@@ -9,7 +9,7 @@ The Application object manages the CLI application:
     from cleo import Application
 
     console = Application()
-    console->run()
+    console.run()
 
 The ``run()`` method parses the arguments and options passed on the command
 line and executes the right command.
@@ -22,14 +22,14 @@ which returns a ``Command`` instance:
     def ls_dir(input_, output_):
         dir = input_.get_argument('dir')
 
-        output.writeln('Dir listing for <info>%s</info>' % dir)
+        output_.writeln('Dir listing for <info>%s</info>' % dir)
 
-    console
-        .register('ls')
+    console\
+        .register('ls')\
         .set_definition([
             InputArgument('dir', InputArgument.REQUIRED, 'Directory name'),
-        ])
-        .set_description('Displays the files in the given directory')
+        ])\
+        .set_description('Displays the files in the given directory')\
         .set_code(ls_dir)
 
 You can also register new commands via classes.
