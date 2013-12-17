@@ -20,7 +20,7 @@ class StreamOutput(Output):
         return self.stream
 
     def do_write(self, message, newline):
-        self.stream.write((message + (os.linesep if newline else '')).encode())
+        self.stream.write((message + (os.linesep if newline else '')).encode('utf-8'))
         self.stream.flush()
 
     def has_color_support(self, decorated):
