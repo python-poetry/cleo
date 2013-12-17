@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import StringIO
+from io import BytesIO
 
 from ..input.list_input import ListInput
 from ..output.stream_output import StreamOutput
@@ -45,7 +45,7 @@ class ApplicationTester(object):
         if 'interactive' in options:
             self.__input.set_interactive(options['interactive'])
 
-        self.__output = StreamOutput(StringIO.StringIO())
+        self.__output = StreamOutput(BytesIO())
         if 'decorated' in options:
             self.__output.set_decorated(options['decorated'])
         if 'verbosity' in options:

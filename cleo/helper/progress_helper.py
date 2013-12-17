@@ -3,7 +3,7 @@
 import time
 import math
 
-from helper import Helper
+from .helper import Helper
 from ..output.output import Output
 
 

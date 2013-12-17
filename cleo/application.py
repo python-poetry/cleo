@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import sys
 import traceback
 import Levenshtein
 
@@ -72,10 +71,9 @@ class Application(object):
 
         try:
             status_code = self.do_run(input_, output_)
-        except Exception, e:
+        except Exception as e:
             if not self._catch_exceptions:
-                exc = sys.exc_info()
-                raise exc[1], None, exc[2]
+                raise
 
             if isinstance(output_, ConsoleOutput):
                 self.render_exception(e, output_.get_error_output())

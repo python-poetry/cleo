@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from input import Input
+
+from .input import Input
 
 
 class ArgvInput(Input):

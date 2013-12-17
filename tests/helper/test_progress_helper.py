@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import StringIO
+from io import BytesIO
 
 from unittest import TestCase
 from cleo.helper.progress_helper import ProgressHelper
@@ -22,7 +22,7 @@ class ProgressHelperTest(TestCase):
 
         output.get_stream().seek(0)
         self.assertEqual(self.generate_output('    1 [->--------------------------]'),
-                         output.get_stream().read())
+                         output.get_stream().read().decode())
 
     def test_advance_with_steps(self):
         """
@@ -35,7 +35,7 @@ class ProgressHelperTest(TestCase):
 
         output.get_stream().seek(0)
         self.assertEqual(self.generate_output('    5 [----->----------------------]'),
-                         output.get_stream().read())
+                         output.get_stream().read().decode())
 
     def test_advance_multiple_times(self):
         """
@@ -50,7 +50,7 @@ class ProgressHelperTest(TestCase):
         output.get_stream().seek(0)
         self.assertEqual(self.generate_output('    3 [--->------------------------]')
                          + self.generate_output('    5 [----->----------------------]'),
-                         output.get_stream().read())
+                         output.get_stream().read().decode())
 
     def test_customizations(self):
         """
@@ -69,7 +69,7 @@ class ProgressHelperTest(TestCase):
 
         output.get_stream().seek(0)
         self.assertEqual(self.generate_output('  1/10 [_/        ]  10%'),
-                         output.get_stream().read())
+                         output.get_stream().read().decode())
 
     def test_percent(self):
         """
@@ -86,10 +86,10 @@ class ProgressHelperTest(TestCase):
         self.assertEqual(self.generate_output('  0/50 [>---------------------------]   0%')
                          + self.generate_output('  1/50 [>---------------------------]   2%')
                          + self.generate_output('  2/50 [=>--------------------------]   4%'),
-                         output.get_stream().read())
+                         output.get_stream().read().decode())
 
     def get_output_stream(self):
-        stream = StringIO.StringIO()
+        stream = BytesIO()
 
         return StreamOutput(stream)
 

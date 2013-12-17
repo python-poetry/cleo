@@ -3,7 +3,7 @@
 import sys
 import os
 
-from helper import Helper
+from .helper import Helper
 from ..formatter.output_formatter_style import OutputFormatterStyle
 
 
@@ -199,7 +199,7 @@ class DialogHelper(Helper):
         @rtype: bool
         """
         answer = 'z'
-        while answer and answer[0].lower() not in ['y', 'n']:
+        while answer and str(answer[0]).lower() not in ['y', 'n']:
             answer = self.ask(output_, question)
 
         if default is False:
@@ -292,7 +292,7 @@ class DialogHelper(Helper):
 
             try:
                 return validator(interviewer())
-            except Exception, error:
-                pass
+            except Exception as e:
+                error = e
 
         raise error

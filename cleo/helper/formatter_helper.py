@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from helper import Helper
+from .helper import Helper
 from ..formatter.output_formatter import OutputFormatter
 
 
