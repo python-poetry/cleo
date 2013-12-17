@@ -116,7 +116,7 @@ class ProgressHelper(Helper):
         @param freq: The redraw frequency in seconds
         @type freq: int
         """
-        self.bar_char = freq
+        self.redraw_freq = freq
 
     def start(self, output_, max_steps=None):
         """
@@ -283,7 +283,7 @@ class ProgressHelper(Helper):
                     text = time_format[1]
                     break
                 else:
-                    text = str(math.ceil(secs / time_format[2])) + ' ' + time_format[1]
+                    text = str(int(math.ceil(secs / time_format[2]))) + ' ' + time_format[1]
                     break
 
         return text
