@@ -83,7 +83,7 @@ class DialogHelper(Helper):
         input_stream = self.input_stream or sys.stdin
 
         if autocomplete is None or not self.has_stty_available():
-            ret = input_stream.readline(4096)
+            ret = input_stream.readline(4096).decode('utf-8')
             if not ret:
                 raise Exception('Aborted')
 

@@ -29,13 +29,13 @@ class DialogHelperTest(TestCase):
                                        'What is your favorite superhero?', heroes, '2'))
         self.assertEqual('1',
                          dialog.select(self.get_output_stream(),
-                                       'What is your favorite superhero?', heroes).decode())
+                                       'What is your favorite superhero?', heroes))
 
         output = self.get_output_stream()
         self.assertEqual('1',
                          dialog.select(output,
                                        'What is your favorite superhero?', heroes, None,
-                                       False, 'Input "%s" is not a superhero!').decode())
+                                       False, 'Input "%s" is not a superhero!'))
 
         output.get_stream().seek(0)
         self.assertTrue(re.match('.*Input "Sebastien" is not a superhero!.*',
@@ -53,7 +53,7 @@ class DialogHelperTest(TestCase):
 
         self.assertEqual('2PM', dialog.ask(self.get_output_stream(), 'What time is it?', '2PM'))
         output = self.get_output_stream()
-        self.assertEqual('8AM', dialog.ask(output, 'What time is it?', '2PM').decode())
+        self.assertEqual('8AM', dialog.ask(output, 'What time is it?', '2PM'))
 
         output.get_stream().seek(0)
         self.assertEqual('What time is it?', output.get_stream().read().decode())
