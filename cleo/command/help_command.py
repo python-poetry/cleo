@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from command import Command
+from .command import Command
 from ..input.input_argument import InputArgument
-from ..input.input_option import InputOption
 
 
 class HelpCommand(Command):

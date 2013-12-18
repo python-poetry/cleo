@@ -2,8 +2,8 @@
 
 import re
 
-from output_formatter_style import OutputFormatterStyle
-from output_formatter_style_stack import OutputFormatterStyleStack
+from .output_formatter_style import OutputFormatterStyle
+from .output_formatter_style_stack import OutputFormatterStyleStack
 
 
 class OutputFormatter(object):

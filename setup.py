@@ -13,7 +13,7 @@ setup(
     author_email='sebastien.eustace@gmail.com',
     url='https://github.com/SDisPater/cleo',
     packages=find_packages(),
-    install_requires=['ordereddict', 'python-Levenshtein'],
+    install_requires=['nose', 'ordereddict', 'python-Levenshtein'],
     tests_require=['nose'],
     test_suite='nose.collector',
     classifiers=[

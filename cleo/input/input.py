@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from input_definition import InputDefinition
+from .input_definition import InputDefinition
 
 
 class Input(object):

@@ -44,10 +44,10 @@ class TestCommandTester(TestCase):
 
     def test_get_output(self):
         """
-        CommandTester.get_input() behaves properly
+        CommandTester.get_output() behaves properly
         """
         self.tester.get_output().get_stream().seek(0)
-        self.assertEqual('foo\n', self.tester.get_output().get_stream().read(),
+        self.assertEqual('foo\n', self.tester.get_output().get_stream().read().decode(),
                          msg='.get_output() returns the current output instance.')
 
     def test_get_display(self):

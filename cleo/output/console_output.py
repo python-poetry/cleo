@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from stream_output import StreamOutput
+from .stream_output import StreamOutput
 
 
 class ConsoleOutput(StreamOutput):

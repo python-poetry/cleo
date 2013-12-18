@@ -94,10 +94,9 @@ class Command(object):
         # bind the input against the command specific arguments/options
         try:
             input_.bind(self._definition)
-        except Exception, e:
+        except Exception as e:
             if not self._ignore_validation_errors_:
-                exc = sys.exc_info()
-                raise exc[1], None, exc[2]
+                raise
 
         self.initialize(input_, output_)
 

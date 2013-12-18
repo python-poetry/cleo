@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import StringIO
+from io import BytesIO
 import re
 
 from unittest import TestCase
@@ -39,7 +39,7 @@ class DialogHelperTest(TestCase):
 
         output.get_stream().seek(0)
         self.assertTrue(re.match('.*Input "Sebastien" is not a superhero!.*',
-                                 output.get_stream().read()) is not None)
+                                 output.get_stream().read().decode()) is not None)
 
         output = self.get_output_stream()
         self.assertRaises(Exception, dialog.select, output, 'What is your favorite superhero?', heroes, None, 1)
@@ -56,7 +56,7 @@ class DialogHelperTest(TestCase):
         self.assertEqual('8AM', dialog.ask(output, 'What time is it?', '2PM'))
 
         output.get_stream().seek(0)
-        self.assertEqual('What time is it?', output.get_stream().read())
+        self.assertEqual('What time is it?', output.get_stream().read().decode())
 
     def test_ask_confirmation(self):
         """
@@ -103,13 +103,13 @@ class DialogHelperTest(TestCase):
                           self.get_output_stream(), question, validator, 2, 'white')
 
     def get_input_stream(self, input_):
-        stream = StringIO.StringIO()
-        stream.write(input_)
+        stream = BytesIO()
+        stream.write(input_.encode())
         stream.seek(0)
 
         return stream
 
     def get_output_stream(self):
-        stream = StringIO.StringIO()
+        stream = BytesIO()
 
         return StreamOutput(stream)

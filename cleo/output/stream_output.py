@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os
-from output import Output
+from io import UnsupportedOperation
+
+from .output import Output
 
 
 class StreamOutput(Output):
@@ -18,7 +20,7 @@ class StreamOutput(Output):
         return self.stream
 
     def do_write(self, message, newline):
-        self.stream.write(message + (os.linesep if newline else ''))
+        self.stream.write((message + (os.linesep if newline else '')).encode('utf-8'))
         self.stream.flush()
 
     def has_color_support(self, decorated):
@@ -28,4 +30,7 @@ class StreamOutput(Output):
         if not hasattr(self.stream, 'fileno'):
             return False
 
-        return os.isatty(self.stream.fileno())
+        try:
+            return os.isatty(self.stream.fileno())
+        except UnsupportedOperation:
+            return False

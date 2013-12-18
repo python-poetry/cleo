@@ -5,9 +5,10 @@ try:
 except ImportError:
     import json
 
-from ordereddict import OrderedDict
+from collections import OrderedDict
 
-from input_option import InputOption
+from .input_option import InputOption
+
 
 class InputDefinition(object):
 
