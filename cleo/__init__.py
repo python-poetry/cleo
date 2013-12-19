@@ -17,6 +17,7 @@ __all__ = [
     'Helper',
     'DialogHelper',
     'ProgressHelper',
+    'TableHelper',
     'HelperSet',
     'FormatterHelper',
     'Input',

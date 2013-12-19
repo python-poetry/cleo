@@ -5,11 +5,13 @@ from .formatter_helper import FormatterHelper, OutputFormatter
 from .helper import Helper
 from .helper_set import HelperSet
 from .progress_helper import ProgressHelper
+from .table_helper import TableHelper
 
 __all__ = [
     'DialogHelper',
     'FormatterHelper', 'OutputFormatter',
     'Helper',
     'HelperSet',
-    'ProgressHelper'
+    'ProgressHelper',
+    'TableHelper'
 ]
