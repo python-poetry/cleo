@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import traceback
-import Levenshtein
+from pylev import levenshtein
 
 from .output.output import Output
 from .output.console_output import ConsoleOutput
@@ -490,13 +490,13 @@ class Application(object):
             if callback is not None:
                 item = callback(item)
 
-            lev = Levenshtein.distance(name, item)
+            lev = levenshtein(name, item)
             if lev <= len(name) / 3 or item.find(name) != -1:
                 alternatives[item] = lev
 
         if not alternatives:
             for key, values in abbrevs.items():
-                lev = Levenshtein.distance(name, key)
+                lev = levenshtein(name, key)
                 if lev <= len(name) / 3 or key.find(name) != -1:
                     for value in values:
                         alternatives[value] = lev
