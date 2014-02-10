@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import traceback
+import os
+import re
+from io import UnsupportedOperation
 from pylev import levenshtein
 
 from .output.output import Output
@@ -68,6 +71,8 @@ class Application(object):
 
         if output_ is None:
             output_ = ConsoleOutput()
+
+        self.configure_io(input_, output_)
 
         try:
             status_code = self.do_run(input_, output_)
@@ -153,7 +158,7 @@ class Application(object):
             self.get_long_version(),
             '',
             '<comment>Usage:</comment>',
-            '  command [arguments] [options]',
+            '  [options] command [arguments]',
             '',
             '<comment>Options:</comment>'
         ]
@@ -205,6 +210,15 @@ class Application(object):
 
             return
 
+        try:
+            command.get_definition()
+        except AttributeError:
+            raise Exception(
+                'Command class "%s" is not correctly initialized.'
+                'You probably forgot to call the parent constructor.'
+                % command.__class__.__name__
+            )
+
         self._commands[command.get_name()] = command
 
         for alias in command.get_aliases():
@@ -239,53 +253,41 @@ class Application(object):
             for alias in command.get_aliases():
                 namespaces.append(self.extract_namespace(alias))
 
-        return list(set(namespaces))
+        return list(set(filter(lambda n: n, namespaces)))
 
     def find_namespace(self, namespace):
-        all_namespaces = {}
-        for n in self.get_namespaces():
-            all_namespaces[n] = n.split(':')
-
-        found = []
-        for i, part in enumerate(namespace.split(':')):
-            abbrevs = self.get_abbreviations(
-                list(
-                    set(
-                        filter(
-                            None,
-                            map(
-                                lambda p: p[i] if len(p) > i else '',
-                                all_namespaces.values()
-                            )
-                        )
-                    )
+        all_namespaces = self.get_namespaces()
+        expr = re.sub('([^:]+|)', lambda m: re.escape(m.group(1)) + '[^:]*', namespace)
+        namespaces = sorted(
+            list(
+                filter(
+                    lambda x: re.findall('^%s' % expr, x),
+                    all_namespaces
                 )
             )
+        )
 
-            if not part in abbrevs:
-                message = 'There are no commands defined in the "%s" namespace.' % namespace
+        if not namespaces:
+            message = 'There are no commands defined in the "%s" namespace.' % namespace
 
-                if 1 <= i:
-                    part = ':'.join(found) + ':' + part
+            alternatives = self.find_alternatives(namespace, all_namespaces, [])
+            if alternatives:
+                if len(alternatives) == 1:
+                    message += '\n\nDid you mean this?\n    '
+                else:
+                    message += '\n\nDid you mean one of these?\n    '
 
-                alternatives = self.find_alternative_namespace(part, abbrevs)
-                if alternatives:
-                    if len(alternatives) == 1:
-                        message += '\n\nDid you mean this?\n    '
-                    else:
-                        message += '\n\nDid you mean one of these?\n    '
+                message += '\n    '.join(alternatives)
 
-                    message += '\n    '.join(alternatives)
+            raise Exception(message)
 
-                raise Exception(message)
+        exact = namespace in namespaces
+        if len(namespaces) > 1 and not exact:
+            raise Exception('The namespace "%s" is ambiguous (%s).'
+                            % (namespace,
+                               self.get_abbreviation_suggestions(namespaces)))
 
-            if len(abbrevs[part]) > 1:
-                raise Exception('The namespace "%s" is ambiguous (%s).'
-                                % (namespace, self.get_abbreviation_suggestions(abbrevs[part])))
-
-            found.append(abbrevs[part][0])
-
-        return ':'.join(found)
+        return namespace if exact else namespaces[0]
 
     def find(self, name):
         # namespace
@@ -413,6 +415,35 @@ class Application(object):
         output_.writeln('<error>%s</error><comment>%s</comment>'
                         % (error[0], '\n\n' + error[1] if len(error) > 1 else ''))
 
+    def configure_io(self, input_, output_):
+        """
+        Configures the input and output instances based on the user arguments and options.
+
+        @param input_: An Input instance
+        @type input_: Input
+        @param output_: An Output instance
+        @type output_: Output
+        """
+        if input_.has_parameter_option('--ansi'):
+            output_.set_decorated(True)
+        elif input_.has_parameter_option('--no-ansi'):
+            output_.set_decorated(False)
+
+        if input_.has_parameter_option(['--no-interaction', '-n']):
+            input_.set_interactive(False)
+        elif self.get_helper_set().has('dialog'):
+            input_stream = self.get_helper_set().get('dialog').get_input_stream()
+            try:
+                is_atty = hasattr(input_stream, 'fileno') and os.isatty(input_stream)
+            except UnsupportedOperation:
+                is_atty = False
+
+            if not is_atty:
+                input_.set_interactive = False
+
+        if input_.has_parameter_option(['--quiet', '-q']):
+            output_.set_verbosity(Output.VERBOSITY_QUIET)
+
     def get_command_name(self, input_):
         return input_.get_first_argument()
 
@@ -422,7 +453,7 @@ class Application(object):
 
             InputOption('--help', '-h', InputOption.VALUE_NONE, 'Display this help message.'),
             InputOption('--quiet', '-q', InputOption.VALUE_NONE, 'Do not output any message.'),
-            InputOption('--verbose', '-v', InputOption.VALUE_NONE, 'Increase verbosity of messages.'),
+            InputOption('--verbose', '-v', InputOption.VALUE_NONE, 'Increase the verbosity of messages.'),
             InputOption('--version', '-V', InputOption.VALUE_NONE, 'Display this application version.'),
             InputOption('--ansi', '', InputOption.VALUE_NONE, 'Force ANSI output.'),
             InputOption('--no-ansi', '', InputOption.VALUE_NONE, 'Disable ANSI output.'),
