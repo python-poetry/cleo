@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import os
-from unittest import TestCase
+import sys
 from cleo.application import Application
 from cleo.command import Command, HelpCommand
+from cleo.output import Output, NullOutput, StreamOutput
+from cleo.input import InputArgument, InputOption, ListInput, InputDefinition
 from cleo.tester.application_tester import ApplicationTester
+from cleo.helper import HelperSet, FormatterHelper
 
+from . import CleoTestCase
 from .fixtures.foo_command import FooCommand
 from .fixtures.foo1_command import Foo1Command
 from .fixtures.foo2_command import Foo2Command
@@ -16,7 +20,7 @@ from .fixtures.foobar_command import FoobarCommand
 from .fixtures.bar_buc_command import BarBucCommand
 
 
-class ApplicationTest(TestCase):
+class ApplicationTest(CleoTestCase):
 
     def setUp(self):
         self.fixtures_path = os.path.join(
@@ -27,6 +31,15 @@ class ApplicationTest(TestCase):
     def open_fixture(self, fixture):
         with open(os.path.join(self.fixtures_path, fixture)) as fh:
             return fh.read()
+
+    def ensure_static_command_help(self, application):
+        for command in application.all().values():
+            command.set_help(
+                command.get_help().replace(
+                    '%command.full_name%',
+                    'app/console %command.name%'
+                )
+            )
 
     def test_constructor(self):
         """
@@ -287,3 +300,725 @@ class ApplicationTest(TestCase):
             application.find_namespace,
             'f'
         )
+
+    def find_invalid_namespace(self):
+        """
+        Application.find_namespace() should raise an error when finding missing namespace
+        """
+        application = Application()
+
+        self.assertRaisesRegexp(
+            Exception,
+            'There are no commands defined in the "bar" namespace\.',
+            application.find_namespace,
+            'bar'
+        )
+
+    def test_find_unique_name_but_namespace_name(self):
+        """
+        Application.find() should raise an error when command is missing
+        """
+        application = Application()
+        application.add(FooCommand())
+        application.add(Foo1Command())
+        application.add(Foo2Command())
+
+        self.assertRaisesRegexp(
+            Exception,
+            'Command "foo1" is not defined',
+            application.find,
+            'foo1'
+        )
+
+    def test_find(self):
+        """
+        Application.find() should return a command
+        """
+        application = Application()
+        application.add(FooCommand())
+
+        self.assertTrue(
+            isinstance(application.find('foo:bar'), FooCommand),
+            msg='.find() returns a command if its name exists'
+        )
+        self.assertTrue(
+            isinstance(application.find('h'), HelpCommand),
+            msg='.find() returns a command if its name exists'
+        )
+        self.assertTrue(
+            isinstance(application.find('f:bar'), FooCommand),
+            msg='.find() returns a command if the abbreviation for the namespace exists'
+        )
+        self.assertTrue(
+            isinstance(application.find('f:b'), FooCommand),
+            msg='.find() returns a command if the abbreviation for the namespace and the command name exist'
+        )
+        self.assertTrue(
+            isinstance(application.find('a'), FooCommand),
+            msg='.find() returns a command if the abbreviation exists for an alias'
+        )
+
+    def test_find_with_ambiguous_abbreviations(self):
+        """
+        Application.find() should raise an error when there is ambiguosity
+        """
+        data = [
+            ['f', 'Command "f" is not defined\.'],
+            ['a', 'Command "a" is ambiguous \(afoobar, afoobar1 and 1 more\)\.'],
+            ['foo:b', 'Command "foo:b" is ambiguous \(foo1:bar, foo:bar and 1 more\)\.'],
+        ]
+
+        application = Application()
+        application.add(FooCommand())
+        application.add(Foo1Command())
+        application.add(Foo2Command())
+
+        for d in data:
+            self.assertRaisesRegexp(
+                Exception,
+                d[1],
+                application.find,
+                d[0]
+            )
+
+    def test_find_command_equal_namesapce(self):
+        """
+        Application.find() returns a command if it has a namespace with the same name
+        """
+        application = Application()
+        application.add(Foo3Command())
+        application.add(Foo4Command())
+
+        self.assertTrue(
+            isinstance(application.find('foo3:bar'), Foo3Command),
+            msg='.find() returns the good command even if a namespace has same name'
+        )
+        self.assertTrue(
+            isinstance(application.find('foo3:bar:toh'), Foo4Command),
+            msg='.find() returns a command even if its namespace equals another command name'
+        )
+
+    def test_find_command_with_ambiguous_namespace_but_unique_name(self):
+        """
+        Application.find() returns a command with ambiguous namespace
+        """
+        application = Application()
+        application.add(FooCommand())
+        application.add(FoobarCommand())
+
+        self.assertTrue(
+            isinstance(application.find('f:f'), FoobarCommand)
+        )
+
+    def test_find_command_with_missing_namespace(self):
+        """
+        Application.find() returns a command with missing namespace
+        """
+        application = Application()
+        application.add(Foo4Command())
+
+        self.assertTrue(
+            isinstance(application.find('f::t'), Foo4Command)
+        )
+
+    def test_find_alternative_exception_message_single(self):
+        """
+        Application.find() raises an exception when an alternative has been found
+        """
+        data = [
+            'foo3:baR',
+            'foO3:bar'
+        ]
+
+        application = Application()
+        application.add(Foo3Command())
+
+        for d in data:
+            self.assertRaisesRegexp(
+                Exception,
+                'Did you mean this',
+                application.find,
+                d
+            )
+
+    def test_find_alternative_exception_message_multiple(self):
+        """
+        Application.find() raises an exception when alternatives have been found
+        """
+        application = Application()
+        application.add(FooCommand())
+        application.add(Foo1Command())
+        application.add(Foo2Command())
+
+        try:
+            application.find('foo:baR')
+            self.fail('.find() raises an Exception if command does not exist, with alternatives')
+        except Exception as e:
+            self.assertRegexpMatches(
+                str(e),
+                'Did you mean one of these'
+            )
+            self.assertRegexpMatches(
+                str(e),
+                'foo1:bar'
+            )
+            self.assertRegexpMatches(
+                str(e),
+                'foo:bar'
+            )
+
+        try:
+            application.find('foo2:baR')
+            self.fail('.find() raises an Exception if command does not exist, with alternatives')
+        except Exception as e:
+            self.assertRegexpMatches(
+                str(e),
+                'Did you mean one of these'
+            )
+            self.assertRegexpMatches(
+                str(e),
+                'foo1'
+            )
+
+        application.add(Foo3Command())
+        application.add(Foo4Command())
+
+        try:
+            application.find('foo3:')
+            self.fail('.find() raises an Exception if command does not exist, with alternatives')
+        except Exception as e:
+            self.assertRegexpMatches(
+                str(e),
+                'foo3:bar'
+            )
+            self.assertRegexpMatches(
+                str(e),
+                'foo3:bar:toh'
+            )
+
+    def test_find_alternative_commands(self):
+        application = Application()
+        application.add(FooCommand())
+        application.add(Foo1Command())
+        application.add(Foo2Command())
+
+        command_name = 'Unknown command'
+        try:
+            application.find(command_name)
+            self.fail('.find() raises an Exception if command does not exist')
+        except Exception as e:
+            self.assertEqual(
+                'Command "%s" is not defined.' % command_name,
+                str(e)
+            )
+
+        command_name = 'bar1'
+        try:
+            application.find(command_name)
+            self.fail('.find() raises an Exception if command does not exist')
+        except Exception as e:
+            self.assertRegexpMatches(
+                str(e),
+                'Command "%s" is not defined.' % command_name
+            )
+            self.assertRegexpMatches(
+                str(e),
+                'afoobar1',
+            )
+            self.assertRegexpMatches(
+                str(e),
+                'foo:bar1',
+            )
+            self.assertNotRegex(
+                str(e),
+                'foo:bar$'
+            )
+
+    def find_alternative_commands_with_an_alias(self):
+        foo_command = FooCommand()
+        foo_command.set_aliases(['foo2'])
+
+        application = Application()
+        application.add(foo_command)
+
+        result = application.find('foo')
+
+        self.assertEqual(foo_command, result)
+
+    def test_find_alternative_namespace(self):
+        application = Application()
+
+        application.add(FooCommand())
+        application.add(Foo1Command())
+        application.add(Foo2Command())
+        application.add(Foo3Command())
+
+        try:
+            application.find('Unknown-namespace:Unknown-command')
+            self.fail('.find() raises an Exception if namespace does not exist')
+        except Exception as e:
+            self.assertRegex(
+                str(e),
+                'There are no commands defined in the "Unknown-namespace" namespace.'
+            )
+
+        try:
+            application.find('foo2:command')
+            self.fail('.find() raises an tException if namespace does not exist')
+        except Exception as e:
+            self.assertRegex(
+                str(e),
+                'There are no commands defined in the "foo2" namespace.'
+            )
+            self.assertRegex(
+                str(e),
+                'foo',
+                msg='.find() raises an tException if namespace does not exist, with alternative "foo"'
+            )
+            self.assertRegex(
+                str(e),
+                'foo1',
+                msg='.find() raises an tException if namespace does not exist, with alternative "foo1"'
+            )
+            self.assertRegex(
+                str(e),
+                'foo3',
+                msg='.find() raises an Exception if namespace does not exist, with alternative "foo2"'
+            )
+
+    def test_find_namespace_does_not_fail_on_deep_similar_namespaces(self):
+        applicaton = Application()
+        applicaton.get_namespaces = self.mock().MagicMock(return_value=['foo:sublong', 'bar:sub'])
+
+        self.assertEqual(
+            'foo:sublong',
+            applicaton.find_namespace('f:sub')
+        )
+
+    def test_set_catch_exceptions(self):
+        application = Application()
+        application.set_auto_exit(False)
+        application.get_terminal_width = self.mock().MagicMock(return_value=120)
+        tester = ApplicationTester(application)
+
+        application.set_catch_exceptions(True)
+        tester.run([('command', 'foo')], {'decorated': False})
+        self.assertEqual(
+            self.open_fixture('application_renderexception1.txt'),
+            tester.get_display().decode('utf-8')
+        )
+
+        application.set_catch_exceptions(False)
+        try:
+            tester.run([('command', 'foo')], {'decorated': False})
+            self.fail('.set_catch_exceptions() sets the catch exception flag')
+        except Exception as e:
+            self.assertEqual('Command "foo" is not defined.', str(e))
+
+    def test_as_text(self):
+        """
+        Application.as_text() returns a text representation of the application.
+        """
+        application = Application()
+        application.add(FooCommand())
+
+        self.ensure_static_command_help(application)
+
+        self.assertEqual(
+            self.open_fixture('application_astext1.txt'),
+            application.as_text()
+        )
+        self.assertEqual(
+            self.open_fixture('application_astext2.txt'),
+            application.as_text('foo')
+        )
+
+    def test_render_exception(self):
+        """
+        Application.render_exception() displays formatted exception.
+        """
+        application = Application()
+        application.set_auto_exit(False)
+
+        application.get_terminal_width = self.mock().MagicMock(return_value=120)
+        tester = ApplicationTester(application)
+
+        tester.run([('command', 'foo')], {'decorated': False})
+        self.assertEqual(
+            self.open_fixture('application_renderexception1.txt'),
+            tester.get_display().decode('utf-8')
+        )
+
+        tester.run([('command', 'foo')],
+                   {'decorated': False, 'verbosity': Output.VERBOSITY_VERBOSE})
+        self.assertRegex(
+            tester.get_display().decode('utf-8'),
+            'Exception trace'
+        )
+
+        tester.run([('command', 'list'), ('--foo', True)], {'decorated': False})
+        self.assertEqual(
+            self.open_fixture('application_renderexception2.txt'),
+            tester.get_display().decode('utf-8')
+        )
+
+        application.add(Foo3Command())
+        tester = ApplicationTester(application)
+        tester.run([('command', 'foo3:bar')], {'decorated': False})
+        self.assertEqual(
+            self.open_fixture('application_renderexception3.txt'),
+            tester.get_display().decode('utf-8')
+        )
+        tester = ApplicationTester(application)
+        tester.run([('command', 'foo3:bar')], {'decorated': True})
+        self.assertEqual(
+            self.open_fixture('application_renderexception3decorated.txt'),
+            tester.get_display().decode('utf-8')
+        )
+
+
+        application = Application()
+        application.set_auto_exit(False)
+
+        application.get_terminal_width = self.mock().MagicMock(return_value=31)
+        tester = ApplicationTester(application)
+
+        tester.run([('command', 'foo')], {'decorated': False})
+        self.assertEqual(
+            self.open_fixture('application_renderexception4.txt'),
+            tester.get_display().decode('utf-8')
+        )
+
+
+    def test_run(self):
+        application = Application()
+        application.set_auto_exit(False)
+        application.set_catch_exceptions(False)
+        command = Foo1Command()
+        application.add(command)
+
+        sys.argv = ['cli.py', 'foo:bar1']
+
+        application.run()
+
+        self.assertEqual(
+            'ArgvInput',
+            command.input.__class__.__name__
+        )
+        self.assertEqual(
+            'ConsoleOutput',
+            command.output.__class__.__name__
+        )
+
+        application = Application()
+        application.set_auto_exit(False)
+        application.set_catch_exceptions(False)
+
+        self.ensure_static_command_help(application)
+        tester = ApplicationTester(application)
+
+        tester.run([], {'decorated': False})
+        self.assertEqual(
+            self.open_fixture('application_run1.txt'),
+            tester.get_display().decode('utf-8')
+        )
+
+        tester.run([('--help', True)], {'decorated': False})
+        self.assertEqual(
+            self.open_fixture('application_run2.txt'),
+            tester.get_display().decode('utf-8')
+        )
+
+        tester.run([('-h', True)], {'decorated': False})
+        self.assertEqual(
+            self.open_fixture('application_run2.txt'),
+            tester.get_display().decode('utf-8')
+        )
+
+        tester.run([('command', 'list'), ('--help', True)], {'decorated': False})
+        self.assertEqual(
+            self.open_fixture('application_run3.txt'),
+            tester.get_display().decode('utf-8')
+        )
+
+        tester.run([('command', 'list'), ('-h', True)], {'decorated': False})
+        self.assertEqual(
+            self.open_fixture('application_run3.txt'),
+            tester.get_display().decode('utf-8')
+        )
+
+        tester.run([('--ansi', True)])
+        self.assertTrue(tester.get_output().is_decorated())
+
+        tester.run([('--no-ansi', True)])
+        self.assertFalse(tester.get_output().is_decorated())
+
+        tester.run([('--version', True)], {'decorated': False})
+        self.assertEqual(
+            self.open_fixture('application_run4.txt'),
+            tester.get_display().decode('utf-8')
+        )
+
+        tester.run([('-V', True)], {'decorated': False})
+        self.assertEqual(
+            self.open_fixture('application_run4.txt'),
+            tester.get_display().decode('utf-8')
+        )
+
+        tester.run([('command', 'list'), ('--quiet', True)])
+        self.assertEqual(
+            '',
+            tester.get_display().decode('utf-8')
+        )
+
+        tester.run([('command', 'list'), ('-q', True)])
+        self.assertEqual(
+            '',
+            tester.get_display().decode('utf-8')
+        )
+
+        tester.run([('command', 'list'), ('--verbose', True)])
+        self.assertEqual(
+            Output.VERBOSITY_VERBOSE,
+            tester.get_output().get_verbosity()
+        )
+
+        tester.run([('command', 'list'), ('-v', True)])
+        self.assertEqual(
+            Output.VERBOSITY_VERBOSE,
+            tester.get_output().get_verbosity()
+        )
+
+        application = Application()
+        application.set_auto_exit(False)
+        application.set_catch_exceptions(False)
+        application.add(FooCommand())
+        tester = ApplicationTester(application)
+
+        tester.run([('command', 'foo:bar'), ('--no-interaction', True)], {'decorated': False})
+        self.assertEqual(
+            'called\n',
+            tester.get_display().decode('utf-8')
+        )
+
+        tester.run([('command', 'foo:bar'), ('-n', True)], {'decorated': False})
+        self.assertEqual(
+            'called\n',
+            tester.get_display().decode('utf-8')
+        )
+
+    def test_run_returns_integer_exit_code(self):
+        exception = OSError(4, '')
+
+        application = Application()
+        application.set_auto_exit(False)
+        application.do_run = self.mock().MagicMock(side_effect=exception)
+
+        exit_code = application.run(ListInput([]), NullOutput())
+
+        self.assertEqual(4, exit_code)
+
+    def test_run_return_exit_code_one_for_exception_code_zero(self):
+        exception = OSError(0, '')
+
+        application = Application()
+        application.set_auto_exit(False)
+        application.do_run = self.mock().MagicMock(side_effect=exception)
+
+        exit_code = application.run(ListInput([]), NullOutput())
+
+        self.assertEqual(1, exit_code)
+
+    def test_adding_already_set_definition_element_data(self):
+        data = [
+            [InputArgument('command', InputArgument.REQUIRED)],
+            [InputOption('quiet', '', InputOption.VALUE_NONE)],
+            [InputOption('query', 'q', InputOption.VALUE_NONE)]
+        ]
+
+        for d in data:
+            application = Application()
+            application.set_auto_exit(False)
+            application.set_catch_exceptions(False)
+            application.register('foo')\
+                .set_definition(d)\
+                .set_code(lambda in_, out_: None)
+
+            input_ = ListInput([('command', 'foo')])
+            output_ = NullOutput()
+
+            self.assertRaises(
+                Exception,
+                application.run,
+                input_,
+                output_
+            )
+
+    def test_get_default_helper_set_returns_default_values(self):
+        application = Application()
+        application.set_auto_exit(False)
+        application.set_catch_exceptions(False)
+
+        helper_set = application.get_helper_set()
+
+        self.assertTrue(helper_set.has('formatter'))
+        self.assertTrue(helper_set.has('dialog'))
+        self.assertTrue(helper_set.has('progress'))
+
+    def test_adding_single_helper_set_overwrites_default_values(self):
+        application = Application()
+        application.set_auto_exit(False)
+        application.set_catch_exceptions(False)
+
+        application.set_helper_set(
+            HelperSet({
+                'formatter': FormatterHelper()
+            })
+        )
+
+        helper_set = application.get_helper_set()
+
+        self.assertTrue(helper_set.has('formatter'))
+        self.assertFalse(helper_set.has('dialog'))
+        self.assertFalse(helper_set.has('progress'))
+
+    def test_overwriting_single_helper_set_overwrites_default_values(self):
+        application = CustomApplication()
+        application.set_auto_exit(False)
+        application.set_catch_exceptions(False)
+
+        application.set_helper_set(
+            HelperSet({
+                'formatter': FormatterHelper()
+            })
+        )
+
+        helper_set = application.get_helper_set()
+
+        self.assertTrue(helper_set.has('formatter'))
+        self.assertFalse(helper_set.has('dialog'))
+        self.assertFalse(helper_set.has('progress'))
+
+    def test_get_default_input_definition_returns_default_values(self):
+        application = Application()
+        application.set_auto_exit(False)
+        application.set_catch_exceptions(False)
+
+        definition = application.get_definition()
+
+        self.assertTrue(definition.has_argument('command'))
+
+        self.assertTrue(definition.has_option('help'))
+        self.assertTrue(definition.has_option('quiet'))
+        self.assertTrue(definition.has_option('verbose'))
+        self.assertTrue(definition.has_option('version'))
+        self.assertTrue(definition.has_option('ansi'))
+        self.assertTrue(definition.has_option('no-ansi'))
+        self.assertTrue(definition.has_option('no-interaction'))
+
+    def test_overwriting_input_definition_overwrites_default_values(self):
+        application = CustomApplication()
+        application.set_auto_exit(False)
+        application.set_catch_exceptions(False)
+
+        definition = application.get_definition()
+
+        self.assertFalse(definition.has_argument('command'))
+
+        self.assertFalse(definition.has_option('help'))
+        self.assertFalse(definition.has_option('quiet'))
+        self.assertFalse(definition.has_option('verbose'))
+        self.assertFalse(definition.has_option('version'))
+        self.assertFalse(definition.has_option('ansi'))
+        self.assertFalse(definition.has_option('no-ansi'))
+        self.assertFalse(definition.has_option('no-interaction'))
+
+        self.assertTrue(definition.has_option('custom'))
+
+    def test_setting_input_definition_overwrites_default_values(self):
+        application = Application()
+        application.set_auto_exit(False)
+        application.set_catch_exceptions(False)
+
+        application.set_definition(InputDefinition([
+            InputOption('--custom', '-c',
+                        InputOption.VALUE_NONE,
+                        'Set the custom input definition.')
+        ]))
+
+        definition = application.get_definition()
+
+        self.assertFalse(definition.has_argument('command'))
+
+        self.assertFalse(definition.has_option('help'))
+        self.assertFalse(definition.has_option('quiet'))
+        self.assertFalse(definition.has_option('verbose'))
+        self.assertFalse(definition.has_option('version'))
+        self.assertFalse(definition.has_option('ansi'))
+        self.assertFalse(definition.has_option('no-ansi'))
+        self.assertFalse(definition.has_option('no-interaction'))
+
+        self.assertTrue(definition.has_option('custom'))
+
+    def test_terminal_dimensions(self):
+        application = Application()
+        original_dimensions = application.get_terminal_dimensions(StreamOutput(sys.stdout))
+        self.assertEqual(2, len(original_dimensions))
+
+        width = 80
+        if original_dimensions[0] == width:
+            width = 100
+
+        application.set_terminal_dimensions(width, 80)
+        self.assertEqual((width, 80), application.get_terminal_dimensions(StreamOutput(sys.stdout)))
+
+
+    def test_set_run_custom_default_command(self):
+        """
+        Application calls the default command.
+        """
+        application = Application()
+        application.set_auto_exit(False)
+        command = FooCommand()
+        application.add(command)
+        application.set_default_command(command.get_name())
+
+        tester = ApplicationTester(application)
+        tester.run([])
+        self.assertEqual(
+            'interact called\ncalled\n',
+            tester.get_display().decode('utf-8')
+        )
+
+        application = CustomDefaultCommandApplication()
+        application.set_auto_exit(False)
+
+        tester = ApplicationTester(application)
+        tester.run([])
+        self.assertEqual(
+            'interact called\ncalled\n',
+            tester.get_display().decode('utf-8')
+        )
+
+
+class CustomApplication(Application):
+
+    def get_default_input_definition(self):
+        return InputDefinition([
+            InputOption('--custom', '-c',
+                        InputOption.VALUE_NONE,
+                        'Set the custom input definition.')
+        ])
+
+    def get_default_helper_set(self):
+        return HelperSet([FormatterHelper()])
+
+
+class CustomDefaultCommandApplication(Application):
+
+    def __init__(self):
+        super(CustomDefaultCommandApplication, self).__init__()
+
+        command = FooCommand()
+        self.add(command)
+        self.set_default_command(command.get_name())

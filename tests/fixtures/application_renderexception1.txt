@@ -1,0 +1,8 @@
+
+
+                                 
+  [Exception]                    
+  Command "foo" is not defined.  
+                                 
+
+

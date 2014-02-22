@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 
+import sys
 import traceback
 import os
 import re
+import termios
+import fcntl
+import struct
 from io import UnsupportedOperation
 from pylev import levenshtein
 
 from .output.output import Output
-from .output.console_output import ConsoleOutput
+from .output.console_output import ConsoleOutput, StreamOutput
 from .input.argv_input import ArgvInput
 from .input.list_input import ListInput
 from .input.input_argument import InputArgument
@@ -16,9 +20,7 @@ from .input.input_definition import InputDefinition
 from .command.command import Command
 from .command.help_command import HelpCommand
 from .command.list_command import ListCommand
-from .helper.helper_set import HelperSet
-from .helper.formatter_helper import FormatterHelper
-from .helper.dialog_helper import DialogHelper
+from .helper import HelperSet, FormatterHelper, DialogHelper, ProgressHelper
 
 
 class Application(object):
@@ -47,9 +49,12 @@ class Application(object):
         self._catch_exceptions = True
         self._auto_exit = True
         self._commands = {}
+        self._default_command = 'list'
         self._definition = self.get_default_input_definition()
         self._want_helps = False
         self._helper_set = self.get_default_helper_set()
+        self._terminal_dimensions = ()
+        self._running_command = None
 
         for command in self.get_default_commands():
             self.add(command)
@@ -87,6 +92,9 @@ class Application(object):
 
             status_code = e.errno if hasattr(e, 'errno') else 1
 
+            if status_code == 0:
+                status_code = 1
+
         if self._auto_exit:
             if status_code > 255:
                 status_code = 255
@@ -107,12 +115,12 @@ class Application(object):
         @return: 0 if everything went fine, or an error code
         @rtype: int
         """
-        name = self.get_command_name(input_)
+        if input_.has_parameter_option(['--version', '-V']):
+            output_.writeln(self.get_long_version())
 
-        if input_.has_parameter_option(['--ansi']):
-            output_.set_decorated(True)
-        elif input_.has_parameter_option(['--no-ansi']):
-            output_.set_decorated(False)
+            return 0
+
+        name = self.get_command_name(input_)
 
         if input_.has_parameter_option(['--help', '-h']):
             if not name:
@@ -121,23 +129,15 @@ class Application(object):
             else:
                 self._want_helps = True
 
-        if input_.has_parameter_option(['--no-interaction', '-n']):
-            input_.set_interactive(False)
-
-        if input_.has_parameter_option(['--quiet', '-q']):
-            output_.set_verbosity(Output.VERBOSITY_QUIET)
-        elif input_.has_parameter_option(['--verbose', '-v']):
-            output_.set_verbosity(Output.VERBOSITY_VERBOSE)
-
         if not name:
-            name = 'list'
-            input_ = ListInput([('command', 'list')])
+            name = self._default_command
+            input_ = ListInput([('command', name)])
 
         # the command name MUST be the first element of the input
         command = self.find(name)
-        self._running_commmand = command
+        self._running_command = command
         status_code = command.run(input_, output_)
-        self._running_commmand = None
+        self._running_command = None
 
         return status_code
 
@@ -203,6 +203,17 @@ class Application(object):
             self.add(command)
 
     def add(self, command):
+        """
+        Adds a command object.
+
+        If a command with the same name already exists, it will be overridden.
+
+        @param command: A Command object
+        @type command: Command
+
+        @return: The registered command
+        @rtype: Command
+        """
         command.set_application(self)
 
         if not command.is_enabled():
@@ -270,7 +281,7 @@ class Application(object):
         if not namespaces:
             message = 'There are no commands defined in the "%s" namespace.' % namespace
 
-            alternatives = self.find_alternatives(namespace, all_namespaces, [])
+            alternatives = self.find_alternatives(namespace, all_namespaces)
             if alternatives:
                 if len(alternatives) == 1:
                     message += '\n\nDid you mean this?\n    '
@@ -290,43 +301,28 @@ class Application(object):
         return namespace if exact else namespaces[0]
 
     def find(self, name):
-        # namespace
-        namespace = ''
-        search_name = name
-        pos = name.find(':')
-        if pos != -1:
-            namespace = self.find_namespace(name[:pos])
-            search_name = namespace + name[pos:]
+        all_commands = list(self._commands.keys())
+        expr = re.sub('([^:]+|)',
+                      lambda m: re.escape(m.group(1)) + '[^:]*',
+                      name)
+        commands = sorted(
+            list(
+                filter(
+                    lambda x: re.findall('^%s' % expr, x),
+                    all_commands
+                )
+            )
+        )
 
-        # name
-        commands = []
-        for command in self._commands.values():
-            extracted_namespace = self.extract_namespace(command.get_name())
-            if extracted_namespace == namespace or namespace and extracted_namespace.find(namespace) == 0:
-                commands.append(command.get_name())
+        if not commands or len(list(filter(lambda x: re.findall('^%s$' % expr, x), commands))) < 1:
+            pos = name.find(':')
+            if pos >= 0:
+                # Check if a namespace exists and contains commands
+                self.find_namespace(name[:pos])
 
-        abbrevs = self.get_abbreviations(list(set(commands)))
-        if search_name in abbrevs and len(abbrevs[search_name]) == 1:
-            return self.get(abbrevs[search_name][0])
-
-        if search_name in abbrevs and len(abbrevs[search_name]) > 1:
-            suggestions = self.get_abbreviation_suggestions(abbrevs[search_name])
-
-            raise Exception('Command "%s" is ambiguous (%s).' % (name, suggestions))
-
-        # aliases
-        aliases = []
-        for command in self._commands.values():
-            for alias in command.get_aliases():
-                extracted_namespace = self.extract_namespace(alias)
-                if extracted_namespace == alias or namespace and extracted_namespace.find(namespace) == 0:
-                    aliases.append(alias)
-
-        aliases = self.get_abbreviations(list(set(aliases)))
-        if search_name not in aliases:
             message = 'Command "%s" is not defined.' % name
 
-            alternatives = self.find_alternative_commands(search_name, abbrevs)
+            alternatives = self.find_alternatives(name, all_commands)
             if alternatives:
                 if len(alternatives) == 1:
                     message += '\n\nDid you mean this?\n    '
@@ -337,11 +333,32 @@ class Application(object):
 
             raise Exception(message)
 
-        if len(aliases[search_name]) > 1:
-            raise Exception('Command "%s" is ambiguous (%s).'
-                            % (name, self.get_abbreviation_suggestions(aliases[search_name])))
+        # Filter out aliases for commands which are already on the list
+        if len(commands) > 1:
+            command_list = self._commands
 
-        return self.get(aliases[search_name][0])
+            def f(name_or_alias):
+                command_name = command_list[name_or_alias].get_name()
+
+                return command_name == name_or_alias or (command_name not in commands)
+
+            commands = sorted(
+                list(
+                    filter(
+                        f,
+                        commands
+                    )
+                )
+            )
+
+        exact = name in commands
+        if len(commands) > 1 and not exact:
+            suggestions = self.get_abbreviation_suggestions(commands)
+
+            raise Exception('Command "%s" is ambiguous (%s).'
+                            % (name, suggestions))
+
+        return self.get(name if exact else commands[0])
 
     def all(self, namespace=None):
         if namespace is None:
@@ -398,22 +415,146 @@ class Application(object):
         # add command by namespace
         for space, commands in self.sort_commands(commands):
             if not namespace and '_global' != space:
-                messages.append('  <comment>' + space + '</comment>')
+                messages.append('<comment>' + space + '</comment>')
 
             for name, command in commands:
                 messages.append('  <info>' + '%-*s</info> %s' % (width, name, command.get_description()))
 
-        return '\n'.join(messages)
+        return '%s\n' % '\n'.join(messages)
 
     def render_exception(self, e, output_):
-        if output_.get_verbosity() == Output.VERBOSITY_VERBOSE:
-            error = traceback.format_exc()
-        else:
-            error = str(e)
+        tb = traceback.extract_tb(sys.exc_info()[2])
 
-        error = str(error).split('\n\n', 1)
-        output_.writeln('<error>%s</error><comment>%s</comment>'
-                        % (error[0], '\n\n' + error[1] if len(error) > 1 else ''))
+        title = '  [%s]  ' % e.__class__.__name__
+        l = len(title)
+        width = self.get_terminal_width(output_)
+        if not width:
+            width = sys.maxsize
+
+        formatter = output_.get_formatter()
+        lines = []
+        for line in re.split('\r?\n', str(e)):
+            for splitline in [line[x:x + (width - 4)]
+                              for x in range(0, len(line), width - 4)]:
+                line_length = len(
+                    re.sub('\[[^m]*m',
+                           '',
+                           formatter.format(splitline))) + 4
+                lines.append((splitline, line_length))
+
+                l = max(line_length, l)
+
+        messages = ['', '']
+        empty_line = formatter.format('<error>%s</error>' % (' ' * l))
+        messages.append(empty_line)
+        messages.append(formatter.format('<error>%s%s</error>'
+                                         % (title,
+                                            ' ' * max(0, l - len(title)))))
+
+        for line in lines:
+            messages.append(
+                formatter.format('<error>  %s  %s</error>'
+                                 % (line[0], ' ' * (l - line[1])))
+            )
+
+        messages.append(empty_line)
+        messages.append('')
+        messages.append('')
+
+        output_.writeln(messages, Output.OUTPUT_RAW)
+
+        if Output.VERBOSITY_VERBOSE <= output_.get_verbosity():
+            output_.writeln('<comment>Exception trace:</comment>')
+
+            for exc_info in tb:
+                file_ = exc_info[0]
+                line_number = exc_info[1]
+                function = exc_info[2]
+                line = exc_info[3]
+
+                output_.writeln(' <info>%s</info> in <question>%s()</question> '
+                                'at line <info>%s</info>'
+                                % (file_, function, line_number))
+                output_.writeln('   %s' % line)
+
+            output_.writeln('')
+            output_.writeln('')
+
+        if self._running_command is not None:
+            output_.writeln('<info>%s</info>'
+                            % self._running_command.get_synopsis())
+
+            output_.writeln('')
+            output_.writeln('')
+
+    def get_terminal_width(self, output_):
+        """
+        Tries to figure out the terminal width in which this application runs
+
+        @return: The terminal width
+        @rtype: int or None
+        """
+        dimensions = self.get_terminal_dimensions(output_)
+
+        return dimensions[0]
+
+    def get_terminal_height(self, output_):
+        """
+        Tries to figure out the terminal height in which this application runs
+
+        @return: The terminal height
+        @rtype: int or None
+        """
+        dimensions = self.get_terminal_dimensions(output_)
+
+        return dimensions[1]
+
+    def get_terminal_dimensions(self, output_):
+        """
+        Tries to figure out the terminal dimensions based on the current environment
+
+        @return: The terminal dimensions
+        @rtype: tuple
+        """
+        if self._terminal_dimensions:
+            return self._terminal_dimensions
+
+        try:
+            if not isinstance(output_, StreamOutput):
+                is_atty = False
+            else:
+                stream = output_.get_stream()
+                is_atty = hasattr(stream, 'fileno') and os.isatty(stream.fileno())
+        except UnsupportedOperation:
+            is_atty = False
+
+        if not is_atty:
+            return None, None
+
+        s = struct.pack("HHHH", 0, 0, 0, 0)
+        fd_stdout = output_.get_stream().fileno()
+        size = fcntl.ioctl(fd_stdout, termios.TIOCGWINSZ, s)
+        height, width = struct.unpack("HHHH", size)[:2]
+
+        return width, height
+
+    def set_terminal_dimensions(self, width, height):
+        """
+        Sets terminal dimensions.
+
+        Can be useful to force terminal dimensions for functional tests.
+
+        @param width: The width
+        @type width: int
+        @param height: The height
+        @type height: int
+
+        @return: The current application
+        @rtype: Application
+        """
+        self._terminal_dimensions = width, height
+
+        return self
 
     def configure_io(self, input_, output_):
         """
@@ -439,17 +580,19 @@ class Application(object):
                 is_atty = False
 
             if not is_atty:
-                input_.set_interactive = False
+                input_.set_interactive(False)
 
         if input_.has_parameter_option(['--quiet', '-q']):
             output_.set_verbosity(Output.VERBOSITY_QUIET)
+        elif input_.has_parameter_option(['--verbose', '-v']):
+            output_.set_verbosity(Output.VERBOSITY_VERBOSE)
 
     def get_command_name(self, input_):
         return input_.get_first_argument()
 
     def get_default_input_definition(self):
         return InputDefinition([
-            InputArgument('command', InputArgument.REQUIRED, 'The command to execute.'),
+            InputArgument('command', InputArgument.REQUIRED, 'The command to execute'),
 
             InputOption('--help', '-h', InputOption.VALUE_NONE, 'Display this help message.'),
             InputOption('--quiet', '-q', InputOption.VALUE_NONE, 'Do not output any message.'),
@@ -466,7 +609,8 @@ class Application(object):
     def get_default_helper_set(self):
         return HelperSet({
             'formatter': FormatterHelper(),
-            'dialog': DialogHelper()
+            'dialog': DialogHelper(),
+            'progress': ProgressHelper()
         })
 
     def sort_commands(self, commands):
@@ -497,7 +641,10 @@ class Application(object):
         return namespaced_commands
 
     def get_abbreviation_suggestions(self, abbrevs):
-        return '%s, %s%s' % (abbrevs[0], abbrevs[1], ' and %d more' % (len(abbrevs) - 2) if len(abbrevs) > 2 else '')
+        return '%s, %s%s' % \
+               (abbrevs[0],
+                abbrevs[1],
+                ' and %d more' % (len(abbrevs) - 2) if len(abbrevs) > 2 else '')
 
     def extract_namespace(self, name, limit=None):
         parts = name.split(':')
@@ -505,33 +652,60 @@ class Application(object):
 
         return ':'.join(parts[:limit] if limit else parts)
 
-    def find_alternative_commands(self, name, abbrevs):
-        def callback(item):
-            return item.get_name()
+    def find_alternatives(self, name, collection):
+        """
+        Finds alternatives of name in collection
 
-        return self.find_alternatives(name, self._commands.values(), abbrevs, callback)
+        @param name: The string
+        @type name: str
+        @param collection: The collection
+        @type collection: list
 
-    def find_alternative_namespace(self, name, abbrevs):
-        return self.find_alternatives(name, self.get_namespaces(), abbrevs)
-
-    def find_alternatives(self, name, collection, abbrevs, callback=None):
+        @return: A sorted list of similar strings
+        """
+        threshold = 1e3
         alternatives = {}
 
+        collection_parts = {}
         for item in collection:
-            if callback is not None:
-                item = callback(item)
+            collection_parts[item] = item.split(':')
 
+        for i, subname in enumerate(name.split(':')):
+            for collection_name, parts in collection_parts.items():
+                exists = collection_name in alternatives
+                if i not in parts and exists:
+                    alternatives[collection_name] += threshold
+                    continue
+                elif i not in parts:
+                    continue
+
+                lev = levenshtein(subname, parts[i])
+                if lev <= (len(subname) / 3) or parts[i].find(subname) != -1:
+                    if exists:
+                        alternatives[collection_name] = alternatives[collection_name] + lev
+                    else:
+                        alternatives[collection_name] = lev
+                elif exists:
+                    alternatives[collection_name] += threshold
+
+        for item in collection:
             lev = levenshtein(name, item)
-            if lev <= len(name) / 3 or item.find(name) != -1:
-                alternatives[item] = lev
+            if lev <= (len(name) / 3) or item.find(name) != -1:
+                if item in alternatives:
+                    alternatives[item] = alternatives[item] - lev
+                else:
+                    alternatives[item] = lev
 
-        if not alternatives:
-            for key, values in abbrevs.items():
-                lev = levenshtein(name, key)
-                if lev <= len(name) / 3 or key.find(name) != -1:
-                    for value in values:
-                        alternatives[value] = lev
+        alternatives = list(filter(lambda a: a[1] < 2 * threshold, alternatives.items()))
+        sorted(alternatives, key=lambda x: x[1])
 
-        asorted = sorted(alternatives.items(), key=lambda x: x[1])
+        return list(map(lambda x: x[0], alternatives))
 
-        return map(lambda x: x[0], asorted)
+    def set_default_command(self, command_name):
+        """
+        Sets the default Command name.
+
+        @param command_name: The Command name
+        @type command_name: str
+        """
+        self._default_command = command_name

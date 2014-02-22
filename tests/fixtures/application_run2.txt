@@ -1,0 +1,22 @@
+Usage:
+ help [command_name]
+
+Arguments:
+ command               The command to execute
+ command_name          The command name (default: "help")
+
+Options:
+ --help (-h)           Display this help message.
+ --quiet (-q)          Do not output any message.
+ --verbose (-v)        Increase the verbosity of messages.
+ --version (-V)        Display this application version.
+ --ansi                Force ANSI output.
+ --no-ansi             Disable ANSI output.
+ --no-interaction (-n) Do not ask any interactive question.
+
+Help:
+ The help command displays help for a given command:
+ 
+   python app/console help list
+ 
+ To display the list of available commands, please use the list command.

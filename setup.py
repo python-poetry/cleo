@@ -13,8 +13,8 @@ setup(
     author_email='sebastien.eustace@gmail.com',
     url='https://github.com/SDisPater/cleo',
     packages=find_packages(),
-    install_requires=['nose', 'ordereddict', 'pylev'],
-    tests_require=['nose'],
+    install_requires=['nose', 'ordereddict', 'pylev', 'mock'],
+    tests_require=['nose', 'mock'],
     test_suite='nose.collector',
     classifiers=[
         'Intended Audience :: Developers',

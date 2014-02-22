@@ -8,6 +8,7 @@ class Input(object):
     interactive = True
 
     def __init__(self, definition=None):
+        self.interactive = True
         if definition is None:
             self.arguments = {}
             self.options = {}

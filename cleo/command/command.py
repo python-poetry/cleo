@@ -18,7 +18,7 @@ class Command(object):
 
     def __init__(self, name=None):
         self._definition = InputDefinition()
-        self._ignore_validation_errors_ = False
+        self._ignore_validation_errors = False
         self._application_definition_merged = False
         self._aliases = []
         self._synopsis = None
@@ -26,6 +26,8 @@ class Command(object):
         self._help = ''
         self._name = None
         self._application = None
+        self._helper_set = None
+        self._description = None
 
         if name is not None:
             self.set_name(name)
@@ -36,7 +38,7 @@ class Command(object):
             raise Exception('The command name cannot be empty.')
 
     def ignore_validation_errors(self):
-        self._ignore_validation_errors_ = True
+        self._ignore_validation_errors = True
 
     def set_application(self, application=None):
         self._application = application
@@ -95,7 +97,7 @@ class Command(object):
         try:
             input_.bind(self._definition)
         except Exception as e:
-            if not self._ignore_validation_errors_:
+            if not self._ignore_validation_errors:
                 raise
 
         self.initialize(input_, output_)
@@ -198,7 +200,11 @@ class Command(object):
 
     def get_synopsis(self):
         if self._synopsis is None:
-            self._synopsis = '%s %s' % (self._name, self._definition.get_synopsis())
+            self._synopsis = (
+                '%s %s'
+                % (self._name,
+                   self._definition.get_synopsis())
+            ).strip()
 
         return self._synopsis
 
