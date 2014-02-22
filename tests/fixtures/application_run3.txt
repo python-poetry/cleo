@@ -1,0 +1,21 @@
+Usage:
+ list [--raw] [namespace]
+
+Arguments:
+ namespace  The namespace name
+
+Options:
+ --raw      To output raw command list
+
+Help:
+ The list command lists all commands:
+ 
+   python app/console list
+ 
+ You can also display the commands for a specific namespace:
+ 
+   python app/console list test
+ 
+ It's also possible to get raw list of commands (useful for embedding command runner):
+ 
+   python app/console list --raw

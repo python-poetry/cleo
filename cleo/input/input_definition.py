@@ -66,7 +66,7 @@ class InputDefinition(object):
         self.__arguments[argument.get_name()] = argument
 
     def get_argument(self, name):
-        arguments = self.__arguments.values() if isinstance(name, int) else self.__arguments
+        arguments = list(self.__arguments.values()) if isinstance(name, int) else self.__arguments
 
         if not self.has_argument(name):
             raise Exception('The "%s" argument does not exist.' % name)
@@ -166,7 +166,7 @@ class InputDefinition(object):
             else:
                 element = '%s--%s'
 
-            elements.append(element % (shortcut, option.get_name()))
+            elements.append('[%s]' % (element % (shortcut, option.get_name())))
 
         for argument in self.get_arguments():
             if argument.is_required():
@@ -199,7 +199,7 @@ class InputDefinition(object):
         if self.get_arguments():
             text.append('<comment>Arguments:</comment>')
             for argument in self.get_arguments():
-                if argument.get_default() is None\
+                if argument.get_default() is not None\
                     and (not isinstance(argument.get_default(), list)
                          or len(argument.get_default())):
                     default = '<comment> (default: %s)</comment>' % self.format_default_value(argument.get_default())
@@ -209,6 +209,8 @@ class InputDefinition(object):
                 description = argument.get_description().replace('\n', '\n' + ' ' * (mx + 2))
 
                 text.append(' <info>%-*s</info> %s%s' % (mx, argument.get_name(), description, default))
+
+            text.append('')
 
         if self.get_options():
             text.append('<comment>Options:</comment>')

@@ -1,0 +1,11 @@
+
+
+                                      
+  [Exception]                         
+  The "--foo" option does not exist.  
+                                      
+
+
+list [--raw] [namespace]
+
+

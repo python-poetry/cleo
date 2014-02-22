@@ -8,6 +8,7 @@ class Input(object):
     interactive = True
 
     def __init__(self, definition=None):
+        self.interactive = True
         if definition is None:
             self.arguments = {}
             self.options = {}
@@ -22,6 +23,36 @@ class Input(object):
         self.definition = definition
 
         self.parse()
+
+    def has_parameter_option(self, values):
+        """
+        Returns true if the raw parameters (not parsed) contain a value.
+
+        This method is to be used to introspect the input parameters
+        before they have been validated. It must be used carefully.
+
+        @param values: The values to look for in the raw parameters (can be a list)
+        @type values: str|list
+        @return: True if the value is in the raw parameters
+        @rtype: bool
+        """
+        raise NotImplementedError()
+
+    def get_parameter_option(self, values, default=False):
+        """
+        Returns the value of a raw option (not parsed).
+
+        This method is to be used to introspect the input parameters
+        before they have been validated. It must be used carefully.
+
+        @param values: The values to look for in the raw parameters (can be a list)
+        @type values: str|list
+        @param default: The default value to return if no result is found
+        @type default: mixed
+        @return: True if the value is in the raw parameters
+        @rtype: bool
+        """
+        raise NotImplementedError()
 
     def parse(self):
         raise NotImplementedError()

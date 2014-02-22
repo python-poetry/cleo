@@ -56,7 +56,7 @@ class OutputFormatter(object):
         if match.group(1) == '\\':
             return self.apply_current_style(match.group(0))
 
-        if match.group(3) == '':
+        if not match.group(3):
             if match.group(2) == '/':
                 # we got "</>" tag
                 self.__style_stack.pop()
@@ -89,12 +89,10 @@ class OutputFormatter(object):
         style = OutputFormatterStyle()
 
         for match in matches:
-            match.pop(0)
-
-            if match.group(0) == 'fg':
-                style.set_foreground(match.group(1))
-            elif match.group(0) == 'bg':
-                style.set_background(match.group(1))
+            if match[0] == 'fg':
+                style.set_foreground(match[1])
+            elif match[0] == 'bg':
+                style.set_background(match[1])
             else:
                 pass
 
