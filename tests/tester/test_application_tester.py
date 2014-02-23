@@ -55,12 +55,12 @@ class TestApplicationTester(TestCase):
         ApplicationTester.get_output() behaves properly
         """
         self.tester.get_output().get_stream().seek(0)
-        self.assertEqual(b'foo\n', self.tester.get_output().get_stream().read(),
+        self.assertEqual('foo\n', self.tester.get_output().get_stream().read().decode('utf-8'),
                          msg='.get_output() returns the current output instance.')
 
     def test_get_display(self):
         """
         ApplicationTester.get_display() behaves properly
         """
-        self.assertEqual(b'foo\n', self.tester.get_display(),
+        self.assertEqual('foo\n', self.tester.get_display(),
                          msg='.get_display() returns the display of the last execution.')

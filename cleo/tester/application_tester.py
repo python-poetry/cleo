@@ -62,7 +62,7 @@ class ApplicationTester(object):
         """
         self.__output.get_stream().seek(0)
 
-        return self.__output.get_stream().read()
+        return self.__output.get_stream().read().decode('utf-8')
 
     def get_input(self):
         """
