@@ -9,7 +9,7 @@ class InputOption(object):
     VALUE_NONE = 1
     VALUE_REQUIRED = 2
     VALUE_OPTIONAL = 4
-    VALUE_IS_ARRAY = 8
+    VALUE_IS_LIST = 8
 
     def __init__(self, name, shortcut=None, mode=None, description='', default=None):
         """
@@ -97,14 +97,14 @@ class InputOption(object):
         """
         return self.__class__.VALUE_OPTIONAL == (self.__class__.VALUE_OPTIONAL & self.__mode)
 
-    def is_array(self):
+    def is_list(self):
         """
         Returns True if the option can take multiple values
 
-        @return: True if mode is VALUE_IS_ARRAY, False otherwise
+        @return: True if mode is VALUE_IS_LIST, False otherwise
         @rtype: bool
         """
-        return self.__class__.VALUE_IS_ARRAY == (self.__class__.VALUE_IS_ARRAY & self.__mode)
+        return self.__class__.VALUE_IS_LIST == (self.__class__.VALUE_IS_LIST & self.__mode)
 
     def set_default(self, default=None):
         """
@@ -116,7 +116,7 @@ class InputOption(object):
         if self.__class__.VALUE_NONE == self.__mode and default is not None:
             raise Exception('Cannot set a default value when using InputOption::VALUE_NONE mode.')
 
-        if self.is_array():
+        if self.is_list():
             if default is None:
                 default = []
             elif not isinstance(default, list):
@@ -154,6 +154,6 @@ class InputOption(object):
         return option.get_name() == self.get_name()\
             and option.get_shortcut() == self.get_shortcut()\
             and option.get_default() == self.get_default()\
-            and option.is_array() == self.is_array()\
+            and option.is_list() == self.is_list()\
             and option.is_value_required() == self.is_value_required()\
             and option.is_value_optional() == self.is_value_optional()

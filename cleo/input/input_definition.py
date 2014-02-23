@@ -55,7 +55,7 @@ class InputDefinition(object):
         if argument.is_required() and self.__has_optional:
             raise Exception('Cannot add a required argument after an optional one.')
 
-        if argument.is_array():
+        if argument.is_list():
             self.__has_an_array_argument = True
 
         if argument.is_required():
@@ -174,8 +174,8 @@ class InputDefinition(object):
             else:
                 element = '[%s]'
 
-            elements.append(element % argument.get_name() + ('1' if argument.is_array() else ''))
-            if argument.is_array():
+            elements.append(element % argument.get_name() + ('1' if argument.is_list() else ''))
+            if argument.is_list():
                 elements.append('... [%sN]' % argument.get_name())
 
         return ' '.join(elements)
@@ -223,7 +223,7 @@ class InputDefinition(object):
                 else:
                     default = ''
 
-                multiple = '<comment> (multiple values allowed)</comment>' if option.is_array() else ''
+                multiple = '<comment> (multiple values allowed)</comment>' if option.is_list() else ''
                 description = option.get_description().replace('\n', '\n' + ' ' * (mx + 2))
 
                 option_max = mx - len(option.get_name()) - 2

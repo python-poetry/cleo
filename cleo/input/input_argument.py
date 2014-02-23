@@ -8,7 +8,7 @@ class InputArgument(object):
 
     REQUIRED = 1
     OPTIONAL = 2
-    IS_ARRAY = 4
+    IS_LIST = 4
 
     def __init__(self, name, mode=None, description='', default=None):
         """
@@ -52,14 +52,14 @@ class InputArgument(object):
         """
         return self.__class__.REQUIRED == (self.__class__.REQUIRED & self.__mode)
 
-    def is_array(self):
+    def is_list(self):
         """
         Returns True if the argument can take multiple values
 
-        @return: True if mode is IS_ARRAY, False otherwise
+        @return: True if mode is IS_LIST, False otherwise
         @rtype: bool
         """
-        return self.__class__.IS_ARRAY == (self.__class__.IS_ARRAY & self.__mode)
+        return self.__class__.IS_LIST == (self.__class__.IS_LIST & self.__mode)
 
     def set_default(self, default=None):
         """
@@ -71,7 +71,7 @@ class InputArgument(object):
         if self.is_required() and default is not None:
             raise Exception('Cannot set a default value except for InputArgument::OPTIONAL mode.')
 
-        if self.is_array():
+        if self.is_list():
             if default is None:
                 default = []
             elif not isinstance(default, list):

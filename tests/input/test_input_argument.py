@@ -29,18 +29,18 @@ class InputArgumentTest(TestCase):
         self.assertRaises(Exception, InputArgument, 'foo', 'ANOTHER_MODE')
         self.assertRaises(Exception, InputArgument, 'foo', -1)
 
-    def test_is_array(self):
+    def test_is_list(self):
         """
-        InputArgument.is_array() returns true if the argument can be an array'
+        InputArgument.is_list() returns true if the argument can be an array'
         """
-        argument = InputArgument('foo', InputArgument.IS_ARRAY)
-        self.assertTrue(argument.is_array())
+        argument = InputArgument('foo', InputArgument.IS_LIST)
+        self.assertTrue(argument.is_list())
 
-        argument = InputArgument('foo', InputArgument.OPTIONAL | InputArgument.IS_ARRAY)
-        self.assertTrue(argument.is_array())
+        argument = InputArgument('foo', InputArgument.OPTIONAL | InputArgument.IS_LIST)
+        self.assertTrue(argument.is_list())
 
         argument = InputArgument('foo', InputArgument.OPTIONAL)
-        self.assertFalse(argument.is_array())
+        self.assertFalse(argument.is_list())
 
     def test_get_description(self):
         """
