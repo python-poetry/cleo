@@ -22,12 +22,6 @@ from .fixtures.bar_buc_command import BarBucCommand
 
 class ApplicationTest(CleoTestCase):
 
-    def setUp(self):
-        self.fixtures_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            'fixtures'
-        )
-
     def ensure_static_command_help(self, application):
         for command in application.all().values():
             command.set_help(

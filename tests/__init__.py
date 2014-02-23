@@ -14,6 +14,12 @@ else:
 
 class CleoTestCase(TestCase):
 
+    def setUp(self):
+        self.fixtures_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            'fixtures'
+        )
+
     def assertRegex(self, *args, **kwargs):
         if PY3:
             return super(CleoTestCase, self).assertRegex(*args, **kwargs)
