@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import os
 from unittest import TestCase
 
 PY3 = sys.version_info[0] == 3
@@ -27,3 +28,7 @@ class CleoTestCase(TestCase):
 
     def mock(self):
         return mock
+
+    def open_fixture(self, fixture):
+        with open(os.path.join(self.fixtures_path, fixture)) as fh:
+            return fh.read()

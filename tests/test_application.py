@@ -28,10 +28,6 @@ class ApplicationTest(CleoTestCase):
             'fixtures'
         )
 
-    def open_fixture(self, fixture):
-        with open(os.path.join(self.fixtures_path, fixture)) as fh:
-            return fh.read()
-
     def ensure_static_command_help(self, application):
         for command in application.all().values():
             command.set_help(
