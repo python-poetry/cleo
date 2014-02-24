@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import re
 from .input_definition import InputDefinition
 
 
@@ -102,3 +103,9 @@ class Input(object):
 
     def has_option(self, name):
         return self.definition.has_option(name)
+
+    def escape_token(self, token):
+        if re.match('^[\w-]+$', token):
+            return token
+        else:
+            return "\\'".join("'" + p + "'" for p in token.split("'"))

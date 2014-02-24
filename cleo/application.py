@@ -64,7 +64,7 @@ class Application(object):
         Runs the current application
 
         @param input_: An Input Instance
-        @type input_: Input
+        @type input_: cleo.input.Input
         @param output_: An Output instance
         @type output_: Output
 
@@ -108,7 +108,7 @@ class Application(object):
         Runs the current application
 
         @param input_: An Input Instance
-        @type input_: Input
+        @type input_: cleo.input.Input
         @param output_: An Output instance
         @type output_: Output
 

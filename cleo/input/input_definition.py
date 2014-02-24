@@ -74,10 +74,14 @@ class InputDefinition(object):
         return arguments[name]
 
     def has_argument(self, name):
-        if isinstance(name, int):
-            return name < len(self.__arguments)
+        arguments = list(self.__arguments.values()) if isinstance(name, int) else self.__arguments
 
-        return name in self.__arguments
+        try:
+            arguments[name]
+
+            return True
+        except (KeyError, IndexError):
+            return False
 
     def get_arguments(self):
         return self.__arguments.values()

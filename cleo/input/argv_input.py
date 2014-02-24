@@ -1,17 +1,22 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import re
 
 from .input import Input
 
 
 class ArgvInput(Input):
 
-    def __init__(self, definition=None):
+    def __init__(self, argv=None, definition=None):
         super(ArgvInput, self).__init__(definition)
 
-        self.__tokens = sys.argv
-        self.__tokens.pop(0)
+        if argv is None:
+            argv = sys.argv
+
+        argv.pop(0)
+
+        self.__tokens = argv
         self.__parsed = None
 
     def parse(self):
@@ -29,7 +34,7 @@ class ArgvInput(Input):
                 parse_options = False
             elif parse_options and token.find('--') == 0:
                 self.parse_long_option(token)
-            elif parse_options and token[0] == '-':
+            elif parse_options and token[0] == '-' and token != '-':
                 self.parse_short_option(token)
             else:
                 self.parse_argument(token)
@@ -38,7 +43,8 @@ class ArgvInput(Input):
         name = token[1:]
 
         if len(name) > 1:
-            if self.definition.has_shortcut(name[0]) and self.definition.get_option_for_shortcut(name[0]).accept_value():
+            if self.definition.has_shortcut(name[0])\
+                    and self.definition.get_option_for_shortcut(name[0]).accept_value():
                 # an option with a value (with no space)
                 self.add_short_option(name[0], name[1:])
             else:
@@ -50,7 +56,7 @@ class ArgvInput(Input):
                 except IndexError:
                     value = None
 
-                if value.startswith('-'):
+                if value and value.startswith('-'):
                     self.__parsed.insert(0, value)
                     value = None
 
@@ -70,7 +76,7 @@ class ArgvInput(Input):
 
                 break
             else:
-                self.add_long_option(option.get_name(), True)
+                self.add_long_option(option.get_name(), None)
 
     def parse_long_option(self, token):
         name = token[2:]
@@ -84,7 +90,7 @@ class ArgvInput(Input):
                 except IndexError:
                     value = None
 
-                if value.startswith('-'):
+                if value and value.startswith('-'):
                     self.__parsed.insert(0, value)
                     value = None
 
@@ -98,13 +104,13 @@ class ArgvInput(Input):
         # if input is expecting another argument, add it
         if self.definition.has_argument(c):
             arg = self.definition.get_argument(c)
-            self.arguments[arg.get_name()] = [token] if arg.is_array() else token
-        elif self.definition.has_argument(c - 1) and self.definition.get_argument(c - 1).is_array():
+            self.arguments[arg.get_name()] = [token] if arg.is_list() else token
+        elif self.definition.has_argument(c - 1) and self.definition.get_argument(c - 1).is_list():
             arg = self.definition.get_argument(c - 1)
             self.arguments[arg.get_name()].append(token)
         # unexpected argument
         else:
-            raise Exception('Too many arguments')
+            raise Exception('Too many arguments.')
 
     def add_short_option(self, shortcut, value):
         if not self.definition.has_shortcut(shortcut):
@@ -118,6 +124,12 @@ class ArgvInput(Input):
 
         option = self.definition.get_option(name)
 
+        if value is False:
+            value = None
+
+        if value is not None and not option.accept_value():
+            raise Exception('The "--%s" option does not accept a value.' % name)
+
         if value is None and option.accept_value() and len(self.__parsed):
             # if option accepts an optional or mandatory argument
             # let's see if there is one provided
@@ -126,20 +138,26 @@ class ArgvInput(Input):
             except IndexError:
                 nxt = None
 
-            if len(nxt) >= 1 and nxt[0] == '-':
+            if nxt and len(nxt) >= 1 and nxt[0] != '-':
                 value = nxt
             elif not nxt:
                 value = ''
             else:
                 self.__parsed.insert(0, nxt)
 
+        # This test is here to handle cases like --foo=
+        # and foo option value is optional
+        if value == '':
+            value = None
+
         if value is None:
             if option.is_value_required():
                 raise Exception('The "--%s" option requires a value.' % name)
 
-            value = option.get_default() if option.is_value_optional() else True
+            if not option.is_list():
+                value = option.get_default() if option.is_value_optional() else True
 
-        if option.is_array():
+        if option.is_list():
             if name not in self.options:
                 self.options[name] = [value]
             else:
@@ -157,9 +175,10 @@ class ArgvInput(Input):
     def has_parameter_option(self, values):
         values = [values] if not isinstance(values, (list, tuple)) else values
 
-        for v in self.__tokens:
-            if v in values:
-                return True
+        for token in self.__tokens:
+            for value in values:
+                if token == value or token.find(value + '=') == 0:
+                    return True
 
         return False
 
@@ -174,11 +193,26 @@ class ArgvInput(Input):
                 break
 
             for value in values:
-                if token.find(value) == 0:
+                if token == value or token.find(value + '=') == 0:
                     pos = token.find('=')
                     if pos != -1:
-                        return token[:pos+1]
+                        return token[pos + 1:]
 
                     return tokens.pop(0)
 
         return default
+
+    def __str__(self):
+        def stringify(token):
+            m = re.match('^(-[^=]+=)(.+)', token)
+            if m:
+                return m.group(1) + self.escape_token(m.group(2))
+
+            if token and token[0] != '-':
+                return self.escape_token(token)
+
+            return token
+
+        tokens = map(stringify, self.__tokens)
+
+        return ' '.join(tokens)
