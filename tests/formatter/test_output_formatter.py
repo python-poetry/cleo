@@ -85,7 +85,7 @@ class OutputFormatterTest(CleoTestCase):
         formatter = OutputFormatter(True)
 
         self.assertEqual(
-            '\033[37;41merror\033[0m\033[32minfo\033[0m\033[33mcomment\033[0m\x1b[32m\x1b[0m\033[37;41merror\033[0m',
+            '\033[37;41merror\033[0m\033[32minfo\033[0m\033[33mcomment\033[0m\033[37;41merror\033[0m',
             formatter.format('<error>error<info>info<comment>comment</comment></info>error</error>')
         )
 
