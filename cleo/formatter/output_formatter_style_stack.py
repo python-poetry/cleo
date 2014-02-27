@@ -22,7 +22,13 @@ class OutputFormatterStyleStack(object):
         if not style:
             return self.styles.pop()
 
-        return self.styles.pop(self.styles.index(style))
+        for i, stacked_style in enumerate(reversed(self.styles)):
+            if style.apply('') == stacked_style.apply(''):
+                self.styles = self.styles[:len(self.styles) - 1 - i]
+
+                return stacked_style
+
+        raise Exception('Incorrectly nested style tag found.')
 
     def get_current(self):
         if not len(self.styles):
