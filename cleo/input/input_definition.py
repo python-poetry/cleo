@@ -50,7 +50,7 @@ class InputDefinition(object):
             raise Exception('An argument with name "%s" already exists.' % argument.get_name())
 
         if self.__has_an_array_argument:
-            raise Exception('Cannot add an argument after an array argument.')
+            raise Exception('Cannot add an argument after a list argument.')
 
         if argument.is_required() and self.__has_optional:
             raise Exception('Cannot add a required argument after an optional one.')
@@ -61,7 +61,7 @@ class InputDefinition(object):
         if argument.is_required():
             self.__required_count += 1
         else:
-            self.has_optional = True
+            self.__has_optional = True
 
         self.__arguments[argument.get_name()] = argument
 
@@ -84,7 +84,13 @@ class InputDefinition(object):
             return False
 
     def get_arguments(self):
-        return self.__arguments.values()
+        """
+        Gets the list of InputArguments objects.
+
+        @return: A list of InputArguments objects
+        @rtype: list
+        """
+        return list(self.__arguments.values())
 
     def get_argument_count(self):
         return len(self.__arguments) if not self.__has_an_array_argument else 10000000
@@ -125,7 +131,8 @@ class InputDefinition(object):
 
         self.__options[option.get_name()] = option
         if option.get_shortcut():
-            self.__shortcuts[option.get_shortcut()] = option.get_name()
+            for shortcut in option.get_shortcut().split('|'):
+                self.__shortcuts[shortcut] = option.get_name()
 
     def get_option(self, name):
         if not self.has_option(name):
@@ -137,7 +144,7 @@ class InputDefinition(object):
         return name in self.__options
 
     def get_options(self):
-        return self.__options.values()
+        return list(self.__options.values())
 
     def has_shortcut(self, name):
         return name in self.__shortcuts
@@ -178,7 +185,7 @@ class InputDefinition(object):
             else:
                 element = '[%s]'
 
-            elements.append(element % argument.get_name() + ('1' if argument.is_list() else ''))
+            elements.append(element % (argument.get_name() + ('1' if argument.is_list() else '')))
             if argument.is_list():
                 elements.append('... [%sN]' % argument.get_name())
 
@@ -219,7 +226,7 @@ class InputDefinition(object):
         if self.get_options():
             text.append('<comment>Options:</comment>')
             for option in self.get_options():
-                if option.accept_value() is None \
+                if option.accept_value() \
                     and option.get_default() is not None \
                     and (not isinstance(option.get_default(), list)
                          or len(option.get_default())):
