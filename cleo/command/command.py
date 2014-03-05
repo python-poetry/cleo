@@ -20,6 +20,7 @@ class Command(object):
         self._definition = InputDefinition()
         self._ignore_validation_errors = False
         self._application_definition_merged = False
+        self._application_definition_merged_with_args = False
         self._aliases = []
         self._synopsis = None
         self._code = None
@@ -112,18 +113,31 @@ class Command(object):
         else:
             status_code = self.execute(input_, output_)
 
-        return status_code
+        try:
+            return int(float(status_code))
+        except (TypeError, ValueError):
+            return 0
 
     def set_code(self, code):
         if not callable(code):
-            raise Exception('Invalid callable provided to Command::setCode.')
+            raise Exception('Invalid callable provided to Command.setCode().')
 
         self._code = code
 
         return self
 
     def merge_application_definition(self, merge_args=True):
-        if self._application is None or self._application_definition_merged:
+        """
+        Merges the application definition with the command definition.
+
+        This method should not be used directly.
+
+        @param merge_args: Whether to merge or not the Application definition arguments to Command definition arguments
+        @type merge_args: bool
+        """
+        if self._application is None \
+                or (self._application_definition_merged
+                    and (self._application_definition_merged_with_args or not merge_args)):
             return
 
         if merge_args:
@@ -134,6 +148,8 @@ class Command(object):
         self._definition.add_options(self._application.get_definition().get_options())
 
         self._application_definition_merged = True
+        if merge_args:
+            self._application_definition_merged_with_args = True
 
     def set_definition(self, definition):
         if isinstance(definition, InputDefinition):
@@ -246,4 +262,4 @@ class Command(object):
 
     def validate_name(self, name):
         if not re.match('^[^:]+(:[^:]+)*$', name):
-            raise CommandError('Command name "%s" is invalid' % name)
+            raise CommandError('Command name "%s" is invalid.' % name)

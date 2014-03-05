@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from collections import OrderedDict
+
 
 class OutputFormatterStyle(object):
 
@@ -50,10 +52,10 @@ class OutputFormatterStyle(object):
         self.set_options(options)
 
     def set_foreground(self, foreground):
-        self.foreground = self.__class__.FOREGROUND_COLORS[foreground]
+        self.foreground = self.FOREGROUND_COLORS[foreground]
 
     def set_background(self, background):
-        self.background = self.__class__.BACKGROUND_COLORS[background]
+        self.background = self.BACKGROUND_COLORS[background]
 
     def set_option(self, option):
         if option not in self.OPTIONS:
@@ -61,10 +63,17 @@ class OutputFormatterStyle(object):
                             % (option, ', '.join(self.OPTIONS.keys())))
 
         if option not in self.options:
-            self.options.append(self.OPTIONS[option])
+            self.options[self.OPTIONS[option]] = option
+
+    def unset_option(self, option):
+        if not option in self.OPTIONS:
+            raise Exception('Invalid option specified: "%s". Expected one of (%s)'
+                            % (option, ', '.join(self.OPTIONS.keys())))
+
+        del self.options[self.OPTIONS[option]]
 
     def set_options(self, options):
-        self.options = []
+        self.options = OrderedDict()
 
         for option in options:
             self.set_option(option)
@@ -79,7 +88,7 @@ class OutputFormatterStyle(object):
             codes.append(self.background)
 
         if len(self.options):
-            codes += self.options
+            codes += list(self.options.keys())
 
         if not len(codes):
             return text

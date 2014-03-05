@@ -19,15 +19,14 @@ class FormatterHelper(Helper):
             lines.append(('  %s  ' if large else ' %s ') % message)
             l = max(len(message) + (4 if large else 2), l)
 
-        messages = ' ' * l if large else []
+        messages = [' ' * l] if large else []
         for line in lines:
             messages.append(line + ' ' * (l - len(line)))
 
         if large:
             messages.append(' ' * l)
 
-        for message in messages:
-            message = '<%s>%s</%s>' % (style, message, style)
+        messages = map(lambda m: '<%s>%s</%s>' % (style, m, style), messages)
 
         return '\n'.join(messages)
 

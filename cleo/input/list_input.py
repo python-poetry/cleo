@@ -10,9 +10,6 @@ class ListInput(Input):
     Usage:
     >>> input_ = ListInput([('name', 'foo'), ('--bar', 'foobar')])
     """
-
-    interactive = False
-
     def __init__(self, parameters, definition=None):
         """
         Constructor
@@ -22,6 +19,7 @@ class ListInput(Input):
         @param definition: An InputDefinition instance
         @type definition: InputDefinition
         """
+        self.interactive = False
         self.parameters = parameters
 
         super(ListInput, self).__init__(definition)

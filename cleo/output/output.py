@@ -18,7 +18,7 @@ class Output(object):
     OUTPUT_PLAIN = 2
 
     def __init__(self, verbosity=VERBOSITY_NORMAL, decorated=None, formatter=None):
-        self.verbosity = verbosity or self.__class__.VERBOSITY_NORMAL
+        self.verbosity = self.VERBOSITY_NORMAL if verbosity is None else verbosity
         self.formatter = formatter or OutputFormatter()
         self.formatter.set_decorated(bool(decorated))
 
@@ -40,19 +40,25 @@ class Output(object):
     def get_verbosity(self):
         return self.verbosity
 
+    def is_quiet(self):
+        return self.VERBOSITY_QUIET == self.verbosity
+
+    def is_verbose(self):
+        return self.VERBOSITY_VERBOSE == self.verbosity
+
     def write(self, messages, newline=False, output_type=OUTPUT_NORMAL):
-        if self.verbosity == self.__class__.VERBOSITY_QUIET:
+        if self.verbosity == self.VERBOSITY_QUIET:
             return
 
         if not isinstance(messages, (list, tuple)):
             messages = [messages]
 
         for message in messages:
-            if output_type == self.__class__.OUTPUT_NORMAL:
+            if output_type == self.OUTPUT_NORMAL:
                 message = self.formatter.format(message)
-            elif output_type == self.__class__.OUTPUT_RAW:
+            elif output_type == self.OUTPUT_RAW:
                 pass
-            elif output_type == self.__class__.OUTPUT_PLAIN:
+            elif output_type == self.OUTPUT_PLAIN:
                 message = self.formatter.format(message)
             else:
                 raise OutputError('Unknown output type given (%s)' % output_type)

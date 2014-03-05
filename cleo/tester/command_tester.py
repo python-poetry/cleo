@@ -62,7 +62,7 @@ class CommandTester(object):
         """
         self.__output.get_stream().seek(0)
 
-        return self.__output.get_stream().read().decode()
+        return self.__output.get_stream().read().decode('utf-8')
 
     def get_input(self):
         """

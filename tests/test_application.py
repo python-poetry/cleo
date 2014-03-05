@@ -22,16 +22,6 @@ from .fixtures.bar_buc_command import BarBucCommand
 
 class ApplicationTest(CleoTestCase):
 
-    def setUp(self):
-        self.fixtures_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            'fixtures'
-        )
-
-    def open_fixture(self, fixture):
-        with open(os.path.join(self.fixtures_path, fixture)) as fh:
-            return fh.read()
-
     def ensure_static_command_help(self, application):
         for command in application.all().values():
             command.set_help(
@@ -231,7 +221,7 @@ class ApplicationTest(CleoTestCase):
             {'decorated': False}
         )
 
-        self.assertEqual('', tester.get_display().decode('utf-8'))
+        self.assertEqual('', tester.get_display())
 
     def test_get_invalid_command(self):
         """
@@ -605,7 +595,7 @@ class ApplicationTest(CleoTestCase):
         tester.run([('command', 'foo')], {'decorated': False})
         self.assertEqual(
             self.open_fixture('application_renderexception1.txt'),
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
         application.set_catch_exceptions(False)
@@ -646,20 +636,20 @@ class ApplicationTest(CleoTestCase):
         tester.run([('command', 'foo')], {'decorated': False})
         self.assertEqual(
             self.open_fixture('application_renderexception1.txt'),
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
         tester.run([('command', 'foo')],
                    {'decorated': False, 'verbosity': Output.VERBOSITY_VERBOSE})
         self.assertRegex(
-            tester.get_display().decode('utf-8'),
+            tester.get_display(),
             'Exception trace'
         )
 
         tester.run([('command', 'list'), ('--foo', True)], {'decorated': False})
         self.assertEqual(
             self.open_fixture('application_renderexception2.txt'),
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
         application.add(Foo3Command())
@@ -667,13 +657,13 @@ class ApplicationTest(CleoTestCase):
         tester.run([('command', 'foo3:bar')], {'decorated': False})
         self.assertEqual(
             self.open_fixture('application_renderexception3.txt'),
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
         tester = ApplicationTester(application)
         tester.run([('command', 'foo3:bar')], {'decorated': True})
         self.assertEqual(
             self.open_fixture('application_renderexception3decorated.txt'),
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
 
@@ -686,7 +676,7 @@ class ApplicationTest(CleoTestCase):
         tester.run([('command', 'foo')], {'decorated': False})
         self.assertEqual(
             self.open_fixture('application_renderexception4.txt'),
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
 
@@ -720,31 +710,31 @@ class ApplicationTest(CleoTestCase):
         tester.run([], {'decorated': False})
         self.assertEqual(
             self.open_fixture('application_run1.txt'),
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
         tester.run([('--help', True)], {'decorated': False})
         self.assertEqual(
             self.open_fixture('application_run2.txt'),
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
         tester.run([('-h', True)], {'decorated': False})
         self.assertEqual(
             self.open_fixture('application_run2.txt'),
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
         tester.run([('command', 'list'), ('--help', True)], {'decorated': False})
         self.assertEqual(
             self.open_fixture('application_run3.txt'),
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
         tester.run([('command', 'list'), ('-h', True)], {'decorated': False})
         self.assertEqual(
             self.open_fixture('application_run3.txt'),
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
         tester.run([('--ansi', True)])
@@ -756,25 +746,25 @@ class ApplicationTest(CleoTestCase):
         tester.run([('--version', True)], {'decorated': False})
         self.assertEqual(
             self.open_fixture('application_run4.txt'),
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
         tester.run([('-V', True)], {'decorated': False})
         self.assertEqual(
             self.open_fixture('application_run4.txt'),
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
         tester.run([('command', 'list'), ('--quiet', True)])
         self.assertEqual(
             '',
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
         tester.run([('command', 'list'), ('-q', True)])
         self.assertEqual(
             '',
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
         tester.run([('command', 'list'), ('--verbose', True)])
@@ -798,13 +788,13 @@ class ApplicationTest(CleoTestCase):
         tester.run([('command', 'foo:bar'), ('--no-interaction', True)], {'decorated': False})
         self.assertEqual(
             'called\n',
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
         tester.run([('command', 'foo:bar'), ('-n', True)], {'decorated': False})
         self.assertEqual(
             'called\n',
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
     def test_run_returns_integer_exit_code(self):
@@ -987,7 +977,7 @@ class ApplicationTest(CleoTestCase):
         tester.run([])
         self.assertEqual(
             'interact called\ncalled\n',
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
         application = CustomDefaultCommandApplication()
@@ -997,7 +987,7 @@ class ApplicationTest(CleoTestCase):
         tester.run([])
         self.assertEqual(
             'interact called\ncalled\n',
-            tester.get_display().decode('utf-8')
+            tester.get_display()
         )
 
 

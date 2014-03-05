@@ -8,7 +8,7 @@ from .output_formatter_style_stack import OutputFormatterStyleStack
 
 class OutputFormatter(object):
 
-    FORMAT_PATTERN = '(?is)(\\\\?)<(/?)([a-z][a-z0-9_=;-]+)?>((?:(?!\\\\?<).)*)'
+    FORMAT_PATTERN = '(?isx)(\\\\?)<(/?)([a-z][a-z0-9_=;-]*)?>((?: [^<\\\\]+ | (?!<(?:/?[a-z]|/>)). | .(?<=\\\\<) )*)'
 
     def __init__(self, decorated=False, styles=None):
         self.__decorated = bool(decorated)
@@ -19,7 +19,7 @@ class OutputFormatter(object):
         self.set_style('error', OutputFormatterStyle('white', 'red'))
         self.set_style('info', OutputFormatterStyle('green'))
         self.set_style('comment', OutputFormatterStyle('yellow'))
-        self.set_style('question', OutputFormatterStyle('cyan'))
+        self.set_style('question', OutputFormatterStyle('black', 'cyan'))
 
         for name, style in styles.items():
             self.set_style(name, style)
@@ -28,7 +28,7 @@ class OutputFormatter(object):
 
     @classmethod
     def escape(cls, text):
-        return re.sub('(?i)([^\\\\]?)<', '$1\\<', text)
+        return re.sub('(?is)([^\\\\]?)<', '\\1\\<', text)
 
     def set_decorated(self, decorated):
         self.__decorated = bool(decorated)
@@ -47,7 +47,7 @@ class OutputFormatter(object):
             return self.__styles[name]
 
     def format(self, message):
-        message = re.sub(self.__class__.FORMAT_PATTERN, self.replace_style, message)
+        message = re.sub(self.FORMAT_PATTERN, self.replace_style, message)
 
         return message.replace('\\<', '<')
 

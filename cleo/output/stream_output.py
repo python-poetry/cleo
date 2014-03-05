@@ -9,6 +9,10 @@ from .output import Output
 class StreamOutput(Output):
 
     def __init__(self, stream, verbosity=Output.VERBOSITY_NORMAL, decorated=None, formatter=None):
+        if not hasattr(stream, 'write') or not callable(stream.write):
+            raise Exception('The StreamOutput class needs a stream '
+                            'as its first argument.')
+
         self.stream = stream
 
         if decorated is None:
