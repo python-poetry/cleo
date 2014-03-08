@@ -10,17 +10,17 @@ import struct
 from io import UnsupportedOperation
 from pylev import levenshtein
 
-from .output.output import Output
-from .output.console_output import ConsoleOutput, StreamOutput
-from .input.argv_input import ArgvInput
-from .input.list_input import ListInput
-from .input.input_argument import InputArgument
-from .input.input_option import InputOption
-from .input.input_definition import InputDefinition
-from .command.command import Command
-from .command.help_command import HelpCommand
-from .command.list_command import ListCommand
-from .helper import HelperSet, FormatterHelper, DialogHelper, ProgressHelper
+from .outputs.output import Output
+from .outputs.console_output import ConsoleOutput, StreamOutput
+from .inputs.argv_input import ArgvInput
+from .inputs.list_input import ListInput
+from .inputs.input_argument import InputArgument
+from .inputs.input_option import InputOption
+from .inputs.input_definition import InputDefinition
+from .commands.command import Command
+from .commands.help_command import HelpCommand
+from .commands.list_command import ListCommand
+from .helpers import HelperSet, FormatterHelper, DialogHelper, ProgressHelper
 
 
 class Application(object):
@@ -108,7 +108,7 @@ class Application(object):
         Runs the current application
 
         @param input_: An Input Instance
-        @type input_: cleo.input.Input
+        @type input_: cleo.inputs.Input
         @param output_: An Output instance
         @type output_: Output
 

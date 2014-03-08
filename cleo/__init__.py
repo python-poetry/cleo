@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from .application import Application
-from .command import Command
-from .formatter import *
-from .helper import *
-from .input import *
-from .output import *
-from .tester import *
+from .commands import Command
+from .formatters import *
+from .helpers import *
+from .inputs import *
+from .outputs import *
+from .testers import *
 
 __all__ = [
     'Application',
