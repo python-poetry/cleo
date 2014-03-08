@@ -172,8 +172,22 @@ class Command(object):
 
         return self
 
+    def add_argument_from_dict(self, argument_dict):
+        argument = InputArgument.from_dict(argument_dict)
+
+        self._definition.add_argument(argument)
+
+        return self
+
     def add_option(self, name, shortcut=None, mode=None, description='', default=None):
         self._definition.add_option(InputOption(name, shortcut, mode, description, default))
+
+        return self
+
+    def add_option_from_dict(self, option_dict):
+        option = InputOption.from_dict(option_dict)
+
+        self._definition.add_option(option)
 
         return self
 
@@ -263,3 +277,37 @@ class Command(object):
     def validate_name(self, name):
         if not re.match('^[^:]+(:[^:]+)*$', name):
             raise CommandError('Command name "%s" is invalid.' % name)
+
+    @classmethod
+    def from_dict(cls, command_dict):
+        """
+        Creates a command from a dictionary.
+
+        @param command_dict: The dictionary defining the commmand
+        @type command_dict: dict
+
+        @return: The command
+        @rtype: Command
+        """
+        if len(command_dict) > 1:
+            raise Exception('Only one command can be defined (%d given).'
+                            % len(command_dict))
+
+        name = list(command_dict.keys())[0]
+        command = Command(name)
+
+        command_dict = command_dict[name]
+
+        if 'description' in command_dict:
+            command.set_description(command_dict['description'])
+
+        if 'aliases' in command_dict:
+            command.set_aliases(command_dict['aliases'])
+
+        for argument in command_dict.get('arguments', []):
+            command.add_argument_from_dict(argument)
+
+        for option in command_dict.get('options', []):
+            command.add_option_from_dict(option)
+
+        return command

@@ -208,12 +208,15 @@ class Application(object):
 
         If a command with the same name already exists, it will be overridden.
 
-        @param command: A Command object
-        @type command: Command
+        @param command: A Command object or a dictionary defining the command
+        @type command: Command or dict
 
         @return: The registered command
         @rtype: Command
         """
+        if isinstance(command, dict):
+            command = Command.from_dict(command)
+
         command.set_application(self)
 
         if not command.is_enabled():
