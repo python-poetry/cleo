@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from cleo.command.command import Command
+from cleo.commands.command import Command
 
 
 class TestCommand(Command):

@@ -3,11 +3,11 @@
 import os
 import sys
 from cleo.application import Application
-from cleo.command import Command, HelpCommand
-from cleo.output import Output, NullOutput, StreamOutput
-from cleo.input import InputArgument, InputOption, ListInput, InputDefinition
-from cleo.tester.application_tester import ApplicationTester
-from cleo.helper import HelperSet, FormatterHelper
+from cleo.commands import Command, HelpCommand
+from cleo.outputs import Output, NullOutput, StreamOutput
+from cleo.inputs import InputArgument, InputOption, ListInput, InputDefinition
+from cleo.testers.application_tester import ApplicationTester
+from cleo.helpers import HelperSet, FormatterHelper
 
 from . import CleoTestCase
 from .fixtures.foo_command import FooCommand
