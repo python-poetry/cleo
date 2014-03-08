@@ -106,3 +106,46 @@ class InputOptionTest(TestCase):
 
         option = InputOption('foo', 'f', InputOption.VALUE_NONE)
         self.assertRaises(Exception, option.set_default, 'default')
+
+    def test_from_dict(self):
+        """
+        InputOption.from_dict() returns an InputOption instance given a dict.
+        """
+        option_dict = {
+            'foo': {
+                'shortcut': 'f',
+                'description': 'The foo option.',
+                'value_required': False,
+                'list': True,
+                'default': ['default']
+            }
+        }
+
+        option = InputOption.from_dict(option_dict)
+        self.assertTrue(InputOption, option)
+        self.assertEqual('foo', option.get_name())
+        self.assertEqual('f', option.get_shortcut())
+        self.assertEqual('The foo option.', option.get_description())
+        self.assertEqual(['default'], option.get_default())
+        self.assertTrue(option.is_list())
+        self.assertFalse(option.is_value_required())
+        self.assertTrue(option.is_value_optional())
+
+        option_dict = {
+            'foo': {
+                'value_required': True
+            }
+        }
+
+        option = InputOption.from_dict(option_dict)
+        self.assertFalse(option.is_list())
+        self.assertTrue(option.is_value_required())
+
+        option_dict = {
+            'foo': {}
+        }
+
+        option = InputOption.from_dict(option_dict)
+        self.assertFalse(option.is_list())
+        self.assertFalse(option.is_value_required())
+        self.assertFalse(option.is_value_optional())

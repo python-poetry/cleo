@@ -10,7 +10,7 @@ from cleo.testers.application_tester import ApplicationTester
 from cleo.helpers import HelperSet, FormatterHelper
 
 from . import CleoTestCase
-from .fixtures.foo_command import FooCommand
+from .fixtures.foo_command import FooCommand, foo_commmand
 from .fixtures.foo1_command import Foo1Command
 from .fixtures.foo2_command import Foo2Command
 from .fixtures.foo3_command import Foo3Command
@@ -163,6 +163,16 @@ class ApplicationTest(CleoTestCase):
             application.add,
             Foo5Command()
         )
+
+    def test_add_with_dictionary(self):
+        """
+        Application.add() accepts a dictionary as argument.
+        """
+        application = Application()
+
+        foo = application.add(foo_commmand)
+        self.assertTrue(isinstance(foo, Command))
+        self.assertEqual('foo:bar1', foo.get_name())
 
     def test_has_get(self):
         """

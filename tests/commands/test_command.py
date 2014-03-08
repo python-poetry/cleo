@@ -75,6 +75,16 @@ class CommandTest(CleoTestCase):
         self.assertEqual(ret, command)
         self.assertTrue(command.get_definition().has_argument('foo'))
 
+    def test_add_argument_from_dict(self):
+        """
+        Command.add_argument_from_dict() adds an argument to command.
+        """
+        command = TestCommand()
+        ret = command.add_argument_from_dict({'foo': {}})
+
+        self.assertEqual(ret, command)
+        self.assertTrue(command.get_definition().has_argument('foo'))
+
     def test_add_option(self):
         """
         Command.add_option() adds an option to command.
@@ -306,6 +316,38 @@ class CommandTest(CleoTestCase):
             self.open_fixture('command_astext.txt'),
             command.as_text()
         )
+
+    def test_from_dict(self):
+        command_dict = {
+            'foo': {
+                'description': 'The foo command.',
+                'aliases': ['foobar'],
+                'help': 'This is help.',
+                'arguments': [{
+                    'bar': {
+                        'description': 'The bar argument.',
+                        'required': True,
+                        'list': True
+                    }
+                }],
+                'options': [{
+                    'baz': {
+                        'shortcut': 'b',
+                        'description': 'The baz option.',
+                        'value_required': False,
+                        'list': True,
+                        'default': ['default']
+                    }
+                }]
+            }
+        }
+
+        command = Command.from_dict(command_dict)
+
+        self.assertTrue(isinstance(command, Command))
+        self.assertEqual('foo', command.get_name())
+        self.assertTrue(command.get_definition().has_argument('bar'))
+        self.assertTrue(command.get_definition().has_option('baz'))
 
     def callable_method(self, input_, output_):
         output_.writeln('from the code...')

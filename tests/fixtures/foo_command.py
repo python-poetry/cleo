@@ -18,3 +18,16 @@ class FooCommand(Command):
         self.output = output_
 
         output_.writeln('called')
+
+
+def foo_code(input_, output_):
+    output_.writeln('called')
+
+
+foo_commmand = {
+    'foo:bar1': {
+        'description': 'The foo:bar command',
+        'aliases': ['afoobar'],
+        'code': foo_code
+    }
+}
