@@ -304,6 +304,9 @@ class Command(object):
         if 'aliases' in command_dict:
             command.set_aliases(command_dict['aliases'])
 
+        if 'code' in command_dict:
+            command.set_code(command_dict['code'])
+
         for argument in command_dict.get('arguments', []):
             command.add_argument_from_dict(argument)
 

@@ -318,6 +318,9 @@ class CommandTest(CleoTestCase):
         )
 
     def test_from_dict(self):
+        def foo(input_, output_):
+            output_.writeln('foo')
+
         command_dict = {
             'foo': {
                 'description': 'The foo command.',
@@ -338,7 +341,8 @@ class CommandTest(CleoTestCase):
                         'list': True,
                         'default': ['default']
                     }
-                }]
+                }],
+                'code': foo
             }
         }
 
@@ -346,6 +350,8 @@ class CommandTest(CleoTestCase):
 
         self.assertTrue(isinstance(command, Command))
         self.assertEqual('foo', command.get_name())
+        self.assertEqual(foo, command._code)
+        self.assertEqual(['foobar'], command.get_aliases())
         self.assertTrue(command.get_definition().has_argument('bar'))
         self.assertTrue(command.get_definition().has_option('baz'))
 
