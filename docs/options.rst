@@ -79,7 +79,7 @@ InputOption.VALUE_REQUIRED   'value_required': True   This value is required (e.
 InputOption.VALUE_OPTIONAL   'value_required': False  This option may or may not have a value (e.g. ``--yell`` or ``--yell=loud``)
 ===========================  ======================== ======================================================================================
 
-You can combine ``VALUE_IS_ARRAY`` with ``VALUE_REQUIRED`` or ``VALUE_OPTIONAL`` like this:
+You can combine ``VALUE_IS_LIST`` with ``VALUE_REQUIRED`` or ``VALUE_OPTIONAL`` like this:
 
 .. code-block:: python
 

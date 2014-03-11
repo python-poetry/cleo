@@ -13,3 +13,4 @@ with some useful additions.
     introduction
     arguments
     options
+    helpers/index
