@@ -24,7 +24,17 @@ class StreamOutput(Output):
         return self.stream
 
     def do_write(self, message, newline):
-        self.stream.write((message + (os.linesep if newline else '')).encode('utf-8'))
+        message = (message + (os.linesep if newline else ''))
+
+        # This try/catch block is a small hack
+        # to handle the cases where the stream is a class
+        # like BytesIO that accepts only bytes object
+        try:
+            self.stream.write(message)
+        except TypeError:
+            message = message.encode('utf-8')
+            self.stream.write(message)
+
         self.stream.flush()
 
     def has_color_support(self, decorated):
