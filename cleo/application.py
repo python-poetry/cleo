@@ -475,7 +475,7 @@ class Application(object):
                 function = exc_info[2]
                 line = exc_info[3]
 
-                output_.writeln(' <info>%s</info> in <question>%s()</question> '
+                output_.writeln(' <info>%s</info> in <fg=cyan>%s()</> '
                                 'at line <info>%s</info>'
                                 % (file_, function, line_number))
                 output_.writeln('   %s' % line)
