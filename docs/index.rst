@@ -13,4 +13,6 @@ with some useful additions.
     introduction
     arguments
     options
+    testing
+    existing_command
     helpers/index
