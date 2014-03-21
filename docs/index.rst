@@ -16,3 +16,5 @@ with some useful additions.
     testing
     existing_command
     helpers/index
+    usage
+    single_command_tool
