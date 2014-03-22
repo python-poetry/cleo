@@ -52,4 +52,4 @@ You can also simplify how you execute the application:
     #!/usr/bin/env ython
 
     application = MyApplication()
-    application.run();
+    application.run()

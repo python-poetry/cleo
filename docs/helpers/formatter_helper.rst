@@ -42,7 +42,7 @@ Print Messages in a Block
 -------------------------
 
 Sometimes you want to be able to print a whole block of text with a background
-color. Symfony uses this when printing error messages.
+color. CLeo uses this when printing error messages.
 
 If you print your error message on more than one line manually, you will
 notice that the background is only as long as each individual line. Use the
