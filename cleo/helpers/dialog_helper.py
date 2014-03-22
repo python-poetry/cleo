@@ -2,6 +2,7 @@
 
 import sys
 import os
+import subprocess
 
 from .helper import Helper
 from ..formatters.output_formatter_style import OutputFormatterStyle
@@ -207,6 +208,43 @@ class DialogHelper(Helper):
 
         return not answer or answer[0].lower() == 'y'
 
+    def ask_hidden_response(self, output_, question, fallback=True):
+        """
+        Asks a question to the user, the response is hidden
+
+        @param output_: An Ouput instance
+        @type output_: Output
+        @param question: The question
+        @type question: str
+        @param fallback: Whether to fallback on non-hidden question or not
+        @type fallback: bool
+
+        @return: The answer
+        @rtype: str
+        """
+        if self.has_stty_available():
+            output_.write(question)
+
+            stty_mode = subprocess.check_output(['stty', '-g'])
+
+            subprocess.check_output(['stty', '-echo'])
+            input_stream = self.input_stream or sys.stdin
+            value = input_stream.readline(4096).decode('utf-8')
+            subprocess.check_output(['stty', '%s' % stty_mode])
+
+            if not value:
+                raise Exception('Aborted')
+
+            value = value.strip()
+            output_.writeln('')
+
+            return value
+
+        if fallback:
+            return self.ask(output_, question)
+
+        raise Exception('Unable to hide the response')
+
     def ask_and_validate(self, output_, question, validator,
                          attempts=False, default=None, autocomplete=None):
         """
@@ -236,6 +274,34 @@ class DialogHelper(Helper):
 
         return self.validate_attempts(interviewer, output_, validator, attempts)
 
+    def ask_hidden_response_and_validate(self, output_, question, validator,
+                                         attempts=False, fallback=True):
+        """
+        Asks for a value, hide and validates the response.
+
+        The validator receives the data to validate. It must return the
+        validated data when the data is valid and throw an exception
+        otherwise.
+
+        @param output_: An Output Instance
+        @type output_: Output
+        @param question: The question to ask
+        @type question: str or list
+        @param validator: A callback
+        @type validator: callable
+        @param attempts: Max number of times to ask before giving up (false by default, which means infinite)
+        @type attempts: bool or int
+        @param fallback: Whether to fallback on non-hidden question or not
+        @type fallback: bool
+
+        @return: The answer
+        @rtype: str
+        """
+        def interviewer():
+            return self.ask_hidden_response(output_, question, fallback)
+
+        return self.validate_attempts(interviewer, output_, validator, attempts)
+
     def set_input_stream(self, input_stream):
         """
         Sets the input stream to read from when interacting with the user.
@@ -262,10 +328,10 @@ class DialogHelper(Helper):
         if self.stty is not None:
             return self.stty
 
-        exit_code = os.system('stty 2>&1')
-        self.stty = exit_code
+        exit_code = subprocess.call(['stty', '2'])
+        self.stty = exit_code == 0
 
-        return self.stty == 0
+        return self.stty
 
     def validate_attempts(self, interviewer, output_, validator, attempts):
         """
