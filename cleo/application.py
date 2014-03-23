@@ -20,7 +20,7 @@ from .inputs.input_definition import InputDefinition
 from .commands.command import Command
 from .commands.help_command import HelpCommand
 from .commands.list_command import ListCommand
-from .helpers import HelperSet, FormatterHelper, DialogHelper, ProgressHelper
+from .helpers import HelperSet, FormatterHelper, DialogHelper, ProgressHelper, TableHelper
 
 
 class Application(object):
@@ -613,7 +613,8 @@ class Application(object):
         return HelperSet({
             'formatter': FormatterHelper(),
             'dialog': DialogHelper(),
-            'progress': ProgressHelper()
+            'progress': ProgressHelper(),
+            'table': TableHelper()
         })
 
     def sort_commands(self, commands):
