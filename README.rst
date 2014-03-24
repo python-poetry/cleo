@@ -9,6 +9,8 @@ Cleo allows you to create beautiful and testable command-line commands.
 It is heavily inspired by the `Symfony Console Component <https://github.com/symfony/Console>`_,
 with some useful additions.
 
+Full documentation available here: http://cleo.readthedocs.org
+
 Creating a basic Command
 ------------------------
 
