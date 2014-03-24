@@ -2,16 +2,17 @@
 
 from setuptools import setup, find_packages
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 setup(
     name='cleo',
     license='MIT',
     version=__version__,
-    description='A Python port of Symfony2 Console Component.',
+    description='Cleo allows you to create beautiful and testable command-line commands.',
     author='Sébastien Eustace',
     author_email='sebastien.eustace@gmail.com',
     url='https://github.com/SDisPater/cleo',
+    download_url='https://github.com/SDisPater/cleo/archive/v0.2.0.tar.gz',
     packages=find_packages(),
     install_requires=['nose', 'pylev', 'mock'],
     tests_require=['nose', 'mock'],
