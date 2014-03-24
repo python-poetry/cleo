@@ -9,6 +9,7 @@ setup(
     license='MIT',
     version=__version__,
     description='Cleo allows you to create beautiful and testable command-line commands.',
+    long_description=open('README.rst').read(),
     author='Sébastien Eustace',
     author_email='sebastien.eustace@gmail.com',
     url='https://github.com/SDisPater/cleo',
