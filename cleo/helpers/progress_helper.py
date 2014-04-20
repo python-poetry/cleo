@@ -15,7 +15,7 @@ class ProgressHelper(Helper):
     FORMAT_QUIET = ' %percent%%'
     FORMAT_NORMAL = ' %current%/%max% [%bar%] %percent%%'
     FORMAT_VERBOSE = ' %current%/%max% [%bar%] %percent% Elapsed: %elapsed%'
-    FORMAT_QUIET_NOMAX = ' %{current}%'
+    FORMAT_QUIET_NOMAX = ' %current%'
     FORMAT_NORMAL_NOMAX = ' %current% [%bar%]'
     FORMAT_VERBOSE_NOMAX = ' %current% [%bar%] Elapsed: %elapsed%'
 
@@ -297,14 +297,14 @@ class ProgressHelper(Helper):
         @param messages: The message as an array of lines or a single string
         @type messages: list or str
         """
+        length = len(messages)
+
+        # append whitespace to match the last line's length
+        if self.last_messages_length is not None and self.last_messages_length > length:
+            messages = messages.ljust(self.last_messages_length, '\x20')
+
         # carriage return
         output_.write('\x0D')
-        if self.last_messages_length is not None:
-            # clear the line with the text of the last message
-            output_.write('\x20' * self.last_messages_length)
-            # carriage return
-            output_.write('\x0D')
-
         output_.write(messages)
 
         self.last_messages_length = len(messages)
