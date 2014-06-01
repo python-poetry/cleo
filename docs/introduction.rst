@@ -79,6 +79,35 @@ This prints:
 
     HELLO JOHN
 
+
+.. versionadded:: 0.3
+
+    .. note::
+
+        To register a new command you can also use provided decorators:
+
+        .. code-block:: python
+
+            from cleo import Application
+
+            app = Application()
+
+            @app.command('demo:greet', description='Greets someone')
+            @app.argument('name', description='Who do you want to greet?', required=False)
+            @app.option('yell', description='If set, the task will yell in uppercase letters', value_required=None)
+            def greet(i, o):
+                name = i.get_argument('name')
+                if name:
+                    text = 'Hello %s' % name
+                else:
+                    text = 'Hello'
+
+                if i.get_option('yell'):
+                    text = text.upper()
+
+                o.writeln(text)
+
+
 .. note::
 
     The greet command can also be declared from a class called ``GreetCommand`` like so:

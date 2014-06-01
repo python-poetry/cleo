@@ -20,8 +20,8 @@ class FooCommand(Command):
         output_.writeln('called')
 
 
-def foo_code(input_, output_):
-    output_.writeln('called')
+def foo_code(i, o):
+    o.writeln('called')
 
 
 foo_commmand = {
