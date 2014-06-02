@@ -740,6 +740,8 @@ class Application(object):
             command.set_description(description)
             command.set_code(func)
 
+            self.add(command)
+
             return func
 
         return decorate

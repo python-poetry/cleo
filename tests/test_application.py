@@ -1060,6 +1060,37 @@ class ApplicationTest(CleoTestCase):
         self.assertTrue(option.is_value_required())
         self.assertTrue(option.is_list())
 
+    def test_combined_decorators(self):
+        """
+        Combining decorators should register a command with arguments and options
+        """
+        application = Application()
+
+        @application.command('decorated_foo', description='Foo command')
+        @application.argument('foo', description='Foo argument', required=True, is_list=True)
+        @application.option('bar', 'b', description='Bar option', value_required=True, is_list=True)
+        def decorated_foo_code(i, o):
+            """Foo Description"""
+            o.writeln('called')
+
+        self.assertTrue(application.has('decorated_foo'))
+
+        command = application.get('decorated_foo')
+        self.assertEqual(command._code, decorated_foo_code)
+        self.assertEqual(command.get_description(), 'Foo command')
+        self.assertTrue('decorated_foo_code' in command.get_aliases())
+
+        argument = command.get_definition().get_argument('foo')
+        self.assertEqual('Foo argument', argument.get_description())
+        self.assertTrue(argument.is_required())
+        self.assertTrue(argument.is_list())
+
+        option = command.get_definition().get_option('bar')
+        self.assertEqual('b', option.get_shortcut())
+        self.assertEqual('Bar option', option.get_description())
+        self.assertTrue(option.is_value_required())
+        self.assertTrue(option.is_list())
+
 
 class CustomApplication(Application):
 
