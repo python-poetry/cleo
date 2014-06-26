@@ -1091,6 +1091,22 @@ class ApplicationTest(CleoTestCase):
         self.assertTrue(option.is_value_required())
         self.assertTrue(option.is_list())
 
+    def test_argument_decorator_order(self):
+        application = Application()
+
+        @application.command('decorated_foo', description='Foo command')
+        @application.argument('foo', description='Foo argument', required=True)
+        @application.argument('bar', description='Bar argument', required=True)
+        def decorated_foo_code(i, o):
+            """Foo Description"""
+            o.writeln('called')
+
+        command = application.get('decorated_foo')
+        self.assertEqual(
+            ['bar', 'foo'],
+            list(map(lambda a: a.get_name(), command.get_definition().get_arguments()))
+        )
+
 
 class CustomApplication(Application):
 
