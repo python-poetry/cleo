@@ -35,6 +35,22 @@ and make the ``name`` argument required:
             'Your last name?'
         )
 
+.. versionadded:: 0.3
+
+    Decorators notation.
+
+    .. code-block:: python
+
+        from cleo import Application
+
+        app = Application()
+
+        @app.command('demo:greet', description='Greets someone')
+        @app.argument('last_name', description='Your last name?', required=False)
+        @app.argument('name', description='Who do you want to greet?', required=True)
+        def greet(input_, output_):
+            # ...
+
 You now have access to a ``last_name`` argument in your command:
 
 .. code-block:: python

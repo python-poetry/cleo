@@ -38,6 +38,22 @@ how many times in a row the message should be printed:
             1
         )
 
+.. versionadded:: 0.3
+
+    Decorators notation.
+
+    .. code-block:: python
+
+        from cleo import Application
+
+        app = Application()
+
+        @app.command('demo:greet', description='Greets someone')
+        @app.option('iterations', value_required=True, default=1)
+        @app.argument('name', description='Who do you want to greet?', required=True)
+        def greet(input_, output_):
+            #...
+
 Next, use this in the command to print the message multiple times:
 
 .. code-block:: python
