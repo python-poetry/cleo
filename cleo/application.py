@@ -713,3 +713,123 @@ class Application(object):
         @type command_name: str
         """
         self._default_command = command_name
+
+    def command(self, name, description=None):
+        """
+        Decorator to add a command to the application.
+
+        Will automatically register the command with the function name
+        as an alias. This is needed in order to not have duplicate commands
+        when used in combination with the @option and @argument decorators.
+
+        @param name: The Command name
+        @type name: str
+        @param description: The Command description
+        @type description: str
+        """
+        def decorate(func):
+            func_name = func.__name__
+
+            if self.has(func_name):
+                command = self.get(func_name)
+                command.set_name(name)
+            else:
+                command = self.register(name)
+
+            command.set_aliases([func_name])
+            command.set_description(description)
+            command.set_code(func)
+
+            self.add(command)
+
+            return func
+
+        return decorate
+
+    def argument(self, name, description=None, required=False, is_list=False, default=None):
+        """
+        Decorator to add an argument to a command of the application.
+
+        Will automatically register a command with the function name
+        if none exists yet and use the function __doc__ value as
+        the command description.
+
+        @param name: The argument name
+        @type name: str
+        @param description: The argument description
+        @type description: str
+        @param required: Whether the argument is required or not
+        @type required: bool
+        @param is_list: Whether the argument is a list or not
+        @type is_list: bool
+        @param default: The default value
+        @type default: mixed
+        """
+        def decorate(func):
+            func_name = func.__name__
+
+            if self.has(func_name):
+                command = self.get(func_name)
+            else:
+                command = self.register(func_name)
+                command.set_description(func.__doc__)
+
+            command.add_argument_from_dict({
+                name: {
+                    'description': description,
+                    'required': required,
+                    'list': is_list,
+                    'default': default
+                }
+            })
+            command.set_code(func)
+
+            return func
+
+        return decorate
+
+    def option(self, name, shortcut=None, description=None,
+               value_required=None, is_list=False, default=None):
+        """
+        Decorator to add an option to a command of the application.
+
+        Will automatically register a command with the function name
+        if none exists yet and use the function __doc__ value as
+        the command description.
+
+        @param name: The option name
+        @type name: str
+        @param shortcut: The option shortcut
+        @type shortcut: str
+        @param description: The option description
+        @type description: str
+        @param value_required: Whether the option requires a value or not
+        @type value_required: bool or None
+        @param is_list: Whether the option is a list or not
+        @type is_list: bool
+        @param default: The default value
+        @type default: mixed
+        """
+        def decorate(func):
+            func_name = func.__name__
+
+            if self.has(func_name):
+                command = self.get(func_name)
+            else:
+                command = self.register(func_name)
+                command.set_description(func.__doc__)
+
+            command.add_option_from_dict({
+                name: {
+                    'shortcut': shortcut,
+                    'description': description,
+                    'value_required': value_required,
+                    'list': is_list,
+                    'default': default
+                }
+            })
+            command.set_code(func)
+
+            return func
+
+        return decorate
