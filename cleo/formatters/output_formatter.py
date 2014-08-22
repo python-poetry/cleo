@@ -94,7 +94,7 @@ class OutputFormatter(object):
             elif match[0] == 'bg':
                 style.set_background(match[1])
             else:
-                pass
+                style.set_option(match[1])
 
         return style
 

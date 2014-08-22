@@ -128,6 +128,10 @@ class OutputFormatterTest(CleoTestCase):
             '\033[34;41msome text\033[0m',
             formatter.format('<fg=blue;bg=red>some text</fg=blue;bg=red>')
         )
+        self.assertEqual(
+            '\033[34;41;1msome text\033[0m',
+            formatter.format('<fg=blue;bg=red;options=bold>some text</>')
+        )
 
     def test_non_style_tag(self):
         formatter = OutputFormatter(True)
