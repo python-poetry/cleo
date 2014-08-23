@@ -241,3 +241,24 @@ verbosity levels:
 
 When the quiet level is used, all output is suppressed as the default
 ``Output.write()`` method returns without actually printing.
+
+
+Autocompletion
+--------------
+
+.. versionadded:: 0.3
+
+    Cleo now supports autocompletion of commands.
+
+    However it is not completely automatic. First you have to use the ``bash_completion.sh`` file:
+
+    .. code-block:: bash
+
+        # In your .bashrc or .zshrc
+        source /path/to/bash_completion.sh
+
+    Now, if your script is named ``console`` autocompletion is set. If not add a line like the following:
+
+    .. code-block:: bash
+
+        complete -F _complete_console you-script-name
