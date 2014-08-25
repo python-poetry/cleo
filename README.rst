@@ -1,8 +1,8 @@
 Cleo
 ====
 
-.. image:: https://travis-ci.org/SDisPater/cleo.svg?branch=master
-    :target: https://travis-ci.org/SDisPater/cleo
+.. image:: https://travis-ci.org/sdispater/cleo.svg?branch=master
+    :target: https://travis-ci.org/sdispater/cleo
 
 Cleo allows you to create beautiful and testable command-line commands.
 
