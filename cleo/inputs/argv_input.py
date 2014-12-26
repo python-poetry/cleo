@@ -12,7 +12,7 @@ class ArgvInput(Input):
         super(ArgvInput, self).__init__(definition)
 
         if argv is None:
-            argv = sys.argv
+            argv = sys.argv[:]
 
         argv.pop(0)
 
