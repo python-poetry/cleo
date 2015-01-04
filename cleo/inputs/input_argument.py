@@ -1,5 +1,28 @@
 # -*- coding: utf-8 -*-
 
+from ..validators import ValidationError
+
+
+class InvalidArgument(ValidationError):
+
+    def __init__(self, argument, msg, value=ValidationError._UNDEFINED):
+        self.argument = argument
+        self.msg = msg
+        self.value = value
+
+        super(ValidationError, self).__init__(str(self))
+
+    def to_s(self):
+        if self.value != self._UNDEFINED:
+            return 'Invalid value %s (%s) ' \
+                   'for argument %s: %s'\
+                   % (repr(self.value),
+                      self.value.__class__.__name__,
+                      self.argument.get_name(),
+                      self.msg)
+
+        return self.msg
+
 
 class InputArgument(object):
     """
@@ -10,7 +33,8 @@ class InputArgument(object):
     OPTIONAL = 2
     IS_LIST = 4
 
-    def __init__(self, name, mode=None, description='', default=None):
+    def __init__(self, name, mode=None,
+                 description='', default=None, validator=None):
         """
         Constructor
 
@@ -22,6 +46,8 @@ class InputArgument(object):
         @type description: str
         @param default: The default value (for OPTIONAL mode only)
         @type default: mixed
+        @param validator: A Validator instance or a callable
+        @type validator: Validator or callable
         """
         if mode is None:
             mode = self.OPTIONAL
@@ -31,6 +57,7 @@ class InputArgument(object):
         self.__name = name
         self.__mode = mode
         self.__description = description
+        self.__validator = validator
 
         self.set_default(default)
 
@@ -97,6 +124,15 @@ class InputArgument(object):
         """
         return self.__description
 
+    def get_validator(self):
+        """
+        Returns the validator
+
+        @return: The validator
+        @rtype: Validator or callable
+        """
+        return self.__validator
+
     @classmethod
     def from_dict(cls, argument_dict):
         """
@@ -123,4 +159,6 @@ class InputArgument(object):
         if argument_dict.get('list', False):
             mode |= cls.IS_LIST
 
-        return cls(name, mode, description, default)
+        validator = argument_dict.get('validator')
+
+        return cls(name, mode, description, default, validator=validator)

@@ -1,5 +1,27 @@
 # -*- coding: utf-8 -*-
 
+from ..validators import ValidationError
+
+
+class InvalidOption(ValidationError):
+
+    def __init__(self, option, msg, value=ValidationError._UNDEFINED):
+        self.option = option
+        self.msg = msg
+        self.value = value
+
+        super(ValidationError, self).__init__(str(self))
+
+    def to_s(self):
+        if self.value != self._UNDEFINED:
+            return 'Invalid value %s (%s) for option %s: %s'\
+                   % (repr(self.value),
+                      self.value.__class__.__name__,
+                      self.option.get_name(),
+                      self.msg)
+
+        return self.msg
+
 
 class InputOption(object):
     """
@@ -11,7 +33,8 @@ class InputOption(object):
     VALUE_OPTIONAL = 4
     VALUE_IS_LIST = 8
 
-    def __init__(self, name, shortcut=None, mode=None, description='', default=None):
+    def __init__(self, name, shortcut=None, mode=None,
+                 description='', default=None, validator=None):
         """
         Constructor
 
@@ -25,6 +48,8 @@ class InputOption(object):
         @type description: str
         @param default: The default value (must be null for VALUE_REQUIRED or VALUE_NONE)
         @type default: mixed
+        @param validator: A Validator instance or a callable
+        @type validator: Validator or callable
         """
         if name.startswith('--'):
             name = name[2:]
@@ -51,6 +76,7 @@ class InputOption(object):
         self.__shortcut = shortcut
         self.__mode = mode
         self.__description = description
+        self.__validator = validator
 
         self.set_default(default)
 
@@ -142,6 +168,15 @@ class InputOption(object):
         """
         return self.__description
 
+    def get_validator(self):
+        """
+        Returns the validator
+
+        @return: The validator
+        @rtype: Validator or callable
+        """
+        return self.__validator
+
     def equals(self, option):
         """
         Checks whether the given option equals this one.
@@ -190,4 +225,6 @@ class InputOption(object):
         if mode != cls.VALUE_NONE and option_dict.get('list', False):
             mode |= cls.VALUE_IS_LIST
 
-        return cls(name, shortcut, mode, description, default)
+        validator = option_dict.get('validator')
+
+        return cls(name, shortcut, mode, description, default, validator=validator)

@@ -2,6 +2,9 @@
 
 import re
 from .input_definition import InputDefinition
+from ..validators import ValidationError, Callable, Validator
+from .input_argument import InvalidArgument
+from .input_option import InvalidOption
 
 
 class Input(object):
@@ -61,6 +64,53 @@ class Input(object):
     def validate(self):
         if len(self.get_arguments()) < self.definition.get_argument_required_count():
             raise Exception('Not enough arguments')
+
+        self.validate_arguments()
+        self.validate_options()
+
+    def validate_arguments(self):
+        """
+        Validates the arguments
+
+        @raise: InvalidArgument
+        """
+        for arg_name, arg_value in self.get_arguments().items():
+            arg = self.definition.get_argument(arg_name)
+            validator = arg.get_validator()
+
+            if validator:
+                if not isinstance(validator, Validator):
+                    if callable(validator):
+                        validator = Callable(validator)
+                    else:
+                        raise Exception('Invalid validator specified for argument %s' % arg.name)
+
+                try:
+                    validator.validate(arg_value)
+                except ValidationError as e:
+                    raise InvalidArgument(arg, e.msg, e.value)
+
+    def validate_options(self):
+        """
+        Validates the options
+
+        @raise: InvalidOptionValue
+        """
+        for opt_name, opt_value in self.get_options().items():
+            opt = self.definition.get_option(opt_name)
+            validator = opt.get_validator()
+
+            if validator:
+                if not isinstance(validator, Validator):
+                    if callable(validator):
+                        validator = Callable(validator)
+                    else:
+                        raise Exception('Invalid validator specified for option %s' % opt.name)
+
+                try:
+                    validator.validate(opt_value)
+                except ValidationError as e:
+                    raise InvalidOption(opt, e.msg, e.value)
 
     def is_interactive(self):
         return self.interactive
