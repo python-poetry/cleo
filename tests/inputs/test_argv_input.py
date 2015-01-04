@@ -16,6 +16,10 @@ class ArgvInputTest(CleoTestCase):
             ['foo'],
             input_._ArgvInput__tokens
         )
+        self.assertEqual(
+            ['cli.py', 'foo'],
+            sys.argv
+        )
 
     def test_parse_arguments(self):
         input_ = ArgvInput(['cli.py', 'foo'])
