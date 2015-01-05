@@ -2,6 +2,7 @@
 
 from unittest import TestCase
 from cleo.inputs.input_argument import InputArgument
+from cleo.validators import Integer
 
 
 class InputArgumentTest(TestCase):
@@ -28,6 +29,20 @@ class InputArgumentTest(TestCase):
 
         self.assertRaises(Exception, InputArgument, 'foo', 'ANOTHER_MODE')
         self.assertRaises(Exception, InputArgument, 'foo', -1)
+
+        validator = Integer()
+        argument = InputArgument('foo', None, validator=validator)
+        self.assertEqual(validator, argument.get_validator())
+
+        # Named validator
+        validator = 'integer'
+        argument = InputArgument('foo', None, validator=validator)
+        self.assertIsInstance(argument.get_validator(), Integer)
+
+        # Native type
+        validator = int
+        argument = InputArgument('foo', None, validator=validator)
+        self.assertIsInstance(argument.get_validator(), Integer)
 
     def test_is_list(self):
         """
@@ -77,12 +92,14 @@ class InputArgumentTest(TestCase):
         """
         InputArgument.from_dict() returns an InputArgument instance given a dict.
         """
+        validator = Integer()
         argument_dict = {
             'foo': {
                 'description': 'The foo argument.',
                 'required': False,
                 'list': True,
-                'default': ['default']
+                'default': ['default'],
+                'validator': validator
             }
         }
 
@@ -93,3 +110,4 @@ class InputArgumentTest(TestCase):
         self.assertEqual(['default'], argument.get_default())
         self.assertTrue(argument.is_list())
         self.assertFalse(argument.is_required())
+        self.assertEqual(validator, argument.get_validator())

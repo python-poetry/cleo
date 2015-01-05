@@ -6,6 +6,7 @@ import subprocess
 
 from .helper import Helper
 from ..formatters.output_formatter_style import OutputFormatterStyle
+from ..validators import Choice, Callable, Validator, Integer, ValidationError
 
 
 class DialogHelper(Helper):
@@ -59,7 +60,25 @@ class DialogHelper(Helper):
 
             return picked
 
-        result = self.ask_and_validate(output_, '> ', choose, attempts, default)
+        class SelectError(ValidationError):
+
+            def to_s(self):
+                return error_message % self.value
+
+        class SelectChoice(Choice):
+
+            def validate(self, choice):
+                try:
+                    return super(SelectChoice, self).validate(choice)
+                except ValidationError as e:
+                    self.error(choice)
+
+            def error(self, choice):
+                raise SelectError(error_message, choice)
+
+        result = self.ask_and_validate(output_, '> ',
+                                       SelectChoice(range(0, len(choices)), validator=Integer()),
+                                       attempts, default)
 
         return result
 
@@ -259,7 +278,7 @@ class DialogHelper(Helper):
         @param question: The question to ask
         @type question: str or list
         @param validator: A callback
-        @type validator: callable
+        @type validator: callable or validator
         @param attempts: Max number of times to ask before giving up (false by default, which means infinite)
         @type attempts: bool or int
         @param default: The default answer if the user enters nothing
@@ -288,7 +307,7 @@ class DialogHelper(Helper):
         @param question: The question to ask
         @type question: str or list
         @param validator: A callback
-        @type validator: callable
+        @type validator: callable or Validator
         @param attempts: Max number of times to ask before giving up (false by default, which means infinite)
         @type attempts: bool or int
         @param fallback: Whether to fallback on non-hidden question or not
@@ -342,13 +361,16 @@ class DialogHelper(Helper):
         @param output_: An Output Instance
         @type output_: Output
         @param validator: A callback
-        @type validator: callable
+        @type validator: callable or Validator
         @param attempts: Max number of times to ask before giving up (false by default, which means infinite)
         @type attempts: bool or int
 
         @return: The validated response
         """
         error = None
+        if not isinstance(validator, Validator):
+            validator = Callable(validator)
+
         while attempts is False or attempts > 0:
             if attempts is not False:
                 attempts -= 1
@@ -357,7 +379,7 @@ class DialogHelper(Helper):
                 output_.writeln(self.get_helper_set().get('formatter').format_block(str(error), 'error'))
 
             try:
-                return validator(interviewer())
+                return validator.validate(interviewer())
             except Exception as e:
                 error = e
 

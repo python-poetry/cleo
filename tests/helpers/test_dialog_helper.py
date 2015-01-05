@@ -8,6 +8,7 @@ from cleo.helpers.dialog_helper import DialogHelper
 from cleo.helpers.helper_set import HelperSet
 from cleo.helpers.formatter_helper import FormatterHelper
 from cleo.outputs.stream_output import StreamOutput
+from cleo.validators import Choice
 
 
 class DialogHelperTest(TestCase):
@@ -24,15 +25,15 @@ class DialogHelperTest(TestCase):
         heroes = ['Superman', 'Batman', 'Spiderman']
 
         dialog.set_input_stream(self.get_input_stream('\n1\nSebastien\n1\nSebastien\nSebastien\n'))
-        self.assertEqual('2',
+        self.assertEqual(2,
                          dialog.select(self.get_output_stream(),
                                        'What is your favorite superhero?', heroes, '2'))
-        self.assertEqual('1',
+        self.assertEqual(1,
                          dialog.select(self.get_output_stream(),
                                        'What is your favorite superhero?', heroes))
 
         output = self.get_output_stream()
-        self.assertEqual('1',
+        self.assertEqual(1,
                          dialog.select(output,
                                        'What is your favorite superhero?', heroes, None,
                                        False, 'Input "%s" is not a superhero!'))
@@ -101,6 +102,46 @@ class DialogHelperTest(TestCase):
         self.assertRaises(Exception,
                           dialog.ask_and_validate,
                           self.get_output_stream(), question, validator, 2, 'white')
+
+    def test_ask_and_validate_with_validator(self):
+        """
+        DialogHelper.ask_and_validate() behaves properly when passing Validator instances
+        """
+        dialog = DialogHelper()
+        helper_set = HelperSet([FormatterHelper()])
+        dialog.set_helper_set(helper_set)
+
+        question = 'What color was the white horse of Henry IV?'
+        error = 'This is not a color!'
+
+        def validator(color):
+            if color not in ['white', 'black']:
+                raise Exception(error)
+
+            return color
+
+        dialog.set_input_stream(self.get_input_stream('\nblack\n'))
+        self.assertEqual('white',
+                         dialog.ask_and_validate(
+                             self.get_output_stream(),
+                             question,
+                             Choice(['white', 'black']),
+                             2,
+                             'white'
+                         ))
+        self.assertEqual('black',
+                         dialog.ask_and_validate(
+                             self.get_output_stream(),
+                             question,
+                             Choice(['white', 'black']),
+                             2,
+                             'white'
+                         ))
+
+        dialog.set_input_stream(self.get_input_stream('green\nyellow\norange\n'))
+        self.assertRaises(Exception,
+                          dialog.ask_and_validate,
+                          self.get_output_stream(), question, Choice(['white', 'black']), 2, 'white')
 
     def get_input_stream(self, input_):
         stream = BytesIO()
