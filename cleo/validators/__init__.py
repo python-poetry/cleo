@@ -151,7 +151,7 @@ class Enum(Validator):
 
     values = ()
 
-    def __init__(self, values=None):
+    def __init__(self, values=None, validator=None):
         super(Enum, self).__init__()
 
         if values is None:
@@ -162,7 +162,12 @@ class Enum(Validator):
         except TypeError:
             self.values = list(values)
 
+        self.validator = validator
+
     def validate(self, value):
+        if self.validator:
+            value = self.validator.validate(value)
+
         try:
             if value in self.values:
                 return value
