@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ..validators import ValidationError
+from ..validators import ValidationError, VALIDATORS
 
 
 class InvalidArgument(ValidationError):
@@ -57,7 +57,7 @@ class InputArgument(object):
         self.__name = name
         self.__mode = mode
         self.__description = description
-        self.__validator = validator
+        self.__validator = VALIDATORS.get(validator)
 
         self.set_default(default)
 

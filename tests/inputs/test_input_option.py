@@ -72,6 +72,16 @@ class InputOptionTest(TestCase):
         option = InputOption('foo', 'f', None, validator=validator)
         self.assertEqual(validator, option.get_validator())
 
+        # Named validator
+        validator = 'integer'
+        option = InputOption('foo', 'f', None, validator=validator)
+        self.assertIsInstance(option.get_validator(), Integer)
+
+        # Native type
+        validator = int
+        option = InputOption('foo', 'f', None, validator=validator)
+        self.assertIsInstance(option.get_validator(), Integer)
+
     def test_get_description(self):
         """
         InputOption.get_description() returns the message description

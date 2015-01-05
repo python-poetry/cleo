@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from .._compat import basestring
+
 
 class ValidationError(ValueError):
 
@@ -61,6 +63,59 @@ class Validator(object):
         return getattr(self, 'name', self.__class__.__name__)
 
 
+class ValidatorSet(object):
+
+    def __init__(self, validators=None):
+        self.validators = {}
+
+        validators = validators or []
+        for validator in validators:
+            self.register(validator)
+
+    def register(self, validator):
+        if not issubclass(validator, Validator):
+            raise Exception('A validator must be a subclass of the Validator class')
+
+        if hasattr(validator, 'name'):
+            if isinstance(validator.name, (list, tuple)):
+                for name in validator.name:
+                    self._register_validator(name, validator)
+            else:
+                self._register_validator(validator.name, validator)
+
+    def get(self, validator):
+        if isinstance(validator, Validator):
+            return validator
+
+        if isinstance(validator, basestring):
+            if validator in self.validators:
+                return self.validators[validator]()
+            elif validator == 'string':
+                return None
+            else:
+                raise Exception('Unable to find a validator with name "%s"' % validator)
+
+        if validator is basestring:
+            return None
+
+        if validator is int:
+            return Integer()
+
+        if validator is float:
+            return Float()
+
+        if validator is bool:
+            return Boolean()
+
+        return None
+
+    def _register_validator(self, name, validator):
+        if validator.name in self.validators:
+            raise Exception('A validator with name "%s" is already registered' % validator.name)
+
+        self.validators[name] = validator
+
+
 # Default validators
 class Callable(Validator):
     """A validator that accepts a callable.
@@ -91,6 +146,8 @@ class Enum(Validator):
     Attributes:
         - values: The collection of valid values.
     """
+
+    name = ('enum', 'choice')
 
     values = ()
 
@@ -218,3 +275,12 @@ class Range(Validator):
                % (left_boundary,
                   repr(self.min), repr(self.max),
                   right_boundary)
+
+
+VALIDATORS = ValidatorSet([
+    Boolean,
+    Enum,
+    Integer,
+    Float,
+    Range
+])

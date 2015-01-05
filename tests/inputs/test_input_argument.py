@@ -34,6 +34,16 @@ class InputArgumentTest(TestCase):
         argument = InputArgument('foo', None, validator=validator)
         self.assertEqual(validator, argument.get_validator())
 
+        # Named validator
+        validator = 'integer'
+        argument = InputArgument('foo', None, validator=validator)
+        self.assertIsInstance(argument.get_validator(), Integer)
+
+        # Native type
+        validator = int
+        argument = InputArgument('foo', None, validator=validator)
+        self.assertIsInstance(argument.get_validator(), Integer)
+
     def test_is_list(self):
         """
         InputArgument.is_list() returns true if the argument can be an array'

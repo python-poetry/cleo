@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ..validators import ValidationError
+from ..validators import ValidationError, VALIDATORS
 
 
 class InvalidOption(ValidationError):
@@ -76,7 +76,7 @@ class InputOption(object):
         self.__shortcut = shortcut
         self.__mode = mode
         self.__description = description
-        self.__validator = validator
+        self.__validator = VALIDATORS.get(validator)
 
         self.set_default(default)
 
