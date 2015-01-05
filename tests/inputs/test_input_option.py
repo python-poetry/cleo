@@ -2,6 +2,7 @@
 
 from unittest import TestCase
 from cleo.inputs.input_option import InputOption
+from cleo.validators import Integer
 
 
 class InputOptionTest(TestCase):
@@ -67,6 +68,10 @@ class InputOptionTest(TestCase):
         self.assertRaises(Exception, InputOption, 'foo', 'f', 'ANOTHER_MODE')
         self.assertRaises(Exception, InputOption, 'foo', 'f', -1)
 
+        validator = Integer()
+        option = InputOption('foo', 'f', None, validator=validator)
+        self.assertEqual(validator, option.get_validator())
+
     def test_get_description(self):
         """
         InputOption.get_description() returns the message description
@@ -111,13 +116,16 @@ class InputOptionTest(TestCase):
         """
         InputOption.from_dict() returns an InputOption instance given a dict.
         """
+        validator = Integer()
+
         option_dict = {
             'foo': {
                 'shortcut': 'f',
                 'description': 'The foo option.',
                 'value_required': False,
                 'list': True,
-                'default': ['default']
+                'default': ['default'],
+                'validator': validator
             }
         }
 
@@ -130,6 +138,7 @@ class InputOptionTest(TestCase):
         self.assertTrue(option.is_list())
         self.assertFalse(option.is_value_required())
         self.assertTrue(option.is_value_optional())
+        self.assertEqual(validator, option.get_validator())
 
         option_dict = {
             'foo': {
