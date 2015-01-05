@@ -167,8 +167,11 @@ class Command(object):
     def get_native_definition(self):
         return self.get_definition()
 
-    def add_argument(self, name, mode=None, description='', default=None):
-        self._definition.add_argument(InputArgument(name, mode, description, default))
+    def add_argument(self, name, mode=None,
+                     description='', default=None, validator=None):
+        self._definition.add_argument(
+            InputArgument(name, mode, description, default, validator)
+        )
 
         return self
 
@@ -179,8 +182,11 @@ class Command(object):
 
         return self
 
-    def add_option(self, name, shortcut=None, mode=None, description='', default=None):
-        self._definition.add_option(InputOption(name, shortcut, mode, description, default))
+    def add_option(self, name, shortcut=None, mode=None,
+                   description='', default=None, validator=None):
+        self._definition.add_option(
+            InputOption(name, shortcut, mode, description, default, validator)
+        )
 
         return self
 
