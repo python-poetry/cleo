@@ -104,19 +104,12 @@ This prints:
         class GreetCommand(Command):
 
             def configure():
-                self.set_name('demo:greet')\
-                    .set_description('Greets someone')\
-                    .add_argument(
-                        InputArgument('name',
-                                      InputArgument.OPTIONAL,
-                                      'Who do you want to greet?')
-                    )\
-                    .add_option(
-                        InputOption('yell',
-                                    'y',
-                                    InputOption.VALUE_NONE,
-                                    'If set, the task will yell in uppercase letters')
-                    )
+                self.set_name('demo:greet')
+                self.set_description('Greets someone')
+                self.add_argument('name', InputArgument.OPTIONAL,
+                                  description='Who do you want to greet?')
+                self.add_option('yell', 'y', InputOption.VALUE_NONE,
+                                description='If set, the task will yell in uppercase letters')
 
             def execute(input_, output_):
                 name = input_.get_argument('name')
