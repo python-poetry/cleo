@@ -11,6 +11,7 @@ from cleo.helpers import FormatterHelper
 from cleo.testers import CommandTester
 from .. import CleoTestCase
 from ..fixtures.test_command import TestCommand
+from ..fixtures.no_configure_command import NoConfigureCommand
 
 
 class CommandTest(CleoTestCase):
@@ -354,6 +355,15 @@ class CommandTest(CleoTestCase):
         self.assertEqual(['foobar'], command.get_aliases())
         self.assertTrue(command.get_definition().has_argument('bar'))
         self.assertTrue(command.get_definition().has_option('baz'))
+
+    def test_without_configure(self):
+        command = NoConfigureCommand()
+
+        self.assertEqual('no:configure', command.get_name())
+        self.assertEqual('description', command.get_description())
+        self.assertEqual('help', command.get_help())
+        self.assertEqual(2, command.get_definition().get_argument_count())
+        self.assertEqual(2, len(command.get_definition().get_options()))
 
     def callable_method(self, input_, output_):
         output_.writeln('from the code...')

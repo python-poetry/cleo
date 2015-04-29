@@ -21,21 +21,34 @@ class Command(object):
         self._ignore_validation_errors = False
         self._application_definition_merged = False
         self._application_definition_merged_with_args = False
-        self._aliases = []
-        self._synopsis = None
-        self._code = None
-        self._help = ''
-        self._name = None
         self._application = None
         self._helper_set = None
-        self._description = None
+        self._synopsis = None
+        self._code = None
+
+        if hasattr(self, 'aliases'):
+            self.set_aliases(self.aliases)
+        else:
+            self.aliases = []
+
+        if hasattr(self, 'help'):
+            self.set_help(self.help)
+        else:
+            self.help = ''
+
+        self.name = name or getattr(self, 'name', None)
+
+        if hasattr(self, 'description'):
+            self.set_description(self.description)
+        else:
+            self.description = None
 
         if name is not None:
             self.set_name(name)
 
         self.configure()
 
-        if not self._name:
+        if not self.name:
             raise Exception('The command name cannot be empty.')
 
     def ignore_validation_errors(self):
@@ -61,7 +74,23 @@ class Command(object):
         return True
 
     def configure(self):
-        pass
+        if hasattr(self, 'arguments'):
+            for argument in self.arguments:
+                if isinstance(argument, InputArgument):
+                    self._definition.add_argument(argument)
+                elif isinstance(argument, dict):
+                    self.add_argument_from_dict({argument['name']: argument})
+                else:
+                    raise Exception('Invalid argument')
+
+        if hasattr(self, 'options'):
+            for option in self.options:
+                if isinstance(option, InputOption):
+                    self._definition.add_option(option)
+                elif isinstance(option, dict):
+                    self.add_option_from_dict({option['name']: option})
+                else:
+                    raise Exception('Invalid option')
 
     def execute(self, input_, output_):
         raise NotImplementedError()
@@ -200,45 +229,45 @@ class Command(object):
     def set_name(self, name):
         self.validate_name(name)
 
-        self._name = name
+        self.name = name
 
         return self
 
     def get_name(self):
-        return self._name
+        return self.name
 
     def set_description(self, description):
-        self._description = description
+        self.description = description
 
         return self
 
     def get_description(self):
-        return self._description
+        return self.description
 
     def set_help(self, help_):
-        self._help = help_
+        self.help = help_
 
         return self
 
     def get_help(self):
-        return self._help
+        return self.help
 
     def set_aliases(self, aliases):
         for alias in aliases:
             self.validate_name(alias)
 
-        self._aliases = aliases
+        self.aliases = aliases
 
         return self
 
     def get_aliases(self):
-        return self._aliases
+        return self.aliases
 
     def get_synopsis(self):
         if self._synopsis is None:
             self._synopsis = (
                 '%s %s'
-                % (self._name,
+                % (self.name,
                    self._definition.get_synopsis())
             ).strip()
 
@@ -248,7 +277,7 @@ class Command(object):
         return self._helper_set.get(name)
 
     def get_processed_help(self):
-        name = self._name
+        name = self.name
 
         h = self.get_help()
 
