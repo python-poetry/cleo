@@ -5,7 +5,11 @@ try:
 except ImportError:
     import json
 
-from collections import OrderedDict
+try:
+    from collections import OrderedDict
+except ImportError:
+    # python 2.6 or earlier, use backport
+    from ordereddict import OrderedDict
 
 from .input_option import InputOption
 
