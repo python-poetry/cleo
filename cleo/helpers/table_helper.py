@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import re
 from .helper import Helper
+from .._compat import decode_str
 
 
 class TableHelper(Helper):
@@ -257,6 +259,8 @@ class TableHelper(Helper):
 
         width = self.get_column_width(column)
 
+        width += len(cell) - len(self.width_without_decoration(self.__output.get_formatter(), cell))
+
         content = self.__cell_row_content_format % cell
 
         self.__output.write(cell_format % getattr(content, self.__pad_type)(width, self.__padding_char))
@@ -295,13 +299,24 @@ class TableHelper(Helper):
             return 0
 
         if column < len(row):
-            return len(row[column])
+            return len(self.width_without_decoration(self.__output.get_formatter(), row[column]))
 
         return self.get_cell_width(row, column - 1)
 
     def cleanup(self):
         self.__column_widths = []
         self.__number_of_columns = None
+
+    def width_without_decoration(self, formatter, string):
+        is_decorated = formatter.is_decorated()
+        formatter.set_decorated(False)
+        string = formatter.format(string)
+        string = re.sub('\033\[[^m]*m', '', string)
+        formatter.set_decorated(is_decorated)
+
+        string = decode_str(string)
+
+        return string
 
     def get_name(self):
         return 'table'

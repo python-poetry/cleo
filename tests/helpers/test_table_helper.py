@@ -6,6 +6,7 @@ from unittest import TestCase
 
 from cleo.helpers.table_helper import TableHelper
 from cleo.outputs.stream_output import StreamOutput
+from cleo._compat import PY2
 
 
 class TableHelperTest(TestCase):
@@ -14,7 +15,8 @@ class TableHelperTest(TestCase):
         ['99921-58-10-7', 'Divine Comedy', 'Dante Alighieri'],
         ['9971-5-0210-0', 'A Tale of Two Cities', 'Charles Dickens'],
         ['960-425-059-0', 'The Lord of the Rings', 'J. R. R. Tolkien'],
-        ['80-902734-1-6', 'And Then There Were None', 'Agatha Christie']
+        ['80-902734-1-6', 'And Then There Were None', 'Agatha Christie'],
+        ['9782070409341', 'Le Père Goriot', 'Honoré de Balzac']
     ]
 
     render_data = (
@@ -29,6 +31,7 @@ class TableHelperTest(TestCase):
 | 9971-5-0210-0 | A Tale of Two Cities     | Charles Dickens  |
 | 960-425-059-0 | The Lord of the Rings    | J. R. R. Tolkien |
 | 80-902734-1-6 | And Then There Were None | Agatha Christie  |
+| 9782070409341 | Le Père Goriot           | Honoré de Balzac |
 +---------------+--------------------------+------------------+
 '''
         ),
@@ -41,6 +44,7 @@ class TableHelperTest(TestCase):
  9971-5-0210-0 A Tale of Two Cities     Charles Dickens  
  960-425-059-0 The Lord of the Rings    J. R. R. Tolkien 
  80-902734-1-6 And Then There Were None Agatha Christie  
+ 9782070409341 Le Père Goriot           Honoré de Balzac 
 '''
         ),
         (
@@ -54,6 +58,7 @@ class TableHelperTest(TestCase):
   9971-5-0210-0   A Tale of Two Cities       Charles Dickens   
   960-425-059-0   The Lord of the Rings      J. R. R. Tolkien  
   80-902734-1-6   And Then There Were None   Agatha Christie   
+  9782070409341   Le Père Goriot             Honoré de Balzac  
  =============== ========================== ================== 
 '''
         ),
@@ -178,4 +183,7 @@ class TableHelperTest(TestCase):
     def get_output_content(self, output_):
         output_.get_stream().seek(0)
 
-        return output_.get_stream().getvalue().decode('utf-8').replace(os.linesep, "\n")
+        if PY2:
+            return output_.get_stream().getvalue().replace(os.linesep, "\n")
+        else:
+            return output_.get_stream().getvalue().decode('utf-8').replace(os.linesep, "\n")
