@@ -15,7 +15,7 @@ Calling a command from another one is straightforward:
 
 .. code-block:: python
 
-    def execute(input_, output_):
+    def execute(i, o):
         command = self.get_application().find('demo:greet')
 
         arguments = [
@@ -25,7 +25,7 @@ Calling a command from another one is straightforward:
         ]
 
         greet_input = ListInput(arguments)
-        return_code = command.run(greet_input, output_)
+        return_code = command.run(greet_input, o)
 
         # ...
 

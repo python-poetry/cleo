@@ -36,7 +36,7 @@ To reproduce this style, you can use the
         'SomeSection',
         'Here is some message related to that section'
     )
-    output_.writeln(formatted_line)
+    o.writeln(formatted_line)
 
 Print Messages in a Block
 -------------------------
@@ -52,7 +52,7 @@ notice that the background is only as long as each individual line. Use the
 
     error_messages = ['Error!', 'Something went wrong']
     formatted_block = formatter.format_block(error_messages, 'error')
-    output_.writeln(formatted_block)
+    o.writeln(formatted_block)
 
 As you can see, passing an array of messages to the ``FormatterHelper.format_block()``
 method creates the desired output. If you pass ``True`` as third parameter, the

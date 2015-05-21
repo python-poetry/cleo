@@ -24,7 +24,7 @@ the following to your command:
 
     # ...
     if dialog.ask_confirmation(
-        output_,
+        o,
         '<question>Continue with this action?</question>',
         False
     ):
@@ -46,7 +46,7 @@ if you want to know the user name, you can add this to your command:
 
     # ...
     name = dialog.ask(
-        output_,
+        o,
         'Please enter your name',
         'John Doe'
     )
@@ -67,7 +67,7 @@ will be autocompleted as the user types:
     dialog = self.get_helper_set().get('dialog')
     roles = ['admin', 'manager', 'developer']
     role = dialog.ask(
-        output_,
+        o,
         'Please enter your role',
         'developer',
         roles
@@ -83,7 +83,7 @@ convenient for passwords:
 
     dialog = self.get_helper_set().get('dialog')
     password = dialog.ask_hidden_response(
-        output_,
+        o,
         'What is the database password?',
         False
     )
@@ -114,7 +114,7 @@ method:
         return answer
 
     bundle = dialog.ask_and_validate(
-        output_,
+        o,
         'Please enter the name of the bundle',
         validate_answer,
         False,
@@ -158,7 +158,7 @@ You can also ask and validate a hidden response:
         return value
 
     password = dialog.ask_hidden_response_and_validate(
-        output_,
+        o,
         'Please enter your password',
         validate,
         20,
@@ -186,12 +186,12 @@ from a predefined list:
     colors = ['red', 'blue', 'yellow']
 
     color = dialog.select(
-        output_,
+        o,
         'Please select your favorite color (default to red)',
         colors,
         0
     )
-    output_.writeln('You have just selected: %s' % colors[color])
+    o.writeln('You have just selected: %s' % colors[color])
 
     # ... do something with the color
 
@@ -222,7 +222,7 @@ from the command line, you need to overwrite the HelperSet used by the command:
         command_tester = CommandTester(command)
 
         dialog = command.get_helper('dialog')
-        dialog.set_input_stream(self.get_input_stream('Test\n'))
+        dialog.set_istream(self.get_istream('Test\n'))
         # Equals to a user inputing "Test" and hitting ENTER
         # If you need to enter a confirmation, "yes\n" will work
 
@@ -231,10 +231,10 @@ from the command line, you need to overwrite the HelperSet used by the command:
         # self.assertRegex('/.../', command_tester.get_display())
     }
 
-    def get_input_stream(input_)
+    def get_istream(i)
     {
         stream = BytesIO()
-        stream.write(input_.encode())
+        stream.write(i.encode())
         stream.seek(0)
 
         return stream

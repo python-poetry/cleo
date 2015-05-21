@@ -51,7 +51,7 @@ how many times in a row the message should be printed:
         @app.command('demo:greet', description='Greets someone')
         @app.option('iterations', value_required=True, default=1)
         @app.argument('name', description='Who do you want to greet?', required=True)
-        def greet(input_, output_):
+        def greet(i, o):
             #...
 
 Next, use this in the command to print the message multiple times:
@@ -59,7 +59,7 @@ Next, use this in the command to print the message multiple times:
 .. code-block:: python
 
     for _ in range(0, input.get_option('iterations')):
-        output_.writeln(text)
+        o.writeln(text)
 
 Now, when you run the task, you can optionally specify a ``--iterations``
 flag:

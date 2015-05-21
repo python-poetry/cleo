@@ -1,42 +1,58 @@
 Creating a basic Command
 ------------------------
 
+Using classes
+~~~~~~~~~~~~~
+
 To make a command that greets you from the command line,
 create ``greet_command.py`` and add the following to it:
 
 .. code-block:: python
 
-    def greet(input_, output_):
-        name = input_.get_argument('name')
-        if name:
-            text = 'Hello %s' % name
-        else:
-            text = 'Hello'
+    from cleo import Command, InputArgument, InputOption
 
-        if input_.get_option('yell'):
-            text = text.upper()
 
-        output_.writeln(text)
+    class GreetCommand(Command):
 
-    greet_command = {
-        'demo:greet': {
-            'description': 'Greets someone',
-            'arguments': [{
-                'name': {
-                    'description': 'Who do you want to greet?',
-                    'required': False
-                }
-            }],
-            'options': [{
-                'yell': {
-                    'shortcut': 'y',
-                    'description': 'If set, the task will yell in uppercase letters',
-                    'value_required': None
-                }
-            }],
-            'code': greet
-        }
-    }
+        name = 'demo:greet'
+
+        description = 'Greets someone'
+
+        arguments = [
+            {
+                'name': 'name',
+                'description': 'Who do you want to greet?',
+                'required': False
+            }
+        ]
+
+        options = [
+            {
+                'name': 'yell',
+                'shortcut': 'y',
+                'flag': True,
+                'description': 'If set, the task will yell in uppercase letters'
+            }
+        ]
+
+        def execute(i, o):
+            """
+            Executes the command.
+    
+            :type i: cleo.inputs.input.Input
+            :type o: cleo.outputs.output.Output
+            """
+            name = i.get_argument('name')
+            if name:
+                text = 'Hello %s' % name
+            else:
+                text = 'Hello'
+
+            if i.get_option('yell'):
+                text = text.upper()
+
+            o.writeln(text)
+            
 
 You also need to create the file to run at the command line which creates
 an ``Application`` and adds commands to it:
@@ -46,11 +62,11 @@ an ``Application`` and adds commands to it:
     #!/usr/bin/env python
     # -*- coding: utf-8 -*-
 
-    from greet_command import greet_command
+    from greet_command import GreetCommand
     from cleo import Application
 
     application = Application()
-    application.add(greet_command)
+    application.add(GreetCommand())
 
     if __name__ == '__main__':
         application.run()
@@ -79,70 +95,78 @@ This prints:
 
     HELLO JOHN
 
-.. note::
+Using decorators
+~~~~~~~~~~~~~~~~
 
-    .. versionadded:: 0.3
+.. versionadded:: 0.3
 
-        To register a new command you can also use provided decorators:
+To register a new command you can also use provided decorators:
 
-        .. code-block:: python
+.. code-block:: python
 
-            from cleo import Application
-
-            app = Application()
-
-            @app.command('demo:greet', description='Greets someone')
-            @app.argument('name', description='Who do you want to greet?', required=False)
-            @app.option('yell', description='If set, the task will yell in uppercase letters', value_required=None)
-            def greet(input_, ouput_):
-                name = input_.get_argument('name')
-                if name:
-                    text = 'Hello %s' % name
-                else:
-                    text = 'Hello'
-
-                if input_.get_option('yell'):
-                    text = text.upper()
-
-                output_.writeln(text)
-
-
-.. note::
-
-    The greet command can also be declared from a class called ``GreetCommand`` like so:
-
-    .. code-block:: python
-
-        from cleo import Command, InputArgument, InputOption
+    from cleo import Application
+    
+    app = Application()
+    
+    @app.command('demo:greet', description='Greets someone')
+    @app.argument('name', description='Who do you want to greet?', required=False)
+    @app.option('yell', description='If set, the task will yell in uppercase letters',
+                flag=True)
+    def greet(i, o):
+        name = i.get_argument('name')
+        if name:
+            text = 'Hello %s' % name
+        else:
+            text = 'Hello'
+    
+        if i.get_option('yell'):
+            text = text.upper()
+    
+        o.writeln(text)
 
 
-        class GreetCommand(Command):
+Using dictionaries
+~~~~~~~~~~~~~~~~~~
 
-            def configure():
-                self.set_name('demo:greet')
-                self.set_description('Greets someone')
-                self.add_argument('name', InputArgument.OPTIONAL,
-                                  description='Who do you want to greet?')
-                self.add_option('yell', 'y', InputOption.VALUE_NONE,
-                                description='If set, the task will yell in uppercase letters')
+The greet command can also be declared with a dictionary like so:
 
-            def execute(input_, output_):
-                name = input_.get_argument('name')
-                if name:
-                    text = 'Hello %s' % name
-                else:
-                    text = 'Hello'
+.. code-block:: python
+    
+    from cleo import Application
 
-                if input_.get_option('yell'):
-                    text = text.upper()
+    app = Application()
 
-                output_.writeln(text)
 
-    Then you just have to import the ``GreetCommand`` class and add it to the application:
+    def greet(i, o):
+        name = i.get_argument('name')
+        if name:
+            text = 'Hello %s' % name
+        else:
+            text = 'Hello'
 
-    .. code-block:: python
+        if i.get_option('yell'):
+            text = text.upper()
 
-        application.add(GreetCommand())
+        o.writeln(text)
+
+    greet_command = {
+        'name': 'demo:greet',
+        'description': 'Greets someone',
+        'arguments': [{
+            'name': 'name',
+            'description': 'Who do you want to greet?',
+            'required': False
+        }],
+        'options': [{
+            'name': 'yell',
+            'shortcut': 'y',
+            'description': 'If set, the task will yell in uppercase letters',
+            'flag': True
+        }],
+        'code': greet
+    }
+
+    app.add(greet_command)
 
 
 .. _output-coloring:
@@ -154,24 +178,24 @@ Whenever you output text, you can surround the text with tags to color its
 output. For example::
 
     # green text
-    output_.writeln('<info>foo</info>')
+    o.writeln('<info>foo</info>')
 
     # yellow text
-    output_.writeln('<comment>foo</comment>')
+    o.writeln('<comment>foo</comment>')
 
     # black text on a cyan background
-    output_.writeln('<question>foo</question>')
+    o.writeln('<question>foo</question>')
 
     # white text on a red background
-    output_.writeln('<error>foo</error>')
+    o.writeln('<error>foo</error>')
 
 It is possible to define your own styles using the class ``OutputFormatterStyle``:
 
 .. code-block:: python
 
     style = OutputFormatterStyle('red', 'yellow', ['bold', 'blink'])
-    output_.get_formatter().set_style('fire', style)
-    output_.writeln('<fire>foo</fire>')
+    o.get_formatter().set_style('fire', style)
+    o.writeln('<fire>foo</fire>')
 
 Available foreground and background colors are: ``black``, ``red``, ``green``,
 ``yellow``, ``blue``, ``magenta``, ``cyan`` and ``white``.
@@ -181,13 +205,13 @@ And available options are: ``bold``, ``underscore``, ``blink``, ``reverse`` and 
 You can also set these colors and options inside the tagname::
 
     # green text
-    output_.writeln('<fg=green>foo</fg=green>')
+    o.writeln('<fg=green>foo</fg=green>')
 
     # black text on a cyan background
-    output_.writeln('<fg=black;bg=cyan>foo</fg=black;bg=cyan>')
+    o.writeln('<fg=black;bg=cyan>foo</fg=black;bg=cyan>')
 
     # bold text on a yellow background
-    output_.writeln('<bg=yellow;options=bold>foo</bg=yellow;options=bold>')
+    o.writeln('<bg=yellow;options=bold>foo</bg=yellow;options=bold>')
 
 .. _verbosity-levels:
 
@@ -218,18 +242,18 @@ level. For example:
 
 .. code-block:: python
 
-    if Output.VERBOSITY_VERBOSE <= output_.get_verbosity():
-        output_.writeln(...)
+    if Output.VERBOSITY_VERBOSE <= o.get_verbosity():
+        o.writeln(...)
 
 There are also more semantic methods you can use to test for each of the
 verbosity levels:
 
 .. code-block:: python
 
-    if output_.is_quiet():
+    if o.is_quiet():
         # ...
 
-    if output_.is_verbose():
+    if o.is_verbose():
         # ...
 
 When the quiet level is used, all output is suppressed as the default

@@ -48,14 +48,14 @@ and make the ``name`` argument required:
         @app.command('demo:greet', description='Greets someone')
         @app.argument('last_name', description='Your last name?', required=False)
         @app.argument('name', description='Who do you want to greet?', required=True)
-        def greet(input_, output_):
+        def greet(i, o):
             # ...
 
 You now have access to a ``last_name`` argument in your command:
 
 .. code-block:: python
 
-    last_name = input_.get_argument('last_name')
+    last_name = i.get_argument('last_name')
     if last_name:
         text += ' %s' % last_name
 
@@ -98,7 +98,7 @@ You can access the ``names`` argument as a list:
 
 .. code-block:: python
 
-    names = input_.get_argument('name')
+    names = i.get_argument('name')
     if names:
         text += ' %s' % ', '.join(names)
     }

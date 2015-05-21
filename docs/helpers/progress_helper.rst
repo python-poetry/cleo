@@ -11,7 +11,7 @@ pass it a total number of units, and advance the progress as your command execut
 
     progress = self.get_helper_set().get('progress')
 
-    progress.start(output_, 50)
+    progress.start(o, 50)
 
     for _ in range(50)
         # ... do some work
@@ -68,7 +68,7 @@ progress bar:
 
     .. code-block:: python
 
-        progress.start(output_, 50000)
+        progress.start(o, 50000)
 
         # update every 100 iterations
         progress.set_redraw_frequency(100)

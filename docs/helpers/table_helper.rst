@@ -18,7 +18,7 @@ set headers, rows and render:
            ['80-902734-1-6', 'And Then There Were None', 'Agatha Christie']
         ])
 
-    table.render(output_)
+    table.render(o)
 
 The table layout can be customized as well. There are two ways to customize
 table rendering: using named layouts or by customizing rendering options.
