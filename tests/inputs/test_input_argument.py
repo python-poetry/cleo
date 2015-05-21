@@ -111,3 +111,26 @@ class InputArgumentTest(TestCase):
         self.assertTrue(argument.is_list())
         self.assertFalse(argument.is_required())
         self.assertEqual(validator, argument.get_validator())
+
+    def test_from_dict_plain_dict(self):
+        """
+        InputArgument.from_dict() returns an InputArgument instance given a dict.
+        """
+        validator = Integer()
+        argument_dict = {
+            'name': 'foo',
+            'description': 'The foo argument.',
+            'required': False,
+            'list': True,
+            'default': ['default'],
+            'validator': validator
+        }
+
+        argument = InputArgument.from_dict(argument_dict)
+        self.assertTrue(InputArgument, argument)
+        self.assertEqual('foo', argument.get_name())
+        self.assertEqual('The foo argument.', argument.get_description())
+        self.assertEqual(['default'], argument.get_default())
+        self.assertTrue(argument.is_list())
+        self.assertFalse(argument.is_required())
+        self.assertEqual(validator, argument.get_validator())

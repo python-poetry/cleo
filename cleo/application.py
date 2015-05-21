@@ -775,12 +775,11 @@ class Application(object):
                 command.set_description(func.__doc__)
 
             command.add_argument_from_dict({
-                name: {
-                    'description': description,
-                    'required': required,
-                    'list': is_list,
-                    'default': default
-                }
+                'name': name,
+                'description': description,
+                'required': required,
+                'list': is_list,
+                'default': default
             })
             command.set_code(func)
 
@@ -789,7 +788,7 @@ class Application(object):
         return decorate
 
     def option(self, name, shortcut=None, description=None,
-               value_required=None, is_list=False, default=None):
+               value_required=None, is_list=False, default=None, flag=False):
         """
         Decorator to add an option to a command of the application.
 
@@ -805,6 +804,8 @@ class Application(object):
         @type description: str
         @param value_required: Whether the option requires a value or not
         @type value_required: bool or None
+        @param flag: Whether the option is a flag or not
+        @type flag: bool
         @param is_list: Whether the option is a list or not
         @type is_list: bool
         @param default: The default value
@@ -820,13 +821,12 @@ class Application(object):
                 command.set_description(func.__doc__)
 
             command.add_option_from_dict({
-                name: {
-                    'shortcut': shortcut,
-                    'description': description,
-                    'value_required': value_required,
-                    'list': is_list,
-                    'default': default
-                }
+                'name': name,
+                'shortcut': shortcut,
+                'description': description,
+                'value_required': value_required,
+                'list': is_list,
+                'default': default
             })
             command.set_code(func)
 

@@ -168,3 +168,25 @@ class InputOptionTest(TestCase):
         self.assertFalse(option.is_list())
         self.assertFalse(option.is_value_required())
         self.assertFalse(option.is_value_optional())
+
+    def test_from_dict_with_plain_dict(self):
+        """
+        InputOption.from_dict() returns an InputOption instance given a dict.
+        """
+        validator = Integer()
+
+        option_dict = {
+            'name': 'foo',
+            'shortcut': 'f',
+            'description': 'The foo option.',
+            'flag': True,
+            'validator': validator
+        }
+
+        option = InputOption.from_dict(option_dict)
+        self.assertTrue(InputOption, option)
+        self.assertEqual('foo', option.get_name())
+        self.assertEqual('f', option.get_shortcut())
+        self.assertEqual('The foo option.', option.get_description())
+        self.assertTrue(option.is_flag())
+        self.assertEqual(validator, option.get_validator())

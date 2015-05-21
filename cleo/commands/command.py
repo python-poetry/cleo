@@ -325,13 +325,12 @@ class Command(object):
         @rtype: Command
         """
         if len(command_dict) > 1:
-            raise Exception('Only one command can be defined (%d given).'
-                            % len(command_dict))
+            name = command_dict['name']
+        else:
+            name = list(command_dict.keys())[0]
+            command_dict = command_dict[name]
 
-        name = list(command_dict.keys())[0]
         command = Command(name)
-
-        command_dict = command_dict[name]
 
         if 'description' in command_dict:
             command.set_description(command_dict['description'])

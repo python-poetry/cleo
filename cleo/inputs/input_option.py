@@ -28,7 +28,7 @@ class InputOption(object):
     Represents a command line option.
     """
 
-    VALUE_NONE = 1
+    VALUE_NONE = VALUE_IS_FLAG = 1
     VALUE_REQUIRED = 2
     VALUE_OPTIONAL = 4
     VALUE_IS_LIST = 8
@@ -123,6 +123,14 @@ class InputOption(object):
         """
         return self.__class__.VALUE_OPTIONAL == (self.__class__.VALUE_OPTIONAL & self.__mode)
 
+    def is_flag(self):
+        """
+        Returns True if the option is a flag
+
+        @return: True if value mode is VALUE_NONE, False otherwise
+        """
+        return self.__class__.VALUE_NONE == (self.__class__.VALUE_NONE & self.__mode)
+
     def is_list(self):
         """
         Returns True if the option can take multiple values
@@ -205,12 +213,11 @@ class InputOption(object):
         @rtype: InputOption
         """
         if len(option_dict) > 1:
-            raise Exception('Only one option can be defined (%d given).'
-                            % len(option_dict))
+            name = option_dict['name']
+        else:
+            name = list(option_dict.keys())[0]
+            option_dict = option_dict[name]
 
-        name = list(option_dict.keys())[0]
-
-        option_dict = option_dict[name]
         description = option_dict.get('description')
         shortcut = option_dict.get('shortcut')
         default = option_dict.get('default')
@@ -220,6 +227,9 @@ class InputOption(object):
         elif value_required is False:
             mode = cls.VALUE_OPTIONAL
         else:
+            mode = cls.VALUE_NONE
+
+        if option_dict.get('flag') is True:
             mode = cls.VALUE_NONE
 
         if mode != cls.VALUE_NONE and option_dict.get('list', False):

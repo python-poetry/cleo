@@ -145,12 +145,11 @@ class InputArgument(object):
         @rtype: InputArgument
         """
         if len(argument_dict) > 1:
-            raise Exception('Only one argument can be defined (%d given).'
-                            % len(argument_dict))
+            name = argument_dict['name']
+        else:
+            name = list(argument_dict.keys())[0]
+            argument_dict = argument_dict[name]
 
-        name = list(argument_dict.keys())[0]
-
-        argument_dict = argument_dict[name]
         description = argument_dict.get('description')
         default = argument_dict.get('default')
         required = argument_dict.get('required', False)
