@@ -20,11 +20,10 @@ how many times in a row the message should be printed:
 .. code-block:: python
 
     'options': [{
-        'iterations': {
-            'description': 'How many times should the message be printed?',
-            'value_required': True,
-            'default': 1
-        }
+        'name': 'iterations',
+        'description': 'How many times should the message be printed?',
+        'value_required': True,
+        'default': 1
     }]
 
     # Class notation
@@ -100,12 +99,11 @@ You can combine ``VALUE_IS_LIST`` with ``VALUE_REQUIRED`` or ``VALUE_OPTIONAL`` 
 .. code-block:: python
 
     'options': [{
-        'iterations': {
-            'description': 'How many times should the message be printed?',
-            'value_required': True,
-            'list': True
-            'default': [1]
-        }
+        'name': 'iterations',
+        'description': 'How many times should the message be printed?',
+        'value_required': True,
+        'list': True
+        'default': [1]
     }]
 
     # Class notation

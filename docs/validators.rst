@@ -5,6 +5,16 @@ Validators are a convenient way to check and adapt the type of an argument or an
 
 .. code-block:: python
 
+    options = [
+        # ...
+        {
+            'name': 'iterations',
+            'value_required': True,
+            'default': 1,
+            'validator': 'integer'
+        }
+    ]
+
     @app.option('iterations', value_required=True, default=1,
                 validator=Integer())
     def greet(i, o):
@@ -36,11 +46,11 @@ and their negatives (*0*, *no*, *n*, *off*) or native boolean types (*True*, *Fa
 Range
 -----
 
-The `Range()`` validator accepts a value that must be comprised inside a specified range.
+The ``Range()`` validator accepts a value that must be comprised inside a specified range.
 
 The range can be of anything that can be compared to the specified value, like integers, floats or string.
 
-The default validator for ranges is `Integer` but it can be changed.
+The default validator for ranges is ``Integer`` but it can be changed.
 
 
 .. code-block:: python

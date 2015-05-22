@@ -10,15 +10,13 @@ and make the ``name`` argument required:
 .. code-block:: python
 
     'arguments': [{
-        'name': {
-            'description': 'Who do you want to greet?',
-            'required': False
-        }
+        'name': 'name',
+        'description': 'Who do you want to greet?',
+        'required': False
     }, {
-        'last_name': {
-            'description': 'Your last name?',
-            'required': False
-        }
+        'name': 'last_name',
+        'description': 'Your last name?',
+        'required': False
     }]
 
     # Class notation
@@ -73,10 +71,9 @@ argument list:
 .. code-block:: python
 
     'arguments': [{
-        'names': {
-            'description': 'Who do you want to greet (separate multiple names with a space)?',
-            'list': True
-        }
+        'name': 'names',
+        'description': 'Who do you want to greet (separate multiple names with a space)?',
+        'list': True
     }]
 
     # Class notation
