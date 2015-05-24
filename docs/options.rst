@@ -1,6 +1,9 @@
 Using Options
 -------------
 
+.. role:: python(code)
+   :language: python
+
 Unlike arguments, options are not ordered (meaning you can specify them in any
 order) and are specified with two dashes (e.g. ``--yell`` - you can also
 declare a one-letter shortcut that you can call with a single dash like
@@ -85,14 +88,14 @@ will work:
 
 There are 4 option variants you can use:
 
-===========================  ======================== ======================================================================================
-Option                       Dictionary notation      Value
-===========================  ======================== ======================================================================================
-InputOption.VALUE_IS_LIST    'list': True             This option accepts multiple values (e.g. ``--dir=/foo --dir=/bar``)
-InputOption.VALUE_NONE       'value_required': None   Do not accept input for this option (e.g. ``--yell``)
-InputOption.VALUE_REQUIRED   'value_required': True   This value is required (e.g. ``--iterations=5``), the option itself is still optional
-InputOption.VALUE_OPTIONAL   'value_required': False  This option may or may not have a value (e.g. ``--yell`` or ``--yell=loud``)
-===========================  ======================== ======================================================================================
+===============================  =================================== ======================================================================================
+Option                           Dictionary notation                 Value
+===============================  =================================== ======================================================================================
+``InputOption.VALUE_IS_LIST``    :python:`{'list': True}`             This option accepts multiple values (e.g. ``--dir=/foo --dir=/bar``)
+``InputOption.VALUE_NONE``       :python:`{'value_required': None}`   Do not accept input for this option (e.g. ``--yell``)
+``InputOption.VALUE_REQUIRED``   :python:`{'value_required': True}`   This value is required (e.g. ``--iterations=5``), the option itself is still optional
+``InputOption.VALUE_OPTIONAL``   :python:`{'value_required': False}`  This option may or may not have a value (e.g. ``--yell`` or ``--yell=loud``)
+===============================  =================================== ======================================================================================
 
 You can combine ``VALUE_IS_LIST`` with ``VALUE_REQUIRED`` or ``VALUE_OPTIONAL`` like this:
 

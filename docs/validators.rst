@@ -39,8 +39,8 @@ Those validators are self-explanatory.
 Boolean
 -------
 
-The ``Boolean()`` validator only accepts the following values: *1*, *true*, *yes*, *y*, *on*
-and their negatives (*0*, *no*, *n*, *off*) or native boolean types (*True*, *False*).
+The ``Boolean()`` validator only accepts the following values: ``1``, ``true``, ``yes``, ``y``, ``on``
+and their negatives (``0``, ``no``, ``n``, ``off``) or native boolean types (``True``, ``False``).
 
 
 Range

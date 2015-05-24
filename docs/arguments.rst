@@ -1,6 +1,9 @@
 Using Arguments
 ---------------
 
+.. role:: python(code)
+   :language: python
+
 The most interesting part of the commands are the arguments and options that
 you can make available. Arguments are the strings - separated by spaces - that
 come after the command name itself. They are ordered, and can be optional
@@ -102,13 +105,13 @@ You can access the ``names`` argument as a list:
 
 There are 3 argument variants you can use:
 
-=========================== ======================== ===============================================================================================================
-Mode                        Dictionary notation      Value
-=========================== ======================== ===============================================================================================================
-InputArgument.REQUIRED      'required': True         The argument is required
-InputArgument.OPTIONAL      'required': False        The argument is optional and therefore can be omitted
-InputArgument.IS_LIST       'list': True             The argument can contain an indefinite number of arguments and must be used at the end of the argument list
-=========================== ======================== ===============================================================================================================
+=========================== ============================== ===============================================================================================================
+Mode                        Dictionary notation            Value
+=========================== ============================== ===============================================================================================================
+``InputArgument.REQUIRED``  :python:`{'required': True}`   The argument is required
+``InputArgument.OPTIONAL``  :python:`{'required': False}`  The argument is optional and therefore can be omitted
+``InputArgument.IS_LIST``   :python:`{'list': True}`       The argument can contain an indefinite number of arguments and must be used at the end of the argument list
+=========================== ============================== ===============================================================================================================
 
 You can combine ``IS_LIST`` with ``REQUIRED`` and ``OPTIONAL`` like this:
 

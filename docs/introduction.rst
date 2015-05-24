@@ -223,9 +223,9 @@ Cleo has 3 levels of verbosity. These are defined in the ``Output`` class:
 =======================================  ==================================
 Mode                                     Value
 =======================================  ==================================
-Output.VERBOSITY_QUIET                   Do not output any messages
-Output.VERBOSITY_NORMAL                  The default verbosity level
-Output.VERBOSITY_VERBOSE                 Increased verbosity of messages
+``Output.VERBOSITY_QUIET``               Do not output any messages
+``Output.VERBOSITY_NORMAL``              The default verbosity level
+``Output.VERBOSITY_VERBOSE``             Increased verbosity of messages
 =======================================  ==================================
 
 You can specify the quiet verbosity level with the ``--quiet`` or ``-q``
