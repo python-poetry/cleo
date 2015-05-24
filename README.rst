@@ -14,42 +14,58 @@ Full documentation available here: http://cleo.readthedocs.org
 Creating a basic Command
 ------------------------
 
+Using classes
+~~~~~~~~~~~~~
+
 To make a command that greets you from the command line,
 create ``greet_command.py`` and add the following to it:
 
 .. code-block:: python
 
-    def greet(input_, output_):
-        name = input_.get_argument('name')
-        if name:
-            text = 'Hello %s' % name
-        else:
-            text = 'Hello'
+    from cleo import Command, InputArgument, InputOption
 
-        if input_.get_option('yell'):
-            text = text.upper()
 
-        output_.writeln(text)
+    class GreetCommand(Command):
 
-    greet_command = {
-        'demo:greet': {
-            'description': 'Greets someone',
-            'arguments': [{
-                'name': {
-                    'description': 'Who do you want to greet?',
-                    'required': False
-                }
-            }],
-            'options': [{
-                'yell': {
-                    'shortcut': 'y',
-                    'description': 'If set, the task will yell in uppercase letters',
-                    'value_required': None
-                }
-            }],
-            'code': greet
-        }
-    }
+        name = 'demo:greet'
+
+        description = 'Greets someone'
+
+        arguments = [
+            {
+                'name': 'name',
+                'description': 'Who do you want to greet?',
+                'required': False
+            }
+        ]
+
+        options = [
+            {
+                'name': 'yell',
+                'shortcut': 'y',
+                'flag': True,
+                'description': 'If set, the task will yell in uppercase letters'
+            }
+        ]
+
+        def execute(i, o):
+            """
+            Executes the command.
+
+            :type i: cleo.inputs.input.Input
+            :type o: cleo.outputs.output.Output
+            """
+            name = i.get_argument('name')
+            if name:
+                text = 'Hello %s' % name
+            else:
+                text = 'Hello'
+
+            if i.get_option('yell'):
+                text = text.upper()
+
+            o.writeln(text)
+
 
 You also need to create the file to run at the command line which creates
 an ``Application`` and adds commands to it:
@@ -59,11 +75,11 @@ an ``Application`` and adds commands to it:
     #!/usr/bin/env python
     # -*- coding: utf-8 -*-
 
-    from greet_command import greet_command
+    from greet_command import GreetCommand
     from cleo import Application
 
     application = Application()
-    application.add(greet_command)
+    application.add(GreetCommand())
 
     if __name__ == '__main__':
         application.run()
@@ -92,42 +108,78 @@ This prints:
 
     HELLO JOHN
 
-.. note::
+Using decorators
+~~~~~~~~~~~~~~~~
 
-    The greet command can also be declared from a class called ``GreetCommand`` like so:
+.. versionadded:: 0.3
 
-    .. code-block:: python
+To register a new command you can also use provided decorators:
 
-        from cleo import Command, InputArgument, InputOption
+.. code-block:: python
+
+    from cleo import Application
+
+    app = Application()
+
+    @app.command('demo:greet', description='Greets someone')
+    @app.argument('name', description='Who do you want to greet?', required=False)
+    @app.option('yell', description='If set, the task will yell in uppercase letters',
+                flag=True)
+    def greet(i, o):
+        name = i.get_argument('name')
+        if name:
+            text = 'Hello %s' % name
+        else:
+            text = 'Hello'
+
+        if i.get_option('yell'):
+            text = text.upper()
+
+        o.writeln(text)
 
 
-        class GreetCommand(Command):
+Using dictionaries
+~~~~~~~~~~~~~~~~~~
 
-            def configure():
-                self.set_name('demo:greet')
-                self.set_description('Greets someone')
-                self.add_argument('name', InputArgument.OPTIONAL,
-                                  description='Who do you want to greet?')
-                self.add_option('yell', 'y', InputOption.VALUE_NONE,
-                                description='If set, the task will yell in uppercase letters')
+The greet command can also be declared with a dictionary like so:
 
-            def execute(input_, output_):
-                name = input_.get_argument('name')
-                if name:
-                    text = 'Hello %s' % name
-                else:
-                    text = 'Hello'
+.. code-block:: python
 
-                if input_.get_option('yell'):
-                    text = text.upper()
+    from cleo import Application
 
-                output_.writeln(text)
+    app = Application()
 
-    Then you just have to import the ``GreetCommand`` class and add it to the application:
 
-    .. code-block:: python
+    def greet(i, o):
+        name = i.get_argument('name')
+        if name:
+            text = 'Hello %s' % name
+        else:
+            text = 'Hello'
 
-        application.add(GreetCommand())
+        if i.get_option('yell'):
+            text = text.upper()
+
+        o.writeln(text)
+
+    greet_command = {
+        'name': 'demo:greet',
+        'description': 'Greets someone',
+        'arguments': [{
+            'name': 'name',
+            'description': 'Who do you want to greet?',
+            'required': False
+        }],
+        'options': [{
+            'name': 'yell',
+            'shortcut': 'y',
+            'description': 'If set, the task will yell in uppercase letters',
+            'flag': True
+        }],
+        'code': greet
+    }
+
+    app.add(greet_command)
 
 
 Coloring the Output
