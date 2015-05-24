@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_packages
 
-__version__ = '0.2.1'
+__version__ = '0.3.0'
 
 setup(
     name='cleo',
@@ -13,7 +13,7 @@ setup(
     author='Sébastien Eustace',
     author_email='sebastien.eustace@gmail.com',
     url='https://github.com/SDisPater/cleo',
-    download_url='https://github.com/SDisPater/cleo/archive/v0.2.0.tar.gz',
+    download_url='https://github.com/SDisPater/cleo/archive/v%s.tar.gz' % __version__,
     packages=find_packages(),
     install_requires=['nose', 'pylev', 'mock'],
     tests_require=['nose', 'mock'],
