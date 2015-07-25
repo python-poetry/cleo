@@ -7,6 +7,7 @@ import subprocess
 from .helper import Helper
 from ..formatters.output_formatter_style import OutputFormatterStyle
 from ..validators import Choice, Callable, Validator, Integer, ValidationError
+from .._compat import decode_str, PY2
 
 
 class DialogHelper(Helper):
@@ -103,7 +104,7 @@ class DialogHelper(Helper):
         input_stream = self.input_stream or sys.stdin
 
         if autocomplete is None or not self.has_stty_available():
-            ret = input_stream.readline(4096).decode('utf-8')
+            ret = decode_str(input_stream.readline(4096))
             if not ret:
                 raise Exception('Aborted')
 
@@ -245,10 +246,12 @@ class DialogHelper(Helper):
             output_.write(question)
 
             stty_mode = subprocess.check_output(['stty', '-g'])
+            if not PY2:
+                stty_mode = stty_mode.decode()
 
             subprocess.check_output(['stty', '-echo'])
             input_stream = self.input_stream or sys.stdin
-            value = input_stream.readline(4096).decode('utf-8')
+            value = decode_str(input_stream.readline(4096))
             subprocess.check_output(['stty', '%s' % stty_mode])
 
             if not value:

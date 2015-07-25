@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from io import BytesIO
+from io import BytesIO, StringIO
 import re
 
 from unittest import TestCase
@@ -9,6 +9,7 @@ from cleo.helpers.helper_set import HelperSet
 from cleo.helpers.formatter_helper import FormatterHelper
 from cleo.outputs.stream_output import StreamOutput
 from cleo.validators import Choice
+from cleo._compat import PY2
 
 
 class DialogHelperTest(TestCase):
@@ -39,6 +40,8 @@ class DialogHelperTest(TestCase):
                                        False, 'Input "%s" is not a superhero!'))
 
         output.get_stream().seek(0)
+        print(output.get_stream().read().decode())
+        output.get_stream().seek(0)
         self.assertTrue(re.match('.*Input "Sebastien" is not a superhero!.*',
                                  output.get_stream().read().decode()) is not None)
 
@@ -51,6 +54,20 @@ class DialogHelperTest(TestCase):
         """
         dialog = DialogHelper()
         dialog.set_input_stream(self.get_input_stream('\n8AM\n'))
+
+        self.assertEqual('2PM', dialog.ask(self.get_output_stream(), 'What time is it?', '2PM'))
+        output = self.get_output_stream()
+        self.assertEqual('8AM', dialog.ask(output, 'What time is it?', '2PM'))
+
+        output.get_stream().seek(0)
+        self.assertEqual('What time is it?', output.get_stream().read().decode())
+
+    def test_ask_with_string(self):
+        """
+        DialogHelper.ask() behaves properly with string
+        """
+        dialog = DialogHelper()
+        dialog.set_input_stream(self.get_string_input_stream('\n8AM\n'))
 
         self.assertEqual('2PM', dialog.ask(self.get_output_stream(), 'What time is it?', '2PM'))
         output = self.get_output_stream()
@@ -146,6 +163,17 @@ class DialogHelperTest(TestCase):
     def get_input_stream(self, input_):
         stream = BytesIO()
         stream.write(input_.encode())
+        stream.seek(0)
+
+        return stream
+
+    def get_string_input_stream(self, input_):
+        stream = StringIO()
+        if PY2:
+            stream.write(input_.decode())
+        else:
+            stream.write(input_)
+
         stream.seek(0)
 
         return stream

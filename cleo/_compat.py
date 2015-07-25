@@ -15,7 +15,7 @@ else:
 
 
 def decode_str(string, encodings=None):
-    if not PY2:
+    if not PY2 and not isinstance(string, bytes):
         return string
 
     if encodings is None:
