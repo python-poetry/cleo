@@ -40,8 +40,6 @@ class DialogHelperTest(TestCase):
                                        False, 'Input "%s" is not a superhero!'))
 
         output.get_stream().seek(0)
-        print(output.get_stream().read().decode())
-        output.get_stream().seek(0)
         self.assertTrue(re.match('.*Input "Sebastien" is not a superhero!.*',
                                  output.get_stream().read().decode()) is not None)
 
