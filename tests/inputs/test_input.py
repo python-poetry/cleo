@@ -64,6 +64,7 @@ class InputTest(CleoTestCase):
         input = MockInput(definition)
 
         input.validate_arguments()
+        self.assertIsInstance(input.get_argument('arg'), int)
 
         # Wrong type
         input = MockWrongInput(definition)
@@ -81,6 +82,7 @@ class InputTest(CleoTestCase):
         input = MockInput(definition)
 
         input.validate_options()
+        self.assertIsInstance(input.get_option('opt'), float)
 
         # Wrong type
         input = MockWrongInput(definition)

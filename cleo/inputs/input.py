@@ -86,7 +86,9 @@ class Input(object):
                         raise Exception('Invalid validator specified for argument %s' % arg.name)
 
                 try:
-                    validator.validate(arg_value)
+                    validated_value = validator.validate(arg_value)
+                    if validated_value is not None:
+                        self.arguments[arg_name] = validated_value
                 except ValidationError as e:
                     raise InvalidArgument(arg, e.msg, e.value)
 
@@ -108,7 +110,9 @@ class Input(object):
                         raise Exception('Invalid validator specified for option %s' % opt.name)
 
                 try:
-                    validator.validate(opt_value)
+                    validated_value = validator.validate(opt_value)
+                    if validated_value is not None:
+                        self.options[opt_name] = validated_value
                 except ValidationError as e:
                     raise InvalidOption(opt, e.msg, e.value)
 
