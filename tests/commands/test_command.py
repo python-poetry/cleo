@@ -12,6 +12,7 @@ from cleo.testers import CommandTester
 from .. import CleoTestCase
 from ..fixtures.test_command import TestCommand
 from ..fixtures.no_configure_command import NoConfigureCommand
+from ..fixtures.signature_command import SignatureCommand
 
 
 class CommandTest(CleoTestCase):
@@ -397,6 +398,15 @@ class CommandTest(CleoTestCase):
         self.assertEqual('no:configure', command.get_name())
         self.assertEqual('description', command.get_description())
         self.assertEqual('help', command.get_help())
+        self.assertEqual(2, command.get_definition().get_argument_count())
+        self.assertEqual(2, len(command.get_definition().get_options()))
+
+    def test_with_signature(self):
+        command = SignatureCommand()
+
+        self.assertEqual('signature:command', command.name)
+        self.assertEqual('description', command.description)
+        self.assertEqual('help', command.help)
         self.assertEqual(2, command.get_definition().get_argument_count())
         self.assertEqual(2, len(command.get_definition().get_options()))
 
