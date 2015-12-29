@@ -1,350 +1,142 @@
 # -*- coding: utf-8 -*-
 
-import re
-import sys
-
-from ..inputs.input import Input
-from ..inputs.input_definition import InputDefinition
-from ..inputs.input_argument import InputArgument
-from ..inputs.input_option import InputOption
-from ..outputs.output import Output
+from .base_command import BaseCommand, CommandError
+from ..inputs.list_input import ListInput
+from ..parser import Parser
 
 
-class CommandError(Exception):
-    pass
+class Command(BaseCommand):
 
+    name = None
 
-class Command(object):
+    description = None
+
+    signature = None
+
+    help = ''
 
     def __init__(self, name=None):
-        self._definition = InputDefinition()
-        self._ignore_validation_errors = False
-        self._application_definition_merged = False
-        self._application_definition_merged_with_args = False
-        self._application = None
-        self._helper_set = None
-        self._synopsis = None
-        self._code = None
+        self.input = None
+        self.output = None
 
-        if hasattr(self, 'aliases'):
-            self.set_aliases(self.aliases)
+        if self.signature:
+            self._configure_using_fluent_definition()
         else:
-            self.aliases = []
+            super(Command, self).__init__(name or self.name)
 
-        if hasattr(self, 'help'):
-            self.set_help(self.help)
-        else:
-            self.help = ''
+    def _configure_using_fluent_definition(self):
+        """
+        Configure the console command using a fluent definition.
+        """
+        definition = Parser.parse(self.signature)
 
-        self.name = name or getattr(self, 'name', None)
+        super(Command, self).__init__(definition['name'])
 
-        if hasattr(self, 'description'):
-            self.set_description(self.description)
-        else:
-            self.description = None
+        for argument in definition['arguments']:
+            self.get_definition().add_argument(argument)
 
-        if name is not None:
-            self.set_name(name)
+        for option in definition['options']:
+            self.get_definition().add_option(option)
 
-        self.configure()
+    def run(self, i, o):
+        """
+        Initialize command.
 
-        if not self.name:
-            raise Exception('The command name cannot be empty.')
+        :type i: cleo.inputs.input.Input
+        :type o: cleo.outputs.output.Output
+        """
+        self.input = i
+        self.output = o
+        
+        return super(Command, self).run(i, o)
 
-    def ignore_validation_errors(self):
-        self._ignore_validation_errors = True
+    def execute(self, i, o):
+        """
+        Executes the command.
 
-    def set_application(self, application=None):
-        self._application = application
-        if application:
-            self.set_helper_set(application.get_helper_set())
-        else:
-            self._helper_set = None
+        :type i: cleo.inputs.input.Input
+        :type o: cleo.outputs.output.Output
+        """
+        return self.handle()
 
-    def set_helper_set(self, helper_set):
-        self._helper_set = helper_set
-
-    def get_helper_set(self):
-        return self._helper_set
-
-    def get_application(self):
-        return self._application
-
-    def is_enabled(self):
-        return True
-
-    def configure(self):
-        if hasattr(self, 'arguments'):
-            for argument in self.arguments:
-                if isinstance(argument, InputArgument):
-                    self._definition.add_argument(argument)
-                elif isinstance(argument, dict):
-                    self.add_argument_from_dict({argument['name']: argument})
-                else:
-                    raise Exception('Invalid argument')
-
-        if hasattr(self, 'options'):
-            for option in self.options:
-                if isinstance(option, InputOption):
-                    self._definition.add_option(option)
-                elif isinstance(option, dict):
-                    self.add_option_from_dict({option['name']: option})
-                else:
-                    raise Exception('Invalid option')
-
-    def execute(self, input_, output_):
+    def handle(self):
+        """
+        Executes the command.
+        """
         raise NotImplementedError()
 
-    def interact(self, input_, output_):
-        pass
-
-    def initialize(self, input_, output_):
-        pass
-
-    def run(self, input_, output_):
+    def call(self, name, options=None):
         """
-        Runs the command.
+        Call another command.
 
-        The code to execute is either defined directly with the
-        setCode() method or by overriding the execute() method
-        in a sub-class.
+        :param name: The command name
+        :type name: str
 
-        @param input_: an Input instance
-        @type input_: Input
-        @param output_: an Output instance
-        @type output_: Output
-
-        @return: The command exit code
-        @rtype: int
+        :param options: The options
+        :type options: list or None
         """
-        # force the creation of the synopsis before the merge with the app definition
-        self.get_synopsis()
+        if options is None:
+            options = []
 
-        # add the application arguments and options
-        self.merge_application_definition()
+        command = self.get_application().find(name)
 
-        # bind the input against the command specific arguments/options
-        try:
-            input_.bind(self._definition)
-        except Exception as e:
-            if not self._ignore_validation_errors:
-                raise
+        options = [('command', command.get_name())] + options
 
-        self.initialize(input_, output_)
+        return command.run(ListInput(options), self.output)
 
-        if input_.is_interactive():
-            self.interact(input_, output_)
-
-        input_.validate()
-
-        if self._code:
-            status_code = self._code(input_, output_)
-        else:
-            status_code = self.execute(input_, output_)
-
-        try:
-            return int(float(status_code))
-        except (TypeError, ValueError):
-            return 0
-
-    def set_code(self, code):
-        if not callable(code):
-            raise Exception('Invalid callable provided to Command.setCode().')
-
-        self._code = code
-
-        return self
-
-    def merge_application_definition(self, merge_args=True):
+    def line(self, text):
         """
-        Merges the application definition with the command definition.
+        Write a string as information output.
 
-        This method should not be used directly.
-
-        @param merge_args: Whether to merge or not the Application definition arguments to Command definition arguments
-        @type merge_args: bool
+        :param text: The line to write
+        :type text: str
         """
-        if self._application is None \
-                or (self._application_definition_merged
-                    and (self._application_definition_merged_with_args or not merge_args)):
-            return
+        self.output.writeln(text)
 
-        if merge_args:
-            current_arguments = self._definition.get_arguments()
-            self._definition.set_arguments(self._application.get_definition().get_arguments())
-            self._definition.add_arguments(current_arguments)
-
-        self._definition.add_options(self._application.get_definition().get_options())
-
-        self._application_definition_merged = True
-        if merge_args:
-            self._application_definition_merged_with_args = True
-
-    def set_definition(self, definition):
-        if isinstance(definition, InputDefinition):
-            self._definition = definition
-        else:
-            self._definition.set_definition(definition)
-
-        self._application_definition_merged = False
-
-        return self
-
-    def get_definition(self):
-        return self._definition
-
-    def get_native_definition(self):
-        return self.get_definition()
-
-    def add_argument(self, name, mode=None,
-                     description='', default=None, validator=None):
-        self._definition.add_argument(
-            InputArgument(name, mode, description, default, validator)
-        )
-
-        return self
-
-    def add_argument_from_dict(self, argument_dict):
-        argument = InputArgument.from_dict(argument_dict)
-
-        self._definition.add_argument(argument)
-
-        return self
-
-    def add_option(self, name, shortcut=None, mode=None,
-                   description='', default=None, validator=None):
-        self._definition.add_option(
-            InputOption(name, shortcut, mode, description, default, validator)
-        )
-
-        return self
-
-    def add_option_from_dict(self, option_dict):
-        option = InputOption.from_dict(option_dict)
-
-        self._definition.add_option(option)
-
-        return self
-
-    def set_name(self, name):
-        self.validate_name(name)
-
-        self.name = name
-
-        return self
-
-    def get_name(self):
-        return self.name
-
-    def set_description(self, description):
-        self.description = description
-
-        return self
-
-    def get_description(self):
-        return self.description
-
-    def set_help(self, help_):
-        self.help = help_
-
-        return self
-
-    def get_help(self):
-        return self.help
-
-    def set_aliases(self, aliases):
-        for alias in aliases:
-            self.validate_name(alias)
-
-        self.aliases = aliases
-
-        return self
-
-    def get_aliases(self):
-        return self.aliases
-
-    def get_synopsis(self):
-        if self._synopsis is None:
-            self._synopsis = (
-                '%s %s'
-                % (self.name,
-                   self._definition.get_synopsis())
-            ).strip()
-
-        return self._synopsis
-
-    def get_helper(self, name):
-        return self._helper_set.get(name)
-
-    def get_processed_help(self):
-        name = self.name
-
-        h = self.get_help()
-
-        h = h.replace('%command.full_name%', name)
-        h = h.replace('%command.name%', name)
-
-        return h
-
-    def as_text(self):
-        if self._application and not self._application_definition_merged:
-            self.get_synopsis()
-            self.merge_application_definition(False)
-
-        messages = [
-            '<comment>Usage:</comment>',
-            ' ' + self.get_synopsis(),
-            '',
-        ]
-
-        if self.get_aliases():
-            messages.append('<comment>Aliases:</comment> <info>' + ', '.join(self.get_aliases()) + '</info>')
-
-        messages.append(self.get_native_definition().as_text())
-
-        h = self.get_processed_help()
-        if h:
-            messages.append('<comment>Help:</comment>')
-            messages.append(' ' + h.replace('\n', '\n ') + '\n')
-
-        return '\n'.join(messages)
-
-    def validate_name(self, name):
-        if not re.match('^[^:]+(:[^:]+)*$', name):
-            raise CommandError('Command name "%s" is invalid.' % name)
-
-    @classmethod
-    def from_dict(cls, command_dict):
+    def info(self, text):
         """
-        Creates a command from a dictionary.
+        Write a string as information output.
 
-        @param command_dict: The dictionary defining the commmand
-        @type command_dict: dict
-
-        @return: The command
-        @rtype: Command
+        :param text: The line to write
+        :type text: str
         """
-        if len(command_dict) > 1:
-            name = command_dict['name']
-        else:
-            name = list(command_dict.keys())[0]
-            command_dict = command_dict[name]
+        self.line('<info>%s</info>' % text)
 
-        command = Command(name)
+    def comment(self, text):
+        """
+        Write a string as comment output.
 
-        if 'description' in command_dict:
-            command.set_description(command_dict['description'])
+        :param text: The line to write
+        :type text: str
+        """
+        self.line('<comment>%s</comment>' % text)
 
-        if 'aliases' in command_dict:
-            command.set_aliases(command_dict['aliases'])
+    def question(self, text):
+        """
+        Write a string as question output.
 
-        if 'code' in command_dict:
-            command.set_code(command_dict['code'])
+        :param text: The line to write
+        :type text: str
+        """
+        self.line('<question>%s</question>' % text)
 
-        for argument in command_dict.get('arguments', []):
-            command.add_argument_from_dict(argument)
+    def error(self, text):
+        """
+        Write a string as error output.
 
-        for option in command_dict.get('options', []):
-            command.add_option_from_dict(option)
+        :param text: The line to write
+        :type text: str
+        """
+        self.line('<error>%s</error>' % text)
 
-        return command
+    def argument(self, key=None):
+        if key is None:
+            return self.input.get_arguments()
+
+        return self.input.get_argument(key)
+
+    def option(self, key=None):
+        if key is None:
+            return self.input.get_options()
+
+        return self.input.get_option(key)
