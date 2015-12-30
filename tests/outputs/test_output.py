@@ -10,17 +10,17 @@ from .. import CleoTestCase
 class OutputTest(CleoTestCase):
 
     def test_init(self):
-        output = TestOutput(Output.VERBOSITY_QUIET, True)
+        output = MyOutput(Output.VERBOSITY_QUIET, True)
         self.assertEqual(Output.VERBOSITY_QUIET, output.get_verbosity())
         self.assertTrue(output.is_decorated())
 
     def test_set_is_decorated(self):
-        output = TestOutput()
+        output = MyOutput()
         output.set_decorated(True)
         self.assertTrue(output.is_decorated())
 
     def test_set_get_verbosity(self):
-        output = TestOutput()
+        output = MyOutput()
         output.set_verbosity(Output.VERBOSITY_QUIET)
         self.assertEqual(Output.VERBOSITY_QUIET, output.get_verbosity())
 
@@ -36,18 +36,18 @@ class OutputTest(CleoTestCase):
         self.assertTrue(output.is_verbose())
 
     def test_write_with_verbosity_quiet(self):
-        output = TestOutput(Output.VERBOSITY_QUIET)
+        output = MyOutput(Output.VERBOSITY_QUIET)
         output.writeln('foo')
         self.assertEqual('', output.output)
 
     def test_write_a_list_of_messages(self):
-        output = TestOutput()
+        output = MyOutput()
         output.writeln(['foo', 'bar'])
         self.assertEqual('foo\nbar\n', output.output)
 
     def test_write_raw_message(self):
         for message, type_, expected_output in self.provide_write_arguments():
-            output = TestOutput()
+            output = MyOutput()
             output.writeln(message, type_)
             self.assertEqual(expected_output, output.output)
 
@@ -66,21 +66,21 @@ class OutputTest(CleoTestCase):
         ]
 
     def test_write_with_decoration_turned_off(self):
-        output = TestOutput()
+        output = MyOutput()
         output.set_decorated(False)
         output.writeln('<info>foo</info>')
         self.assertEqual('foo\n', output.output)
 
     def test_write_decorated_message(self):
         foo_style = OutputFormatterStyle('yellow', 'red', ['blink'])
-        output = TestOutput()
+        output = MyOutput()
         output.get_formatter().set_style('foo', foo_style)
         output.set_decorated(True)
         output.writeln('<foo>foo</foo>')
         self.assertEqual('\033[33;41;5mfoo\033[0m\n', output.output)
 
     def test_write_with_invalid_output_type(self):
-        output = TestOutput()
+        output = MyOutput()
         self.assertRaisesRegexp(
             Exception,
             'Unknown output type given \(24\)',
@@ -90,7 +90,7 @@ class OutputTest(CleoTestCase):
         )
 
     def test_write_with_invalid_style(self):
-        output = TestOutput()
+        output = MyOutput()
 
         output.clear()
         output.write('<bar>foo</bar>')
@@ -101,10 +101,10 @@ class OutputTest(CleoTestCase):
         self.assertEqual('<bar>foo</bar>\n', output.output)
 
 
-class TestOutput(Output):
+class MyOutput(Output):
 
     def __init__(self, verbosity=Output.VERBOSITY_NORMAL, decorated=None, formatter=None):
-        super(TestOutput, self).__init__(verbosity, decorated, formatter)
+        super(MyOutput, self).__init__(verbosity, decorated, formatter)
 
         self.output = ''
 

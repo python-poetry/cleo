@@ -3,7 +3,7 @@
 from cleo.commands.command import Command
 
 
-class TestCommand(Command):
+class SomeCommand(Command):
 
     def configure(self):
         self.set_name('namespace:name') \

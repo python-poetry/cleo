@@ -20,7 +20,7 @@ from .inputs.input_definition import InputDefinition
 from .commands.command import Command
 from .commands.help_command import HelpCommand
 from .commands.list_command import ListCommand
-from .helpers import HelperSet, FormatterHelper, DialogHelper, ProgressHelper, TableHelper
+from .helpers import HelperSet, FormatterHelper, QuestionHelper, ProgressHelper, TableHelper
 
 
 class Application(object):
@@ -575,11 +575,17 @@ class Application(object):
 
         if input_.has_parameter_option(['--no-interaction', '-n']):
             input_.set_interactive(False)
-        elif self.get_helper_set().has('dialog'):
-            input_stream = self.get_helper_set().get('dialog').get_input_stream()
+        elif self.get_helper_set().has('question'):
+            input_stream = self.get_helper_set().get('question').input_stream
             try:
-                is_atty = hasattr(input_stream, 'fileno') and os.isatty(input_stream)
-            except UnsupportedOperation:
+                is_atty = hasattr(input_stream, 'fileno')
+
+                if hasattr(input_stream, 'isatty'):
+                    is_atty = is_atty and input_stream.isatty()
+                else:
+                    is_atty = is_atty and os.isatty(input_stream)
+
+            except (UnsupportedOperation, TypeError):
                 is_atty = False
 
             if not is_atty:
@@ -612,7 +618,7 @@ class Application(object):
     def get_default_helper_set(self):
         return HelperSet({
             'formatter': FormatterHelper(),
-            'dialog': DialogHelper(),
+            'question': QuestionHelper(),
             'progress': ProgressHelper(),
             'table': TableHelper()
         })

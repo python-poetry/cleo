@@ -158,7 +158,10 @@ class Enum(Validator):
             values = self.values
 
         try:
-            self.values = set(values)
+            seen = set()
+            seen_add = seen.add
+
+            self.values = [x for x in values if not (x in seen or seen_add(x))]
         except TypeError:
             self.values = list(values)
 

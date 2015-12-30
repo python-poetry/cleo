@@ -10,7 +10,7 @@ from cleo.outputs import NullOutput
 from cleo.helpers import FormatterHelper
 from cleo.testers import CommandTester
 from .. import CleoTestCase
-from ..fixtures.test_command import TestCommand
+from ..fixtures.some_command import SomeCommand
 from ..fixtures.no_configure_command import NoConfigureCommand
 from ..fixtures.signature_command import SignatureCommand
 
@@ -46,7 +46,7 @@ class CommandTest(CleoTestCase):
         Command.set_application() sets the current application
         """
         application = Application()
-        command = TestCommand()
+        command = SomeCommand()
         command.set_application(application)
         self.assertEqual(application, command.get_application(), msg='.set_application() sets the current application')
 
@@ -54,7 +54,7 @@ class CommandTest(CleoTestCase):
         """
         Command.get/set_definition properly sets and gets definition
         """
-        command = TestCommand()
+        command = SomeCommand()
         definition = InputDefinition()
         ret = command.set_definition(definition)
         self.assertEqual(command, ret, msg='.set_definition() implements a fluent interface')
@@ -71,7 +71,7 @@ class CommandTest(CleoTestCase):
         """
         Command.add_argument() adds an argument to command.
         """
-        command = TestCommand()
+        command = SomeCommand()
         ret = command.add_argument('foo')
 
         self.assertEqual(ret, command)
@@ -81,7 +81,7 @@ class CommandTest(CleoTestCase):
         """
         Command.add_argument_from_dict() adds an argument to command.
         """
-        command = TestCommand()
+        command = SomeCommand()
         ret = command.add_argument_from_dict({'foo': {}})
 
         self.assertEqual(ret, command)
@@ -91,14 +91,14 @@ class CommandTest(CleoTestCase):
         """
         Command.add_option() adds an option to command.
         """
-        command = TestCommand()
+        command = SomeCommand()
         ret = command.add_option('foo')
 
         self.assertEqual(ret, command)
         self.assertTrue(command.get_definition().has_option('foo'))
 
     def test_get_namespace_get_name_set_name(self):
-        command = TestCommand()
+        command = SomeCommand()
         self.assertEqual('namespace:name', command.get_name())
 
         command.set_name('foo')
@@ -111,7 +111,7 @@ class CommandTest(CleoTestCase):
     def test_invalid_command_names(self):
         data = ['', 'foo:']
 
-        command = TestCommand()
+        command = SomeCommand()
 
         for d in data:
             self.assertRaisesRegexp(
@@ -122,7 +122,7 @@ class CommandTest(CleoTestCase):
             )
 
     def test_set_get_description(self):
-        command = TestCommand()
+        command = SomeCommand()
 
         self.assertEqual('description', command.get_description())
 
@@ -131,7 +131,7 @@ class CommandTest(CleoTestCase):
         self.assertEqual('description1', command.get_description())
 
     def test_set_get_help(self):
-        command = TestCommand()
+        command = SomeCommand()
 
         self.assertEqual('help', command.get_help())
 
@@ -140,7 +140,7 @@ class CommandTest(CleoTestCase):
         self.assertEqual('help1', command.get_description())
 
     def test_get_processed_help(self):
-        command = TestCommand()
+        command = SomeCommand()
 
         command.set_help('The %command.name% command does... Example: python %command.full_name%.')
         self.assertRegex(
@@ -153,7 +153,7 @@ class CommandTest(CleoTestCase):
         )
 
     def test_set_get_aliases(self):
-        command = TestCommand()
+        command = SomeCommand()
 
         self.assertEqual(['name'], command.get_aliases())
 
@@ -162,7 +162,7 @@ class CommandTest(CleoTestCase):
         self.assertEqual(['name1'], command.get_aliases())
 
     def test_get_synposis(self):
-        command = TestCommand()
+        command = SomeCommand()
         command.add_argument('foo')
         command.add_option('foo')
 
@@ -173,7 +173,7 @@ class CommandTest(CleoTestCase):
 
     def test_get_helper(self):
         application = Application()
-        command = TestCommand()
+        command = SomeCommand()
         command.set_application(application)
         formatter_helper = FormatterHelper()
 
@@ -189,7 +189,7 @@ class CommandTest(CleoTestCase):
         application1 = Application()
         application1.get_definition().add_arguments([InputArgument('foo')])
         application1.get_definition().add_options([InputOption('bar')])
-        command = TestCommand()
+        command = SomeCommand()
         command.set_application(application1)
         command.set_definition(
             InputDefinition([
@@ -212,7 +212,7 @@ class CommandTest(CleoTestCase):
         application1 = Application()
         application1.get_definition().add_arguments([InputArgument('foo')])
         application1.get_definition().add_options([InputOption('bar')])
-        command = TestCommand()
+        command = SomeCommand()
         command.set_application(application1)
         command.set_definition(InputDefinition())
 
@@ -228,7 +228,7 @@ class CommandTest(CleoTestCase):
         self.assertEqual(2, command.get_definition().get_argument_count())
 
     def test_run_interactive(self):
-        tester = CommandTester(TestCommand())
+        tester = CommandTester(SomeCommand())
 
         tester.execute([], {'interactive': True})
 
@@ -238,7 +238,7 @@ class CommandTest(CleoTestCase):
         )
 
     def test_run_non_interactive(self):
-        tester = CommandTester(TestCommand())
+        tester = CommandTester(SomeCommand())
 
         tester.execute([], {'interactive': False})
 
@@ -257,7 +257,7 @@ class CommandTest(CleoTestCase):
         )
 
     def test_run_with_invalid_option(self):
-        command = TestCommand()
+        command = SomeCommand()
         tester = CommandTester(command)
 
         self.assertRaises(
@@ -268,17 +268,17 @@ class CommandTest(CleoTestCase):
         )
 
     def test_run_returns_integer_exit_code(self):
-        command = TestCommand()
+        command = SomeCommand()
         exit_code = command.run(ListInput([]), NullOutput())
         self.assertEqual(0, exit_code)
 
-        command = TestCommand()
+        command = SomeCommand()
         command.execute = self.mock().MagicMock(return_value=2.3)
         exit_code = command.run(ListInput([]), NullOutput())
         self.assertEqual(2, exit_code)
 
     def test_set_code(self):
-        command = TestCommand()
+        command = SomeCommand()
         ret = command.set_code(lambda in_, out_: out_.writeln('from the code...'))
         self.assertEqual(ret, command)
 
@@ -289,7 +289,7 @@ class CommandTest(CleoTestCase):
             tester.get_display()
         )
 
-        command = TestCommand()
+        command = SomeCommand()
         command.set_code(self.callable_method)
         tester = CommandTester(command)
         tester.execute([])
@@ -299,7 +299,7 @@ class CommandTest(CleoTestCase):
         )
 
     def test_set_code_with_non_callable(self):
-        command = TestCommand()
+        command = SomeCommand()
 
         self.assertRaisesRegexp(
             Exception,
@@ -309,7 +309,7 @@ class CommandTest(CleoTestCase):
         )
 
     def test_as_text(self):
-        command = TestCommand()
+        command = SomeCommand()
         command.set_application(Application())
         tester = CommandTester(command)
         tester.execute([('command', command.get_name())])

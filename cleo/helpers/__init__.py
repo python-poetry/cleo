@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .dialog_helper import DialogHelper
+from .question_helper import QuestionHelper
 from .formatter_helper import FormatterHelper, OutputFormatter
 from .helper import Helper
 from .helper_set import HelperSet
@@ -8,7 +8,7 @@ from .progress_helper import ProgressHelper
 from .table_helper import TableHelper
 
 __all__ = [
-    'DialogHelper',
+    'QuestionHelper',
     'FormatterHelper', 'OutputFormatter',
     'Helper',
     'HelperSet',
