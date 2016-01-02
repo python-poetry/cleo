@@ -7,7 +7,7 @@ from .helper import Helper
 from ..questions import Question, ChoiceQuestion
 from ..outputs import ConsoleOutput
 from ..formatters import OutputFormatterStyle
-from .._utils import decode
+from .._compat import decode
 
 
 class QuestionHelper(Helper):

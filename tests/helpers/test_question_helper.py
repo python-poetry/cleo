@@ -12,7 +12,7 @@ from cleo.outputs.stream_output import StreamOutput
 from cleo.inputs import Input
 from cleo._compat import PY2
 from cleo.questions import Question, ConfirmationQuestion, ChoiceQuestion
-from cleo._utils import decode
+from cleo._compat import decode
 
 
 class QuestionHelperTest(CleoTestCase):

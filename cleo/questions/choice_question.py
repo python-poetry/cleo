@@ -4,7 +4,7 @@ import re
 from .question import Question
 from ..validators import Choice
 from ..exceptions import CleoException
-from .._utils import basestring, decode
+from .._compat import basestring, decode
 
 
 class SelectChoiceValidator(Choice):

@@ -4,7 +4,7 @@ from __future__ import division
 
 import math
 import re
-from .._utils import decode
+from .._compat import decode
 
 
 class Helper(object):
