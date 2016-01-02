@@ -9,9 +9,11 @@ class OutputError(Exception):
 
 class Output(object):
 
-    VERBOSITY_QUIET = 0
-    VERBOSITY_NORMAL = 1
-    VERBOSITY_VERBOSE = 2
+    VERBOSITY_QUIET = 16
+    VERBOSITY_NORMAL = 32
+    VERBOSITY_VERBOSE = 64
+    VERBOSITY_VERY_VERBOSE = 128
+    VERBOSITY_DEBUG = 256
 
     OUTPUT_NORMAL = 0
     OUTPUT_RAW = 1
@@ -45,6 +47,12 @@ class Output(object):
 
     def is_verbose(self):
         return self.VERBOSITY_VERBOSE == self.verbosity
+
+    def is_very_verbose(self):
+        return self.VERBOSITY_VERY_VERBOSE == self.verbosity
+
+    def is_debug(self):
+        return self.VERBOSITY_DEBUG == self.verbosity
 
     def write(self, messages, newline=False, output_type=OUTPUT_NORMAL):
         if self.verbosity == self.VERBOSITY_QUIET:
