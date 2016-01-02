@@ -6,6 +6,7 @@ from .helper import Helper
 from .helper_set import HelperSet
 from .progress_helper import ProgressHelper
 from .table_helper import TableHelper
+from .table import Table
 
 __all__ = [
     'QuestionHelper',
@@ -13,5 +14,6 @@ __all__ = [
     'Helper',
     'HelperSet',
     'ProgressHelper',
-    'TableHelper'
+    'TableHelper',
+    'Table'
 ]

@@ -3,6 +3,7 @@
 from .base_command import BaseCommand, CommandError
 from ..inputs.list_input import ListInput
 from ..parser import Parser
+from ..styles import CleoStyle
 
 
 class Command(BaseCommand):
@@ -46,7 +47,7 @@ class Command(BaseCommand):
         :type o: cleo.outputs.output.Output
         """
         self.input = i
-        self.output = o
+        self.output = CleoStyle(i, o)
         
         return super(Command, self).run(i, o)
 

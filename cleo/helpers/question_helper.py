@@ -239,7 +239,7 @@ class QuestionHelper(Helper):
                 # Restore cursor position
                 output.write('\0338')
 
-        subprocess.call(['stty', '%s' % stty_mode])
+        subprocess.call(['stty', '%s' % decode(stty_mode)])
 
         return ret
 
