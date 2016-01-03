@@ -21,7 +21,8 @@ class CleoStyle(OutputStyle):
         self._buffered_output = BufferedOutput(output.get_verbosity(), False, copy.deepcopy(output.get_formatter()))
         self._line_length = min(self._get_terminal_width(), self.MAX_LINE_LENGTH)
 
-    def block(self, messages, type=None, style=None, prefix=' ', padding=False):
+    def block(self, messages, type=None, style=None,
+              prefix=' ', padding=False, type_style=None, indent_on_type=False):
         """
         Formats a message as a block of text.
 
@@ -29,10 +30,10 @@ class CleoStyle(OutputStyle):
         @type messages: str or list
 
         @param type: The block type (added in [] on first line)
-        @type type: str
+        @type type: str or None
 
         @param style: The style to apply to the whole block
-        @type style: str
+        @type style: str or None
 
         @param prefix: The prefix for the block
         @type prefix: str
@@ -50,10 +51,17 @@ class CleoStyle(OutputStyle):
         if type is not None:
             messages[0] = '[%s] %s' % (type, messages[0])
 
+            if indent_on_type:
+                for key, message in enumerate(messages[1:]):
+                    key = key + 1
+                    messages[key] = ' ' * (Helper.len(type) + 1 + 2) + message
+
         # Wrap and add newlines for each element
         for key, message in enumerate(messages):
             message = OutputFormatter.escape(message)
-            lines += os.linesep.join(textwrap.wrap(message, self._line_length - Helper.len(prefix))).split(os.linesep)
+            wrap_limit = self._line_length - Helper.len(prefix)
+
+            lines += os.linesep.join(textwrap.wrap(message, wrap_limit)).split(os.linesep)
 
             if messages and key < len(messages) - 1:
                 lines.append('')
@@ -71,6 +79,14 @@ class CleoStyle(OutputStyle):
                 line = '<%s>%s</>' % (style, line)
 
             new_lines.append(line)
+
+        if type and type_style:
+            n = 0 if not padding else 1
+            split = new_lines[n].split('[%s]' % type)
+            if len(split) > 1:
+                new_lines[n] = split[0] + '[<%s>%s</>]' % (type_style, type) + split[1]
+            else:
+                new_lines[n] = '[<%s>%s</>]' % (type_style, type) + split[0]
 
         self.writeln(new_lines)
         self.new_line()
@@ -110,19 +126,19 @@ class CleoStyle(OutputStyle):
             self.writeln(' // %s' % msg)
 
     def success(self, message):
-        self.block(message, 'OK', 'fg=black;bg=green', padding=True)
+        self.block(message, 'OK', type_style='fg=green')
 
     def error(self, message):
         self.block(message, 'ERROR', 'fg=white;bg=red', padding=True)
 
     def warning(self, message):
-        self.block(message, 'WARNING', 'fg=white;bg=red', padding=True)
+        self.block(message, 'WARNING', type_style='fg=red')
 
     def note(self, message):
-        self.block(message, 'NOTE', 'fg=yellow', ' ! ')
+        self.block(message, 'NOTE', type_style='fg=blue')
 
     def caution(self, message):
-        self.block(message, 'CAUTION', 'fg=white;bg=red', ' ! ', padding=True)
+        self.block(message, 'CAUTION', type_style='fg=red', indent_on_type=True)
 
     def table(self, headers, rows):
         headers = list(map(lambda header: '<info>%s</>' % header, headers))
