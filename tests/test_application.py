@@ -862,7 +862,6 @@ class ApplicationTest(CleoTestCase):
 
         self.assertTrue(helper_set.has('formatter'))
         self.assertTrue(helper_set.has('question'))
-        self.assertTrue(helper_set.has('progress'))
 
     def test_adding_single_helper_set_overwrites_default_values(self):
         application = Application()
@@ -879,7 +878,6 @@ class ApplicationTest(CleoTestCase):
 
         self.assertTrue(helper_set.has('formatter'))
         self.assertFalse(helper_set.has('question'))
-        self.assertFalse(helper_set.has('progress'))
 
     def test_overwriting_single_helper_set_overwrites_default_values(self):
         application = CustomApplication()
@@ -896,7 +894,6 @@ class ApplicationTest(CleoTestCase):
 
         self.assertTrue(helper_set.has('formatter'))
         self.assertFalse(helper_set.has('question'))
-        self.assertFalse(helper_set.has('progress'))
 
     def test_get_default_input_definition_returns_default_values(self):
         application = Application()
