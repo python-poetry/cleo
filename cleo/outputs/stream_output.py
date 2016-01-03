@@ -4,6 +4,7 @@ import os
 from io import UnsupportedOperation
 
 from .output import Output
+from .._compat import encode
 
 
 class StreamOutput(Output):
@@ -32,7 +33,7 @@ class StreamOutput(Output):
         try:
             self.stream.write(message)
         except TypeError:
-            message = message.encode('utf-8')
+            message = encode(message)
             self.stream.write(message)
 
         self.stream.flush()
