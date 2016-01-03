@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import warnings
 from .helper import Helper
 from .table import Table
 from ..outputs import NullOutput
@@ -15,6 +16,9 @@ class TableHelper(Helper):
     LAYOUT_COMPACT = 2
 
     def __init__(self):
+        warnings.warn('TableHelper class is deprecated. '
+                      'Use the Table class instead', DeprecationWarning)
+
         self._table = Table(NullOutput())
 
 

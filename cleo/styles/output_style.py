@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from ..helpers import ProgressHelper
+from ..helpers import ProgressBar
 from ..outputs import Output
 
 
@@ -163,7 +163,7 @@ class OutputStyle(Output):
 
         @rtype ProgressHelper
         """
-        return ProgressHelper()
+        return ProgressBar(self, max)
 
     def write(self, messages, newline=False, type=Output.OUTPUT_NORMAL):
         self._output.write(messages, newline, type)

@@ -2,6 +2,7 @@
 
 import time
 import math
+import warnings
 
 from .helper import Helper
 from ..outputs.output import Output
@@ -63,6 +64,10 @@ class ProgressHelper(Helper):
         (129600, '1 day'),
         (604800, 'days', 86400)
     ]
+
+    def __init__(self):
+        warnings.warn('ProgressHelper class is deprecated. '
+                      'Use the ProgressBar class instead', DeprecationWarning)
 
     def set_bar_width(self, size):
         """
@@ -193,6 +198,9 @@ class ProgressHelper(Helper):
         if not self.max_steps:
             self.bar_char = self.bar_char_original
             self.display(True)
+        else:
+            if self.current_step < self.max_steps:
+                self.advance(self.max_steps - self.current_step)
 
         self.start_time = None
         self.output.writeln('')

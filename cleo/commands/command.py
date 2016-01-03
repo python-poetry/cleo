@@ -287,6 +287,17 @@ class Command(BaseCommand):
         """
         self.output.listing(elements)
 
+    def progress_bar(self, max=0):
+        """
+        Creates a new progress bar
+
+        :param max: The maximum number of steps
+        :type max: int
+
+        :rtype: ProgressBar
+        """
+        return self.output.create_progress_bar(max)
+
     def _parse_verbosity(self, level=None):
         if level in self.verbosity_map:
             level = self.verbosity_map[level]

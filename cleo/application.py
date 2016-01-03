@@ -619,7 +619,6 @@ class Application(object):
         return HelperSet({
             'formatter': FormatterHelper(),
             'question': QuestionHelper(),
-            'progress': ProgressHelper(),
             'table': TableHelper()
         })
 
