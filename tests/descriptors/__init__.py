@@ -63,12 +63,6 @@ class DescriptorTestCase(CleoTestCase):
 
         return data
 
-    def get_descriptor(self):
-        raise NotImplementedError()
-
-    def get_format(self):
-        raise NotImplementedError()
-
     def assertDescription(self, expected_description, described_object):
         output = BufferedOutput(BufferedOutput.VERBOSITY_NORMAL, True)
         self.get_descriptor().describe(output, described_object, raw_output=True)
