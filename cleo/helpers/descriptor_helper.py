@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from .helper import Helper
-from ..descriptors import TextDescriptor
+from ..descriptors import TextDescriptor, JsonDescriptor
 
 
 class DescriptorHelper(Helper):
@@ -13,6 +13,7 @@ class DescriptorHelper(Helper):
         self._descriptors = {}
 
         self.register('txt', TextDescriptor())
+        self.register('json', JsonDescriptor())
 
     def describe(self, output, obj, **options):
         """

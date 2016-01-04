@@ -17,7 +17,7 @@ class HelpCommand(Command):
 
   <info>python %command.full_name% list</info>
 
-You can also output the help in other formats by using the --format option:
+You can also output the help in other formats by using the <comment>--format</comment> option:
 
   <info>python %command.full_name% --format=json list</info>
 

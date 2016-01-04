@@ -80,7 +80,7 @@ class InputOption(object):
         self.__name = name
         self.__shortcut = shortcut
         self.__mode = mode
-        self.__description = description
+        self.__description = description or ''
         self.__validator = VALIDATORS.get(validator)
 
         self.set_default(default)

@@ -4,9 +4,21 @@ import os
 from .. import CleoTestCase
 from .objects_provider import ObjectsProvider
 from cleo.outputs import BufferedOutput
+from cleo.commands import BaseCommand
 
 
 class DescriptorTestCase(CleoTestCase):
+
+    def setUp(self):
+        super(DescriptorTestCase, self).setUp()
+
+        self.original = BaseCommand._get_command_full_name
+        BaseCommand._get_command_full_name = lambda self: 'app/console ' + self.name
+
+    def tearDown(self):
+        super(DescriptorTestCase, self).tearDown()
+
+        BaseCommand._get_command_full_name = self.original
 
     def _test_describe_input_arguments(self):
         for argument, expected_description in self.get_input_argument_test_data():

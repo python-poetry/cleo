@@ -16,7 +16,7 @@ class Command(BaseCommand):
 
     signature = None
 
-    description = None
+    description = ''
 
     help = ''
 

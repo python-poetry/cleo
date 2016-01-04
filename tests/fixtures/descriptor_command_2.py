@@ -13,3 +13,6 @@ class DescriptorCommand2(Command):
     help = 'command 2 help'
 
     usages = ['-o|--option_name <argument_name>', '<argument_name>']
+
+    def _get_command_full_name(self):
+        return 'app/console ' + self.name

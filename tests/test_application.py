@@ -717,8 +717,6 @@ class ApplicationTest(CleoTestCase):
         )
 
         tester.run([('command', 'list'), ('--help', True)], {'decorated': False})
-        print(self.open_fixture('application_run3.txt'))
-        print(tester.get_display())
         self.assertEqual(
             self.open_fixture('application_run3.txt'),
             tester.get_display()

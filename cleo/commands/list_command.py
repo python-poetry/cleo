@@ -21,7 +21,7 @@ You can also display the commands for a specific namespace:
 
   <info>python %command.full_name% test</info>
 
-You can also output the information in other formats by using the --format option:
+You can also output the information in other formats by using the <comment>--format</comment> option:
 
   <info>python %command.full_name% --format=json</info>
 

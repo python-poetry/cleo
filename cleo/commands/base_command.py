@@ -2,6 +2,7 @@
 
 import re
 import copy
+import inspect
 
 from ..inputs.input import Input
 from ..inputs.input_definition import InputDefinition
@@ -42,7 +43,7 @@ class BaseCommand(object):
         if hasattr(self, 'description'):
             self.set_description(self.description)
         else:
-            self.description = None
+            self.description = ''
 
         if hasattr(self, 'usages'):
             for usage in copy.copy(self.usages):
@@ -300,11 +301,13 @@ class BaseCommand(object):
 
         h = self.get_help() or self.get_description()
 
-        import inspect
-        h = h.replace('%command.full_name%', inspect.stack()[-1][1] + ' ' + name)
+        h = h.replace('%command.full_name%', self._get_command_full_name())
         h = h.replace('%command.name%', name)
 
         return h
+
+    def _get_command_full_name(self):
+        return inspect.stack()[-1][1] + ' ' + self.name
 
     def validate_name(self, name):
         if not re.match('^[^:]+(:[^:]+)*$', name):

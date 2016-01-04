@@ -13,3 +13,6 @@ class DescriptorCommand1(Command):
     aliases = ['alias1', 'alias2']
 
     help = 'command 1 help'
+
+    def _get_command_full_name(self):
+        return 'app/console ' + self.name
