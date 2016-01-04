@@ -17,7 +17,6 @@ setup(
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     install_requires=['pylev', 'mock'],
     tests_require=['pytest', 'mock'],
-    test_suite='nose.collector',
     classifiers=[
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
