@@ -154,22 +154,7 @@ class Application(object):
         return self._definition
 
     def get_help(self):
-        messages = [
-            self.get_long_version(),
-            '',
-            '<comment>Usage:</comment>',
-            '  [options] command [arguments]',
-            '',
-            '<comment>Options:</comment>'
-        ]
-
-        for option in self.get_definition().get_options():
-            messages.append('  %-29s %s %s'
-                            % ('<info>--' + option.get_name() + '</info>',
-                               '<info>-' + option.get_shortcut() + '</info>' if option.get_shortcut() else '  ',
-                               option.get_description()))
-
-        return '\n'.join(messages)
+        return self.get_long_version()
 
     def set_catch_exceptions(self, boolean):
         self._catch_exceptions = boolean
@@ -393,38 +378,6 @@ class Application(object):
 
         return abbrevs
 
-    def as_text(self, namespace=None, raw=False):
-        commands = self.all(self.find_namespace(namespace)) if namespace else self._commands
-
-        width = 0
-        for command in commands.values():
-            width = len(command.get_name()) if len(command.get_name()) > width else width
-        width += 2
-
-        if raw:
-            messages = []
-            for space, commands in self.sort_commands(commands):
-                for name, command in commands:
-                    messages.append('%-*s %s' % (width, name, command.get_description()))
-
-                return '\n'.join(messages)
-
-        messages = [self.get_help(), '']
-        if namespace:
-            messages.append('<comment>Available commands for the \"%s\" namespace:</comment>' % namespace)
-        else:
-            messages.append('<comment>Available commands:</comment>')
-
-        # add command by namespace
-        for space, commands in self.sort_commands(commands):
-            if not namespace and '_global' != space:
-                messages.append('<comment>' + space + '</comment>')
-
-            for name, command in commands:
-                messages.append('  <info>' + '%-*s</info> %s' % (width, name, command.get_description()))
-
-        return '%s\n' % '\n'.join(messages)
-
     def render_exception(self, e, output_):
         tb = traceback.extract_tb(sys.exc_info()[2])
 
@@ -447,7 +400,7 @@ class Application(object):
 
                 l = max(line_length, l)
 
-        messages = ['', '']
+        messages = ['']
         empty_line = formatter.format('<error>%s</error>' % (' ' * l))
         messages.append(empty_line)
         messages.append(formatter.format('<error>%s%s</error>'
@@ -461,7 +414,6 @@ class Application(object):
             )
 
         messages.append(empty_line)
-        messages.append('')
         messages.append('')
 
         output_.writeln(messages, Output.OUTPUT_RAW)
@@ -481,13 +433,11 @@ class Application(object):
                 output_.writeln('   %s' % line)
 
             output_.writeln('')
-            output_.writeln('')
 
         if self._running_command is not None:
             output_.writeln('<info>%s</info>'
                             % self._running_command.get_synopsis())
 
-            output_.writeln('')
             output_.writeln('')
 
     def get_terminal_width(self, output_):
@@ -593,7 +543,17 @@ class Application(object):
 
         if input_.has_parameter_option(['--quiet', '-q']):
             output_.set_verbosity(Output.VERBOSITY_QUIET)
-        elif input_.has_parameter_option(['--verbose', '-v']):
+        elif input_.has_parameter_option('-vvv')\
+                or input_.has_parameter_option('--verbose=3')\
+                or input_.get_parameter_option('--verbose') == 3:
+            output_.set_verbosity(Output.VERBOSITY_DEBUG)
+        elif input_.has_parameter_option('-vv')\
+                or input_.has_parameter_option('--verbose=2')\
+                or input_.get_parameter_option('--verbose') == 2:
+            output_.set_verbosity(Output.VERBOSITY_VERY_VERBOSE)
+        elif input_.has_parameter_option('-v')\
+                or input_.has_parameter_option('--verbose=1')\
+                or input_.get_parameter_option('--verbose') == 1:
             output_.set_verbosity(Output.VERBOSITY_VERBOSE)
 
     def get_command_name(self, input_):
@@ -603,13 +563,17 @@ class Application(object):
         return InputDefinition([
             InputArgument('command', InputArgument.REQUIRED, 'The command to execute'),
 
-            InputOption('--help', '-h', InputOption.VALUE_NONE, 'Display this help message.'),
-            InputOption('--quiet', '-q', InputOption.VALUE_NONE, 'Do not output any message.'),
-            InputOption('--verbose', '-v', InputOption.VALUE_NONE, 'Increase the verbosity of messages.'),
-            InputOption('--version', '-V', InputOption.VALUE_NONE, 'Display this application version.'),
-            InputOption('--ansi', '', InputOption.VALUE_NONE, 'Force ANSI output.'),
-            InputOption('--no-ansi', '', InputOption.VALUE_NONE, 'Disable ANSI output.'),
-            InputOption('--no-interaction', '-n', InputOption.VALUE_NONE, 'Do not ask any interactive question.')
+            InputOption('--help', '-h', InputOption.VALUE_NONE, 'Display this help message'),
+            InputOption('--quiet', '-q', InputOption.VALUE_NONE, 'Do not output any message'),
+            InputOption(
+                '--verbose', '-v|vv|vvv', InputOption.VALUE_NONE,
+                'Increase the verbosity of messages: 1 for normal output, '
+                '2 for more verbose output and 3 for debug'
+            ),
+            InputOption('--version', '-V', InputOption.VALUE_NONE, 'Display this application version'),
+            InputOption('--ansi', '', InputOption.VALUE_NONE, 'Force ANSI output'),
+            InputOption('--no-ansi', '', InputOption.VALUE_NONE, 'Disable ANSI output'),
+            InputOption('--no-interaction', '-n', InputOption.VALUE_NONE, 'Do not ask any interactive question')
         ])
 
     def get_default_commands(self):

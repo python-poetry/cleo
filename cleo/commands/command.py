@@ -7,15 +7,16 @@ from ..styles import CleoStyle
 from ..outputs import Output
 from ..questions import ChoiceQuestion
 from ..helpers import Table
+from ..formatters import OutputFormatterStyle
 
 
 class Command(BaseCommand):
 
     name = None
 
-    description = None
+    signature = None
 
-    signature = ''
+    description = None
 
     help = ''
 
@@ -32,6 +33,14 @@ class Command(BaseCommand):
     def __init__(self, name=None):
         self.input = None
         self.output = None
+
+        if self.__doc__:
+            doc = self.__doc__.strip().split('\n', 1)
+            if len(doc) > 1:
+                self.description = doc[0].strip()
+                self.signature = doc[1].strip('\n').strip()
+            else:
+                self.description = doc[0].strip()
 
         if self.signature:
             self._configure_using_fluent_definition()
@@ -297,6 +306,26 @@ class Command(BaseCommand):
         :rtype: ProgressBar
         """
         return self.output.create_progress_bar(max)
+
+    def set_style(self, name, fg=None, bg=None, options=None):
+        """
+        Sets a new style
+
+        :param name: The name of the style
+        :type name: str
+
+        :param fg: The foreground color
+        :type fg: str
+
+        :param bg: The background color
+        :type bg: str
+
+        :param options: The options
+        :type options: list
+        """
+        style = OutputFormatterStyle(fg, bg, options)
+
+        self.output.get_formatter().set_style(name, style)
 
     def _parse_verbosity(self, level=None):
         if level in self.verbosity_map:

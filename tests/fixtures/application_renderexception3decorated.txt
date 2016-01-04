@@ -1,11 +1,8 @@
 
-
 [37;41m                           [0m
 [37;41m  [Exception]              [0m
 [37;41m  Third exception [0m[34;41mcomment[0m[37;41m  [0m
 [37;41m                           [0m
 
-
 [32mfoo3:bar[0m
-
 

@@ -301,35 +301,18 @@ class InputDefinitionTest(CleoTestCase):
         definition = InputDefinition([InputOption('foo', 'f')])
         self.assertEqual('[-f|--foo]', definition.get_synopsis())
         definition = InputDefinition([InputOption('foo', 'f', InputOption.VALUE_REQUIRED)])
-        self.assertEqual('[-f|--foo="..."]', definition.get_synopsis())
+        self.assertEqual('[-f|--foo FOO]', definition.get_synopsis())
         definition = InputDefinition([InputOption('foo', 'f', InputOption.VALUE_OPTIONAL)])
-        self.assertEqual('[-f|--foo[="..."]]', definition.get_synopsis())
+        self.assertEqual('[-f|--foo [FOO]]', definition.get_synopsis())
 
         definition = InputDefinition([InputArgument('foo')])
-        self.assertEqual('[foo]', definition.get_synopsis())
+        self.assertEqual('[<foo>]', definition.get_synopsis())
         definition = InputDefinition([InputArgument('foo', InputArgument.REQUIRED)])
-        self.assertEqual('foo', definition.get_synopsis())
+        self.assertEqual('<foo>', definition.get_synopsis())
         definition = InputDefinition([InputArgument('foo', InputArgument.IS_LIST)])
-        self.assertEqual('[foo1] ... [fooN]', definition.get_synopsis())
+        self.assertEqual('[<foo>]...', definition.get_synopsis())
         definition = InputDefinition([InputArgument('foo', InputArgument.REQUIRED | InputArgument.IS_LIST)])
-        self.assertEqual('foo1 ... [fooN]', definition.get_synopsis())
-
-    def test_as_text(self):
-        definition = InputDefinition([
-            InputArgument('foo', InputArgument.OPTIONAL, 'The foo argument'),
-            InputArgument('baz', InputArgument.OPTIONAL, 'The baz argument', True),
-            InputArgument('bar', InputArgument.OPTIONAL | InputArgument.IS_LIST,
-                          'The bar argument', ['http://foo.com/']),
-            InputOption('foo', 'f', InputOption.VALUE_REQUIRED, 'The foo option'),
-            InputOption('baz', None, InputOption.VALUE_OPTIONAL, 'The baz option', False),
-            InputOption('bar', 'b', InputOption.VALUE_OPTIONAL, 'The bar option', 'bar'),
-            InputOption('qux', '', InputOption.VALUE_OPTIONAL | InputOption.VALUE_IS_LIST,
-                        'The qux option', ['http://foo.com/', 'bar'])
-        ])
-        self.assertEqual(
-            self.open_fixture('definition_astext.txt'),
-            definition.as_text()
-        )
+        self.assertEqual('<foo> (<foo>)...', definition.get_synopsis())
 
     def initialize_arguments(self):
         self.foo = InputArgument('foo')

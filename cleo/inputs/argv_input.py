@@ -185,7 +185,7 @@ class ArgvInput(Input):
     def get_parameter_option(self, values, default=False):
         values = [values] if not isinstance(values, (list, tuple)) else values
 
-        tokens = self.__tokens
+        tokens = self.__tokens[:]
         while True:
             try:
                 token = tokens.pop(0)

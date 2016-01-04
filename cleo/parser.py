@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import os
 from .exceptions import CleoException
 from .inputs.input_argument import InputArgument
 from .inputs.input_option import InputOption
@@ -26,6 +27,8 @@ class Parser(object):
 
         if not expression.strip():
             raise CleoException('Console command signature is empty.')
+
+        expression = expression.replace(os.linesep, '')
 
         matches = re.match('[^\s]+', expression)
 
@@ -142,29 +145,35 @@ class Parser(object):
             shortcut = matches[0].lstrip('-')
             token = matches[1]
 
-        if token.endswith('='):
-            return InputOption(
-                token.rstrip('='),
-                shortcut,
-                InputOption.VALUE_OPTIONAL,
-                description
-            )
-        elif token.endswith('=*'):
-            return InputOption(
-                token.rstrip('=*'),
-                shortcut,
-                InputOption.VALUE_OPTIONAL | InputOption.VALUE_IS_LIST,
-                description
-            )
+        default = None
+        mode = InputOption.VALUE_NONE
 
-        matches = re.match('(.+)\=(.+)', token)
+        if token.endswith('=*'):
+            mode = InputOption.VALUE_REQUIRED | InputOption.VALUE_IS_LIST
+            token = token.rstrip('=*')
+        elif token.endswith('=?*'):
+            mode = InputOption.VALUE_OPTIONAL | InputOption.VALUE_IS_LIST
+            token = token.rstrip('=?*')
+        elif token.endswith("=?"):
+            mode = InputOption.VALUE_OPTIONAL
+            token = token.rstrip('=?')
+        elif token.endswith('='):
+            mode = InputOption.VALUE_REQUIRED
+            token = token.rstrip('=')
+
+        matches = re.match('(.+)(\=[\?\*]*)(.+)', token)
         if matches:
-            return InputOption(
-                matches.group(1),
-                shortcut,
-                InputOption.VALUE_OPTIONAL,
-                description,
-                matches.group(2)
-            )
+            token = matches.group(1)
+            operator = matches.group(2)
+            default = matches.group(3)
 
-        return InputOption(token, shortcut, InputOption.VALUE_NONE, description)
+            if operator == '=*':
+                mode = InputOption.VALUE_REQUIRED | InputOption.VALUE_IS_LIST
+            elif operator == '=?*':
+                mode = InputOption.VALUE_OPTIONAL | InputOption.VALUE_IS_LIST
+            elif operator == '=?':
+                mode = InputOption.VALUE_OPTIONAL
+            elif operator == '=':
+                mode = InputOption.VALUE_REQUIRED
+
+        return InputOption(token, shortcut, mode, description, default)

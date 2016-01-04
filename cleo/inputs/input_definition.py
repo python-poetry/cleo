@@ -169,90 +169,47 @@ class InputDefinition(object):
 
         return self.__shortcuts[shortcut]
 
-    def get_synopsis(self):
+    def get_synopsis(self, short=False):
         elements = []
-        for option in self.get_options():
-            shortcut = '-%s|' % option.get_shortcut() if option.get_shortcut() else ''
 
-            if option.is_value_required():
-                element = '%s--%s="..."'
-            elif option.is_value_optional():
-                element = '%s--%s[="..."]'
-            else:
-                element = '%s--%s'
+        if short and self.get_options():
+            elements.append('[options]')
+        elif not short:
+            for option in self.get_options():
+                value = ''
 
-            elements.append('[%s]' % (element % (shortcut, option.get_name())))
+
+                if option.accept_value():
+                    left = ''
+                    right = ''
+
+                    if option.is_value_optional():
+                        left = '['
+                        right = ']'
+
+                    value = ' %s%s%s' % (left, option.get_name().upper(), right)
+
+                shortcut = '-%s|' % option.get_shortcut() if option.get_shortcut() else ''
+
+                elements.append('[%s--%s%s]' % (shortcut, option.get_name(), value))
+
+        if len(elements) and self.get_arguments():
+            elements.append('[--]')
 
         for argument in self.get_arguments():
-            if argument.is_required():
-                element = '%s'
-            else:
-                element = '[%s]'
+            element = '<%s>' % argument.get_name()
 
-            elements.append(element % (argument.get_name() + ('1' if argument.is_list() else '')))
+            if not argument.is_required():
+                element = '[%s]' % element
+            elif argument.is_list():
+                element = '%s (%s)' % (element, element)
+
             if argument.is_list():
-                elements.append('... [%sN]' % argument.get_name())
+                element += '...'
+
+            elements.append(element)
 
         return ' '.join(elements)
-
-    def as_text(self):
-        # find the largest option or argument name
-        mx = 0
-        for option in self.get_options():
-            name_length = len(option.get_name()) + 2
-            if option.get_shortcut():
-                name_length += len(option.get_shortcut()) + 3
-
-            mx = max(mx, name_length)
-
-        for argument in self.get_arguments():
-            mx = max(mx, len(argument.get_name()))
-        mx += 1
-
-        text = []
-
-        if self.get_arguments():
-            text.append('<comment>Arguments:</comment>')
-            for argument in self.get_arguments():
-                if argument.get_default() is not None\
-                    and (not isinstance(argument.get_default(), list)
-                         or len(argument.get_default())):
-                    default = '<comment> (default: %s)</comment>' % self.format_default_value(argument.get_default())
-                else:
-                    default = ''
-
-                description = argument.get_description().replace('\n', '\n' + ' ' * (mx + 2))
-
-                text.append(' <info>%-*s</info> %s%s' % (mx, argument.get_name(), description, default))
-
-            text.append('')
-
-        if self.get_options():
-            text.append('<comment>Options:</comment>')
-            for option in self.get_options():
-                if option.accept_value() \
-                    and option.get_default() is not None \
-                    and (not isinstance(option.get_default(), list)
-                         or len(option.get_default())):
-                    default = '<comment> (default: %s)</comment>' % self.format_default_value(option.get_default())
-                else:
-                    default = ''
-
-                multiple = '<comment> (multiple values allowed)</comment>' if option.is_list() else ''
-                description = option.get_description().replace('\n', '\n' + ' ' * (mx + 2))
-
-                option_max = mx - len(option.get_name()) - 2
-                text.append(' <info>%s</info> %-*s%s%s%s'
-                            % ('--' + option.get_name(),
-                               option_max,
-                               '(-%s) ' % option.get_shortcut() if option.get_shortcut() else '',
-                               description,
-                               default,
-                               multiple))
-
-            text.append('')
-
-        return '\n'.join(text)
 
     def format_default_value(self, default):
         return json.dumps(default)

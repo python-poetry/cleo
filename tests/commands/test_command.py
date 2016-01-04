@@ -163,11 +163,11 @@ class CommandTest(CleoTestCase):
 
     def test_get_synposis(self):
         command = SomeCommand()
-        command.add_argument('foo')
+        command.add_argument('bar')
         command.add_option('foo')
 
         self.assertEqual(
-            'namespace:name [--foo] [foo]',
+            'namespace:name [--foo] [--] [<bar>]',
             command.get_synopsis()
         )
 
@@ -306,17 +306,6 @@ class CommandTest(CleoTestCase):
             'Invalid callable provided to Command.setCode().',
             command.set_code,
             self.NON_CALLABLE
-        )
-
-    def test_as_text(self):
-        command = SomeCommand()
-        command.set_application(Application())
-        tester = CommandTester(command)
-        tester.execute([('command', command.get_name())])
-
-        self.assertEqual(
-            self.open_fixture('command_astext.txt'),
-            command.as_text()
         )
 
     def test_from_dict(self):

@@ -12,10 +12,10 @@ class HelpCommandTest(CleoTestCase):
         command = HelpCommand()
         command.set_application(Application())
         tester = CommandTester(command)
-        tester.execute([('command_name', 'li')])
-        self.assertRegex(
-            tester.get_display(),
-            'list \[--raw\] \[namespace\]'
+        tester.execute([('command_name', 'li')], {'decorated': False})
+        self.assertIn(
+            'list [options] [--] [<namespace>]',
+            tester.get_display()
         )
 
     def test_execute_for_command(self):
@@ -23,16 +23,16 @@ class HelpCommandTest(CleoTestCase):
         tester = CommandTester(command)
         command.set_command(ListCommand())
         tester.execute([])
-        self.assertRegex(
-            tester.get_display(),
-            'list \[--raw\] \[namespace\]'
+        self.assertIn(
+            'list [options] [--] [<namespace>]',
+            tester.get_display()
         )
 
     def test_execute_for_application_command(self):
         application = Application()
         tester = CommandTester(application.get('help'))
         tester.execute([('command_name', 'list')])
-        self.assertRegex(
-            tester.get_display(),
-            'list \[--raw\] \[namespace\]'
+        self.assertIn(
+            'list [options] [--] [<namespace>]',
+            tester.get_display()
         )

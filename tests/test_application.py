@@ -614,24 +614,6 @@ class ApplicationTest(CleoTestCase):
         except Exception as e:
             self.assertEqual('Command "foo" is not defined.', str(e))
 
-    def test_as_text(self):
-        """
-        Application.as_text() returns a text representation of the application.
-        """
-        application = Application()
-        application.add(FooCommand())
-
-        self.ensure_static_command_help(application)
-
-        self.assertEqual(
-            self.open_fixture('application_astext1.txt'),
-            application.as_text()
-        )
-        self.assertEqual(
-            self.open_fixture('application_astext2.txt'),
-            application.as_text('foo')
-        )
-
     def test_render_exception(self):
         """
         Application.render_exception() displays formatted exception.
@@ -735,6 +717,8 @@ class ApplicationTest(CleoTestCase):
         )
 
         tester.run([('command', 'list'), ('--help', True)], {'decorated': False})
+        print(self.open_fixture('application_run3.txt'))
+        print(tester.get_display())
         self.assertEqual(
             self.open_fixture('application_run3.txt'),
             tester.get_display()

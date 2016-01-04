@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import re
 from ..validators import ValidationError, VALIDATORS
 
 
@@ -41,7 +42,7 @@ class InputOption(object):
         @param name: The option name
         @type name: str
         @param shortcut: The option shortcut
-        @type shortcut: str or None
+        @type shortcut: str or None or list
         @param mode: The argument mode: VALUE_NONE or VALUE_REQUIRED or VALUE_OPTIONAL
         @type mode: int or None
         @param description: A description text
@@ -61,8 +62,12 @@ class InputOption(object):
             shortcut = None
 
         if shortcut is not None:
-            if shortcut[0] == '-':
-                shortcut = shortcut[1:]
+            if isinstance(shortcut, list):
+                shortcut = '|'.join(shortcut)
+
+            shortcuts = re.split('\|-?', shortcut.lstrip('-'))
+            shortcuts = list(filter(lambda x: x.strip() != '', shortcuts))
+            shortcut = '|'.join(shortcuts)
 
             if not shortcut:
                 raise Exception('An option shortcut cannot be empty.')

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
-import sys
+import copy
 
 from ..inputs.input import Input
 from ..inputs.input_definition import InputDefinition
@@ -23,7 +23,8 @@ class BaseCommand(object):
         self._application_definition_merged_with_args = False
         self._application = None
         self._helper_set = None
-        self._synopsis = None
+        self._usages = []
+        self._synopsis = {}
         self._code = None
 
         if hasattr(self, 'aliases'):
@@ -42,6 +43,12 @@ class BaseCommand(object):
             self.set_description(self.description)
         else:
             self.description = None
+
+        if hasattr(self, 'usages'):
+            for usage in copy.copy(self.usages):
+                self.add_usage(usage)
+        else:
+            self._usages = []
 
         if name is not None:
             self.set_name(name)
@@ -105,10 +112,6 @@ class BaseCommand(object):
         """
         Runs the command.
 
-        The code to execute is either defined directly with the
-        setCode() method or by overriding the execute() method
-        in a sub-class.
-
         @param input_: an Input instance
         @type input_: Input
         @param output_: an Output instance
@@ -118,7 +121,8 @@ class BaseCommand(object):
         @rtype: int
         """
         # force the creation of the synopsis before the merge with the app definition
-        self.get_synopsis()
+        self.get_synopsis(True)
+        self.get_synopsis(False)
 
         # add the application arguments and options
         self.merge_application_definition()
@@ -263,15 +267,30 @@ class BaseCommand(object):
     def get_aliases(self):
         return self.aliases
 
-    def get_synopsis(self):
-        if self._synopsis is None:
-            self._synopsis = (
+    def add_usage(self, usage):
+        if usage.find(self.name) != 0:
+            usage = '%s %s' % (self.name, usage)
+
+        self._usages.append(usage)
+
+        return self
+
+    def get_usages(self):
+        return self._usages
+
+    def get_synopsis(self, short=False):
+        key = 'long'
+        if short:
+            key = 'short'
+
+        if key not in self._synopsis:
+            self._synopsis[key] = (
                 '%s %s'
                 % (self.name,
-                   self._definition.get_synopsis())
+                   self._definition.get_synopsis(short))
             ).strip()
 
-        return self._synopsis
+        return self._synopsis[key]
 
     def get_helper(self, name):
         return self._helper_set.get(name)
@@ -279,35 +298,13 @@ class BaseCommand(object):
     def get_processed_help(self):
         name = self.name
 
-        h = self.get_help()
+        h = self.get_help() or self.get_description()
 
-        h = h.replace('%command.full_name%', name)
+        import inspect
+        h = h.replace('%command.full_name%', inspect.stack()[-1][1] + ' ' + name)
         h = h.replace('%command.name%', name)
 
         return h
-
-    def as_text(self):
-        if self._application and not self._application_definition_merged:
-            self.get_synopsis()
-            self.merge_application_definition(False)
-
-        messages = [
-            '<comment>Usage:</comment>',
-            ' ' + self.get_synopsis(),
-            '',
-        ]
-
-        if self.get_aliases():
-            messages.append('<comment>Aliases:</comment> <info>' + ', '.join(self.get_aliases()) + '</info>')
-
-        messages.append(self.get_native_definition().as_text())
-
-        h = self.get_processed_help()
-        if h:
-            messages.append('<comment>Help:</comment>')
-            messages.append(' ' + h.replace('\n', '\n ') + '\n')
-
-        return '\n'.join(messages)
 
     def validate_name(self, name):
         if not re.match('^[^:]+(:[^:]+)*$', name):

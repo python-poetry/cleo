@@ -1,38 +1,42 @@
 # -*- coding: utf-8 -*-
 
 from .command import Command
-from ..inputs.input_argument import InputArgument
+from ..helpers import DescriptorHelper
 
 
 class HelpCommand(Command):
+    """
+    Displays help for a command
 
-    __command = None
+    help {command_name=help : The command name}
+         {--format=txt : The output format (txt, xml, json, or md)}
+         {--raw : To output raw command help}
+    """
 
-    def configure(self):
-        self.ignore_validation_errors()
-
-        self.set_name('help')\
-            .set_definition([
-                InputArgument('command_name', InputArgument.OPTIONAL, 'The command name', 'help')
-            ])\
-            .set_description('Displays help for a command')\
-            .set_help("""The <info>%command.name%</info> command displays help for a given command:
+    help = """The <info>%command.name%</info> command displays help for a given command:
 
   <info>python %command.full_name% list</info>
 
-To display the list of available commands, please use the <info>list</info> command.""")
+You can also output the help in other formats by using the --format option:
+
+  <info>python %command.full_name% --format=json list</info>
+
+To display the list of available commands, please use the <info>list</info> command."""
+
+    _command = None
 
     def set_command(self, command):
-        self.__command = command
+        self._command = command
 
-    def execute(self, input_, output_):
-        if self.__command is None:
-            if input_.get_argument('command_name'):
-                self.__command = self.get_application().find(input_.get_argument('command_name'))
+    def handle(self):
+        if self._command is None:
+            self._command = self.get_application().find(self.argument('command_name'))
 
-        if self.__command is None:
-            output_.write(self.get_application().as_text())
-        else:
-            output_.write(self.__command.as_text())
+        helper = DescriptorHelper()
+        helper.describe(
+            self.output, self._command,
+            format=self.option('format'),
+            raw_text=self.option('raw')
+        )
 
-        self.__command = None
+        self._command = None
