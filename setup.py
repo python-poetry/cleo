@@ -15,7 +15,7 @@ setup(
     url='https://github.com/SDisPater/cleo',
     download_url='https://github.com/SDisPater/cleo/archive/v%s.tar.gz' % __version__,
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
-    install_requires=['pylev', 'mock'],
+    install_requires=['pylev', 'psutil'],
     tests_require=['pytest', 'mock'],
     classifiers=[
         'Intended Audience :: Developers',

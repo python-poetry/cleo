@@ -5,6 +5,7 @@ from __future__ import division
 import time
 import re
 import math
+import psutil
 from ..outputs import Output, ConsoleOutput
 from ..exceptions import CleoException
 from .helper import Helper
@@ -382,6 +383,11 @@ class ProgressBar(object):
             )
 
         return estimated
+
+    def _formatter_memory(self):
+        return Helper.format_memory(
+            psutil.Process().memory_info().rss
+        )
 
     def _formatter_current(self):
         return str(self._step).rjust(self._step_width, ' ')
