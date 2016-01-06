@@ -4,9 +4,12 @@ from .base_command import BaseCommand, CommandError
 from ..inputs.list_input import ListInput
 from ..parser import Parser
 from ..styles import CleoStyle
-from ..outputs import Output
+from ..outputs import Output, NullOutput
 from ..questions import ChoiceQuestion
 from ..helpers import Table
+from ..helpers.table_separator import TableSeparator
+from ..helpers.table_cell import TableCell
+from ..helpers.table_style import TableStyle
 from ..formatters import OutputFormatterStyle
 
 
@@ -107,6 +110,25 @@ class Command(BaseCommand):
 
         return command.run(ListInput(options), self.output)
 
+    def call_silent(self, name, options=None):
+        """
+        Call another command silently.
+
+        :param name: The command name
+        :type name: str
+
+        :param options: The options
+        :type options: list or None
+        """
+        if options is None:
+            options = []
+
+        command = self.get_application().find(name)
+
+        options = [('command', command.get_name())] + options
+
+        return command.run(ListInput(options), NullOutput())
+
     def argument(self, key=None):
         """
         Get the value of a command argument.
@@ -135,7 +157,7 @@ class Command(BaseCommand):
 
         return self.input.get_option(key)
 
-    def confirm(self, question, default=False):
+    def confirm(self, question, default=False, true_answer_regex='(?i)^y'):
         """
         Confirm a question with the user.
 
@@ -144,6 +166,9 @@ class Command(BaseCommand):
 
         :param default: The default value
         :type default: bool
+
+        :param true_answer_regex: A regex to match the "yes" answer
+        :type true_answer_regex: str
 
         :rtype: bool
         """
@@ -202,7 +227,32 @@ class Command(BaseCommand):
 
         return self.output.ask_question(question)
 
-    def table(self, headers, rows, style='default'):
+    def table(self, headers=None, rows=None, style='default'):
+        """
+        Return a Table instance.
+
+        :param headers: The table headers
+        :type headers: list
+
+        :param rows: The table rows
+        :type rows: list
+
+        :param style: The tbale style
+        :type style: str
+        """
+        table = Table(self.output)
+
+        if headers:
+            table.set_headers(headers)
+
+        if rows:
+            table.set_rows(rows)
+
+        table.set_style(style)
+
+        return table
+
+    def render_table(self, headers, rows, style='default'):
         """
         Format input to textual table.
 
@@ -218,6 +268,36 @@ class Command(BaseCommand):
         table = Table(self.output)
 
         table.set_style(style).set_headers(headers).set_rows(rows).render()
+
+    def table_separator(self):
+        """
+        Return a TableSeparator instance.
+
+        :rtype: TableSeparator
+        """
+        return TableSeparator()
+
+    def table_cell(self, value, **options):
+        """
+        Return a TableCell instance
+
+        :param value: The cell value
+        :type value: str
+
+        :param options: The cell options
+        :type options: dict
+
+        :rtype: TableCell
+        """
+        return TableCell(value, **options)
+
+    def table_style(self):
+        """
+        Return a TableStyle instance.
+
+        :rtype: TableStyle
+        """
+        return TableStyle()
 
     def line(self, text, style=None, verbosity=None):
         """
