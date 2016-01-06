@@ -7,7 +7,7 @@ from cleo.validators import Integer, Boolean
 class SignatureCommand(Command):
 
     name = 'no:configure'
-    signature = 'signature:command {foo} {bar?} {--z/baz} {--Z/bazz}'
+    signature = 'signature:command {foo} {bar?} {--z|baz} {--Z|bazz}'
 
     description = 'description'
 
