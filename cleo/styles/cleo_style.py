@@ -163,8 +163,10 @@ class CleoStyle(OutputStyle):
 
         return self.ask_question(question)
 
-    def confirm(self, question, default=True):
-        return self.ask_question(ConfirmationQuestion(question, default))
+    def confirm(self, question, default=True, true_answer_regex='(?i)^y'):
+        return self.ask_question(
+            ConfirmationQuestion(question, default, true_answer_regex)
+        )
 
     def choice(self, question, choices, default=None):
         if default is not None:
