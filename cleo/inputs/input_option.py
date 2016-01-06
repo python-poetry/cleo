@@ -190,6 +190,17 @@ class InputOption(object):
         """
         return self.__validator
 
+    def set_validator(self, validator):
+        """
+        Sets the valdidator.
+
+        :param validator: A Validator instance
+        :type validator: Validator
+        """
+        self.__validator = VALIDATORS.get(validator)
+
+        return self
+
     def equals(self, option):
         """
         Checks whether the given option equals this one.

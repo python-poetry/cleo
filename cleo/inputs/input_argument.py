@@ -133,6 +133,17 @@ class InputArgument(object):
         """
         return self.__validator
 
+    def set_validator(self, validator):
+        """
+        Sets the valdidator.
+
+        :param validator: A Validator instance
+        :type validator: Validator
+        """
+        self.__validator = VALIDATORS.get(validator)
+
+        return self
+
     @classmethod
     def from_dict(cls, argument_dict):
         """

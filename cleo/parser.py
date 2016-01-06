@@ -80,6 +80,7 @@ class Parser(object):
         @rtype: InputArgument
         """
         description = None
+        validator = None
 
         if ' : ' in token:
             token, description = tuple(token.split(' : ', 2))
@@ -87,6 +88,12 @@ class Parser(object):
             token = token.strip()
 
             description = description.strip()
+
+        # Checking validator:
+        matches = re.match('(.*)\((.*?)\)', token)
+        if matches:
+            token = matches.group(1).strip()
+            validator = matches.group(2).strip()
 
         if token.endswith('?*'):
             return InputArgument(
@@ -116,7 +123,8 @@ class Parser(object):
                 matches.group(2)
             )
 
-        return InputArgument(token, InputArgument.REQUIRED, description)
+        return InputArgument(token, InputArgument.REQUIRED, description,
+                             validator=validator)
 
     @classmethod
     def _parse_option(cls, token):
@@ -129,6 +137,7 @@ class Parser(object):
         @rtype: InputOption
         """
         description = None
+        validator = None
 
         if ' : ' in token:
             token, description = tuple(token.split(' : ', 2))
@@ -136,6 +145,12 @@ class Parser(object):
             token = token.strip()
 
             description = description.strip()
+
+        # Checking validator:
+        matches = re.match('(.*)\((.*?)\)', token)
+        if matches:
+            token = matches.group(1).strip()
+            validator = matches.group(2).strip()
 
         shortcut = None
 
@@ -176,4 +191,5 @@ class Parser(object):
             elif operator == '=':
                 mode = InputOption.VALUE_REQUIRED
 
-        return InputOption(token, shortcut, mode, description, default)
+        return InputOption(token, shortcut, mode, description, default,
+                           validator=validator)

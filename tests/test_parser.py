@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from cleo.parser import Parser
+from cleo.validators import Integer, Boolean
 from . import CleoTestCase
 
 
@@ -108,3 +109,11 @@ class ParserTestCase(CleoTestCase):
         self.assertEqual('The option description.', results['options'][0].get_description())
         self.assertTrue(results['options'][0].accept_value())
         self.assertTrue(results['options'][0].is_list())
+
+    def test_validator_parsing(self):
+        results = Parser.parse('command:name {argument (integer)} {--option (boolean) : Description with (parenthesis)}')
+
+        self.assertEqual('argument', results['arguments'][0].get_name())
+        self.assertEqual('option', results['options'][0].get_name())
+        self.assertIsInstance(results['arguments'][0].get_validator(), Integer)
+        self.assertIsInstance(results['options'][0].get_validator(), Boolean)

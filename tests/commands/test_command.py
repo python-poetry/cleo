@@ -9,6 +9,7 @@ from cleo.inputs import ListInput
 from cleo.outputs import NullOutput
 from cleo.helpers import FormatterHelper
 from cleo.testers import CommandTester
+from cleo.validators import Integer, Boolean
 from .. import CleoTestCase
 from ..fixtures.some_command import SomeCommand
 from ..fixtures.no_configure_command import NoConfigureCommand
@@ -398,6 +399,8 @@ class CommandTest(CleoTestCase):
         self.assertEqual('help', command.help)
         self.assertEqual(2, command.get_definition().get_argument_count())
         self.assertEqual(2, len(command.get_definition().get_options()))
+        self.assertIsInstance(command.get_definition().get_argument('foo').get_validator(), Integer)
+        self.assertIsInstance(command.get_definition().get_option('baz').get_validator(), Boolean)
 
     def callable_method(self, input_, output_):
         output_.writeln('from the code...')

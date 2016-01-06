@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import re
 from .base_command import BaseCommand, CommandError
 from ..inputs.list_input import ListInput
 from ..parser import Parser
@@ -33,6 +34,8 @@ class Command(BaseCommand):
         'normal': Output.VERBOSITY_NORMAL
     }
 
+    validation = None
+
     def __init__(self, name=None):
         self.input = None
         self.output = None
@@ -41,7 +44,7 @@ class Command(BaseCommand):
             doc = self.__doc__.strip().split('\n', 1)
             if len(doc) > 1:
                 self.description = doc[0].strip()
-                self.signature = doc[1].strip('\n').strip()
+                self.signature = re.sub('\s{2,}', ' ', doc[1].strip())
             else:
                 self.description = doc[0].strip()
 
@@ -59,9 +62,15 @@ class Command(BaseCommand):
         super(Command, self).__init__(definition['name'])
 
         for argument in definition['arguments']:
+            if self.validation and argument.get_name() in self.validation:
+                argument.set_validator(self.validation[argument.get_name()])
+
             self.get_definition().add_argument(argument)
 
         for option in definition['options']:
+            if self.validation and '--%s' % option.get_name() in self.validation:
+                option.set_validator(self.validation['--%s' % option.get_name()])
+
             self.get_definition().add_option(option)
 
     def run(self, i, o):
