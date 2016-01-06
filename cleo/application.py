@@ -693,6 +693,7 @@ class Application(object):
 
         @param name: The Command name
         @type name: str
+
         @param description: The Command description
         @type description: str
         """
@@ -725,12 +726,16 @@ class Application(object):
 
         @param name: The argument name
         @type name: str
+
         @param description: The argument description
         @type description: str
+
         @param required: Whether the argument is required or not
         @type required: bool
+
         @param is_list: Whether the argument is a list or not
         @type is_list: bool
+
         @param default: The default value
         @type default: mixed
         """
@@ -767,16 +772,22 @@ class Application(object):
 
         @param name: The option name
         @type name: str
+
         @param shortcut: The option shortcut
         @type shortcut: str
+
         @param description: The option description
         @type description: str
+
         @param value_required: Whether the option requires a value or not
         @type value_required: bool or None
+
         @param flag: Whether the option is a flag or not
         @type flag: bool
+
         @param is_list: Whether the option is a list or not
         @type is_list: bool
+
         @param default: The default value
         @type default: mixed
         """
@@ -794,6 +805,7 @@ class Application(object):
                 'shortcut': shortcut,
                 'description': description,
                 'value_required': value_required,
+                'flag': flag,
                 'list': is_list,
                 'default': default
             })
