@@ -1,5 +1,5 @@
 Building a Single Command Application
-=====================================
+#####################################
 
 When building a command line tool, you may not need to provide several commands.
 In such case, having to pass the command name each time is tedious. Fortunately,
@@ -35,9 +35,9 @@ it is possible to remove this need by extending the application:
             Overridden so that the application doesn't expect the command
             name to be the first argument.
             """
-            idefinition = super(MyApplication, self).get_definition()
+            definition = super(MyApplication, self).get_definition()
             # Clear out the normal first argument, which is the command name
-            idefinition.set_arguments()
+            definition.set_arguments()
 
             return idefinition
 

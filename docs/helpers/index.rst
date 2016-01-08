@@ -7,7 +7,7 @@ tools capable of helping you with different tasks:
 .. toctree::
     :maxdepth: 1
 
-    dialog_helper
+    question_helper
     formatter_helper
-    progress_helper
-    table_helper
+    progress_bar
+    table

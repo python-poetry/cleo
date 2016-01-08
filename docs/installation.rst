@@ -1,5 +1,5 @@
 Installation
-------------
+############
 
 You can install Cleo in 2 different ways:
 
@@ -9,7 +9,7 @@ You can install Cleo in 2 different ways:
 
         $ pip install cleo
 
-* Use the official repository (https://github.com/SDisPater/cleo)
+* Use the official repository (https://github.com/sdispater/cleo)
 
 .. note::
 

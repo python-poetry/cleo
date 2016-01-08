@@ -1,25 +1,43 @@
 Validators
-==========
+##########
 
 Validators are a convenient way to check and adapt the type of an argument or an option.
 
 .. code-block:: python
 
-    options = [
-        # ...
-        {
-            'name': 'iterations',
-            'value_required': True,
-            'default': 1,
-            'validator': 'integer'
+    class GreetCommand(Command):
+        """
+        Greets someone
+
+        demo:greet {name? : Who do you want to greet?}
+                   {--y|yell : If set, will yell in uppercase letters}
+                   {--iterations=1 (integer) : How many times should the message be printed?}
+        """
+
+When using validators inside a command signature, only the :ref:`named_validators` are supported.
+Validators must be specified like so:
+
+.. code-block:: text
+
+    {argument_or_option (validator)}
+
+If you need more complex validators, or want to specify options to validators, you can do so by
+using the ``validation`` attribute:
+
+.. code-block:: python
+
+    class GreetCommand(Command):
+        """
+        Greets someone
+
+        demo:greet {name? : Who do you want to greet?}
+                   {--y|yell : If set, will yell in uppercase letters}
+                   {--iterations=1 : How many times should the message be printed?}
+        """
+
+        validation = {
+            '--iterations': Integer()
         }
-    ]
-
-    @app.option('iterations', value_required=True, default=1,
-                validator=Integer())
-    def greet(i, o):
-        # ...
-
 
 For now, there are only a few built-in validators:
 
@@ -31,20 +49,20 @@ For now, there are only a few built-in validators:
 
 
 Integer and Float
------------------
+=================
 
 Those validators are self-explanatory.
 
 
 Boolean
--------
+=======
 
 The ``Boolean()`` validator only accepts the following values: ``1``, ``true``, ``yes``, ``y``, ``on``
 and their negatives (``0``, ``no``, ``n``, ``off``) or native boolean types (``True``, ``False``).
 
 
 Range
------
+=====
 
 The ``Range()`` validator accepts a value that must be comprised inside a specified range.
 
@@ -66,7 +84,7 @@ The default validator for ranges is ``Integer`` but it can be changed.
 
 
 Choice/Enum
------------
+===========
 
 The ``Choice()`` (or its alias ``Enum``) restricts a possible value to a specified set of choices.
 
@@ -79,8 +97,10 @@ The ``Choice()`` (or its alias ``Enum``) restricts a possible value to a specifi
     Choice([1, 3, 5, 7, 11], validator=Integer())
 
 
-Named validators
-----------------
+.. _named_validators:
+
+Named Validators
+================
 
 Instead of declaring explicitely the validators it is possible to use their internal names:
 

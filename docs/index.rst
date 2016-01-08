@@ -11,11 +11,10 @@ with some useful additions.
 
     installation
     introduction
-    arguments
-    options
-    validators
-    testing
-    existing_command
     helpers/index
+    validators
+    decorators
+    dictionaries
     usage
     single_command_tool
+    api/index
