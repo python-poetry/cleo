@@ -9,6 +9,7 @@ import fcntl
 import struct
 from io import UnsupportedOperation
 from pylev import levenshtein
+from collections import OrderedDict
 
 from .outputs.output import Output
 from .outputs.console_output import ConsoleOutput, StreamOutput
@@ -20,7 +21,8 @@ from .inputs.input_definition import InputDefinition
 from .commands.command import Command
 from .commands.help_command import HelpCommand
 from .commands.list_command import ListCommand
-from .helpers import HelperSet, FormatterHelper, QuestionHelper, ProgressHelper, TableHelper
+from .commands.completion.completion_command import CompletionCommand
+from .helpers import HelperSet, FormatterHelper, QuestionHelper, TableHelper
 
 
 class Application(object):
@@ -35,7 +37,7 @@ class Application(object):
     >>> app.run()
     """
 
-    def __init__(self, name='UNKNOWN', version='UNKNOWN'):
+    def __init__(self, name='UNKNOWN', version='UNKNOWN', complete=False):
         """
         Constructor
 
@@ -48,13 +50,14 @@ class Application(object):
         self._version = version
         self._catch_exceptions = True
         self._auto_exit = True
-        self._commands = {}
+        self._commands = OrderedDict()
         self._default_command = 'list'
         self._definition = self.get_default_input_definition()
         self._want_helps = False
         self._helper_set = self.get_default_helper_set()
         self._terminal_dimensions = ()
         self._running_command = None
+        self._complete = complete
 
         for command in self.get_default_commands():
             self.add(command)
@@ -352,7 +355,7 @@ class Application(object):
         if namespace is None:
             return self._commands
 
-        commands = {}
+        commands = OrderedDict()
         for name, command in self._commands.items():
             if namespace == self.extract_namespace(name, namespace.count(':') + 1):
                 commands[name] = command
@@ -577,7 +580,12 @@ class Application(object):
         ])
 
     def get_default_commands(self):
-        return [HelpCommand(), ListCommand()]
+        commands = [HelpCommand(), ListCommand()]
+
+        if self._complete:
+            commands.append(CompletionCommand())
+
+        return commands
 
     def get_default_helper_set(self):
         return HelperSet({

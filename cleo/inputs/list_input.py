@@ -37,7 +37,7 @@ class ListInput(Input):
                 value = item[1]
             else:
                 key = item
-                value = None
+                value = item
 
             if key and '-' == key[0]:
                 continue
