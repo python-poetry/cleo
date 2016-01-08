@@ -13,7 +13,7 @@ class TestApplicationTester(TestCase):
         self.application.set_auto_exit(False)
         self.application.register('foo')\
             .add_argument('foo')\
-            .set_code(lambda input_, output_: output_.writeln('foo'))
+            .set_code(lambda c: c.line('foo'))
 
         self.tester = ApplicationTester(self.application)
         self.tester.run(

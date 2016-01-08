@@ -280,7 +280,7 @@ class CommandTest(CleoTestCase):
 
     def test_set_code(self):
         command = SomeCommand()
-        ret = command.set_code(lambda in_, out_: out_.writeln('from the code...'))
+        ret = command.set_code(lambda c: c.line('from the code...'))
         self.assertEqual(ret, command)
 
         tester = CommandTester(command)
@@ -402,5 +402,5 @@ class CommandTest(CleoTestCase):
         self.assertIsInstance(command.get_definition().get_argument('foo').get_validator(), Integer)
         self.assertIsInstance(command.get_definition().get_option('baz').get_validator(), Boolean)
 
-    def callable_method(self, input_, output_):
-        output_.writeln('from the code...')
+    def callable_method(self, c):
+        c.line('from the code...')

@@ -12,7 +12,7 @@ class TestCommandTester(TestCase):
         self.command = Command('foo')
         self.command.add_argument('command')
         self.command.add_argument('foo')
-        self.command.set_code(lambda input_, output_: output_.writeln('foo'))
+        self.command.set_code(lambda c: c.line('foo'))
 
         self.tester = CommandTester(self.command)
         self.tester.execute([('foo', 'bar')],

@@ -41,17 +41,20 @@ class Command(BaseCommand):
         self.output = None
 
         if self.__doc__:
-            doc = self.__doc__.strip().split('\n', 1)
-            if len(doc) > 1:
-                self.description = doc[0].strip()
-                self.signature = re.sub('\s{2,}', ' ', doc[1].strip())
-            else:
-                self.description = doc[0].strip()
+            self._parse_doc(self.__doc__)
 
         if self.signature:
             self._configure_using_fluent_definition()
         else:
             super(Command, self).__init__(name or self.name)
+
+    def _parse_doc(self, doc):
+        doc = self.__doc__.strip().split('\n', 1)
+        if len(doc) > 1:
+            self.description = doc[0].strip()
+            self.signature = re.sub('\s{2,}', ' ', doc[1].strip())
+        else:
+            self.description = doc[0].strip()
 
     def _configure_using_fluent_definition(self):
         """
@@ -181,7 +184,7 @@ class Command(BaseCommand):
 
         :rtype: bool
         """
-        return self.output.confirm(question, default)
+        return self.output.confirm(question, default, true_answer_regex)
 
     def ask(self, question, default=None):
         """
@@ -246,7 +249,7 @@ class Command(BaseCommand):
         :param rows: The table rows
         :type rows: list
 
-        :param style: The tbale style
+        :param style: The table style
         :type style: str
         """
         table = Table(self.output)
@@ -424,3 +427,5 @@ class Command(BaseCommand):
 
         return level
 
+    def _execute_code(self, i, o):
+        return self._code(self)

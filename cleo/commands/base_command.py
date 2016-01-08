@@ -143,7 +143,7 @@ class BaseCommand(object):
         input_.validate()
 
         if self._code:
-            status_code = self._code(input_, output_)
+            status_code = self._execute_code(input_, output_)
         else:
             status_code = self.execute(input_, output_)
 
@@ -151,6 +151,9 @@ class BaseCommand(object):
             return int(float(status_code))
         except (TypeError, ValueError):
             return 0
+
+    def _execute_code(self, input_, output):
+        return self._code(input_, output)
 
     def set_code(self, code):
         if not callable(code):
