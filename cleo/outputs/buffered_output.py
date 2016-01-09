@@ -11,7 +11,7 @@ class BufferedOutput(Output):
         """
         Empties buffer and returns its content.
 
-        @rtype: str
+        :rtype: str
         """
         content = self.buffer
         self.buffer = ''

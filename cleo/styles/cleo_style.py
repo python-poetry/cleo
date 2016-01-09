@@ -26,20 +26,20 @@ class CleoStyle(OutputStyle):
         """
         Formats a message as a block of text.
 
-        @param messages: The message to write in the block
-        @type messages: str or list
+        :param messages: The message to write in the block
+        :type messages: str or list
 
-        @param type: The block type (added in [] on first line)
-        @type type: str or None
+        :param type: The block type (added in [] on first line)
+        :type type: str or None
 
-        @param style: The style to apply to the whole block
-        @type style: str or None
+        :param style: The style to apply to the whole block
+        :type style: str or None
 
-        @param prefix: The prefix for the block
-        @type prefix: str
+        :param prefix: The prefix for the block
+        :type prefix: str
 
-        @param padding: Whether to add vertical padding
-        @type padding: bool
+        :param padding: Whether to add vertical padding
+        :type padding: bool
         """
         self._auto_prepend_block()
         if not isinstance(messages, list):
@@ -178,10 +178,10 @@ class CleoStyle(OutputStyle):
         """
         Asks a question.
 
-        @param question: The question to ask
-        @type question: Question
+        :param question: The question to ask
+        :type question: Question
 
-        @rtype: str
+        :rtype: str
         """
         if self._input.is_interactive():
             self._auto_prepend_block()

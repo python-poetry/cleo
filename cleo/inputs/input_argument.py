@@ -38,16 +38,16 @@ class InputArgument(object):
         """
         Constructor
 
-        @param name: The argument name
-        @type name: str
-        @param mode: The argument mode: REQUIRED or OPTIONAL
-        @type mode: int or None
-        @param description: A description text
-        @type description: str
-        @param default: The default value (for OPTIONAL mode only)
-        @type default: mixed
-        @param validator: A Validator instance or a callable
-        @type validator: Validator or callable
+        :param name: The argument name
+        :type name: str
+        :param mode: The argument mode: REQUIRED or OPTIONAL
+        :type mode: int or None
+        :param description: A description text
+        :type description: str
+        :param default: The default value (for OPTIONAL mode only)
+        :type default: mixed
+        :param validator: A Validator instance or a callable
+        :type validator: Validator or callable
         """
         if mode is None:
             mode = self.OPTIONAL
@@ -65,8 +65,8 @@ class InputArgument(object):
         """
         Returns the argument name
 
-        @return: The argument name
-        @rtype: str
+        :return: The argument name
+        :rtype: str
         """
         return self.__name
 
@@ -74,8 +74,8 @@ class InputArgument(object):
         """
         Returns True if the argument is required.
 
-        @return: True if parameter mode is REQUIRED, False otherwise
-        @rtype: bool
+        :return: True if parameter mode is REQUIRED, False otherwise
+        :rtype: bool
         """
         return self.__class__.REQUIRED == (self.__class__.REQUIRED & self.__mode)
 
@@ -83,8 +83,8 @@ class InputArgument(object):
         """
         Returns True if the argument can take multiple values
 
-        @return: True if mode is IS_LIST, False otherwise
-        @rtype: bool
+        :return: True if mode is IS_LIST, False otherwise
+        :rtype: bool
         """
         return self.__class__.IS_LIST == (self.__class__.IS_LIST & self.__mode)
 
@@ -92,8 +92,8 @@ class InputArgument(object):
         """
         Sets the default value.
 
-        @param default: The default value
-        @type default: mixed
+        :param default: The default value
+        :type default: mixed
         """
         if self.is_required() and default is not None:
             raise Exception('Cannot set a default value except for InputArgument::OPTIONAL mode.')
@@ -110,8 +110,8 @@ class InputArgument(object):
         """
         Returns the default value.
 
-        @return: The default value
-        @rtype: mixed
+        :return: The default value
+        :rtype: mixed
         """
         return self.__default
 
@@ -119,8 +119,8 @@ class InputArgument(object):
         """
         Returns the description text.
 
-        @return: The description text
-        @rtype: str
+        :return: The description text
+        :rtype: str
         """
         return self.__description
 
@@ -128,8 +128,8 @@ class InputArgument(object):
         """
         Returns the validator
 
-        @return: The validator
-        @rtype: Validator or callable
+        :return: The validator
+        :rtype: Validator or callable
         """
         return self.__validator
 
@@ -149,11 +149,11 @@ class InputArgument(object):
         """
         Created a InputArgument instance from a dictionary.
 
-        @param argument_dict: The dictionary defining the argument
-        @type argument_dict: dict
+        :param argument_dict: The dictionary defining the argument
+        :type argument_dict: dict
 
-        @return: The created InputArgument instance
-        @rtype: InputArgument
+        :return: The created InputArgument instance
+        :rtype: InputArgument
         """
         if len(argument_dict) > 1:
             name = argument_dict['name']

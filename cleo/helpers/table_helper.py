@@ -26,10 +26,10 @@ class TableHelper(Helper):
         """
         Sets table layout type.
 
-        @param layout: self.LAYOUT_*
-        @type layout: int
+        :param layout: self.LAYOUT_*
+        :type layout: int
 
-        @rtype: TableHelper
+        :rtype: TableHelper
         """
         if layout == self.LAYOUT_BORDERLESS:
             self._table.set_style('borderless')
@@ -126,8 +126,8 @@ class TableHelper(Helper):
         | 960-425-059-0 | The Lord of the Rings | J. R. R. Tolkien |
         +---------------+-----------------------+------------------+
 
-        @param output_: Output
-        @type output_: Output
+        :param output_: Output
+        :type output_: Output
         """
         self._table._output = output
 

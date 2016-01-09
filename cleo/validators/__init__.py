@@ -33,16 +33,16 @@ class Validator(object):
 
         Adaptors should return the adapted value in this method.
 
-        @param value: The value to validate and to adapt
+        :param value: The value to validate and to adapt
 
-        @raise ValidationError: If ``value`` is invalid.
+        :raise ValidationError: If ``value`` is invalid.
         """
         raise NotImplementedError
 
     def is_valid(self, value):
         """Check if the value is valid.
 
-        @return: ``True`` if the value is valid, ``False`` if invalid.
+        :return: ``True`` if the value is valid, ``False`` if invalid.
         """
         try:
             self.validate(value)
@@ -125,8 +125,8 @@ class Callable(Validator):
     """
     def __init__(self, callable_):
         """
-        @param callable_: The callable
-        @type callable_: callable
+        :param callable_: The callable
+        :type callable_: callable
         """
         if not callable(callable_):
             raise TypeError('"callable" argument is not callable')

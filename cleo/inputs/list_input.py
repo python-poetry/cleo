@@ -14,10 +14,10 @@ class ListInput(Input):
         """
         Constructor
 
-        @param parameters: A dict of parameters
-        @type parameters: list
-        @param definition: An InputDefinition instance
-        @type definition: InputDefinition
+        :param parameters: A dict of parameters
+        :type parameters: list
+        :param definition: An InputDefinition instance
+        :type definition: InputDefinition
         """
         self.interactive = False
         self.parameters = parameters
@@ -28,8 +28,8 @@ class ListInput(Input):
         """
         Returns the first argument from the raw parameters (not parsed)
 
-        @return: The value of the first argument or None otherwise
-        @rtype: str
+        :return: The value of the first argument or None otherwise
+        :rtype: str
         """
         for item in self.parameters:
             if isinstance(item, tuple):
@@ -51,11 +51,11 @@ class ListInput(Input):
         This method is to be used to introspect the input parameters
         before they have been validated. It must be used carefully.
 
-        @param values: The values to look for in the raw parameters (can be a list)
-        @type values: str or list
+        :param values: The values to look for in the raw parameters (can be a list)
+        :type values: str or list
 
-        @return: True if the value is contained in the raw parameters
-        @rtype: bool
+        :return: True if the value is contained in the raw parameters
+        :rtype: bool
         """
         if not isinstance(values, list):
             values = [values]
@@ -78,13 +78,13 @@ class ListInput(Input):
         This method is to be used to introspect the input parameters
         before they have been validated. It must be used carefully.
 
-        @param values: The values to look for in the raw parameters (can be a list)
-        @type values: str or list
-        @param default: The default value to return if no result is found
-        @type default: mixed
+        :param values: The values to look for in the raw parameters (can be a list)
+        :type values: str or list
+        :param default: The default value to return if no result is found
+        :type default: mixed
 
-        @return: The option value
-        @rtype: mixed
+        :return: The option value
+        :rtype: mixed
         """
         if not isinstance(values, list):
             values = [values]
@@ -125,10 +125,10 @@ class ListInput(Input):
         """
         Adds a short option value
 
-        @param shortcut: The short option key
-        @type shortcut: str
-        @param value: The value for the option
-        @type value: mixed
+        :param shortcut: The short option key
+        :type shortcut: str
+        :param value: The value for the option
+        :type value: mixed
         """
         if not self.definition.has_shortcut(shortcut):
             raise Exception('The "-%s" option does not exist.' % shortcut)
@@ -139,10 +139,10 @@ class ListInput(Input):
         """
         Adds a long option value
 
-        @param name: The long option key
-        @type name: str
-        @param value: The value for the option
-        @type value: mixed
+        :param name: The long option key
+        :type name: str
+        :param value: The value for the option
+        :type value: mixed
         """
         if not self.definition.has_option(name):
             raise Exception('The "--%s" option does not exist.' % name)
@@ -161,10 +161,10 @@ class ListInput(Input):
         """
         Adds an argument value
 
-        @param name: The argument key
-        @type name: str
-        @param value: The value for the argument
-        @type value: mixed
+        :param name: The argument key
+        :type name: str
+        :param value: The value for the argument
+        :type value: mixed
         """
         if not self.definition.has_argument(name):
             raise Exception('The "%s" argument does not exist.' % name)

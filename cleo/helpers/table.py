@@ -21,8 +21,8 @@ class Table(object):
         """
         Constructor.
 
-        @param output: An Output instance
-        @type output: Output
+        :param output: An Output instance
+        :type output: Output
         """
         self._output = output
         self._headers = []
@@ -42,11 +42,11 @@ class Table(object):
         """
         Sets a style definition.
 
-        @param name: The name of the style
-        @type name: str
+        :param name: The name of the style
+        :type name: str
 
-        @param table_style: A TableStyle instance
-        @type table_style: TableStyle
+        :param table_style: A TableStyle instance
+        :type table_style: TableStyle
         """
         if not cls.styles:
             cls.styles = cls._init_styles()
@@ -57,8 +57,8 @@ class Table(object):
         """
         Sets table style.
 
-        @param name: The name of the style
-        @type name: str
+        :param name: The name of the style
+        :type name: str
         """
         if isinstance(name, TableStyle):
             self._style = name
@@ -71,7 +71,7 @@ class Table(object):
 
     def get_style(self):
         """
-        @rtype: TableStyle
+        :rtype: TableStyle
         """
         return self._style
 
@@ -79,13 +79,13 @@ class Table(object):
         """
         Sets table column style.
 
-        @param column_index: Colun index
-        @type column_index: int
+        :param column_index: Colun index
+        :type column_index: int
 
-        @param name: The name of the style
-        @type name: str or TableStyle
+        :param name: The name of the style
+        :type name: str or TableStyle
 
-        @rtype: Table
+        :rtype: Table
         """
         column_index = int(column_index)
 
@@ -102,10 +102,10 @@ class Table(object):
 
         If style was not set, it returns the global table style.
 
-        @param column_index: Colun index
-        @type column_index: int
+        :param column_index: Colun index
+        :type column_index: int
 
-        @rtype: TableStyle
+        :rtype: TableStyle
         """
         if column_index in self._column_styles:
             return self._column_styles[column_index]
@@ -221,11 +221,11 @@ class Table(object):
 
         Example: | 9971-5-0210-0 | A Tale of Two Cities  | Charles Dickens  |
 
-        @param row: The row to render
-        @type: row: list
+        :param row: The row to render
+        :type: row: list
 
-        @param cell_format: The cell format
-        @type cell_format: str
+        :param cell_format: The cell format
+        :type cell_format: str
         """
         if not row:
             return
@@ -242,13 +242,13 @@ class Table(object):
         """
         Renders table cell with padding.
 
-        @param row: The row to render
-        @type: row: list
+        :param row: The row to render
+        :type: row: list
 
-        @param column: The column to render
+        :param column: The column to render
 
-        @param cell_format: The cell format
-        @type cell_format: str
+        :param cell_format: The cell format
+        :type cell_format: str
         """
         try:
             cell = row[column]
@@ -345,12 +345,12 @@ class Table(object):
         """
         Fill rows that contains rowspan > 1.
 
-        @param rows: The rows to fill
-        @type rows: list
+        :param rows: The rows to fill
+        :type rows: list
 
-        @type line: int
+        :type line: int
 
-        @rtype: list
+        :rtype: list
         """
         unmerged_rows = OrderedDict()
 
@@ -411,9 +411,9 @@ class Table(object):
         """
         Fill cells for a row that contains colspan > 1.
 
-        @type row: list
+        :type row: list
 
-        @rtype: list
+        :rtype: list
         """
         new_row = []
 
@@ -434,11 +434,11 @@ class Table(object):
         """
         Copy a row
 
-        @type rows: list
+        :type rows: list
 
-        @type line: int
+        :type line: int
 
-        @rtype: list
+        :rtype: list
         """
         row = [x for x in rows[line]]
 
@@ -453,10 +453,10 @@ class Table(object):
         """
         Gets number of columns by row.
 
-        @param row: The row
-        @type row: list
+        :param row: The row
+        :type row: list
 
-        @rtype: int
+        :rtype: int
         """
         columns = len(row)
         for column in row:
@@ -469,9 +469,9 @@ class Table(object):
         """
         Gets list of columns for the given row.
 
-        @type row: list
+        :type row: list
 
-        @rtype: list
+        :rtype: list
         """
         columns = list(range(0, self._number_of_columns))
 
@@ -503,11 +503,11 @@ class Table(object):
         """
         Gets cell width.
 
-        @type row: list
+        :type row: list
 
-        @type column: int
+        :type column: int
 
-        @rtype: int
+        :rtype: int
         """
         try:
             cell = row[column]

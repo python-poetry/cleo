@@ -73,8 +73,8 @@ class ProgressHelper(Helper):
         """
         Sets the progress bar with
 
-        @param size: The progress bar size
-        @type size: int
+        :param size: The progress bar size
+        :type size: int
         """
         self.bar_width = size
 
@@ -82,8 +82,8 @@ class ProgressHelper(Helper):
         """
         Sets the progress bar character
 
-        @param char: The progress bar character
-        @type char: str
+        :param char: The progress bar character
+        :type char: str
         """
         self.bar_char = char
 
@@ -91,8 +91,8 @@ class ProgressHelper(Helper):
         """
         Sets the empty bar character
 
-        @param char: A character
-        @type char: str
+        :param char: A character
+        :type char: str
         """
         self.empty_bar_char = char
 
@@ -100,8 +100,8 @@ class ProgressHelper(Helper):
         """
         Sets the progress character
 
-        @param char: A character
-        @type char: str
+        :param char: A character
+        :type char: str
         """
         self.progress_char = char
 
@@ -109,8 +109,8 @@ class ProgressHelper(Helper):
         """
         Sets the progress bar format
 
-        @param display_format: The display format
-        @type display_format: str
+        :param display_format: The display format
+        :type display_format: str
         """
         self.display_format = display_format
 
@@ -118,8 +118,8 @@ class ProgressHelper(Helper):
         """
         Sets the redraw frequency
 
-        @param freq: The redraw frequency in seconds
-        @type freq: int
+        :param freq: The redraw frequency in seconds
+        :type freq: int
         """
         self.redraw_freq = freq
 
@@ -127,10 +127,10 @@ class ProgressHelper(Helper):
         """
         Starts the progress output
 
-        @param output_: An Output instance
-        @type output_: Output
-        @param max_steps: Maximum steps
-        @type max_steps: int
+        :param output_: An Output instance
+        :type output_: Output
+        :param max_steps: Maximum steps
+        :type max_steps: int
         """
         self.start_time = time.time()
         self.current_step = 0
@@ -157,10 +157,10 @@ class ProgressHelper(Helper):
         """
         Advances the progress output X steps
 
-        @param step: Number of steps to advance
-        @type step: int
-        @param redraw: Whether to redraw or not
-        @type redraw: bool
+        :param step: Number of steps to advance
+        :type step: int
+        :param redraw: Whether to redraw or not
+        :type redraw: bool
         """
         if self.start_time is None:
             raise Exception('You must start the progress bar before calling advance().')
@@ -176,8 +176,8 @@ class ProgressHelper(Helper):
         """
         Ouputs the current progress string
 
-        @param finish: Forces the end result
-        @type finish: bool
+        :param finish: Forces the end result
+        :type finish: bool
         """
         if self.start_time is None:
             raise Exception('You must start the progress bar before calling display().')
@@ -226,11 +226,11 @@ class ProgressHelper(Helper):
         """
         Generates the array map of format variables to values.
 
-        @param finish: Forces the end result
-        @type finish: bool
+        :param finish: Forces the end result
+        :type finish: bool
 
-        @return: A dict of format vars and values
-        @rtype: dict
+        :return: A dict of format vars and values
+        :rtype: dict
         """
         format_vars = {}
         percent = 0
@@ -278,11 +278,11 @@ class ProgressHelper(Helper):
         """
         Converts seconds into human-readable format
 
-        @param secs: Number of seconds
-        @type secs: int
+        :param secs: Number of seconds
+        :type secs: int
 
-        @return: Time in human-readable format
-        @rtype: str
+        :return: Time in human-readable format
+        :rtype: str
         """
         text = ''
         for time_format in self.time_formats:
@@ -300,10 +300,10 @@ class ProgressHelper(Helper):
         """
         Overwrites a previous message to the output.
 
-        @param output_: An Output instance
-        @type output_: Output
-        @param messages: The message as an array of lines or a single string
-        @type messages: list or str
+        :param output_: An Output instance
+        :type output_: Output
+        :param messages: The message as an array of lines or a single string
+        :type messages: list or str
         """
         length = len(messages)
 

@@ -35,10 +35,10 @@ class Input(object):
         This method is to be used to introspect the input parameters
         before they have been validated. It must be used carefully.
 
-        @param values: The values to look for in the raw parameters (can be a list)
-        @type values: str|list
-        @return: True if the value is in the raw parameters
-        @rtype: bool
+        :param values: The values to look for in the raw parameters (can be a list)
+        :type values: str|list
+        :return: True if the value is in the raw parameters
+        :rtype: bool
         """
         raise NotImplementedError()
 
@@ -49,12 +49,12 @@ class Input(object):
         This method is to be used to introspect the input parameters
         before they have been validated. It must be used carefully.
 
-        @param values: The values to look for in the raw parameters (can be a list)
-        @type values: str|list
-        @param default: The default value to return if no result is found
-        @type default: mixed
-        @return: True if the value is in the raw parameters
-        @rtype: bool
+        :param values: The values to look for in the raw parameters (can be a list)
+        :type values: str|list
+        :param default: The default value to return if no result is found
+        :type default: mixed
+        :return: True if the value is in the raw parameters
+        :rtype: bool
         """
         raise NotImplementedError()
 
@@ -72,7 +72,7 @@ class Input(object):
         """
         Validates the arguments
 
-        @raise: InvalidArgument
+        :raise: InvalidArgument
         """
         for arg_name, arg_value in self.get_arguments().items():
             arg = self.definition.get_argument(arg_name)
@@ -96,7 +96,7 @@ class Input(object):
         """
         Validates the options
 
-        @raise: InvalidOptionValue
+        :raise: InvalidOptionValue
         """
         for opt_name, opt_value in self.get_options().items():
             opt = self.definition.get_option(opt_name)

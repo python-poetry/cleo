@@ -14,10 +14,10 @@ class Parser(object):
         """
         Parse the given console command definition into a dict.
 
-        @param expression: The expression to parse
-        @type expression: str
+        :param expression: The expression to parse
+        :type expression: str
 
-        @rtype: dict
+        :rtype: dict
         """
         parsed = {
             'name': None,
@@ -50,10 +50,10 @@ class Parser(object):
         """
         Extract all of the parameters from the tokens.
 
-        @param tokens: The tokens to extract the parameters from
-        @type tokens: list
+        :param tokens: The tokens to extract the parameters from
+        :type tokens: list
 
-        @rtype: dict
+        :rtype: dict
         """
         arguments = []
         options = []
@@ -74,10 +74,10 @@ class Parser(object):
         """
         Parse an argument expression.
 
-        @param token: The argument expression
-        @type token: str
+        :param token: The argument expression
+        :type token: str
 
-        @rtype: InputArgument
+        :rtype: InputArgument
         """
         description = None
         validator = None
@@ -131,10 +131,10 @@ class Parser(object):
         """
         Parse an option expression.
 
-        @param token: The option expression
-        @type token: str
+        :param token: The option expression
+        :type token: str
 
-        @rtype: InputOption
+        :rtype: InputOption
         """
         description = None
         validator = None

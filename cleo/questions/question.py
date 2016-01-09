@@ -12,11 +12,11 @@ class Question(object):
         """
         Constructor.
 
-        @param question: The question to ask the user
-        @type question: str
+        :param question: The question to ask the user
+        :type question: str
 
-        @param default: The default answer to return if the user enters nothing
-        @type default: mixed
+        :param default: The default answer to return if the user enters nothing
+        :type default: mixed
         """
         self.question = question
         self.default = default
@@ -48,8 +48,8 @@ class Question(object):
         """
         Sets values for the autocompleter.
 
-        @param values: The autocomplete values
-        @type values: list or None
+        :param values: The autocomplete values
+        :type values: list or None
         """
         if values is not None and not isinstance(values, list):
             raise CleoException('Autocompleter values can be either a list or None.')

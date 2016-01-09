@@ -21,17 +21,17 @@ class QuestionHelper(Helper):
         """
         Asks a question to the user.
 
-        @param input_: An Input instance
-        @type input_: Input
+        :param input_: An Input instance
+        :type input_: Input
 
-        @param output: An Output instance
-        @type output: Output
+        :param output: An Output instance
+        :type output: Output
 
-        @param question: The question to ask
-        @type question: Question
+        :param question: The question to ask
+        :type question: Question
 
-        @return: The user answer
-        @rtype: str
+        :return: The user answer
+        :rtype: str
         """
         if isinstance(output, ConsoleOutput):
             output = output.get_error_output()
@@ -58,13 +58,13 @@ class QuestionHelper(Helper):
         """
         Asks a question to the user.
 
-        @param output: An Output instance
-        @type output: Output
+        :param output: An Output instance
+        :type output: Output
 
-        @param question: The question to ask
-        @type question: Question
+        :param question: The question to ask
+        :type question: Question
 
-        @rtype: mixed
+        :rtype: mixed
         """
         self._write_prompt(output, question)
 
@@ -98,11 +98,11 @@ class QuestionHelper(Helper):
         """
         Outputs the question prompt.
 
-        @param output: An Output instance
-        @type output: Output
+        :param output: An Output instance
+        :type output: Output
 
-        @param question: The question to ask
-        @type question: Question
+        :param question: The question to ask
+        :type question: Question
         """
         message = question.question
 
@@ -123,11 +123,11 @@ class QuestionHelper(Helper):
         """
         Outputs an error message.
 
-        @param output: An Output instance
-        @type output: Output
+        :param output: An Output instance
+        :type output: Output
 
-        @param error: A Exception instance
-        @type error: Exception
+        :param error: A Exception instance
+        :type error: Exception
         """
         if self.helper_set is not None and self.helper_set.has('formatter'):
             message = self.helper_set.get('formatter').format_block(decode(str(error)), 'error')
@@ -140,13 +140,13 @@ class QuestionHelper(Helper):
         """
         Autocomplete a question.
 
-        @param output: An Output instance
-        @type output: Output
+        :param output: An Output instance
+        :type output: Output
 
-        @param question: The question to ask
-        @type question: Question
+        :param question: The question to ask
+        :type question: Question
 
-        @rtype: str
+        :rtype: str
         """
         autocomplete = question.autocompleter_values
 
@@ -247,10 +247,10 @@ class QuestionHelper(Helper):
         """
         Gets a hidden response from user.
 
-        @param output: An Output instance
-        @type output: Output
+        :param output: An Output instance
+        :type output: Output
 
-        @rtype: str
+        :rtype: str
         """
         if self._has_stty_available():
             stty_mode = decode(subprocess.check_output(['stty', '-g']))
@@ -273,17 +273,17 @@ class QuestionHelper(Helper):
         """
         Validates an attempt.
 
-        @param interviewer: A callable that will ask for a question and return the result
-        @type interviewer: callable
+        :param interviewer: A callable that will ask for a question and return the result
+        :type interviewer: callable
 
-        @param output: An Output instance
-        @type output: Output
+        :param output: An Output instance
+        :type output: Output
 
-        @param question: The question to ask
-        @type question: Question
+        :param question: The question to ask
+        :type question: Question
 
-        @return: The validate response
-        @rtype: str
+        :return: The validate response
+        :rtype: str
         """
         error = None
         attempts = question.max_attempts
@@ -306,9 +306,9 @@ class QuestionHelper(Helper):
         """
         Read user input.
 
-        @param stream: The input stream
+        :param stream: The input stream
 
-        @return:
+        :return:
         """
         if stream == sys.stdin:
             ret = stream.readline()

@@ -13,14 +13,14 @@ class ConfirmationQuestion(Question):
         """
         Constructor.
 
-        @param question: The question to ask to the user
-        @type question: str
+        :param question: The question to ask to the user
+        :type question: str
 
-        @param default: The default answer to return, True or False
-        @type default: bool
+        :param default: The default answer to return, True or False
+        :type default: bool
 
-        @param true_answer_regex: A regex to match the "yes" answer
-        @type true_answer_regex: str
+        :param true_answer_regex: A regex to match the "yes" answer
+        :type true_answer_regex: str
         """
         super(ConfirmationQuestion, self).__init__(question, default)
 

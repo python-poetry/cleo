@@ -41,10 +41,10 @@ class Application(object):
         """
         Constructor
 
-        @param name: The name of the application
-        @type name: basestring
-        @param version: The version of the application
-        @type version: basestring
+        :param name: The name of the application
+        :type name: basestring
+        :param version: The version of the application
+        :type version: basestring
         """
         self._name = name
         self._version = version
@@ -66,13 +66,13 @@ class Application(object):
         """
         Runs the current application
 
-        @param input_: An Input Instance
-        @type input_: cleo.input.Input
-        @param output_: An Output instance
-        @type output_: Output
+        :param input_: An Input Instance
+        :type input_: cleo.input.Input
+        :param output_: An Output instance
+        :type output_: Output
 
-        @return: 0 if everything went fine, or an error code
-        @rtype: int
+        :return: 0 if everything went fine, or an error code
+        :rtype: int
         """
         if input_ is None:
             input_ = ArgvInput()
@@ -110,13 +110,13 @@ class Application(object):
         """
         Runs the current application
 
-        @param input_: An Input Instance
-        @type input_: cleo.inputs.Input
-        @param output_: An Output instance
-        @type output_: Output
+        :param input_: An Input Instance
+        :type input_: cleo.inputs.Input
+        :param output_: An Output instance
+        :type output_: Output
 
-        @return: 0 if everything went fine, or an error code
-        @rtype: int
+        :return: 0 if everything went fine, or an error code
+        :rtype: int
         """
         if input_.has_parameter_option(['--version', '-V']):
             output_.writeln(self.get_long_version())
@@ -196,11 +196,11 @@ class Application(object):
 
         If a command with the same name already exists, it will be overridden.
 
-        @param command: A Command object or a dictionary defining the command
-        @type command: Command or dict
+        :param command: A Command object or a dictionary defining the command
+        :type command: Command or dict
 
-        @return: The registered command
-        @rtype: Command
+        :return: The registered command
+        :rtype: Command
         """
         if isinstance(command, dict):
             command = Command.from_dict(command)
@@ -447,8 +447,8 @@ class Application(object):
         """
         Tries to figure out the terminal width in which this application runs
 
-        @return: The terminal width
-        @rtype: int or None
+        :return: The terminal width
+        :rtype: int or None
         """
         dimensions = self.get_terminal_dimensions(output_)
 
@@ -458,8 +458,8 @@ class Application(object):
         """
         Tries to figure out the terminal height in which this application runs
 
-        @return: The terminal height
-        @rtype: int or None
+        :return: The terminal height
+        :rtype: int or None
         """
         dimensions = self.get_terminal_dimensions(output_)
 
@@ -469,8 +469,8 @@ class Application(object):
         """
         Tries to figure out the terminal dimensions based on the current environment
 
-        @return: The terminal dimensions
-        @rtype: tuple
+        :return: The terminal dimensions
+        :rtype: tuple
         """
         if self._terminal_dimensions:
             return self._terminal_dimensions
@@ -500,13 +500,13 @@ class Application(object):
 
         Can be useful to force terminal dimensions for functional tests.
 
-        @param width: The width
-        @type width: int
-        @param height: The height
-        @type height: int
+        :param width: The width
+        :type width: int
+        :param height: The height
+        :type height: int
 
-        @return: The current application
-        @rtype: Application
+        :return: The current application
+        :rtype: Application
         """
         self._terminal_dimensions = width, height
 
@@ -516,10 +516,10 @@ class Application(object):
         """
         Configures the input and output instances based on the user arguments and options.
 
-        @param input_: An Input instance
-        @type input_: Input
-        @param output_: An Output instance
-        @type output_: Output
+        :param input_: An Input instance
+        :type input_: Input
+        :param output_: An Output instance
+        :type output_: Output
         """
         if input_.has_parameter_option('--ansi'):
             output_.set_decorated(True)
@@ -598,10 +598,10 @@ class Application(object):
         """
         Sorts command in alphabetical order
 
-        @param commands: A dict of commands
-        @type commands: dict
+        :param commands: A dict of commands
+        :type commands: dict
 
-        @return: A sorted list of commands
+        :return: A sorted list of commands
         """
         namespaced_commands = {}
         for name, command in commands.items():
@@ -637,12 +637,12 @@ class Application(object):
         """
         Finds alternatives of name in collection
 
-        @param name: The string
-        @type name: str
-        @param collection: The collection
-        @type collection: list
+        :param name: The string
+        :type name: str
+        :param collection: The collection
+        :type collection: list
 
-        @return: A sorted list of similar strings
+        :return: A sorted list of similar strings
         """
         threshold = 1e3
         alternatives = {}
@@ -686,8 +686,8 @@ class Application(object):
         """
         Sets the default Command name.
 
-        @param command_name: The Command name
-        @type command_name: str
+        :param command_name: The Command name
+        :type command_name: str
         """
         self._default_command = command_name
 
@@ -699,11 +699,11 @@ class Application(object):
         as an alias. This is needed in order to not have duplicate commands
         when used in combination with the @option and @argument decorators.
 
-        @param name: The Command name
-        @type name: str
+        :param name: The Command name
+        :type name: str
 
-        @param description: The Command description
-        @type description: str
+        :param description: The Command description
+        :type description: str
         """
         def decorate(func):
             func_name = func.__name__
@@ -732,20 +732,20 @@ class Application(object):
         if none exists yet and use the function __doc__ value as
         the command description.
 
-        @param name: The argument name
-        @type name: str
+        :param name: The argument name
+        :type name: str
 
-        @param description: The argument description
-        @type description: str
+        :param description: The argument description
+        :type description: str
 
-        @param required: Whether the argument is required or not
-        @type required: bool
+        :param required: Whether the argument is required or not
+        :type required: bool
 
-        @param is_list: Whether the argument is a list or not
-        @type is_list: bool
+        :param is_list: Whether the argument is a list or not
+        :type is_list: bool
 
-        @param default: The default value
-        @type default: mixed
+        :param default: The default value
+        :type default: mixed
         """
         def decorate(func):
             func_name = func.__name__
@@ -778,26 +778,26 @@ class Application(object):
         if none exists yet and use the function __doc__ value as
         the command description.
 
-        @param name: The option name
-        @type name: str
+        :param name: The option name
+        :type name: str
 
-        @param shortcut: The option shortcut
-        @type shortcut: str
+        :param shortcut: The option shortcut
+        :type shortcut: str
 
-        @param description: The option description
-        @type description: str
+        :param description: The option description
+        :type description: str
 
-        @param value_required: Whether the option requires a value or not
-        @type value_required: bool or None
+        :param value_required: Whether the option requires a value or not
+        :type value_required: bool or None
 
-        @param flag: Whether the option is a flag or not
-        @type flag: bool
+        :param flag: Whether the option is a flag or not
+        :type flag: bool
 
-        @param is_list: Whether the option is a list or not
-        @type is_list: bool
+        :param is_list: Whether the option is a list or not
+        :type is_list: bool
 
-        @param default: The default value
-        @type default: mixed
+        :param default: The default value
+        :type default: mixed
         """
         def decorate(func):
             func_name = func.__name__

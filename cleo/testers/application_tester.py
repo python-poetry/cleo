@@ -15,8 +15,8 @@ class ApplicationTester(object):
         """
         Constructor
 
-        @param application: A Application instance to test
-        @type application: Application
+        :param application: A Application instance to test
+        :type application: Application
         """
         self.__application = application
         self.__input = None
@@ -31,13 +31,13 @@ class ApplicationTester(object):
             * decorated: Sets the output decorated flag
             * verbosity: Sets the output verbosity flag
 
-        @param input_: A dict of argument and options
-        @type input_: list
-        @param options: A dict of options
-        @type options: dict
+        :param input_: A dict of argument and options
+        :type input_: list
+        :param options: A dict of options
+        :type options: dict
 
-        @return: The command exit code
-        @rtype: integer
+        :return: The command exit code
+        :rtype: integer
         """
         options = options or {}
 
@@ -57,8 +57,8 @@ class ApplicationTester(object):
         """
         Gets the display returned by the last execution command
 
-        @return: The display
-        @rtype: str
+        :return: The display
+        :rtype: str
         """
         self.__output.get_stream().seek(0)
 
@@ -68,8 +68,8 @@ class ApplicationTester(object):
         """
         Gets the input instance used by the last execution of the command.
 
-        @return: The current input instance
-        @rtype: Input
+        :return: The current input instance
+        :rtype: Input
         """
         return self.__input
 
@@ -77,7 +77,7 @@ class ApplicationTester(object):
         """
         Gets the output instance used by the last execution of the command.
 
-        @return: The current output instance
-        @rtype: Output
+        :return: The current output instance
+        :rtype: Output
         """
         return self.__output

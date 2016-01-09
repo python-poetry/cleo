@@ -91,8 +91,8 @@ class InputDefinition(object):
         """
         Gets the list of InputArguments objects.
 
-        @return: A list of InputArguments objects
-        @rtype: list
+        :return: A list of InputArguments objects
+        :rtype: list
         """
         return list(self.__arguments.values())
 

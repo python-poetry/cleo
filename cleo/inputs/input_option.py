@@ -39,18 +39,18 @@ class InputOption(object):
         """
         Constructor
 
-        @param name: The option name
-        @type name: str
-        @param shortcut: The option shortcut
-        @type shortcut: str or None or list
-        @param mode: The argument mode: VALUE_NONE or VALUE_REQUIRED or VALUE_OPTIONAL
-        @type mode: int or None
-        @param description: A description text
-        @type description: str
-        @param default: The default value (must be null for VALUE_REQUIRED or VALUE_NONE)
-        @type default: mixed
-        @param validator: A Validator instance or a callable
-        @type validator: Validator or callable
+        :param name: The option name
+        :type name: str
+        :param shortcut: The option shortcut
+        :type shortcut: str or None or list
+        :param mode: The argument mode: VALUE_NONE or VALUE_REQUIRED or VALUE_OPTIONAL
+        :type mode: int or None
+        :param description: A description text
+        :type description: str
+        :param default: The default value (must be null for VALUE_REQUIRED or VALUE_NONE)
+        :type default: mixed
+        :param validator: A Validator instance or a callable
+        :type validator: Validator or callable
         """
         if name.startswith('--'):
             name = name[2:]
@@ -89,8 +89,8 @@ class InputOption(object):
         """
         Returns the option shortcut.
 
-        @return: The option shortcut
-        @rtype: str
+        :return: The option shortcut
+        :rtype: str
         """
         return self.__shortcut
 
@@ -98,8 +98,8 @@ class InputOption(object):
         """
         Returns the option name.
 
-        @return: The option name
-        @rtype: str
+        :return: The option name
+        :rtype: str
         """
         return self.__name
 
@@ -107,8 +107,8 @@ class InputOption(object):
         """
         Returns true if the option accepts a value.
 
-        @return: True if value mode is not VALUE_NONE, False otherwise
-        @rtype: bool
+        :return: True if value mode is not VALUE_NONE, False otherwise
+        :rtype: bool
         """
         return self.is_value_required() or self.is_value_optional()
 
@@ -116,7 +116,7 @@ class InputOption(object):
         """
         Returns True if the option requires a value.
 
-        @return: True if value mode is VALUE_REQUIRED, False otherwise
+        :return: True if value mode is VALUE_REQUIRED, False otherwise
         """
         return self.__class__.VALUE_REQUIRED == (self.__class__.VALUE_REQUIRED & self.__mode)
 
@@ -124,7 +124,7 @@ class InputOption(object):
         """
         Returns True if the option takes an optional value.
 
-        @return: True if value mode is VALUE_OPTIONAL, False otherwise
+        :return: True if value mode is VALUE_OPTIONAL, False otherwise
         """
         return self.__class__.VALUE_OPTIONAL == (self.__class__.VALUE_OPTIONAL & self.__mode)
 
@@ -132,7 +132,7 @@ class InputOption(object):
         """
         Returns True if the option is a flag
 
-        @return: True if value mode is VALUE_NONE, False otherwise
+        :return: True if value mode is VALUE_NONE, False otherwise
         """
         return self.__class__.VALUE_NONE == (self.__class__.VALUE_NONE & self.__mode)
 
@@ -140,8 +140,8 @@ class InputOption(object):
         """
         Returns True if the option can take multiple values
 
-        @return: True if mode is VALUE_IS_LIST, False otherwise
-        @rtype: bool
+        :return: True if mode is VALUE_IS_LIST, False otherwise
+        :rtype: bool
         """
         return self.__class__.VALUE_IS_LIST == (self.__class__.VALUE_IS_LIST & self.__mode)
 
@@ -149,8 +149,8 @@ class InputOption(object):
         """
         Sets the default value.
 
-        @param default: The default value
-        @type default: mixed
+        :param default: The default value
+        :type default: mixed
         """
         if self.__class__.VALUE_NONE == self.__mode and default is not None:
             raise Exception('Cannot set a default value when using InputOption::VALUE_NONE mode.')
@@ -167,8 +167,8 @@ class InputOption(object):
         """
         Returns the default value.
 
-        @return: The default value
-        @rtype: mixed
+        :return: The default value
+        :rtype: mixed
         """
         return self.__default
 
@@ -176,8 +176,8 @@ class InputOption(object):
         """
         Returns the description text.
 
-        @return: The description text
-        @rtype: basestring
+        :return: The description text
+        :rtype: basestring
         """
         return self.__description
 
@@ -185,8 +185,8 @@ class InputOption(object):
         """
         Returns the validator
 
-        @return: The validator
-        @rtype: Validator or callable
+        :return: The validator
+        :rtype: Validator or callable
         """
         return self.__validator
 
@@ -205,10 +205,10 @@ class InputOption(object):
         """
         Checks whether the given option equals this one.
 
-        @param option: option to compare
-        @type option: InputOption
+        :param option: option to compare
+        :type option: InputOption
 
-        @rtype: bool
+        :rtype: bool
         """
         return option.get_name() == self.get_name()\
             and option.get_shortcut() == self.get_shortcut()\
@@ -222,11 +222,11 @@ class InputOption(object):
         """
         Created a InputOption instance from a dictionary.
 
-        @param option_dict: The dictionary defining the argument
-        @type option_dict: dict
+        :param option_dict: The dictionary defining the argument
+        :type option_dict: dict
 
-        @return: The created InputOption instance
-        @rtype: InputOption
+        :return: The created InputOption instance
+        :rtype: InputOption
         """
         if len(option_dict) > 1:
             name = option_dict['name']

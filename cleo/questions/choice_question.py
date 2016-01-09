@@ -13,8 +13,8 @@ class SelectChoiceValidator(Choice):
         """
         Constructor.
 
-        @param question: A ChoiceQuestion instance
-        @type question: ChoiceQuestion
+        :param question: A ChoiceQuestion instance
+        :type question: ChoiceQuestion
         """
         super(SelectChoiceValidator, self).__init__(question.choices, validator)
 
@@ -24,10 +24,10 @@ class SelectChoiceValidator(Choice):
         """
         Validate a choice.
 
-        @param selected: The choice
-        @type selected: str
+        :param selected: The choice
+        :type selected: str
 
-        @return: bool
+        :return: bool
         """
         # Collapse all spaces.
         if not isinstance(selected, basestring):
@@ -97,14 +97,14 @@ class ChoiceQuestion(Question):
         """
         Constructor.
 
-        @param question: The question to ask to the user
-        @type question: str
+        :param question: The question to ask to the user
+        :type question: str
 
-        @param choices: The list of available choices
-        @type choices: list
+        :param choices: The list of available choices
+        :type choices: list
 
-        @param default: The default answer to return
-        @type default: mixed
+        :param default: The default answer to return
+        :type default: mixed
         """
         super(ChoiceQuestion, self).__init__(question, default)
 

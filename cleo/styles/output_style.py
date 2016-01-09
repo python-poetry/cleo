@@ -14,8 +14,8 @@ class OutputStyle(Output):
         """
         Constructor.
 
-        @param output: An Output instance
-        @type output: Output
+        :param output: An Output instance
+        :type output: Output
         """
         self._output = output
 
@@ -23,7 +23,7 @@ class OutputStyle(Output):
         """
         Formats a command title.
 
-        @type message: str
+        :type message: str
         """
         raise NotImplementedError()
 
@@ -31,7 +31,7 @@ class OutputStyle(Output):
         """
         Formats a section title.
 
-        @type message: str
+        :type message: str
         """
         raise NotImplementedError()
 
@@ -39,7 +39,7 @@ class OutputStyle(Output):
         """
         Formats a list.
 
-        @type elements: list
+        :type elements: list
         """
         raise NotImplementedError()
 
@@ -47,7 +47,7 @@ class OutputStyle(Output):
         """
         Formats informational text.
 
-        @type message: str or list
+        :type message: str or list
         """
         raise NotImplementedError()
 
@@ -55,7 +55,7 @@ class OutputStyle(Output):
         """
         Formats a success result bar.
 
-        @type message: str or list
+        :type message: str or list
         """
         raise NotImplementedError()
 
@@ -63,7 +63,7 @@ class OutputStyle(Output):
         """
         Formats an error result bar.
 
-        @type message: str or list
+        :type message: str or list
         """
         raise NotImplementedError()
 
@@ -71,7 +71,7 @@ class OutputStyle(Output):
         """
         Formats a warning result bar.
 
-        @type message: str or list
+        :type message: str or list
         """
         raise NotImplementedError()
 
@@ -79,7 +79,7 @@ class OutputStyle(Output):
         """
         Formats a note admonition.
 
-        @type message: str or list
+        :type message: str or list
         """
         raise NotImplementedError()
 
@@ -87,7 +87,7 @@ class OutputStyle(Output):
         """
         Formats a caution admonition.
 
-        @type message: str or list
+        :type message: str or list
         """
         raise NotImplementedError()
 
@@ -95,8 +95,8 @@ class OutputStyle(Output):
         """
         Formats a table.
 
-        @type headers: list
-        @type rows: list
+        :type headers: list
+        :type rows: list
         """
         raise NotImplementedError()
 
@@ -104,11 +104,11 @@ class OutputStyle(Output):
         """
         Asks a question
 
-        @type question: str
-        @type default: str or None
-        @type validator: callable or None
+        :type question: str
+        :type default: str or None
+        :type validator: callable or None
 
-        @rtype: str
+        :rtype: str
         """
         raise NotImplementedError()
 
@@ -116,10 +116,10 @@ class OutputStyle(Output):
         """
         Asks a question with the user input hidden.
 
-        @type question: str
-        @type validator: callable or None
+        :type question: str
+        :type validator: callable or None
 
-        @rtype: str
+        :rtype: str
         """
         raise NotImplementedError()
 
@@ -127,10 +127,10 @@ class OutputStyle(Output):
         """
         Asks for confirmation.
 
-        @type question: str
-        @type default: bool
+        :type question: str
+        :type default: bool
 
-        @rtype: bool
+        :rtype: bool
         """
         raise NotImplementedError()
 
@@ -138,11 +138,11 @@ class OutputStyle(Output):
         """
         Asks a choice question.
 
-        @type question: str
-        @type choices: list
-        @type default: str or int or None
+        :type question: str
+        :type choices: list
+        :type default: str or int or None
 
-        @rtype: str
+        :rtype: str
         """
         raise NotImplementedError()
 
@@ -150,8 +150,8 @@ class OutputStyle(Output):
         """
         Add newline(s).
 
-        @param count: The number of newlines
-        @type count: int
+        :param count: The number of newlines
+        :type count: int
         """
         self._output.write(os.linesep * count)
 
@@ -159,9 +159,9 @@ class OutputStyle(Output):
         """
         Create a new progress bar
 
-        @int max: int
+        :type max: int
 
-        @rtype ProgressHelper
+        :rtype ProgressHelper
         """
         return ProgressBar(self, max)
 

@@ -113,13 +113,13 @@ class BaseCommand(object):
         """
         Runs the command.
 
-        @param input_: an Input instance
-        @type input_: Input
-        @param output_: an Output instance
-        @type output_: Output
+        :param input_: an Input instance
+        :type input_: Input
+        :param output_: an Output instance
+        :type output_: Output
 
-        @return: The command exit code
-        @rtype: int
+        :return: The command exit code
+        :rtype: int
         """
         # force the creation of the synopsis before the merge with the app definition
         self.get_synopsis(True)
@@ -169,8 +169,8 @@ class BaseCommand(object):
 
         This method should not be used directly.
 
-        @param merge_args: Whether to merge or not the Application definition arguments to Command definition arguments
-        @type merge_args: bool
+        :param merge_args: Whether to merge or not the Application definition arguments to Command definition arguments
+        :type merge_args: bool
         """
         if self._application is None \
                 or (self._application_definition_merged
@@ -321,11 +321,11 @@ class BaseCommand(object):
         """
         Creates a command from a dictionary.
 
-        @param command_dict: The dictionary defining the commmand
-        @type command_dict: dict
+        :param command_dict: The dictionary defining the commmand
+        :type command_dict: dict
 
-        @return: The command
-        @rtype: Command
+        :return: The command
+        :rtype: Command
         """
         if len(command_dict) > 1:
             name = command_dict['name']

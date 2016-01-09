@@ -25,17 +25,17 @@ class ProgressIndicator(object):
         """
         Constructor.
 
-        @param output: An Output instance
-        @type output: Output
+        :param output: An Output instance
+        :type output: Output
 
-        @param fmt: Indicator format
-        @type fmt: str or None
+        :param fmt: Indicator format
+        :type fmt: str or None
 
-        @param indicator_change_interval: Change interval in milliseconds
-        @type indicator_change_interval: int
+        :param indicator_change_interval: Change interval in milliseconds
+        :type indicator_change_interval: int
 
-        @param indicator_values: Animated indicator characters
-        @type indicator_values: list or None
+        :param indicator_values: Animated indicator characters
+        :type indicator_values: list or None
         """
         self._output = output
 
@@ -64,8 +64,8 @@ class ProgressIndicator(object):
         """
         Sets the current indicator message.
 
-        @param message: The message
-        @type message: str or None
+        :param message: The message
+        :type message: str or None
         """
         self._message = message
 
@@ -79,7 +79,7 @@ class ProgressIndicator(object):
         """
         Gets the current animated indicator character.
 
-        @rtype: str
+        :rtype: str
         """
         return self.indicator_values[self._indicator_current % len(self.indicator_values)]
 
@@ -87,7 +87,7 @@ class ProgressIndicator(object):
         """
         Starts the indicator output.
 
-        @type message: str
+        :type message: str
         """
         if self._started:
             raise CleoException('Progress indicator already started.')
@@ -144,8 +144,8 @@ class ProgressIndicator(object):
         """
         Overwrites a previous message to the output.
 
-        @param message: The message
-        @type message: str
+        :param message: The message
+        :type message: str
         """
         # append whitespace to match the line's length
         if self._last_message_length is not None:

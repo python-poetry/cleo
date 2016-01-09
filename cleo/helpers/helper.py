@@ -27,8 +27,8 @@ class Helper(object):
         """
         Sets the helper set associated with this helper.
 
-        @param helper_set: A HelperSet instance
-        @type helper_set: HelperSet
+        :param helper_set: A HelperSet instance
+        :type helper_set: HelperSet
         """
         self.helper_set = helper_set
 
@@ -36,8 +36,8 @@ class Helper(object):
         """
         Gets the helper set associated with this helper.
 
-        @return: A HelperSet instance
-        @rtype: HelperSet
+        :return: A HelperSet instance
+        :rtype: HelperSet
         """
         return self.helper_set
 
@@ -46,11 +46,11 @@ class Helper(object):
         """
         Returns the length of a string.
 
-        @param string: The string to return the length of
-        @type string: str
+        :param string: The string to return the length of
+        :type string: str
 
-        @return: The length of the string
-        @rtype: int
+        :return: The length of the string
+        :rtype: int
         """
         return len(decode(string))
 
@@ -59,11 +59,11 @@ class Helper(object):
         """
         Format a duration in seconds to a human readable representation.
 
-        @param secs: The duration in seconds
-        @type secs: int
+        :param secs: The duration in seconds
+        :type secs: int
 
-        @return: The duration representation
-        @rtype: str
+        :return: The duration representation
+        :rtype: str
         """
         for fmt in cls.time_formats:
             if secs >= fmt[0]:
@@ -79,11 +79,11 @@ class Helper(object):
         """
         Format a memory in bytes to a human readable representation.
 
-        @param secs: The memory in bytes
-        @type secs: int
+        :param secs: The memory in bytes
+        :type secs: int
 
-        @return: The memory representation
-        @rtype: str
+        :return: The memory representation
+        :rtype: str
         """
         if memory >= 1024**3:
             return '%.1f GiB' % (memory / 1024**3)
