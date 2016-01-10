@@ -309,6 +309,25 @@ class ProgressBarTest(TestCase):
 
         self.assertEqual(expected, self.get_output_content(output))
 
+    def test_multiline_format(self):
+        output = self.get_output_stream()
+        bar = ProgressBar(output, 3)
+        bar.set_format('%bar%\nfoobar')
+
+        bar.start()
+        bar.advance()
+        bar.clear()
+        bar.finish()
+
+        expected = self.generate_output([
+            '>---------------------------\nfoobar',
+            '=========>------------------\nfoobar                      ',
+            '                            \n                            ',
+            '============================\nfoobar                      '
+        ])
+
+        self.assertEqual(expected, self.get_output_content(output))
+
     def get_output_stream(self, decorated=True, verbosity=StreamOutput.VERBOSITY_NORMAL):
         stream = BytesIO()
 

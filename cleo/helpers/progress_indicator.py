@@ -2,6 +2,7 @@
 
 import time
 import re
+import psutil
 from ..exceptions import CleoException
 from ..outputs import Output
 from .helper import Helper
@@ -138,7 +139,15 @@ class ProgressIndicator(object):
         if self._output.get_verbosity() == Output.VERBOSITY_QUIET:
             return
 
-        self._overwrite(re.sub('(?i){%([a-z\-_]+)(?:\:([^%]+))?%}', '\\0', self.format))
+        self._overwrite(re.sub('(?i)%([a-z\-_]+)(?:\:([^%]+))?%', self._overwrite_callback, self.format))
+
+    def _overwrite_callback(self, matches):
+        if hasattr(self, '_formatter_%s' % matches.group(1)):
+            text = str(getattr(self, '_formatter_%s' % matches.group(1))())
+        else:
+            text = matches.group(0)
+
+        return text
 
     def _overwrite(self, message):
         """
@@ -149,7 +158,7 @@ class ProgressIndicator(object):
         """
         # append whitespace to match the line's length
         if self._last_message_length is not None:
-            if (self._last_message_length > Helper.len_without_decoration(self._output.formatter(), message)):
+            if (self._last_message_length > Helper.len_without_decoration(self._output.get_formatter(), message)):
                 message = message.ljust(self._last_message_length, '\x20')
 
         if self._output.is_decorated():
@@ -187,3 +196,17 @@ class ProgressIndicator(object):
 
     def _get_current_time_in_milliseconds(self):
         return round(time.time() * 1000)
+
+    def _formatter_indicator(self):
+        return self.current_value
+
+    def _formatter_message(self):
+        return self.get_message()
+
+    def _formatter_elapsed(self):
+        return Helper.format_time(time.time() - self.start_time)
+
+    def _formatter_memory(self):
+        return Helper.format_memory(
+            psutil.Process().memory_info().rss
+        )

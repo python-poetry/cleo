@@ -11,6 +11,7 @@ from ..helpers import Table
 from ..helpers.table_separator import TableSeparator
 from ..helpers.table_cell import TableCell
 from ..helpers.table_style import TableStyle
+from ..helpers.progress_indicator import ProgressIndicator
 from ..formatters import OutputFormatterStyle
 
 
@@ -398,6 +399,24 @@ class Command(BaseCommand):
         :rtype: ProgressBar
         """
         return self.output.create_progress_bar(max)
+
+    def progress_indicator(self, fmt=None, indicator_change_interval=100,
+                           indicator_values=None):
+        """
+        Creates a new progress indicator.
+
+        :param fmt: Indicator format
+        :type fmt: str or None
+
+        :param indicator_change_interval: Change interval in milliseconds
+        :type indicator_change_interval: int
+
+        :param indicator_values: Animated indicator characters
+        :type indicator_values: list or None
+
+        :rtype: ProgressIndicator
+        """
+        return ProgressIndicator(self.output, fmt, indicator_change_interval, indicator_values)
 
     def set_style(self, name, fg=None, bg=None, options=None):
         """
