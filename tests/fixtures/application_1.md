@@ -41,7 +41,7 @@ To display the list of available commands, please use the <info>list</info> comm
 * Accept value: yes
 * Is value required: yes
 * Is multiple: no
-* Description: The output format (txt, xml, json, or md)
+* Description: The output format (txt, json, or md)
 * Default: `txt`
 
 **raw:**
@@ -177,5 +177,5 @@ It's also possible to get raw list of commands (useful for embedding command run
 * Accept value: yes
 * Is value required: yes
 * Is multiple: no
-* Description: The output format (txt, xml, json, or md)
+* Description: The output format (txt, json, or md)
 * Default: `txt`

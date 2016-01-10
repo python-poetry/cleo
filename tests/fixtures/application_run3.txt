@@ -6,7 +6,7 @@ Arguments:
 
 Options:
       --raw            To output raw command list
-      --format=FORMAT  The output format (txt, xml, json, or md) [default: "txt"]
+      --format=FORMAT  The output format (txt, json, or md) [default: "txt"]
 
 Help:
  The list command lists all commands:

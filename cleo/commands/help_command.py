@@ -9,7 +9,7 @@ class HelpCommand(Command):
     Displays help for a command
 
     help {command_name=help : The command name}
-         {--format=txt : The output format (txt, xml, json, or md)}
+         {--format=txt : The output format (txt, json, or md)}
          {--raw : To output raw command help}
     """
 

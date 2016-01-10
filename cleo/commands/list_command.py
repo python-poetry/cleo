@@ -10,7 +10,7 @@ class ListCommand(Command):
 
     list {namespace? : The namespace name}
          {--raw : To output raw command list}
-         {--format=txt : The output format (txt, xml, json, or md)}
+         {--format=txt : The output format (txt, json, or md)}
     """
 
     help = """The <info>%command.name%</info> command lists all commands:
