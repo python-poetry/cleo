@@ -4,6 +4,7 @@ import sys
 import re
 
 from .input import Input
+from ..exceptions import UsageError, NoSuchOption, BadOptionUsage
 
 
 class ArgvInput(Input):
@@ -68,7 +69,7 @@ class ArgvInput(Input):
         l = len(name)
         for i in range(0, l):
             if not self.definition.has_shortcut(name[i]):
-                raise Exception('The "-%s" option does not exist.' % name[i])
+                raise NoSuchOption('The "-%s" option does not exist.' % name[i])
 
             option = self.definition.get_option_for_shortcut(name[i])
             if option.accept_value():
@@ -110,17 +111,17 @@ class ArgvInput(Input):
             self.arguments[arg.get_name()].append(token)
         # unexpected argument
         else:
-            raise Exception('Too many arguments.')
+            raise UsageError('Too many arguments.')
 
     def add_short_option(self, shortcut, value):
         if not self.definition.has_shortcut(shortcut):
-            raise Exception('The "-%s" option does not exist.' % shortcut)
+            raise NoSuchOption('The "-%s" option does not exist.' % shortcut)
 
         self.add_long_option(self.definition.get_option_for_shortcut(shortcut).get_name(), value)
 
     def add_long_option(self, name, value):
         if not self.definition.has_option(name):
-            raise Exception('The "--%s" option does not exist.' % name)
+            raise NoSuchOption('The "--%s" option does not exist.' % name)
 
         option = self.definition.get_option(name)
 
@@ -128,7 +129,7 @@ class ArgvInput(Input):
             value = None
 
         if value is not None and not option.accept_value():
-            raise Exception('The "--%s" option does not accept a value.' % name)
+            raise BadOptionUsage('The "--%s" option does not accept a value.' % name)
 
         if value is None and option.accept_value() and len(self.__parsed):
             # if option accepts an optional or mandatory argument
@@ -152,7 +153,7 @@ class ArgvInput(Input):
 
         if value is None:
             if option.is_value_required():
-                raise Exception('The "--%s" option requires a value.' % name)
+                raise BadOptionUsage('The "--%s" option requires a value.' % name)
 
             if not option.is_list():
                 value = option.get_default() if option.is_value_optional() else True

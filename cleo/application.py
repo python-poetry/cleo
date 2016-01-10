@@ -23,6 +23,7 @@ from .commands.help_command import HelpCommand
 from .commands.list_command import ListCommand
 from .commands.completion.completion_command import CompletionCommand
 from .helpers import HelperSet, FormatterHelper, QuestionHelper, TableHelper
+from .exceptions import CleoException
 
 
 class Application(object):
@@ -93,7 +94,10 @@ class Application(object):
             else:
                 self.render_exception(e, output_)
 
-            status_code = e.errno if hasattr(e, 'errno') else 1
+            if isinstance(e, CleoException):
+                status_code = e.code
+            else:
+                status_code = e.errno if hasattr(e, 'errno') else 1
 
             if status_code == 0:
                 status_code = 1

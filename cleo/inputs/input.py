@@ -5,6 +5,7 @@ from .input_definition import InputDefinition
 from ..validators import ValidationError, Callable, Validator
 from .input_argument import InvalidArgument
 from .input_option import InvalidOption
+from ..exceptions import MissingArguments, NoSuchOption
 
 
 class Input(object):
@@ -63,7 +64,7 @@ class Input(object):
 
     def validate(self):
         if len(self.get_arguments()) < self.definition.get_argument_required_count():
-            raise Exception('Not enough arguments')
+            raise MissingArguments('Not enough arguments')
 
         self.validate_arguments()
         self.validate_options()
@@ -145,13 +146,13 @@ class Input(object):
 
     def get_option(self, name):
         if not self.has_option(name):
-            raise Exception('Option "%s" does not exist' % name)
+            raise NoSuchOption('Option "%s" does not exist' % name)
 
         return self.options.get(name, self.definition.get_option(name).get_default())
 
     def set_option(self, name, value):
         if not self.definition.has_option(name):
-            raise Exception('Argument "%s" does not exist')
+            raise NoSuchOption('Option "%s" does not exist' % name)
 
         self.options[name] = value
 
