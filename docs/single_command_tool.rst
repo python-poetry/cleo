@@ -11,14 +11,14 @@ it is possible to remove this need by extending the application:
 
     class MyApplication(Application):
 
-        def get_command_name(i):
+        def get_command_name(self, i):
             """
             Gets the name of the command based in input.
             """
             # This should return the name of your command
             return 'my_command'
 
-        def get_default_commands():
+        def get_default_commands(self):
             """
             Gets the default commands that should always be available.
             """
@@ -30,7 +30,7 @@ it is possible to remove this need by extending the application:
 
             return default_commands
 
-        def get_definition():
+        def get_definition(self):
             """
             Overridden so that the application doesn't expect the command
             name to be the first argument.
@@ -39,7 +39,7 @@ it is possible to remove this need by extending the application:
             # Clear out the normal first argument, which is the command name
             definition.set_arguments()
 
-            return idefinition
+            return definition
 
 
 When calling your console script, the command ``MyCommand`` will then always
