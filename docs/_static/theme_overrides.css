@@ -209,7 +209,7 @@ article ul li {
 }
 
 .wy-menu-vertical li.current > a {
-    color: #FAC322 !important;
+    color: #579ED1 !important;
     padding-left: 2.427em;
 }
 
@@ -259,7 +259,7 @@ article ul li {
 
 .wy-menu-vertical li.toctree-l1.current:before {
     content: "#";
-    color: #FAC322;
+    color: #579ED1;
     font-size: 13px;
     position: absolute;
     top: 3px;
