@@ -27,7 +27,7 @@ class ProgressBar(object):
         'normal': ' %current%/%max% [%bar%] %percent:3s%%',
         'normal_nomax': ' %current% [%bar%]',
 
-        'verbose': ' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%',
+        'verbose': ' %current%/%max% [%bar%] %percent:3s%% %elapsed:-6s%',
         'verbose_nomax': ' %current% [%bar%] %elapsed:6s%',
 
         'very_verbose': ' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s%',
@@ -221,7 +221,10 @@ class ProgressBar(object):
             return matches.group(0)
 
         if matches.group(2):
-            text = text.rjust(int(matches.group(2).rstrip('s')))
+            if matches.group(2).startswith('-'):
+                text = text.ljust(int(matches.group(2).lstrip('-').rstrip('s')))
+            else:
+                text = text.rjust(int(matches.group(2).rstrip('s')))
 
         return text
 
