@@ -13,8 +13,9 @@ create ``greet_command.py`` and add the following to it:
         """
         Greets someone
 
-        demo:greet {name? : Who do you want to greet?}
-                   {--y|yell : If set, the task will yell in uppercase letters}
+        demo:greet
+            {name? : Who do you want to greet?}
+            {--y|yell : If set, the task will yell in uppercase letters}
         """
 
         def handle(self):
@@ -92,6 +93,16 @@ This prints:
 
         """
         command:name {argument : Argument description} {--option : Option description}
+        """
+
+    The signature can span multiple lines.
+
+    .. code-block:: python
+
+        """
+        command:name
+            {argument : Argument description}
+            {--option : Option description}
         """
 
     If you do not want to use the docstring to describe your commands, you can use the
@@ -289,9 +300,10 @@ and make the ``name`` argument required:
         """
         Greets someone
 
-        demo:greet {name : Who do you want to greet?}
-                   {last_name? : Your last name?}
-                   {--y|yell : If set, the task will yell in uppercase letters}
+        demo:greet
+            {name : Who do you want to greet?}
+            {last_name? : Your last name?}
+            {--y|yell : If set, the task will yell in uppercase letters}
         """
 
 You now have access to a ``last_name`` argument in your command:
@@ -319,8 +331,9 @@ argument list:
         """
         Greets someone
 
-        demo:greet {names* : Who do you want to greet?}
-                   {--y|yell : If set, the task will yell in uppercase letters}
+        demo:greet
+            {names* : Who do you want to greet?}
+            {--y|yell : If set, the task will yell in uppercase letters}
         """
 
 To use this, just specify as many names as you want:
@@ -356,8 +369,9 @@ You can combine ``IS_LIST`` with ``REQUIRED`` and ``OPTIONAL`` like this:
         """
         Greets someone
 
-        demo:greet {names?* : Who do you want to greet?}
-                   {--y|yell : If set, the task will yell in uppercase letters}
+        demo:greet
+            {names?* : Who do you want to greet?}
+            {--y|yell : If set, the task will yell in uppercase letters}
         """
 
 If you want to set a default value, you can it like so:
@@ -397,9 +411,10 @@ how many times in a row the message should be printed:
         """
         Greets someone
 
-        demo:greet {name? : Who do you want to greet?}
-                   {--y|yell : If set, the task will yell in uppercase letters}
-                   {--iterations=1 : How many times should the message be printed?}
+        demo:greet
+            {name? : Who do you want to greet?}
+            {--y|yell : If set, the task will yell in uppercase letters}
+            {--iterations=1 : How many times should the message be printed?}
         """
 
 
@@ -452,9 +467,10 @@ You can combine ``VALUE_IS_LIST`` with ``VALUE_REQUIRED`` or ``VALUE_OPTIONAL`` 
         """
         Greets someone
 
-        demo:greet {name? : Who do you want to greet?}
-                   {--y|yell : If set, the task will yell in uppercase letters}
-                   {--iterations=?*1 : How many times should the message be printed?}
+        demo:greet
+            {name? : Who do you want to greet?}
+            {--y|yell : If set, the task will yell in uppercase letters}
+            {--iterations=?*1 : How many times should the message be printed?}
         """
 
 
