@@ -59,7 +59,7 @@ makes sure that the user can only enter a valid string from a predefined list:
 
     def handle(self):
         color = self.choice(
-            'Please select your favorite color (defaults to red),
+            'Please select your favorite color (defaults to red)',
             ['red', 'blue', 'yellow'],
             0
         )
