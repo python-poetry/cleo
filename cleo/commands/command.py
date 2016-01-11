@@ -6,7 +6,7 @@ from ..inputs.list_input import ListInput
 from ..parser import Parser
 from ..styles import CleoStyle
 from ..outputs import Output, NullOutput
-from ..questions import ChoiceQuestion
+from ..questions import Question, ChoiceQuestion, ConfirmationQuestion
 from ..helpers import Table
 from ..helpers.table_separator import TableSeparator
 from ..helpers.table_cell import TableCell
@@ -199,6 +199,9 @@ class Command(BaseCommand):
 
         :rtype: str
         """
+        if isinstance(question, Question):
+            return self.get_helper('question').ask(self.input, self.output, question)
+
         return self.output.ask(question, default)
 
     def secret(self, question):
@@ -239,6 +242,24 @@ class Command(BaseCommand):
         question.multiselect = multiple
 
         return self.output.ask_question(question)
+
+    def create_question(self, question, type=None, **kwargs):
+        """
+        Returns a Question of specified type.
+
+        :param type: The type of the question
+        :type type: str
+
+        :rtype: mixed
+        """
+        if not type:
+            return Question(question, **kwargs)
+
+        if type == 'choice':
+            return ChoiceQuestion(question, **kwargs)
+
+        if type == 'confirmation':
+            return ConfirmationQuestion(question, **kwargs)
 
     def table(self, headers=None, rows=None, style='default'):
         """
