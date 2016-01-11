@@ -175,7 +175,7 @@ you need to set the helper input stream:
 
         # self.assertRegex('...', command_tester.get_display())
 
-    def get_input_stream(input)
+    def get_input_stream(self, input)
         stream = BytesIO()
         stream.write(input_.encode())
         stream.seek(0)
