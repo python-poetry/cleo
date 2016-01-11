@@ -17,7 +17,7 @@ This a major release with some API changes.
 
 ##### Fixes
 
-* Values are now properly casted by validators
+* Values are now properly cast by validators
 * Fixing "flag" not being set properly
-* Progress bar now behave properly (Fixes [#37](https://github.com/sdispater/cleo/issues/37))
+* Progress bar now behaves properly (Fixes [#37](https://github.com/sdispater/cleo/issues/37))
 * The `-n|--no-interaction` option behaves properly (Fixes [#38](https://github.com/sdispater/cleo/issues/39) and [#39](https://github.com/sdispater/cleo/issues/39))
