@@ -1,5 +1,7 @@
 ### 0.4.0
 
+(January 11th, 2016)
+
 This a major release with some API changes.
 
 ##### Improvements
