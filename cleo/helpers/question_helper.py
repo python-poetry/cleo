@@ -7,6 +7,7 @@ from .helper import Helper
 from ..questions import Question, ChoiceQuestion
 from ..outputs import ConsoleOutput
 from ..formatters import OutputFormatterStyle
+from ..validators import Validator, Callable
 from .._compat import decode
 
 
@@ -288,12 +289,17 @@ class QuestionHelper(Helper):
         error = None
         attempts = question.max_attempts
 
+        if not isinstance(question.validator, Validator):
+            validator = Callable(question.validator)
+        else:
+            validator = question.validator
+
         while attempts is None or attempts:
             if error is not None:
                 self._write_error(output, error)
 
             try:
-                return question.validator(interviewer())
+                return validator.validate(interviewer())
             except Exception as e:
                 error = e
 
