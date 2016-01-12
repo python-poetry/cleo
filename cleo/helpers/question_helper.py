@@ -158,7 +158,7 @@ class QuestionHelper(Helper):
         matches = [x for x in autocomplete]
         num_matches = len(matches)
 
-        stty_mode = subprocess.check_output(['stty', '-g'])
+        stty_mode = decode(subprocess.check_output(['stty', '-g'])).rstrip('\n')
 
         # Disable icanon (so we can fread each keypress) and echo (we'll do echoing here instead)
         subprocess.check_output(['stty', '-icanon', '-echo'])
@@ -254,7 +254,7 @@ class QuestionHelper(Helper):
         :rtype: str
         """
         if self._has_stty_available():
-            stty_mode = decode(subprocess.check_output(['stty', '-g']))
+            stty_mode = decode(subprocess.check_output(['stty', '-g'])).rstrip('\n')
 
             subprocess.check_output(['stty', '-echo'])
             value = decode(input_stream.readline())
