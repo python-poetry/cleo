@@ -331,7 +331,7 @@ class QuestionHelper(Helper):
             return self.stty
 
         devnull = open(os.devnull, 'w')
-        exit_code = subprocess.call(['stty', '2'], stdout=devnull, stderr=devnull)
+        exit_code = subprocess.call(['stty'], stdout=devnull, stderr=devnull)
 
         self.stty = exit_code == 0
 
