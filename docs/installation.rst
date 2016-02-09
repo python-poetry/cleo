@@ -10,9 +10,3 @@ You can install Cleo in 2 different ways:
         $ pip install cleo
 
 * Use the official repository (https://github.com/sdispater/cleo)
-
-.. note::
-
-    Cleo has not been tested on Windows for now so it's likely not going
-    to work properly.
-    Windows support will be added in future versions.
