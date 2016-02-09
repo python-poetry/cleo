@@ -255,7 +255,10 @@ class QuestionHelper(Helper):
         :rtype: str
         """
         if platform.system().lower() == 'windows':
-            exe = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'resources', 'bin', 'hiddeninput.exe')
+            exe = os.path.join(
+                os.path.dirname(os.path.realpath(__file__)),
+                '..', 'resources', 'bin', 'hiddeninput.exe'
+            )
 
             value = decode(os.popen(os.path.realpath(exe)).read()).strip()
             output.writeln('')
