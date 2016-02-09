@@ -2,6 +2,8 @@
 
 ##### Improvements
 
+(February 9th, 2016)
+
 - Adding support for Windows
 
 
