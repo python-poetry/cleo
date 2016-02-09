@@ -9,6 +9,9 @@ from .progress_bar import ProgressBar
 from .progress_indicator import ProgressIndicator
 from .table_helper import TableHelper
 from .table import Table
+from .table_cell import TableCell
+from .table_separator import TableSeparator
+from .table_style import TableStyle
 from .descriptor_helper import DescriptorHelper
 
 __all__ = [
@@ -20,5 +23,6 @@ __all__ = [
     'ProgressHelper',
     'ProgressBar', 'ProgressIndicator',
     'TableHelper',
-    'Table'
+    'Table',
+    'TableCell', 'TableSeparator', 'TableStyle'
 ]

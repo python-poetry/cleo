@@ -4,13 +4,14 @@ import sys
 import traceback
 import os
 import re
-import termios
-import fcntl
+import platform
 import struct
+import subprocess
+import shlex
+
 from io import UnsupportedOperation
 from pylev import levenshtein
 from collections import OrderedDict
-
 from .outputs.output import Output
 from .outputs.console_output import ConsoleOutput, StreamOutput
 from .inputs.argv_input import ArgvInput
@@ -479,24 +480,63 @@ class Application(object):
         if self._terminal_dimensions:
             return self._terminal_dimensions
 
-        try:
-            if not isinstance(output_, StreamOutput):
-                is_atty = False
-            else:
-                stream = output_.get_stream()
-                is_atty = hasattr(stream, 'fileno') and os.isatty(stream.fileno())
-        except UnsupportedOperation:
-            is_atty = False
-
-        if not is_atty:
+        if not isinstance(output_, StreamOutput):
             return None, None
 
-        s = struct.pack("HHHH", 0, 0, 0, 0)
-        fd_stdout = output_.get_stream().fileno()
-        size = fcntl.ioctl(fd_stdout, termios.TIOCGWINSZ, s)
-        height, width = struct.unpack("HHHH", size)[:2]
+        current_os = platform.system().lower()
+        dimensions = None
 
-        return width, height
+        if current_os.lower() == 'windows':
+            try:
+                from ctypes import windll, create_string_buffer
+                # stdin handle is -10
+                # stdout handle is -11
+                # stderr handle is -12
+                h = windll.kernel32.GetStdHandle(-12)
+                csbi = create_string_buffer(22)
+                res = windll.kernel32.GetConsoleScreenBufferInfo(h, csbi)
+                if res:
+                    (bufx, bufy, curx, cury, wattr,
+                     left, top, right, bottom,
+                     maxx, maxy) = struct.unpack("hhhhHhhhhhh", csbi.raw)
+                    sizex = right - left + 1
+                    sizey = bottom - top + 1
+
+                    dimensions = sizex, sizey
+            except:
+                try:
+                    cols = int(subprocess.check_call(shlex.split('tput cols')))
+                    rows = int(subprocess.check_call(shlex.split('tput lines')))
+
+                    dimensions = cols, rows
+                except:
+                    pass
+        elif current_os.lower() in ['linux', 'darwin'] or current_os.startswith('cygwin'):
+            try:
+                if not isinstance(output_, StreamOutput):
+                    is_atty = False
+                else:
+                    stream = output_.get_stream()
+                    is_atty = hasattr(stream, 'fileno') and os.isatty(stream.fileno())
+            except UnsupportedOperation:
+                is_atty = False
+
+            if not is_atty:
+                dimensions = None
+            else:
+                import termios
+                import fcntl
+
+                s = struct.pack("HHHH", 0, 0, 0, 0)
+                fd_stdout = output_.get_stream().fileno()
+                size = fcntl.ioctl(fd_stdout, termios.TIOCGWINSZ, s)
+                height, width = struct.unpack("HHHH", size)[:2]
+                dimensions = width, height
+
+        if dimensions is None:
+            dimensions = 80, 25
+
+        return dimensions
 
     def set_terminal_dimensions(self, width, height):
         """

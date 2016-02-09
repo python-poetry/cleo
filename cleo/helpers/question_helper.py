@@ -3,6 +3,7 @@
 import sys
 import os
 import subprocess
+import platform
 from .helper import Helper
 from ..questions import Question, ChoiceQuestion
 from ..outputs import ConsoleOutput
@@ -253,6 +254,14 @@ class QuestionHelper(Helper):
 
         :rtype: str
         """
+        if platform.system().lower() == 'windows':
+            exe = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'resources', 'bin', 'hiddeninput.exe')
+
+            value = decode(os.popen(os.path.realpath(exe)).read()).strip()
+            output.writeln('')
+
+            return value
+
         if self._has_stty_available():
             stty_mode = decode(subprocess.check_output(['stty', '-g'])).rstrip('\n')
 
@@ -331,7 +340,11 @@ class QuestionHelper(Helper):
             return self.stty
 
         devnull = open(os.devnull, 'w')
-        exit_code = subprocess.call(['stty'], stdout=devnull, stderr=devnull)
+
+        try:
+            exit_code = subprocess.call(['stty'], stdout=devnull, stderr=devnull)
+        except Exception:
+            exit_code = 2
 
         self.stty = exit_code == 0
 

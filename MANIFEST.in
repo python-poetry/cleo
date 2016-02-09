@@ -1,1 +1,5 @@
 include README.md LICENSE
+recursive-exclude tests *
+recursive-exclude .tox *
+
+recursive-include resources *

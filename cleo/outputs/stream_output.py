@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import platform
 from io import UnsupportedOperation
 
 from .output import Output
@@ -39,8 +40,12 @@ class StreamOutput(Output):
         self.stream.flush()
 
     def has_color_support(self, decorated):
-        if os.pathsep == '\\':
-            return os.getenv('ANSICON') is not None
+        if platform.system().lower() == 'windows':
+            return (
+                os.getenv('ANSICON') is not None
+                or 'ON' == os.getenv('ConEmuANSI')
+                or 'xterm' == os.getenv('Term')
+            )
 
         if not hasattr(self.stream, 'fileno'):
             return False

@@ -15,6 +15,7 @@ setup(
     url='https://github.com/sdispater/cleo',
     download_url='https://github.com/sdispater/cleo/archive/v%s.tar.gz' % __version__,
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
+    data_files=[('', ['resources/bin/hiddeninput.exe'])],
     install_requires=['pylev', 'psutil'],
     tests_require=['pytest', 'mock'],
     classifiers=[

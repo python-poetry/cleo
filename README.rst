@@ -125,8 +125,8 @@ This prints:
 
     There are also alternative ways to declare your commands:
 
-        * :doc:`decorators`
-        * :doc:`dictionaries`
+        * via decorators
+        * via dictionaries
 
 .. tip::
 
@@ -173,10 +173,6 @@ This prints:
 
                 self.line(text)
 
-    See :doc:`dictionaries` for the dictionary notation of arguments and options.
-
-
-.. _output-coloring:
 
 Coloring the Output
 -------------------
@@ -236,14 +232,9 @@ You can also set these colors and options inside the tagname:
     # bold text on a yellow background
     self.line('<bg=yellow;options=bold>foo</>')
 
-.. _verbosity-levels:
 
 Verbosity Levels
 ----------------
-
-.. versionchanged:: 0.4
-
-    The ``VERBOSITY_VERY_VERBOSE`` and ``VERBOSITY_DEBUG`` constants were introduced in version 0.4
 
 Cleo has five verbosity levels. These are defined in the ``Output`` class:
 
@@ -287,9 +278,6 @@ When the quiet level is used, all output is suppressed as the default
 
 Using Arguments
 ---------------
-
-.. role:: python(code)
-   :language: python
 
 The most interesting part of the commands are the arguments and options that
 you can make available. Arguments are the strings - separated by spaces - that
@@ -388,9 +376,6 @@ The argument will then be considered optional.
 
 Using Options
 -------------
-
-.. role:: python(code)
-   :language: python
 
 Unlike arguments, options are not ordered (meaning you can specify them in any
 order) and are specified with two dashes (e.g. ``--yell`` - you can also
@@ -565,11 +550,6 @@ Calling a command from another one is straightforward:
 
 Autocompletion
 --------------
-
-.. versionchanged:: 0.4
-
-    The autocompletion has been improved and simplified.
-    The old ``bash_completion.sh`` script has been removed.
 
 Cleo supports automatic (tab) completion in ``bash`` and ``zsh``.
 
