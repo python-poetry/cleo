@@ -1,3 +1,10 @@
+### 0.4.1
+
+##### Improvements
+
+- Adding support for Windows
+
+
 ### 0.4.0
 
 (January 11th, 2016)
