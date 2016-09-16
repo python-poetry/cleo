@@ -210,10 +210,10 @@ class CleoStyle(OutputStyle):
         from ..application import Application
 
         application = Application()
-        dimensions = application.get_terminal_dimensions(self._output)
+        width = application.terminal.width
 
-        if dimensions[0]:
-            return dimensions[0]
+        if width:
+            return width
 
         return self.MAX_LINE_LENGTH
 

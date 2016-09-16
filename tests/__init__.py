@@ -19,6 +19,8 @@ class CleoTestCase(TestCase):
             os.path.dirname(os.path.realpath(__file__)),
             'fixtures'
         )
+        os.environ['COLUMNS'] = '80'
+        os.environ['LINES'] = '24'
 
     def assertRegex(self, *args, **kwargs):
         if PY3:

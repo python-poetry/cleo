@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import os
 from cleo.application import Application
 from cleo.commands import Command, HelpCommand
 from cleo.outputs import Output, NullOutput, StreamOutput
@@ -597,7 +598,7 @@ class ApplicationTest(CleoTestCase):
     def test_set_catch_exceptions(self):
         application = Application()
         application.set_auto_exit(False)
-        application.get_terminal_width = self.mock().MagicMock(return_value=120)
+        os.environ['COLUMNS'] = '120'
         tester = ApplicationTester(application)
 
         application.set_catch_exceptions(True)
@@ -621,7 +622,7 @@ class ApplicationTest(CleoTestCase):
         application = Application()
         application.set_auto_exit(False)
 
-        application.get_terminal_width = self.mock().MagicMock(return_value=120)
+        os.environ['COLUMNS'] = '120'
         tester = ApplicationTester(application)
 
         tester.run([('command', 'foo')], {'decorated': False})
@@ -661,7 +662,7 @@ class ApplicationTest(CleoTestCase):
         application = Application()
         application.set_auto_exit(False)
 
-        application.get_terminal_width = self.mock().MagicMock(return_value=31)
+        os.environ['COLUMNS'] = '31'
         tester = ApplicationTester(application)
 
         tester.run([('command', 'foo')], {'decorated': False})
@@ -937,18 +938,6 @@ class ApplicationTest(CleoTestCase):
         self.assertFalse(definition.has_option('no-interaction'))
 
         self.assertTrue(definition.has_option('custom'))
-
-    def test_terminal_dimensions(self):
-        application = Application()
-        original_dimensions = application.get_terminal_dimensions(StreamOutput(sys.stdout))
-        self.assertEqual(2, len(original_dimensions))
-
-        width = 80
-        if original_dimensions[0] == width:
-            width = 100
-
-        application.set_terminal_dimensions(width, 80)
-        self.assertEqual((width, 80), application.get_terminal_dimensions(StreamOutput(sys.stdout)))
 
     def test_set_run_custom_default_command(self):
         """

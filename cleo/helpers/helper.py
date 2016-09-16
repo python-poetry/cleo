@@ -66,7 +66,7 @@ class Helper(object):
         :rtype: str
         """
         for fmt in cls.time_formats:
-            if secs >= fmt[0]:
+            if secs > fmt[0]:
                 continue
 
             if len(fmt) == 2:

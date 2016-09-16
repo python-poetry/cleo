@@ -24,6 +24,7 @@ from .commands.help_command import HelpCommand
 from .commands.list_command import ListCommand
 from .commands.completion.completion_command import CompletionCommand
 from .helpers import HelperSet, FormatterHelper, QuestionHelper, TableHelper
+from .terminal import Terminal
 from .exceptions import CleoException
 
 
@@ -57,12 +58,16 @@ class Application(object):
         self._definition = self.get_default_input_definition()
         self._want_helps = False
         self._helper_set = self.get_default_helper_set()
-        self._terminal_dimensions = ()
+        self._terminal = Terminal()
         self._running_command = None
         self._complete = complete
 
         for command in self.get_default_commands():
             self.add(command)
+
+    @property
+    def terminal(self):
+        return self._terminal
 
     def run(self, input_=None, output_=None):
         """
@@ -104,6 +109,9 @@ class Application(object):
                 status_code = 1
 
         if self._auto_exit:
+            if status_code is None:
+                status_code = 0
+
             if status_code > 255:
                 status_code = 255
 
@@ -391,7 +399,7 @@ class Application(object):
 
         title = '  [%s]  ' % e.__class__.__name__
         l = len(title)
-        width = self.get_terminal_width(output_)
+        width = self._terminal.width
         if not width:
             width = sys.maxsize
 
@@ -447,114 +455,6 @@ class Application(object):
                             % self._running_command.get_synopsis())
 
             output_.writeln('')
-
-    def get_terminal_width(self, output_):
-        """
-        Tries to figure out the terminal width in which this application runs
-
-        :return: The terminal width
-        :rtype: int or None
-        """
-        dimensions = self.get_terminal_dimensions(output_)
-
-        return dimensions[0]
-
-    def get_terminal_height(self, output_):
-        """
-        Tries to figure out the terminal height in which this application runs
-
-        :return: The terminal height
-        :rtype: int or None
-        """
-        dimensions = self.get_terminal_dimensions(output_)
-
-        return dimensions[1]
-
-    def get_terminal_dimensions(self, output_):
-        """
-        Tries to figure out the terminal dimensions based on the current environment
-
-        :return: The terminal dimensions
-        :rtype: tuple
-        """
-        if self._terminal_dimensions:
-            return self._terminal_dimensions
-
-        if not isinstance(output_, StreamOutput):
-            return None, None
-
-        current_os = platform.system().lower()
-        dimensions = None
-
-        if current_os.lower() == 'windows':
-            try:
-                from ctypes import windll, create_string_buffer
-                # stdin handle is -10
-                # stdout handle is -11
-                # stderr handle is -12
-                h = windll.kernel32.GetStdHandle(-12)
-                csbi = create_string_buffer(22)
-                res = windll.kernel32.GetConsoleScreenBufferInfo(h, csbi)
-                if res:
-                    (bufx, bufy, curx, cury, wattr,
-                     left, top, right, bottom,
-                     maxx, maxy) = struct.unpack("hhhhHhhhhhh", csbi.raw)
-                    sizex = right - left + 1
-                    sizey = bottom - top + 1
-
-                    dimensions = sizex, sizey
-            except:
-                try:
-                    cols = int(subprocess.check_call(shlex.split('tput cols')))
-                    rows = int(subprocess.check_call(shlex.split('tput lines')))
-
-                    dimensions = cols, rows
-                except:
-                    pass
-        elif current_os.lower() in ['linux', 'darwin'] or current_os.startswith('cygwin'):
-            try:
-                if not isinstance(output_, StreamOutput):
-                    is_atty = False
-                else:
-                    stream = output_.get_stream()
-                    is_atty = hasattr(stream, 'fileno') and os.isatty(stream.fileno())
-            except UnsupportedOperation:
-                is_atty = False
-
-            if not is_atty:
-                dimensions = None
-            else:
-                import termios
-                import fcntl
-
-                s = struct.pack("HHHH", 0, 0, 0, 0)
-                fd_stdout = output_.get_stream().fileno()
-                size = fcntl.ioctl(fd_stdout, termios.TIOCGWINSZ, s)
-                height, width = struct.unpack("HHHH", size)[:2]
-                dimensions = width, height
-
-        if dimensions is None:
-            dimensions = 80, 25
-
-        return dimensions
-
-    def set_terminal_dimensions(self, width, height):
-        """
-        Sets terminal dimensions.
-
-        Can be useful to force terminal dimensions for functional tests.
-
-        :param width: The width
-        :type width: int
-        :param height: The height
-        :type height: int
-
-        :return: The current application
-        :rtype: Application
-        """
-        self._terminal_dimensions = width, height
-
-        return self
 
     def configure_io(self, input_, output_):
         """
