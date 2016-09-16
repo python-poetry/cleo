@@ -198,8 +198,12 @@ class CleoStyle(OutputStyle):
         super(CleoStyle, self).writeln(messages, type)
         self._buffered_output.writeln(self._reduce_buffer(messages), type)
 
-    def write(self, messages, newline=False, type=OutputStyle.OUTPUT_NORMAL):
+    def write(self, messages, newline=True, type=OutputStyle.OUTPUT_NORMAL):
         super(CleoStyle, self).write(messages, newline, type)
+        self._buffered_output.write(self._reduce_buffer(messages), newline, type)
+
+    def write_error(self, messages, newline=True, type=OutputStyle.OUTPUT_NORMAL):
+        super(CleoStyle, self).write_error(messages, newline, type)
         self._buffered_output.write(self._reduce_buffer(messages), newline, type)
 
     def new_line(self, count=1):

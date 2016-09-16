@@ -353,6 +353,26 @@ class Command(BaseCommand):
 
         self.output.writeln(styled)
 
+    def line_error(self, text, style=None, verbosity=None):
+        """
+        Write a string as information output to stderr.
+
+        :param text: The line to write
+        :type text: str
+
+        :param style: The style of the string
+        :type style: str
+
+        :param verbosity: The verbosity
+        :type verbosity: None or int str
+        """
+        if style:
+            styled = '<%s>%s</>' % (style, text)
+        else:
+            styled = text
+
+        self.output.write_error(styled)
+
     def info(self, text):
         """
         Write a string as information output.

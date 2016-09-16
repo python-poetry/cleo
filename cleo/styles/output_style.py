@@ -2,7 +2,7 @@
 
 import os
 from ..helpers import ProgressBar
-from ..outputs import Output
+from ..outputs import Output, ConsoleOutput
 
 
 class OutputStyle(Output):
@@ -165,8 +165,17 @@ class OutputStyle(Output):
         """
         return ProgressBar(self, max)
 
-    def write(self, messages, newline=False, type=Output.OUTPUT_NORMAL):
-        self._output.write(messages, newline, type)
+    def write(self, messages, newline=True, type=Output.OUTPUT_NORMAL):
+        self._do_write(messages, newline, False, type)
+
+    def write_error(self, messages, newline=True, type=Output.OUTPUT_NORMAL):
+        self._do_write(messages, newline, True, type)
+
+    def _do_write(self, messages, newline, stderr, type):
+        if stderr and isinstance(self._output, ConsoleOutput):
+            return self._output.get_error_output().write(messages, newline, type)
+
+        return self._output.write(messages, newline, type)
 
     def writeln(self, messages, type=Output.OUTPUT_NORMAL):
         self._output.writeln(messages, type)
