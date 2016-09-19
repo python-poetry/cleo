@@ -140,15 +140,11 @@ This prints:
             description = 'Greets someone'
 
             arguments = [
-                InputArgument('name', InputArgument.OPTIONAL, 'Who do you want to greet?')
+                argument('name', 'Who do you want to greet?', required=False)
             ]
 
             options = [
-                InputOption(
-                    'yell', 'y',
-                    InputArgument.VALUE_NONE,
-                    'If set, the task will yell in uppercase letters'
-                )
+                option('yell', 'y', 'If set, the task will yell in uppercase letters.')
             ]
 
             def handle(self):

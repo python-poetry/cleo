@@ -14,7 +14,8 @@ from .helpers import (
 from .inputs import (
     Input,
     InputDefinition, InputArgument, InputOption,
-    ArgvInput, ListInput
+    ArgvInput, ListInput,
+    argument, option
 )
 from .outputs import Output, ConsoleOutput, StreamOutput, BufferedOutput
 from .testers import ApplicationTester, CommandTester
