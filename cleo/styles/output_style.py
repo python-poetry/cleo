@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from ..helpers import ProgressBar
+from ..helpers import ProgressBar, Helper
 from ..outputs import Output, ConsoleOutput
 
 
@@ -18,6 +18,8 @@ class OutputStyle(Output):
         :type output: Output
         """
         self._output = output
+        self._last_message = ''
+        self._last_message_err = ''
 
     def title(self, message):
         """
@@ -165,20 +167,68 @@ class OutputStyle(Output):
         """
         return ProgressBar(self, max)
 
-    def write(self, messages, newline=True, type=Output.OUTPUT_NORMAL):
+    def write(self, messages, newline=False, type=Output.OUTPUT_NORMAL):
         self._do_write(messages, newline, False, type)
 
-    def write_error(self, messages, newline=True, type=Output.OUTPUT_NORMAL):
+    def write_error(self, messages, newline=False, type=Output.OUTPUT_NORMAL):
         self._do_write(messages, newline, True, type)
 
     def _do_write(self, messages, newline, stderr, type):
-        if stderr and isinstance(self._output, ConsoleOutput):
-            return self._output.get_error_output().write(messages, newline, type)
+        if not isinstance(messages, list):
+            messages = [messages]
 
-        return self._output.write(messages, newline, type)
+        if stderr and isinstance(self._output, ConsoleOutput):
+            self._output.get_error_output().write(messages, newline, type)
+            self._last_message_err = '\n'.join(messages)
+
+            return
+
+        self._output.write(messages, newline, type)
+        self._last_message = '\n'.join(messages)
 
     def writeln(self, messages, type=Output.OUTPUT_NORMAL):
-        self._output.writeln(messages, type)
+        self.write(messages, True, type)
+
+    def overwrite(self, messages, newline=False, size=None, type=Output.OUTPUT_NORMAL):
+        self._do_overwrite(messages, newline, size, False, type)
+
+    def _do_overwrite(self, messages, newline, size, stderr, type):
+        # messages can be a list, let's convert it to string anyway
+        if not isinstance(messages, list):
+            messages = [messages]
+
+        messages = '\n'.join(messages)
+
+        # since overwrite is supposed to overwrite last message...
+        if size is None:
+            # removing possible formatting of lastMessage with strip_tags
+            if stderr:
+                message = self._last_message_err
+            else:
+                message = self._last_message
+
+            size = Helper.len_without_decoration(self._output.get_formatter(), message)
+
+        # ...let's fill its length with backspaces
+        self._do_write('\x08' * size, False, stderr, type)
+
+        # write the new message
+        self._do_write(messages, False, stderr, type)
+
+        fill = size - Helper.len_without_decoration(self._output.get_formatter(), messages)
+        if fill > 0:
+            # whitespace whatever has left
+            self._do_write(' ' * fill, False, stderr, type)
+            # move the cursor back
+            self._do_write('\x08' * fill, False, stderr, type)
+
+        if newline:
+            self._do_write('', True, stderr, type)
+
+        if stderr:
+            self._last_message_err = messages
+        else:
+            self._last_message = messages
 
     def set_formatter(self, formatter):
         self._output.set_formatter(formatter)

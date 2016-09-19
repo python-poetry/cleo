@@ -333,6 +333,24 @@ class Command(BaseCommand):
         """
         return TableStyle()
 
+    def write(self, text, style=None):
+        """
+        Writes a string without a new line.
+        Useful if you want to use overwrite().
+
+        :param text: The line to write
+        :type text: str
+
+        :param style: The style of the string
+        :type style: str
+        """
+        if style:
+            styled = '<%s>%s</>' % (style, text)
+        else:
+            styled = text
+
+        self.output.write(styled, newline=False)
+
     def line(self, text, style=None, verbosity=None):
         """
         Write a string as information output.
@@ -478,6 +496,21 @@ class Command(BaseCommand):
         style = OutputFormatterStyle(fg, bg, options)
 
         self.output.get_formatter().set_style(name, style)
+
+    def overwrite(self, text, size=None):
+        """
+        Overwrites the current line.
+
+        It will not add a new line so use line('')
+        if necessary.
+
+        :param text: The text to write.
+        :type text: str
+
+        :param size: The number of characters to overwrite.
+        :type size: int or None
+        """
+        self.output.overwrite(text, size=size)
 
     def _parse_verbosity(self, level=None):
         if level in self.verbosity_map:

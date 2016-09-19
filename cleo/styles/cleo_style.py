@@ -198,17 +198,21 @@ class CleoStyle(OutputStyle):
         super(CleoStyle, self).writeln(messages, type)
         self._buffered_output.writeln(self._reduce_buffer(messages), type)
 
-    def write(self, messages, newline=True, type=OutputStyle.OUTPUT_NORMAL):
+    def write(self, messages, newline=False, type=OutputStyle.OUTPUT_NORMAL):
         super(CleoStyle, self).write(messages, newline, type)
         self._buffered_output.write(self._reduce_buffer(messages), newline, type)
 
-    def write_error(self, messages, newline=True, type=OutputStyle.OUTPUT_NORMAL):
+    def write_error(self, messages, newline=False, type=OutputStyle.OUTPUT_NORMAL):
         super(CleoStyle, self).write_error(messages, newline, type)
         self._buffered_output.write(self._reduce_buffer(messages), newline, type)
 
     def new_line(self, count=1):
         super(CleoStyle, self).new_line(count)
         self._buffered_output.write('\n' * count)
+
+    def overwrite(self, messages, newline=False, size=None, type=OutputStyle.OUTPUT_NORMAL):
+        super(CleoStyle, self).overwrite(messages, newline, size, type)
+        self._buffered_output.write(self._reduce_buffer(messages), newline, type)
 
     def _get_terminal_width(self):
         from ..application import Application

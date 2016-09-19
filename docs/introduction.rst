@@ -570,6 +570,27 @@ Calling a command from another one is straightforward:
     you can use the ``call_silent()`` method instead.
 
 
+Overwrite the current line
+==========================
+
+If you want to overwrite the current line, you can use the ``overwrite()`` method.
+
+.. code-block:: python
+
+    def handle(self):
+        self.write('Processing...')
+        # do some work
+        self.overwrite('Done!')
+
+.. warning::
+
+    ``overwrite()`` will only work in combination with the ``write()`` method which does not
+    add a new line.
+
+.. note::
+
+    ``overwrite()`` does not automatically add a new line so you must call ``line('')`` if necessary.
+
 
 Autocompletion
 ==============
