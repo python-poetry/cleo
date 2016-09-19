@@ -120,11 +120,6 @@ This prints:
                 '{--y|yell : If set, the task will yell in uppercase letters}
             )
 
-    There are also alternative ways to declare your commands:
-
-        * :doc:`decorators`
-        * :doc:`dictionaries`
-
 .. tip::
 
     If you do not want to use the signature, you can declare your command
@@ -142,20 +137,15 @@ This prints:
             description = 'Greets someone'
 
             arguments = [
-                {
-                    'name': 'name',
-                    'description': 'Who do you want to greet?',
-                    'required': False
-                }
+                InputArgument('name', InputArgument.OPTIONAL, 'Who do you want to greet?')
             ]
 
             options = [
-                {
-                    'name': 'yell',
-                    'shortcut': 'y',
-                    'flag': True,
-                    'description': 'If set, the task will yell in uppercase letters'
-                }
+                InputOption(
+                    'yell', 'y',
+                    InputArgument.VALUE_NONE,
+                    'If set, the task will yell in uppercase letters'
+                )
             ]
 
             def handle(self):
@@ -169,8 +159,6 @@ This prints:
                     text = text.upper()
 
                 self.line(text)
-
-    See :doc:`dictionaries` for the dictionary notation of arguments and options.
 
 
 .. _output-coloring:

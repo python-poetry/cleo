@@ -315,6 +315,10 @@ article ul li {
     background: none;
 }
 
+.wy-table td, .rst-content table.docutils td {
+    font-size: 100% !important;
+}
+
 .rst-content table.docutils tbody td tt.code,
 .rst-content table.field-list tbody td tt.code,
 .rst-content table.docutils tbody td code.code,
@@ -1038,9 +1042,10 @@ tt.code .pseudo, code.code .pseudo { color: #69B69F }
 
 /* Dark Orator */
 
-/*div[class^="highlight"] {
+div[class^="highlight"] {
     border: 0;
-    background: #253B49;
+    background: #152B39;
+    border-radius: 3px;
 }
 
 div[class^="highlight"] > pre {
@@ -1049,9 +1054,22 @@ div[class^="highlight"] > pre {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
+    padding: 4% 4%;
 }
 
-.highlight .c { color: #727995; font-style: normal; }
+.highlight .nn, .highlight .nc { color: #89C6BF; }
+.highlight .c, .highlight .c1 { color: #727995; font-style: normal; }
 .highlight .sd { color: #727995; font-style: normal; }
-.highlight .p { color: #687E95 }
-.highlight .n { color: #98AEC5 } */
+.highlight .p, .highlight .o, code.code .operator { color: #687E95 }
+.highlight .n, code.code .name { color: #98AEC5 }
+.highlight .l { color: #98AEC5; }
+
+.note .last pre,
+.warning .last pre,
+.tip .last pre,
+.caution .last pre,
+.versionchanged .last pre,
+.versionadded .last pre {
+    padding-bottom: 4%;
+    margin-bottom: 0;
+}

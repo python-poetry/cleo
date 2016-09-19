@@ -78,16 +78,6 @@ class CommandTest(CleoTestCase):
         self.assertEqual(ret, command)
         self.assertTrue(command.get_definition().has_argument('foo'))
 
-    def test_add_argument_from_dict(self):
-        """
-        Command.add_argument_from_dict() adds an argument to command.
-        """
-        command = SomeCommand()
-        ret = command.add_argument_from_dict({'foo': {}})
-
-        self.assertEqual(ret, command)
-        self.assertTrue(command.get_definition().has_argument('foo'))
-
     def test_add_option(self):
         """
         Command.add_option() adds an option to command.
@@ -308,79 +298,6 @@ class CommandTest(CleoTestCase):
             command.set_code,
             self.NON_CALLABLE
         )
-
-    def test_from_dict(self):
-        def foo(input_, output_):
-            output_.writeln('foo')
-
-        command_dict = {
-            'foo': {
-                'description': 'The foo command.',
-                'aliases': ['foobar'],
-                'help': 'This is help.',
-                'arguments': [{
-                    'bar': {
-                        'description': 'The bar argument.',
-                        'required': True,
-                        'list': True
-                    }
-                }],
-                'options': [{
-                    'baz': {
-                        'shortcut': 'b',
-                        'description': 'The baz option.',
-                        'value_required': False,
-                        'list': True,
-                        'default': ['default']
-                    }
-                }],
-                'code': foo
-            }
-        }
-
-        command = Command.from_dict(command_dict)
-
-        self.assertTrue(isinstance(command, Command))
-        self.assertEqual('foo', command.get_name())
-        self.assertEqual(foo, command._code)
-        self.assertEqual(['foobar'], command.get_aliases())
-        self.assertTrue(command.get_definition().has_argument('bar'))
-        self.assertTrue(command.get_definition().has_option('baz'))
-
-    def test_from_dict_with_plain_dict(self):
-        def foo(input_, output_):
-            output_.writeln('foo')
-
-        command_dict = {
-            'name': 'foo',
-            'description': 'The foo command.',
-            'aliases': ['foobar'],
-            'help': 'This is help.',
-            'arguments': [{
-                'name': 'bar',
-                'description': 'The bar argument.',
-                'required': True,
-                'list': True
-            }],
-            'options': [{
-                'name': 'baz',
-                'shortcut': 'b',
-                'description': 'The baz option.',
-                'value_required': False,
-                'list': True,
-                'default': ['default']
-            }],
-            'code': foo
-        }
-
-        command = Command.from_dict(command_dict)
-
-        self.assertTrue(isinstance(command, Command))
-        self.assertEqual('foo', command.get_name())
-        self.assertEqual(foo, command._code)
-        self.assertEqual(['foobar'], command.get_aliases())
-        self.assertTrue(command.get_definition().has_argument('bar'))
-        self.assertTrue(command.get_definition().has_option('baz'))
 
     def test_without_configure(self):
         command = NoConfigureCommand()

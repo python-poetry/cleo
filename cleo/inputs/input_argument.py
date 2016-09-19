@@ -143,32 +143,3 @@ class InputArgument(object):
         self.__validator = VALIDATORS.get(validator)
 
         return self
-
-    @classmethod
-    def from_dict(cls, argument_dict):
-        """
-        Created a InputArgument instance from a dictionary.
-
-        :param argument_dict: The dictionary defining the argument
-        :type argument_dict: dict
-
-        :return: The created InputArgument instance
-        :rtype: InputArgument
-        """
-        if len(argument_dict) > 1:
-            name = argument_dict['name']
-        else:
-            name = list(argument_dict.keys())[0]
-            argument_dict = argument_dict[name]
-
-        description = argument_dict.get('description')
-        default = argument_dict.get('default')
-        required = argument_dict.get('required', False)
-        mode = cls.REQUIRED if required else cls.OPTIONAL
-
-        if argument_dict.get('list', False):
-            mode |= cls.IS_LIST
-
-        validator = argument_dict.get('validator')
-
-        return cls(name, mode, description, default, validator=validator)

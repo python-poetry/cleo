@@ -13,8 +13,5 @@ with some useful additions.
     introduction
     helpers/index
     validators
-    decorators
-    dictionaries
     usage
     single_command_tool
-    api/index

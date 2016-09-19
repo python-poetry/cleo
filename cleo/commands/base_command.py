@@ -86,8 +86,6 @@ class BaseCommand(object):
             for argument in self.arguments:
                 if isinstance(argument, InputArgument):
                     self._definition.add_argument(argument)
-                elif isinstance(argument, dict):
-                    self.add_argument_from_dict({argument['name']: argument})
                 else:
                     raise Exception('Invalid argument')
 
@@ -95,8 +93,6 @@ class BaseCommand(object):
             for option in self.options:
                 if isinstance(option, InputOption):
                     self._definition.add_option(option)
-                elif isinstance(option, dict):
-                    self.add_option_from_dict({option['name']: option})
                 else:
                     raise Exception('Invalid option')
 
@@ -212,25 +208,11 @@ class BaseCommand(object):
 
         return self
 
-    def add_argument_from_dict(self, argument_dict):
-        argument = InputArgument.from_dict(argument_dict)
-
-        self._definition.add_argument(argument)
-
-        return self
-
     def add_option(self, name, shortcut=None, mode=None,
                    description='', default=None, validator=None):
         self._definition.add_option(
             InputOption(name, shortcut, mode, description, default, validator)
         )
-
-        return self
-
-    def add_option_from_dict(self, option_dict):
-        option = InputOption.from_dict(option_dict)
-
-        self._definition.add_option(option)
 
         return self
 
@@ -315,39 +297,3 @@ class BaseCommand(object):
     def validate_name(self, name):
         if not re.match('^[^:]+(:[^:]+)*$', name):
             raise CommandError('Command name "%s" is invalid.' % name)
-
-    @classmethod
-    def from_dict(cls, command_dict):
-        """
-        Creates a command from a dictionary.
-
-        :param command_dict: The dictionary defining the commmand
-        :type command_dict: dict
-
-        :return: The command
-        :rtype: Command
-        """
-        if len(command_dict) > 1:
-            name = command_dict['name']
-        else:
-            name = list(command_dict.keys())[0]
-            command_dict = command_dict[name]
-
-        command = cls(name)
-
-        if 'description' in command_dict:
-            command.set_description(command_dict['description'])
-
-        if 'aliases' in command_dict:
-            command.set_aliases(command_dict['aliases'])
-
-        if 'code' in command_dict:
-            command.set_code(command_dict['code'])
-
-        for argument in command_dict.get('arguments', []):
-            command.add_argument_from_dict(argument)
-
-        for option in command_dict.get('options', []):
-            command.add_option_from_dict(option)
-
-        return command

@@ -14,17 +14,12 @@ class NoConfigureCommand(Command):
 
     arguments = [
         InputArgument('foo'),
-        {
-            'name': 'bar'
-        }
+        InputArgument('bar')
     ]
 
     options = [
         InputOption('baz', 'z'),
-        {
-            'name': 'bazz',
-            'shortcut': 'Z'
-        }
+        InputOption('bazz', 'Z')
     ]
 
     def execute(self, input_, output_):
