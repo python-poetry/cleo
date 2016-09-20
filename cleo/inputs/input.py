@@ -14,6 +14,7 @@ class Input(object):
 
     def __init__(self, definition=None):
         self.interactive = True
+        self._stream = None
         if definition is None:
             self.arguments = {}
             self.options = {}
@@ -164,3 +165,9 @@ class Input(object):
             return token
         else:
             return "\\'".join("'" + p + "'" for p in token.split("'"))
+
+    def set_stream(self, stream):
+        self._stream = stream
+
+    def get_stream(self):
+        return self._stream

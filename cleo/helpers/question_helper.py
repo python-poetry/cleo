@@ -41,6 +41,9 @@ class QuestionHelper(Helper):
         if not input_.is_interactive():
             return question.default
 
+        if not self._input_stream:
+            self._input_stream = input_.get_stream()
+
         if not question.validator:
             return self._do_ask(output, question)
 

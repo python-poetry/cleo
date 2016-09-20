@@ -56,3 +56,25 @@ class TestCommandTester(TestCase):
         """
         self.assertEqual('foo\n', self.tester.get_display(),
                          msg='.get_display() returns the display of the last execution.')
+
+    def test_command_with_inputs(self):
+        questions = [
+            'What\'s your name?',
+            'How are you?',
+            'Where do you come from?',
+        ]
+
+        def code(c):
+            c.ask(questions[0])
+            c.ask(questions[1])
+            c.ask(questions[2])
+
+        command = Command('foo')
+        command.set_code(code)
+
+        tester = CommandTester(command)
+        tester.set_inputs(['Bobby', 'Fine', 'France'])
+        tester.execute([])
+
+        self.assertEqual(0, tester.status_code)
+        self.assertEqual('\n' + '\n\n\n'.join(questions) + '\n', tester.get_display(True))
