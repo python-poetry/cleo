@@ -328,6 +328,73 @@ class ProgressBarTest(TestCase):
 
         self.assertEqual(expected, self.get_output_content(output))
 
+    def test_regress(self):
+        output = self.get_output_stream()
+        bar = ProgressBar(output)
+        bar.start()
+        bar.advance()
+        bar.advance()
+        bar.advance(-1)
+
+        expected = self.generate_output([
+            '    0 [>---------------------------]',
+            '    1 [->--------------------------]',
+            '    2 [-->-------------------------]',
+            '    1 [->--------------------------]'
+        ])
+
+        self.assertEqual(expected, self.get_output_content(output))
+
+    def test_regress_with_steps(self):
+        output = self.get_output_stream()
+        bar = ProgressBar(output)
+        bar.start()
+        bar.advance(4)
+        bar.advance(4)
+        bar.advance(-2)
+
+        expected = self.generate_output([
+            '    0 [>---------------------------]',
+            '    4 [---->-----------------------]',
+            '    8 [-------->-------------------]',
+            '    6 [------>---------------------]'
+        ])
+
+        self.assertEqual(expected, self.get_output_content(output))
+
+    def test_regress_multiple_times(self):
+        output = self.get_output_stream()
+        bar = ProgressBar(output)
+        bar.start()
+        bar.advance(3)
+        bar.advance(3)
+        bar.advance(-1)
+        bar.advance(-2)
+
+        expected = self.generate_output([
+            '    0 [>---------------------------]',
+            '    3 [--->------------------------]',
+            '    6 [------>---------------------]',
+            '    5 [----->----------------------]',
+            '    3 [--->------------------------]'
+        ])
+
+        self.assertEqual(expected, self.get_output_content(output))
+
+    def test_regress_below_min(self):
+        output = self.get_output_stream()
+        bar = ProgressBar(output, 10)
+        bar.set_progress(1)
+        bar.advance(-1)
+        bar.advance(-1)
+
+        expected = self.generate_output([
+            '  1/10 [==>-------------------------]  10%',
+            '  0/10 [>---------------------------]   0%'
+        ])
+
+        self.assertEqual(expected, self.get_output_content(output))
+
     def get_output_stream(self, decorated=True, verbosity=StreamOutput.VERBOSITY_NORMAL):
         stream = BytesIO()
 

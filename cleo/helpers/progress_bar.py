@@ -37,7 +37,7 @@ class ProgressBar(object):
         'debug_nomax': ' %current% [%bar%] %elapsed:6s% %memory:6s%'
     }
 
-    def __init__(self, output, max =0):
+    def __init__(self, output, max=0):
         """
         Constructor.
 
@@ -169,11 +169,10 @@ class ProgressBar(object):
         :param step: The current progress
         :type step: int
         """
-        if step < self._step:
-            raise CleoException('You can\'t regress the progress bar.')
-
         if self._max and step > self._max:
             self._max = step
+        elif step < 0:
+            step = 0
 
         prev_period = int(self._step / self.redraw_freq)
         curr_period = int(step / self.redraw_freq)
