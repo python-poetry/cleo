@@ -61,6 +61,7 @@ class Application(object):
         self._terminal = Terminal()
         self._running_command = None
         self._complete = complete
+        self._single_command = False
 
         for command in self.get_default_commands():
             self.add(command)
@@ -170,6 +171,12 @@ class Application(object):
         self._definition = definition
 
     def get_definition(self):
+        if self._single_command:
+            input_definition = self._definition
+            input_definition.set_arguments()
+
+            return input_definition
+
         return self._definition
 
     def get_help(self):
@@ -504,6 +511,9 @@ class Application(object):
             output_.set_verbosity(Output.VERBOSITY_VERBOSE)
 
     def get_command_name(self, input_):
+        if self._single_command:
+            return self._default_command
+
         return input_.get_first_argument()
 
     def get_default_input_definition(self):
@@ -626,11 +636,22 @@ class Application(object):
 
         return list(map(lambda x: x[0], alternatives))
 
-    def set_default_command(self, command_name):
+    def set_default_command(self, command_name, is_single_command=False):
         """
         Sets the default Command name.
 
         :param command_name: The Command name
         :type command_name: str
+
+        :param is_single_command: Set to True if there is only one command in this application
+        :type is_single_command: bool
         """
         self._default_command = command_name
+
+        if is_single_command:
+            # Ensure the command exists
+            self.find(command_name)
+
+            self._single_command = True
+
+        return self

@@ -956,6 +956,22 @@ class ApplicationTest(CleoTestCase):
             tester.get_display()
         )
 
+    def test_set_run_custom_single_command(self):
+        command = FooCommand()
+
+        application = Application()
+        application.set_auto_exit(False)
+        application.add(command)
+        application.set_default_command(command.get_name(), True)
+
+        tester = ApplicationTester(application)
+
+        tester.run([])
+        self.assertIn('called', tester.get_display())
+
+        tester.run([('--help', True)])
+        self.assertIn('The foo:bar command', tester.get_display())
+
 
 class CustomApplication(Application):
 
