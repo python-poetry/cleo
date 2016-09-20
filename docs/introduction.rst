@@ -525,7 +525,7 @@ as an list of tuples to the ``CommandTester.execute()`` method:
 Testing with user inputs
 ------------------------
 
-To test user inputs, you can use the `set_inputs()` method.
+To test user inputs, you can use the ``set_inputs()`` method.
 
 .. code-block:: python
 

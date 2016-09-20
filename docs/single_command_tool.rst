@@ -3,7 +3,7 @@ Building a Single Command Application
 
 When building a command line tool, you may not need to provide several commands.
 In such case, having to pass the command name each time is tedious. Fortunately,
-it is possible to remove this need by using the `set_default_command()` method:
+it is possible to remove this need by using the ``set_default_command()`` method:
 
 .. code-block:: python
 

@@ -105,7 +105,7 @@ to get this information output:
 
 .. code-block:: text
 
-    My Console Application version 1.2
+    My Console Application 1.2
 
 If you do not provide both arguments then it will just output:
 
