@@ -522,6 +522,16 @@ as an list of tuples to the ``CommandTester.execute()`` method:
 
             self.assertRegex('John', command_tester.get_display())
 
+Testing with user inputs
+------------------------
+
+To test user inputs, you can use the `set_inputs()` method.
+
+.. code-block:: python
+
+    command_tester = CommandTester(command)
+    command_tester.set_inputs(['123', 'foo', 'bar'])
+
 .. tip::
 
     You can also test a whole console application by using the ``ApplicationTester`` class.
