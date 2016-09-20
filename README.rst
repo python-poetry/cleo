@@ -9,7 +9,7 @@ create ``greet_command.py`` and add the following to it:
 
 .. code-block:: python
 
-    from cleo import Command, InputArgument, InputOption
+    from cleo import Command
 
 
     class GreetCommand(Command):
@@ -130,7 +130,7 @@ This prints:
 
     .. code-block:: python
 
-        from cleo import Command, InputArgument, InputOption
+        from cleo import Command, argument, option
 
 
         class GreetCommand(Command):
