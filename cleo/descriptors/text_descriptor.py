@@ -205,21 +205,45 @@ class TextDescriptor(Descriptor):
                 self._write_text('<comment>Available commands:</comment>', **options)
 
             # add commands by namespace
+            commands = description.get_commands()
+
             for namespace in description.get_namespaces().values():
                 if not described_namespace and namespace['id'] != ApplicationDescription.GLOBAL_NAMESPACE:
                     self._write_text('\n')
                     self._write_text(' <comment>%s</comment>' % namespace['id'], **options)
 
                 for name in namespace['commands']:
-                    self._write_text('\n')
-                    spacing_width = width - len(name)
-                    self._write_text(
-                        '  <info>%s</info>%s%s'
-                        % (name, ' ' * spacing_width, description.get_command(name).get_description()),
-                        **options
-                    )
+                    if name in commands:
+                        self._write_text('\n')
+                        spacing_width = width - len(name)
+                        command = commands[name]
+                        command_aliases = self._get_command_aliases_text(command)
+                        desc = description.get_command(name).get_description()
+
+                        self._write_text(
+                            '  <info>%s</info>%s%s'
+                            % (name, ' ' * spacing_width, command_aliases + desc),
+                            **options
+                        )
 
         self._write_text('\n')
+
+    def _get_command_aliases_text(self, command):
+        """
+        Formats command aliases to show them in the command description.
+
+        :param command: The command
+        :type command: Command
+
+        :rtype: str
+        """
+        text = ''
+        aliases = command.get_aliases()
+
+        if aliases:
+            text = '[{}] '.format('|'.join(aliases))
+
+        return text
 
     def _write_text(self, content, **options):
         raw = options.get('raw_text')
