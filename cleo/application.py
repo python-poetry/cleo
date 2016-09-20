@@ -4,16 +4,12 @@ import sys
 import traceback
 import os
 import re
-import platform
-import struct
-import subprocess
-import shlex
 
 from io import UnsupportedOperation
 from pylev import levenshtein
 from collections import OrderedDict
 from .outputs.output import Output
-from .outputs.console_output import ConsoleOutput, StreamOutput
+from .outputs.console_output import ConsoleOutput
 from .inputs.argv_input import ArgvInput
 from .inputs.list_input import ListInput
 from .inputs.input_argument import InputArgument
@@ -24,8 +20,13 @@ from .commands.help_command import HelpCommand
 from .commands.list_command import ListCommand
 from .commands.completion.completion_command import CompletionCommand
 from .helpers import HelperSet, FormatterHelper, QuestionHelper, TableHelper
+from .questions import ChoiceQuestion
 from .terminal import Terminal
-from .exceptions import CleoException
+from .exceptions import (
+    CleoException,
+    CommandNotFound, AmbiguousCommand,
+    NamespaceNotFound, AmbiguousNamespace
+)
 
 
 class Application(object):
@@ -154,7 +155,34 @@ class Application(object):
             input_ = ListInput([('command', name)])
 
         # the command name MUST be the first element of the input
-        command = self.find(name)
+        command = None
+
+        while command is None:
+            try:
+                command = self.find(name)
+            except AmbiguousCommand as e:
+                alternatives = e.alternatives
+
+                if (not alternatives
+                    or not input_.is_interactive()
+                    or not self.get_helper_set().has('question')):
+                        raise
+
+                helper = self.get_helper_set().get('question')
+                message = '{} \nPlease select one of these suggested commands:'.format(
+                    e.message
+                )
+                question = ChoiceQuestion(message, alternatives)
+                question.max_attempts = 1
+
+                try:
+                    name = helper.ask(input_, output_, question)
+                except Exception:
+                    raise
+
+                if name is None:
+                    raise
+
         self._running_command = command
         status_code = command.run(input_, output_)
         self._running_command = None
@@ -290,24 +318,13 @@ class Application(object):
         )
 
         if not namespaces:
-            message = 'There are no commands defined in the "%s" namespace.' % namespace
-
             alternatives = self.find_alternatives(namespace, all_namespaces)
-            if alternatives:
-                if len(alternatives) == 1:
-                    message += '\n\nDid you mean this?\n    '
-                else:
-                    message += '\n\nDid you mean one of these?\n    '
 
-                message += '\n    '.join(alternatives)
-
-            raise Exception(message)
+            raise NamespaceNotFound(namespace, alternatives)
 
         exact = namespace in namespaces
         if len(namespaces) > 1 and not exact:
-            raise Exception('The namespace "%s" is ambiguous (%s).'
-                            % (namespace,
-                               self.get_abbreviation_suggestions(namespaces)))
+            raise AmbiguousNamespace(namespace, namespaces)
 
         return namespace if exact else namespaces[0]
 
@@ -331,18 +348,9 @@ class Application(object):
                 # Check if a namespace exists and contains commands
                 self.find_namespace(name[:pos])
 
-            message = 'Command "%s" is not defined.' % name
-
             alternatives = self.find_alternatives(name, all_commands)
-            if alternatives:
-                if len(alternatives) == 1:
-                    message += '\n\nDid you mean this?\n    '
-                else:
-                    message += '\n\nDid you mean one of these?\n    '
 
-                message += '\n    '.join(alternatives)
-
-            raise Exception(message)
+            raise CommandNotFound(name, alternatives)
 
         # Filter out aliases for commands which are already on the list
         if len(commands) > 1:
@@ -364,10 +372,7 @@ class Application(object):
 
         exact = name in commands
         if len(commands) > 1 and not exact:
-            suggestions = self.get_abbreviation_suggestions(commands)
-
-            raise Exception('Command "%s" is ambiguous (%s).'
-                            % (name, suggestions))
+            raise AmbiguousCommand(name, commands)
 
         return self.get(name if exact else commands[0])
 
@@ -492,7 +497,7 @@ class Application(object):
             except (UnsupportedOperation, TypeError):
                 is_atty = False
 
-            if not is_atty:
+            if not is_atty and os.getenv('SHELL_INTERACTIVE') is None:
                 input_.set_interactive(False)
 
         if input_.has_parameter_option(['--quiet', '-q']):
@@ -574,12 +579,6 @@ class Application(object):
         namespaced_commands = sorted(namespaced_commands.items(), key=lambda x: x[0])
 
         return namespaced_commands
-
-    def get_abbreviation_suggestions(self, abbrevs):
-        return '%s, %s%s' % \
-               (abbrevs[0],
-                abbrevs[1],
-                ' and %d more' % (len(abbrevs) - 2) if len(abbrevs) > 2 else '')
 
     def extract_namespace(self, name, limit=None):
         parts = name.split(':')

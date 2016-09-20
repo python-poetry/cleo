@@ -4,7 +4,7 @@ import sys
 import re
 
 from .input import Input
-from ..exceptions import UsageError, NoSuchOption, BadOptionUsage
+from ..exceptions import NoSuchOption, BadOptionUsage, TooManyArguments
 
 
 class ArgvInput(Input):
@@ -111,7 +111,7 @@ class ArgvInput(Input):
             self.arguments[arg.get_name()].append(token)
         # unexpected argument
         else:
-            raise UsageError('Too many arguments.')
+            raise TooManyArguments('Too many arguments.')
 
     def add_short_option(self, shortcut, value):
         if not self.definition.has_shortcut(shortcut):

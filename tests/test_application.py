@@ -972,6 +972,23 @@ class ApplicationTest(CleoTestCase):
         tester.run([('--help', True)])
         self.assertIn('The foo:bar command', tester.get_display())
 
+    def test_find_alternative_commands_with_question(self):
+        application = Application()
+        application.set_auto_exit(False)
+        os.environ['COLUMNS'] = '120'
+        os.environ['SHELL_INTERACTIVE'] = '1'
+        application.add(FooCommand())
+        application.add(Foo1Command())
+        application.add(Foo2Command())
+
+        tester = ApplicationTester(application)
+        tester.set_inputs(['1\n'])
+        tester.run([('command', 'f:b')], {'interactive': True})
+
+        self.assertEqual(
+            self.open_fixture('application_unknown_command_question.txt'),
+            tester.get_display(True)
+        )
 
 class CustomApplication(Application):
 

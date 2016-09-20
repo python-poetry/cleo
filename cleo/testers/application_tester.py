@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 from io import BytesIO
 
 from ..inputs.list_input import ListInput
@@ -21,6 +22,7 @@ class ApplicationTester(object):
         self.__application = application
         self.__input = None
         self.__output = None
+        self.__inputs = []
 
     def run(self, input_, options=None):
         """
@@ -42,6 +44,9 @@ class ApplicationTester(object):
         options = options or {}
 
         self.__input = ListInput(input_)
+        if self.__inputs:
+            self.__input.set_stream(self._create_stream(self.__inputs))
+
         if 'interactive' in options:
             self.__input.set_interactive(options['interactive'])
 
@@ -53,7 +58,7 @@ class ApplicationTester(object):
 
         self.__application.run(self.__input, self.__output)
 
-    def get_display(self):
+    def get_display(self, normalize=False):
         """
         Gets the display returned by the last execution command
 
@@ -62,7 +67,12 @@ class ApplicationTester(object):
         """
         self.__output.get_stream().seek(0)
 
-        return self.__output.get_stream().read().decode('utf-8')
+        display = self.__output.get_stream().read().decode('utf-8')
+
+        if normalize:
+            display = display.replace(os.linesep, '\n')
+
+        return display
 
     def get_input(self):
         """
@@ -81,3 +91,30 @@ class ApplicationTester(object):
         :rtype: Output
         """
         return self.__output
+
+    def set_inputs(self, inputs):
+        """
+        Sets the user inputs.
+
+        :param inputs: The user inputs
+        :type inputs: list
+
+        :rtype: CommandTester
+        """
+        self.__inputs = inputs
+
+        return self
+
+    def _create_stream(self, inputs):
+        """
+        Create a stream from inputs.
+
+        :type inputs: list
+
+        :rtype:
+        """
+        stream = BytesIO()
+        stream.write(os.linesep.join(inputs).encode())
+        stream.seek(0)
+
+        return stream
