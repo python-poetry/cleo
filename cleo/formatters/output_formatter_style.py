@@ -63,16 +63,16 @@ class OutputFormatterStyle(object):
 
     def set_option(self, option):
         if option not in self.OPTIONS:
-            raise Exception('Invalid option specified: "%s". Expected one of (%s)'
-                            % (option, ', '.join(self.OPTIONS.keys())))
+            raise ValueError('Invalid option specified: "%s". Expected one of (%s)'
+                             % (option, ', '.join(self.OPTIONS.keys())))
 
         if option not in self.options:
             self.options[self.OPTIONS[option]] = option
 
     def unset_option(self, option):
         if not option in self.OPTIONS:
-            raise Exception('Invalid option specified: "%s". Expected one of (%s)'
-                            % (option, ', '.join(self.OPTIONS.keys())))
+            raise ValueError('Invalid option specified: "%s". Expected one of (%s)'
+                             % (option, ', '.join(self.OPTIONS.keys())))
 
         del self.options[self.OPTIONS[option]]
 

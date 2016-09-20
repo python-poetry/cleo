@@ -136,9 +136,9 @@ class OutputFormatterTest(CleoTestCase):
     def test_non_style_tag(self):
         formatter = OutputFormatter(True)
         self.assertEqual(
-            '\033[32msome \033[0m\033[32m<tag> styled '
-            '\033[0m\033[32m<p>single-char tag\033[0m\033[32m</p>\033[0m',
-            formatter.format('<info>some <tag> styled <p>single-char tag</p></info>')
+            '\033[32msome \033[0m\033[32m<tag>\033[0m\033[32m \033[0m\033[32m<setting=value>\033[0m\033[32m'
+            ' styled \033[0m\033[32m<p>\033[0m\033[32msingle-char tag\033[0m\033[32m</p>\033[0m',
+            formatter.format('<info>some <tag> <setting=value> styled <p>single-char tag</p></info>')
         )
 
     def test_test_non_decorated_formatter(self):
