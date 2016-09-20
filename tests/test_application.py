@@ -76,7 +76,7 @@ class ApplicationTest(CleoTestCase):
         application = Application('foo', 'bar')
 
         self.assertEqual(
-            '<info>foo</info> version <comment>bar</comment>',
+            'foo <info>bar</info>',
             application.get_long_version()
         )
 

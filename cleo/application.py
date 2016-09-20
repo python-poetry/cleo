@@ -195,9 +195,9 @@ class Application(object):
 
     def get_long_version(self):
         if 'UNKNOWN' != self.get_name() and 'UNKNOWN' != self.get_version():
-            return '<info>%s</info> version <comment>%s</comment>' % (self.get_name(), self.get_version())
+            return '%s <info>%s</info>' % (self.get_name(), self.get_version())
 
-        return '<info>Console Tool</info>'
+        return 'Console Tool'
 
     def register(self, name):
         return self.add(Command(name))
