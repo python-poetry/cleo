@@ -95,6 +95,9 @@ class Application(object):
             if not self._catch_exceptions:
                 raise
 
+            if output_.is_quiet():
+                output_.set_verbosity(Output.VERBOSITY_NORMAL)
+
             if isinstance(output_, ConsoleOutput):
                 self.render_exception(e, output_.get_error_output())
             else:
