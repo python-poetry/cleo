@@ -6,6 +6,8 @@ from ..formatters.output_formatter import OutputFormatter
 
 class FormatterHelper(Helper):
 
+    name = 'formatter'
+
     def format_section(self, section, message, style='info'):
         return '<%s>[%s]</%s> %s' % (style, section, style, message)
 

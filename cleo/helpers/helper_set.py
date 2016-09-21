@@ -9,12 +9,8 @@ class HelperSet(object):
         self.__helpers = {}
         self.__command = None
 
-        if isinstance(helpers, (list, tuple)):
-            for helper in helpers:
-                self.set(helper, None)
-        else:
-            for alias, helper in helpers.items():
-                self.set(helper, None if isinstance(alias, int) else alias)
+        for helper in helpers:
+            self.set(helper, None)
 
     def set(self, helper, alias=None):
         self.__helpers[helper.get_name()] = helper

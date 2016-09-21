@@ -20,7 +20,7 @@ from .commands.command import Command
 from .commands.help_command import HelpCommand
 from .commands.list_command import ListCommand
 from .commands.completion.completion_command import CompletionCommand
-from .helpers import HelperSet, FormatterHelper, QuestionHelper, TableHelper
+from .helpers import HelperSet, FormatterHelper, QuestionHelper, Table
 from .questions import ChoiceQuestion
 from .terminal import Terminal
 from .exceptions import (
@@ -533,11 +533,10 @@ class Application(object):
         return commands
 
     def get_default_helper_set(self):
-        return HelperSet({
-            'formatter': FormatterHelper(),
-            'question': QuestionHelper(),
-            'table': TableHelper()
-        })
+        return HelperSet([
+            FormatterHelper(),
+            QuestionHelper()
+        ])
 
     def sort_commands(self, commands):
         """

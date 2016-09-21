@@ -842,9 +842,7 @@ class ApplicationTest(CleoTestCase):
         application.set_catch_exceptions(False)
 
         application.set_helper_set(
-            HelperSet({
-                'formatter': FormatterHelper()
-            })
+            HelperSet([FormatterHelper()])
         )
 
         helper_set = application.get_helper_set()
@@ -858,9 +856,7 @@ class ApplicationTest(CleoTestCase):
         application.set_catch_exceptions(False)
 
         application.set_helper_set(
-            HelperSet({
-                'formatter': FormatterHelper()
-            })
+            HelperSet([FormatterHelper()])
         )
 
         helper_set = application.get_helper_set()
