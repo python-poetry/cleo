@@ -27,14 +27,12 @@
 
 ### Added
 
-(February 9th, 2016)
-
 - Adding support for Windows
 
 
 ## [0.4] - 2016-01-11
 
-This a major release with some API changes.
+This is a major release with some API changes.
 
 ### Added
 
