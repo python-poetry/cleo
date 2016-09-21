@@ -19,7 +19,7 @@ setup(
     author='Sébastien Eustace',
     author_email='sebastien.eustace@gmail.com',
     url='https://github.com/sdispater/cleo',
-    download_url='https://github.com/sdispater/cleo/archive/v%s.tar.gz' % __version__,
+    download_url='https://github.com/sdispater/cleo/archive/%s.tar.gz' % __version__,
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     package_data={'cleo': ['resources/bin/hiddeninput.exe']},
     install_requires=requirements,
