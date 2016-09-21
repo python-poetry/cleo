@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import os
 from setuptools import setup, find_packages
 
 __version__ = '0.4.1'
+
+here = os.path.abspath(os.path.dirname(__file__))
+
+with open(os.path.join(here, 'requirements.txt')) as f:
+    requirements = f.readlines()
 
 setup(
     name='cleo',
@@ -16,7 +22,7 @@ setup(
     download_url='https://github.com/sdispater/cleo/archive/v%s.tar.gz' % __version__,
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     package_data={'cleo': ['resources/bin/hiddeninput.exe']},
-    install_requires=['pylev', 'psutil'],
+    install_requires=requirements,
     tests_require=['pytest', 'mock'],
     zip_safe=False,
     classifiers=[

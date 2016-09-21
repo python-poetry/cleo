@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from backpack.collections import Collection
 from ..exceptions import CleoException
 
 
@@ -51,7 +52,7 @@ class Question(object):
         :param values: The autocomplete values
         :type values: list or None
         """
-        if values is not None and not isinstance(values, list):
+        if values is not None and not isinstance(values, (list, Collection)):
             raise CleoException('Autocompleter values can be either a list or None.')
 
         if self.hidden:

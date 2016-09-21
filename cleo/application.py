@@ -8,6 +8,7 @@ import re
 from io import UnsupportedOperation
 from pylev import levenshtein
 from collections import OrderedDict
+from backpack import collect
 from .outputs.output import Output
 from .outputs.console_output import ConsoleOutput
 from .inputs.argv_input import ArgvInput
@@ -303,18 +304,15 @@ class Application(object):
             for alias in command.get_aliases():
                 namespaces.append(self.extract_namespace(alias))
 
-        return list(set(filter(lambda n: n, namespaces)))
+        return collect(namespaces).filter(lambda n: n).unique()
 
     def find_namespace(self, namespace):
         all_namespaces = self.get_namespaces()
         expr = re.sub('([^:]+|)', lambda m: re.escape(m.group(1)) + '[^:]*', namespace)
-        namespaces = sorted(
-            list(
-                filter(
-                    lambda x: re.findall('^%s' % expr, x),
-                    all_namespaces
-                )
-            )
+        namespaces = (
+            collect(all_namespaces)
+                .filter(lambda x: re.findall('^%s' % expr, x))
+                .sort()
         )
 
         if not namespaces:
@@ -333,16 +331,11 @@ class Application(object):
         expr = re.sub('([^:]+|)',
                       lambda m: re.escape(m.group(1)) + '[^:]*',
                       name)
-        commands = sorted(
-            list(
-                filter(
-                    lambda x: re.findall('^%s' % expr, x),
-                    all_commands
-                )
-            )
-        )
+        commands = collect(all_commands).filter(
+            lambda x: re.findall('^%s' % expr, x)
+        ).sort()
 
-        if not commands or len(list(filter(lambda x: re.findall('^%s$' % expr, x), commands))) < 1:
+        if not commands or commands.filter(lambda x: re.findall('^%s$' % expr, x)).count() < 1:
             pos = name.find(':')
             if pos >= 0:
                 # Check if a namespace exists and contains commands
@@ -361,14 +354,7 @@ class Application(object):
 
                 return command_name == name_or_alias or (command_name not in commands)
 
-            commands = sorted(
-                list(
-                    filter(
-                        f,
-                        commands
-                    )
-                )
-            )
+            commands = commands.filter(f).sort()
 
         exact = name in commands
         if len(commands) > 1 and not exact:
@@ -616,7 +602,7 @@ class Application(object):
                 lev = levenshtein(subname, parts[i])
                 if lev <= (len(subname) / 3) or parts[i].find(subname) != -1:
                     if exists:
-                        alternatives[collection_name] = alternatives[collection_name] + lev
+                        alternatives[collection_name] += lev
                     else:
                         alternatives[collection_name] = lev
                 elif exists:
@@ -630,10 +616,12 @@ class Application(object):
                 else:
                     alternatives[item] = lev
 
-        alternatives = list(filter(lambda a: a[1] < 2 * threshold, alternatives.items()))
-        sorted(alternatives, key=lambda x: x[1])
+        alts = []
+        for alt, score in alternatives.items():
+            if score < 2 * threshold:
+                alts.append(alt)
 
-        return list(map(lambda x: x[0], alternatives))
+        return alts
 
     def set_default_command(self, command_name, is_single_command=False):
         """
