@@ -1,6 +1,19 @@
 Cleo
 ####
 
+.. image:: https://travis-ci.org/sdispater/cleo.png
+   :alt: Cleo Build status
+   :target: https://travis-ci.org/sdispater/cleo
+
+Create beautiful and testable command-line interfaces.
+
+Resources
+=========
+
+* `Documentation <http://cleo.readthedocs.io>`_
+* `Issue Tracker <https://github.com/sdispater/cleo/issues>`_
+
+
 Usage
 =====
 
@@ -76,89 +89,35 @@ This prints:
 
     HELLO JOHN
 
-.. note::
+As you may have already seen, Cleo uses the command docstring to determine
+the command definition.
+The docstring must be in the following form :
 
-    As you may have already seen, Cleo uses the command docstring to determine
-    the command definition.
-    The docstring must be in the following form :
+.. code-block:: python
 
-    .. code-block:: python
+    """
+    Command description
 
-        """
-        Command description
+    Command signature
+    """
 
-        Command signature
-        """
+The signature being in the following form:
 
-    The signature being in the following form:
+.. code-block:: python
 
-    .. code-block:: python
+    """
+    command:name {argument : Argument description} {--option : Option description}
+    """
 
-        """
-        command:name {argument : Argument description} {--option : Option description}
-        """
+The signature can span multiple lines.
 
-    The signature can span multiple lines.
+.. code-block:: python
 
-    .. code-block:: python
-
-        """
-        command:name
-            {argument : Argument description}
-            {--option : Option description}
-        """
-
-    If you do not want to use the docstring to describe your commands, you can use the
-    ``description`` and ``signature`` attributes, like so:
-
-    .. code-block:: python
-
-        class GreetCommand(Command):
-
-            description = 'Greets someone'
-
-            signature = (
-                'demo:greet '
-                '{name? : Who do you want to greet?} '
-                '{--y|yell : If set, the task will yell in uppercase letters}
-            )
-
-.. tip::
-
-    If you do not want to use the signature, you can declare your command
-    in a more explicit way:
-
-    .. code-block:: python
-
-        from cleo import Command, argument, option
-
-
-        class GreetCommand(Command):
-
-            name = 'demo:greet'
-
-            description = 'Greets someone'
-
-            arguments = [
-                argument('name', 'Who do you want to greet?', required=False)
-            ]
-
-            options = [
-                option('yell', 'y', 'If set, the task will yell in uppercase letters.')
-            ]
-
-            def handle(self):
-                name = self.argument('name')
-                if name:
-                    text = 'Hello %s' % name
-                else:
-                    text = 'Hello'
-
-                if self.option('yell'):
-                    text = text.upper()
-
-                self.line(text)
-
+    """
+    command:name
+        {argument : Argument description}
+        {--option : Option description}
+    """
 
 Coloring the Output
 -------------------
@@ -182,18 +141,16 @@ output. For example:
 
 The closing tag can be replaced by ``</>``, which revokes all formatting options established by the last opened tag.
 
-.. tip::
+You can also use the corresponding methods:
 
-    You can also use the corresponding methods:
+.. code-block:: python
 
-    .. code-block:: python
+    self.info('foo')
+    self.comment('foo')
+    self.question('foo')
+    self.error('foo')
 
-        self.info('foo')
-        self.comment('foo')
-        self.question('foo')
-        self.error('foo')
-
-It is possible to define your own styles using the ``set_style`` method:
+It is possible to define your own styles using the ``set_style()`` method:
 
 .. code-block:: python
 
@@ -233,11 +190,6 @@ Mode                                     Meaning                            Cons
 ``Output.VERBOSITY_VERY_VERBOSE``        Informative non essential messages ``-vv``
 ``Output.VERBOSITY_DEBUG``               Debug messages                     ``-vvv``
 =======================================  ================================== ======================
-
-.. tip::
-
-    The full exception stacktrace is printed if the ``VERBOSITY_VERBOSE``
-    level or above is used.
 
 It is possible to print a message in a command for only a specific verbosity
 level. For example:
@@ -326,7 +278,6 @@ You can access the ``names`` argument as a list:
     names = self.argument('names')
     if names:
         text += ' %s' % ', '.join(names)
-    }
 
 There are 3 argument variants you can use:
 
@@ -407,10 +358,6 @@ flag:
     $ python application.py demo:greet John
     $ python application.py demo:greet John --iterations=5
 
-.. note::
-
-    Naturally, the ``--iterations=5`` part can also be written ``--iterations 5``
-
 The first example will only print once, since ``iterations`` is empty and
 defaults to ``1``. The second example will print five times.
 
@@ -467,7 +414,7 @@ console:
             application = Application()
             application.add(GreetCommand())
 
-            commmand = application.find('demo:greet')
+            command = application.find('demo:greet')
             command_tester = CommandTester(command)
             command_tester.execute([('command', command.get_name())])
 
@@ -501,9 +448,7 @@ as an list of tuples to the ``CommandTester.execute()`` method:
 
             self.assertRegex('John', command_tester.get_display())
 
-.. tip::
-
-    You can also test a whole console application by using the ``ApplicationTester`` class.
+You can also test a whole console application by using the ``ApplicationTester`` class.
 
 
 Calling an existing Command
@@ -520,17 +465,14 @@ Calling a command from another one is straightforward:
 
     def handle(self):
         return_code = self.call('demo:greet', [
-            ('command', command.get_name()),
             ('name', 'John'),
             ('--yell', True)
         ])
 
         # ...
 
-.. tip::
-
-    If you want to suppress the output of the executed command,
-    you can use the ``call_silent()`` method instead.
+If you want to suppress the output of the executed command,
+you can use the ``call_silent()`` method instead.
 
 
 
@@ -565,12 +507,8 @@ which will work if the program is accessible on your PATH.
 You can specify a program name to complete for instead using the ``-p\--program`` option,
 which is required if you're using an alias to run the program.
 
-.. tip::
+If you want the completion to apply automatically for all new shell sessions,
+add the command to your shell's profile (eg. ``~/.bash_profile`` or ``~/.zshrc``)
 
-    If you want the completion to apply automatically for all new shell sessions,
-    add the command to your shell's profile (eg. ``~/.bash_profile`` or ``~/.zshrc``)
-
-.. note::
-
-    The type of shell (zsh/bash) is automatically detected using the ``SHELL`` environment variable at run time.
-    In some circumstances, you may need to explicitly specify the shell type with the ``--shell-type`` option.
+The type of shell (zsh/bash) is automatically detected using the ``SHELL`` environment variable at run time.
+In some circumstances, you may need to explicitly specify the shell type with the ``--shell-type`` option.
