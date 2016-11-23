@@ -3,6 +3,7 @@
 from cleo import Application
 from .descriptor_command_1 import DescriptorCommand1
 from .descriptor_command_2 import DescriptorCommand2
+from .descriptor_command_3 import DescriptorCommand3
 
 
 class DescriptorApplication2(Application):
@@ -12,3 +13,4 @@ class DescriptorApplication2(Application):
 
         self.add(DescriptorCommand1())
         self.add(DescriptorCommand2())
+        self.add(DescriptorCommand3())

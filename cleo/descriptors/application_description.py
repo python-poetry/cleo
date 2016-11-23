@@ -45,7 +45,7 @@ class ApplicationDescription(object):
             names = []
 
             for name, command in commands:
-                if not command.get_name() or command.get_name() == '_completion':
+                if not command.get_name() or command.is_hidden():
                     continue
 
                 if command.get_name() == name:

@@ -37,6 +37,8 @@ class Command(BaseCommand):
 
     validation = None
 
+    hidden = False
+
     def __init__(self, name=None):
         self.input = None
         self.output = None
@@ -511,6 +513,14 @@ class Command(BaseCommand):
         :type size: int or None
         """
         self.output.overwrite(text, size=size)
+
+    def is_hidden(self):
+        """
+        Returns whether the command is hidden or not.
+
+        :rtype: bool
+        """
+        return self.hidden
 
     def _parse_verbosity(self, level=None):
         if level in self.verbosity_map:

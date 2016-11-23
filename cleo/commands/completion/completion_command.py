@@ -21,6 +21,8 @@ class CompletionCommand(Command):
                          Otherwise this is determined automatically.}
     """
 
+    hidden = True
+
     def handle(self):
         handler = CompletionHandler(self.get_application())
 
