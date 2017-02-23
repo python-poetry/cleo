@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from .output import Output
-from ..formatters import OutputFormatter
+from ..formatters import Formatter
 
 
 class NullOutput(Output):
@@ -10,7 +10,7 @@ class NullOutput(Output):
         pass
 
     def get_formatter(self):
-        return OutputFormatter()
+        return Formatter()
 
     def set_decorated(self, decorated):
         pass

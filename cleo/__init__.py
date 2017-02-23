@@ -2,9 +2,6 @@
 
 from .application import Application
 from .commands import Command
-from .formatters import (
-    OutputFormatter, OutputFormatterStyle, OutputFormatterStyleStack
-)
 from .helpers import (
     DescriptorHelper, FormatterHelper, Helper,
     HelperSet, ProgressBar, ProgressIndicator,

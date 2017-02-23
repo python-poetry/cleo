@@ -2,7 +2,6 @@
 
 
 from cleo.outputs import Output
-from cleo.formatters import OutputFormatterStyle
 
 from .. import CleoTestCase
 
@@ -72,9 +71,8 @@ class OutputTest(CleoTestCase):
         self.assertEqual('foo\n', output.output)
 
     def test_write_decorated_message(self):
-        foo_style = OutputFormatterStyle('yellow', 'red', ['blink'])
         output = MyOutput()
-        output.get_formatter().set_style('foo', foo_style)
+        output.get_formatter().add_style('foo', 'yellow', 'red', ['blink'])
         output.set_decorated(True)
         output.writeln('<foo>foo</foo>')
         self.assertEqual('\033[33;41;5mfoo\033[0m\n', output.output)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ..formatters.output_formatter import OutputFormatter
+from ..formatters import Formatter
 
 
 class OutputError(Exception):
@@ -19,10 +19,9 @@ class Output(object):
     OUTPUT_RAW = 1
     OUTPUT_PLAIN = 2
 
-    def __init__(self, verbosity=VERBOSITY_NORMAL, decorated=None, formatter=None):
+    def __init__(self, verbosity=VERBOSITY_NORMAL, decorated=False, formatter=None):
         self.verbosity = self.VERBOSITY_NORMAL if verbosity is None else verbosity
-        self.formatter = formatter or OutputFormatter()
-        self.formatter.set_decorated(bool(decorated))
+        self.formatter = formatter or Formatter(decorated)
 
     def set_formatter(self, formatter):
         self.formatter = formatter
@@ -31,7 +30,7 @@ class Output(object):
         return self.formatter
 
     def set_decorated(self, decorated):
-        self.formatter.set_decorated(bool(decorated))
+        self.formatter.set_decorated(decorated)
 
     def is_decorated(self):
         return self.formatter.is_decorated()
@@ -63,11 +62,11 @@ class Output(object):
 
         for message in messages:
             if output_type == self.OUTPUT_NORMAL:
-                message = self.formatter.format(message)
+                message = self.formatter.colorize(message)
             elif output_type == self.OUTPUT_RAW:
                 pass
             elif output_type == self.OUTPUT_PLAIN:
-                message = self.formatter.format(message)
+                message = self.formatter.colorize(message)
             else:
                 raise OutputError('Unknown output type given (%s)' % output_type)
 

@@ -10,6 +10,9 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, 'requirements.txt')) as f:
     requirements = f.readlines()
 
+with open(os.path.join(here, 'requirements.tests.txt')) as f:
+    test_requirements = f.readlines()
+
 setup(
     name='cleo',
     license='MIT',
@@ -23,7 +26,7 @@ setup(
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     package_data={'cleo': ['resources/bin/hiddeninput.exe']},
     install_requires=requirements,
-    tests_require=['pytest', 'mock'],
+    tests_require=test_requirements,
     zip_safe=False,
     classifiers=[
         'Intended Audience :: Developers',

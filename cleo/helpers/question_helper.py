@@ -4,10 +4,10 @@ import sys
 import os
 import subprocess
 import platform
+
 from .helper import Helper
 from ..questions import Question, ChoiceQuestion
 from ..outputs import ConsoleOutput
-from ..formatters import OutputFormatterStyle
 from ..validators import Validator, Callable
 from .._compat import decode
 
@@ -168,7 +168,7 @@ class QuestionHelper(Helper):
         subprocess.check_output(['stty', '-icanon', '-echo'])
 
         # Add highlighted text style
-        output.get_formatter().set_style('hl', OutputFormatterStyle('black', 'white'))
+        output.get_formatter().add_style('hl', 'black', 'white')
 
         # Read a keypress
         while True:

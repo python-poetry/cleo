@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+
 from .base_command import BaseCommand, CommandError
 from ..inputs.list_input import ListInput
 from ..parser import Parser
@@ -12,7 +13,6 @@ from ..helpers.table_separator import TableSeparator
 from ..helpers.table_cell import TableCell
 from ..helpers.table_style import TableStyle
 from ..helpers.progress_indicator import ProgressIndicator
-from ..formatters import OutputFormatterStyle
 
 
 class Command(BaseCommand):
@@ -495,9 +495,7 @@ class Command(BaseCommand):
         :param options: The options
         :type options: list
         """
-        style = OutputFormatterStyle(fg, bg, options)
-
-        self.output.get_formatter().set_style(name, style)
+        self.output.get_formatter().add_style(name, fg, bg, options)
 
     def overwrite(self, text, size=None):
         """
