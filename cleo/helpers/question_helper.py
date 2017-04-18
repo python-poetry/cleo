@@ -114,9 +114,12 @@ class QuestionHelper(Helper):
         default = question.default
 
         if default is None:
-            message = '<info>{}</info> '.format(message)
+            if isinstance(question, ChoiceQuestion):
+                message = '<question>{}</>: '.format(message)
+            else:
+                message = '<question>{}</> '.format(message)
         elif isinstance(question, ConfirmationQuestion):
-            message = ' <info>{} (yes/no)</info> [<comment>{}</comment>] '.format(
+            message = '<question>{} (yes/no)</> [<comment>{}</>] '.format(
                 message,
                 'yes' if default else 'no'
             )
@@ -127,13 +130,13 @@ class QuestionHelper(Helper):
             for i, value in enumerate(default):
                 default[i] = choices[int(value.strip())]
 
-            message = ' <info>{}</info> [<comment>{}</comment>]:'.format(
+            message = '<question>{}</> [<comment>{}</>]:'.format(
                 message,
                 Formatter.escape(', '.join(default))
             )
         elif isinstance(question, ChoiceQuestion):
             choices = question.choices
-            message = ' <info>{}</info> [<comment>{}</comment>]:'.format(
+            message = '<question>{}</question> [<comment>{}</>]:'.format(
                 message,
                 Formatter.escape(choices[int(default)])
             )
@@ -143,7 +146,7 @@ class QuestionHelper(Helper):
 
             messages = [message]
             for key, value in enumerate(question.choices):
-                messages.append(' [<comment>{:{}}</comment>] {}'.format(key, width, value))
+                messages.append(' [<comment>{:{}}</>] {}'.format(key, width, value))
 
             output.writeln(messages)
 
