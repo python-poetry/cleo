@@ -6,8 +6,9 @@ import subprocess
 import platform
 
 from .helper import Helper
-from ..questions import Question, ChoiceQuestion
+from ..questions import Question, ChoiceQuestion, ConfirmationQuestion
 from ..outputs import ConsoleOutput
+from ..formatters import Formatter
 from ..validators import Validator, Callable
 from .._compat import decode
 
@@ -110,13 +111,39 @@ class QuestionHelper(Helper):
         :type question: Question
         """
         message = question.question
+        default = question.default
+
+        if default is None:
+            message = '<info>{}</info> '.format(message)
+        elif isinstance(question, ConfirmationQuestion):
+            message = ' <info>{} (yes/no)</info> [<comment>{}</comment>] '.format(
+                message,
+                'yes' if default else 'no'
+            )
+        elif isinstance(question, ChoiceQuestion) and question.multiselect:
+            choices = question.choices
+            default = default.split(',')
+
+            for i, value in enumerate(default):
+                default[i] = choices[int(value.strip())]
+
+            message = ' <info>{}</info> [<comment>{}</comment>]:'.format(
+                message,
+                Formatter.escape(', '.join(default))
+            )
+        elif isinstance(question, ChoiceQuestion):
+            choices = question.choices
+            message = ' <info>{}</info> [<comment>{}</comment>]:'.format(
+                message,
+                Formatter.escape(choices[int(default)])
+            )
 
         if isinstance(question, ChoiceQuestion):
             width = max(*map(self.len, [str(k) for k, _ in enumerate(question.choices)]))
 
             messages = [message]
             for key, value in enumerate(question.choices):
-                messages.append(' [<info>%-*s</info>] %s' % (width, key, value))
+                messages.append(' [<comment>{:{}}</comment>] {}'.format(key, width, value))
 
             output.writeln(messages)
 

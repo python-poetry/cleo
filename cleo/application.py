@@ -165,24 +165,25 @@ class Application(object):
                 alternatives = e.alternatives
 
                 if (not alternatives
-                    or not input_.is_interactive()
-                    or not self.get_helper_set().has('question')):
+                    or not input_.is_interactive()):
                         raise
 
-                helper = self.get_helper_set().get('question')
-                message = '{} \nPlease select one of these suggested commands:'.format(
-                    e.message
+                rest = ''
+                if len(alternatives) > 2:
+                    rest = ' and <info>{}</> more'.format(len(alternatives) - 2)
+
+                commands = '<info>{}</>, <info>{}</>{}'.format(
+                    alternatives[0], alternatives[1], rest
                 )
-                question = ChoiceQuestion(message, alternatives)
-                question.max_attempts = 1
 
-                try:
-                    name = helper.ask(input_, output_, question)
-                except Exception:
-                    raise
+                message = (
+                    '\n<comment>Command "<info>{}</>" is ambiguous ({}).</>'
+                    .format(e.name, commands)
+                )
 
-                if name is None:
-                    raise
+                output_.writeln(message)
+
+                return 1
 
         self._running_command = command
         status_code = command.run(input_, output_)
