@@ -1,5 +1,16 @@
 # Change Log
 
+## [Unreleased]
+
+### Added
+
+- Added a new `completions` command to generate autocompletion scripts.
+
+### Changed
+
+- Removed the `_completion` command.
+
+
 ## [0.5.0] - 2016-09-21
 
 ### Added
@@ -58,7 +69,7 @@ This is a major release with some API changes.
 
 
 
-[Unreleased]: https://github.com/sdispater/cleo/compare/0.5.0...master
+[Unreleased]: https://github.com/sdispater/cleo/compare/master...develop
 [0.5.0]: https://github.com/sdispater/cleo/releases/tag/0.5.0
 [0.4.1]: https://github.com/sdispater/cleo/releases/tag/0.4.1
 [0.4]: https://github.com/sdispater/cleo/releases/tag/0.4

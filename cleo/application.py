@@ -19,9 +19,8 @@ from .inputs.input_definition import InputDefinition
 from .commands.command import Command
 from .commands.help_command import HelpCommand
 from .commands.list_command import ListCommand
-from .commands.completion.completion_command import CompletionCommand
-from .helpers import HelperSet, FormatterHelper, QuestionHelper, Table
-from .questions import ChoiceQuestion
+from .commands.completions_command import CompletionsCommand
+from .helpers import HelperSet, FormatterHelper, QuestionHelper
 from .terminal import Terminal
 from .exceptions import (
     CleoException,
@@ -42,7 +41,7 @@ class Application(object):
     >>> app.run()
     """
 
-    def __init__(self, name='UNKNOWN', version='UNKNOWN', complete=False):
+    def __init__(self, name='UNKNOWN', version='UNKNOWN', complete=True):
         """
         Constructor
 
@@ -529,7 +528,7 @@ class Application(object):
         commands = [HelpCommand(), ListCommand()]
 
         if self._complete:
-            commands.append(CompletionCommand())
+            commands.append(CompletionsCommand())
 
         return commands
 

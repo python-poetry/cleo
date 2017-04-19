@@ -1,0 +1,40 @@
+function __fish_my_function_no_subcommand
+    for i in (commandline -opc)
+        if contains -- $i command:with:colons hello help list
+            return 1
+        end
+    end
+    return 0
+end
+
+# global options
+complete -c script -n '__fish_my_function_no_subcommand' -l ansi -d 'Force ANSI output'
+complete -c script -n '__fish_my_function_no_subcommand' -l help -d 'Display this help message'
+complete -c script -n '__fish_my_function_no_subcommand' -l no-ansi -d 'Disable ANSI output'
+complete -c script -n '__fish_my_function_no_subcommand' -l no-interaction -d 'Do not ask any interactive question'
+complete -c script -n '__fish_my_function_no_subcommand' -l quiet -d 'Do not output any message'
+complete -c script -n '__fish_my_function_no_subcommand' -l verbose -d 'Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug'
+complete -c script -n '__fish_my_function_no_subcommand' -l version -d 'Display this application version'
+
+# commands
+complete -c script -f -n '__fish_my_function_no_subcommand' -a command:with:colons -d 'Test.'
+complete -c script -f -n '__fish_my_function_no_subcommand' -a hello -d 'Complete me please.'
+complete -c script -f -n '__fish_my_function_no_subcommand' -a help -d 'Displays help for a command'
+complete -c script -f -n '__fish_my_function_no_subcommand' -a list -d 'Lists commands'
+
+# command options
+
+# command:with:colons
+complete -c script -A -n '__fish_seen_subcommand_from command:with:colons' -l goodbye -d ''
+
+# hello
+complete -c script -A -n '__fish_seen_subcommand_from hello' -l dangerous-option -d 'This $hould be `escaped`.'
+complete -c script -A -n '__fish_seen_subcommand_from hello' -l option-without-description -d ''
+
+# help
+complete -c script -A -n '__fish_seen_subcommand_from help' -l format -d 'The output format (txt, json, or md)'
+complete -c script -A -n '__fish_seen_subcommand_from help' -l raw -d 'To output raw command help'
+
+# list
+complete -c script -A -n '__fish_seen_subcommand_from list' -l format -d 'The output format (txt, json, or md)'
+complete -c script -A -n '__fish_seen_subcommand_from list' -l raw -d 'To output raw command list'
