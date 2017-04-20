@@ -5,11 +5,11 @@
 ### Added
 
 - Added a new `completions` command to generate autocompletion scripts.
+- Added support for command signature inheritance.
 
 ### Changed
 
 - Removed the `_completion` command.
-
 
 ## [0.5.0] - 2016-09-21
 
