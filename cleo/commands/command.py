@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import contextlib
 
 from .base_command import BaseCommand, CommandError
 from ..inputs.list_input import ListInput
@@ -484,6 +485,31 @@ class Command(BaseCommand):
         :rtype: ProgressIndicator
         """
         return ProgressIndicator(self.output, fmt, indicator_change_interval, indicator_values)
+
+    def spin(self, start_message, end_message, fmt=None, interval=100, values=None):
+        """
+        Automatically spin a progress indicator.
+        
+        :param start_message: The message to display when starting
+        :type start_message: str
+        
+        :param end_message: The message to display when finishing
+        :type end_message: str
+        
+        :param fmt: Indicator format
+        :type fmt: str or None
+
+        :param interval: Change interval in milliseconds
+        :type interval: int
+
+        :param values: Animated indicator characters
+        :type values: list or None
+
+        :rtype: ProgressIndicator
+        """
+        spinner = ProgressIndicator(self.output, fmt, interval, values)
+
+        return spinner.auto(start_message, end_message)
 
     def set_style(self, name, fg=None, bg=None, options=None):
         """
