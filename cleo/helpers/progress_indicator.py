@@ -177,6 +177,8 @@ class ProgressIndicator(object):
         while not self._auto_running.is_set():
             self.advance()
 
+            time.sleep(0.1)
+
     def _display(self):
         if self._output.get_verbosity() == Output.VERBOSITY_QUIET:
             return
