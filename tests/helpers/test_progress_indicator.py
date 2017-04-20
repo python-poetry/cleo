@@ -33,6 +33,10 @@ class ProgressIndicatorTestCase(CleoTestCase):
         time.sleep(0.101)
         bar.advance()
         bar.finish('Done Again...')
+        bar.start('Starting Again...')
+        time.sleep(0.101)
+        bar.advance()
+        bar.finish('Done Again...', reset_indicator=True)
 
         expected = self.generate_output([
             ' - Starting...',
@@ -52,6 +56,14 @@ class ProgressIndicatorTestCase(CleoTestCase):
             ' - Starting Again...',
             ' \\ Starting Again...',
             ' \\ Done Again...'
+        ])
+
+        expected += os.linesep
+
+        expected += self.generate_output([
+            ' - Starting Again...',
+            ' \\ Starting Again...',
+            ' - Done Again...'
         ])
 
         expected += os.linesep

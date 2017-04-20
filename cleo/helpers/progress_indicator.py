@@ -130,7 +130,7 @@ class ProgressIndicator(object):
 
         self._display()
 
-    def finish(self, message):
+    def finish(self, message, reset_indicator=False):
         """
         Finish the indicator with message.
         """
@@ -142,6 +142,10 @@ class ProgressIndicator(object):
             self._auto_thread.join()
 
         self._message = message
+
+        if reset_indicator:
+            self._indicator_current = 0
+
         self._display()
         self._output.writeln('')
         self._started = False
@@ -159,7 +163,7 @@ class ProgressIndicator(object):
 
         yield self
 
-        self.finish(end_message)
+        self.finish(end_message, reset_indicator=True)
 
     def _spin(self):
         while not self._auto_running.is_set():
