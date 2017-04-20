@@ -6,6 +6,7 @@
 
 - Added a new `completions` command to generate autocompletion scripts.
 - Added support for command signature inheritance.
+- Added a new `spin()` helper to display a spinner.
 
 ### Changed
 
