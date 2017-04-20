@@ -153,7 +153,7 @@ class ProgressIndicator(object):
     @contextmanager
     def auto(self, start_message, end_message):
         """
-        Auto progres. 
+        Auto progress. 
         """
         self._auto_running = threading.Event()
         self._auto_thread = threading.Thread(target=self._spin)
@@ -161,7 +161,15 @@ class ProgressIndicator(object):
         self.start(start_message)
         self._auto_thread.start()
 
-        yield self
+        try:
+            yield self
+        except Exception:
+            self._output.writeln('')
+
+            self._auto_running.set()
+            self._auto_thread.join()
+
+            raise
 
         self.finish(end_message, reset_indicator=True)
 
