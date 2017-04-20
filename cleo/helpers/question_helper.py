@@ -3,7 +3,7 @@
 import sys
 import os
 import subprocess
-import platform
+import getpass
 
 from .helper import Helper
 from ..questions import Question, ChoiceQuestion, ConfirmationQuestion
@@ -287,33 +287,10 @@ class QuestionHelper(Helper):
 
         :rtype: str
         """
-        if platform.system().lower() == 'windows':
-            exe = os.path.join(
-                os.path.dirname(os.path.realpath(__file__)),
-                '..', 'resources', 'bin', 'hiddeninput.exe'
-            )
+        if hasattr(output, 'output'):
+            output = output.output
 
-            value = decode(os.popen(os.path.realpath(exe)).read()).strip()
-            output.writeln('')
-
-            return value
-
-        if self._has_stty_available():
-            stty_mode = decode(subprocess.check_output(['stty', '-g'])).rstrip('\n')
-
-            subprocess.check_output(['stty', '-echo'])
-            value = decode(input_stream.readline())
-            subprocess.check_output(['stty', '%s' % stty_mode])
-
-            if not value:
-                raise Exception('Aborted')
-
-            value = value.strip()
-            output.writeln('')
-
-            return value
-
-        raise Exception('Unable to hide the response')
+        return getpass.getpass('', stream=output)
 
     def _validate_attempts(self, interviewer, output, question):
         """

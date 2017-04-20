@@ -24,7 +24,6 @@ setup(
     url='https://github.com/sdispater/cleo',
     download_url='https://github.com/sdispater/cleo/archive/%s.tar.gz' % __version__,
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
-    package_data={'cleo': ['resources/bin/hiddeninput.exe']},
     install_requires=requirements,
     tests_require=test_requirements,
     zip_safe=False,

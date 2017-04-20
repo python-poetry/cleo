@@ -54,3 +54,6 @@ class StreamOutput(Output):
             return os.isatty(self.stream.fileno())
         except UnsupportedOperation:
             return False
+
+    def flush(self):
+        return self.stream.flush()

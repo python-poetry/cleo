@@ -21,6 +21,10 @@ class OutputStyle(Output):
         self._last_message = ''
         self._last_message_err = ''
 
+    @property
+    def output(self):
+        return self._output
+
     def title(self, message):
         """
         Formats a command title.
