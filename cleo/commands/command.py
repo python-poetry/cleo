@@ -42,9 +42,15 @@ class Command(BaseCommand):
     def __init__(self, name=None):
         self.input = None
         self.output = None
+        doc = self.__doc__ or super(self.__class__, self).__doc__
 
-        if self.__doc__:
-            self._parse_doc(self.__doc__)
+        if doc:
+            self._parse_doc(doc)
+
+        if not self.signature:
+            parent = super(self.__class__, self)
+            if hasattr(parent, 'signature'):
+                self.signature = parent.signature
 
         if self.signature:
             self._configure_using_fluent_definition()
@@ -52,7 +58,7 @@ class Command(BaseCommand):
             super(Command, self).__init__(name or self.name)
 
     def _parse_doc(self, doc):
-        doc = self.__doc__.strip().split('\n', 1)
+        doc = doc.strip().split('\n', 1)
         if len(doc) > 1:
             self.description = doc[0].strip()
             self.signature = re.sub('\s{2,}', ' ', doc[1].strip())
