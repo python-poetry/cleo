@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from .question_helper import QuestionHelper
-from .formatter_helper import FormatterHelper, OutputFormatter
+from .formatter_helper import FormatterHelper
 from .helper import Helper
 from .helper_set import HelperSet
 from .progress_helper import ProgressHelper
@@ -17,7 +17,7 @@ from .descriptor_helper import DescriptorHelper
 __all__ = [
     'DescriptorHelper',
     'QuestionHelper',
-    'FormatterHelper', 'OutputFormatter',
+    'FormatterHelper',
     'Helper',
     'HelperSet',
     'ProgressHelper',

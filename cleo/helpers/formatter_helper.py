@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from .helper import Helper
-from ..formatters.output_formatter import OutputFormatter
+from ..formatters import Formatter
 
 
 class FormatterHelper(Helper):
@@ -17,7 +17,7 @@ class FormatterHelper(Helper):
         l = 0
         lines = []
         for message in messages:
-            message = OutputFormatter.escape(message)
+            message = Formatter.escape(message)
             lines.append(('  %s  ' if large else ' %s ') % message)
             l = max(len(message) + (4 if large else 2), l)
 

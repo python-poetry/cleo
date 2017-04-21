@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from cleo.formatters import OutputFormatter, OutputFormatterStyle
+from cleo.formatters import Formatter
 
 from .. import CleoTestCase
 
@@ -8,11 +8,11 @@ from .. import CleoTestCase
 class OutputFormatterTest(CleoTestCase):
 
     def test_empty_tag(self):
-        formatter = OutputFormatter(True)
+        formatter = Formatter(True)
         self.assertEqual('foo<>bar', formatter.format('foo<>bar'))
 
     def test_lg_char_escaping(self):
-        formatter = OutputFormatter(True)
+        formatter = Formatter(True)
 
         self.assertEqual('foo<bar', formatter.format('foo\\<bar'))
         self.assertEqual(
@@ -21,11 +21,11 @@ class OutputFormatterTest(CleoTestCase):
         )
         self.assertEqual(
             '\\<info>some info\\</info>',
-            OutputFormatter.escape('<info>some info</info>')
+            Formatter.escape('<info>some info</info>')
         )
 
     def test_bundled_styles(self):
-        formatter = OutputFormatter(True)
+        formatter = Formatter(True)
 
         self.assertTrue(formatter.has_style('error'))
         self.assertTrue(formatter.has_style('info'))
@@ -50,7 +50,7 @@ class OutputFormatterTest(CleoTestCase):
         )
 
     def test_nested_styles(self):
-        formatter = OutputFormatter(True)
+        formatter = Formatter(True)
 
         self.assertEqual(
             '\033[37;41msome \033[0m\033[32msome info\033[0m\033[37;41m error\033[0m',
@@ -58,7 +58,7 @@ class OutputFormatterTest(CleoTestCase):
         )
 
     def test_adjacent_style(self):
-        formatter = OutputFormatter(True)
+        formatter = Formatter(True)
 
         self.assertEqual(
             '\033[37;41msome error\033[0m\033[32msome info\033[0m',
@@ -66,7 +66,7 @@ class OutputFormatterTest(CleoTestCase):
         )
 
     def test_style_matching_non_greedy(self):
-        formatter = OutputFormatter(True)
+        formatter = Formatter(True)
 
         self.assertEqual(
             '(\033[32m>=2.0,<2.3\033[0m)',
@@ -74,7 +74,7 @@ class OutputFormatterTest(CleoTestCase):
         )
 
     def test_style_escaping(self):
-        formatter = OutputFormatter(True)
+        formatter = Formatter(True)
 
         self.assertEqual(
             '(\033[32mz>=2.0,<a2.3\033[0m)',
@@ -82,7 +82,7 @@ class OutputFormatterTest(CleoTestCase):
         )
 
     def test_deep_nested_style(self):
-        formatter = OutputFormatter(True)
+        formatter = Formatter(True)
 
         self.assertEqual(
             '\033[37;41merror\033[0m\033[32minfo\033[0m\033[33mcomment\033[0m\033[37;41merror\033[0m',
@@ -90,16 +90,10 @@ class OutputFormatterTest(CleoTestCase):
         )
 
     def test_new_style(self):
-        formatter = OutputFormatter(True)
+        formatter = Formatter(True)
 
-        style = OutputFormatterStyle('blue', 'white')
-        formatter.set_style('test', style)
-
-        self.assertEqual(style, formatter.get_style('test'))
-        self.assertNotEqual(style, formatter.get_style('info'))
-
-        style = OutputFormatterStyle('blue', 'white')
-        formatter.set_style('b', style)
+        formatter.add_style('test', 'blue', 'white')
+        formatter.add_style('b', 'blue', 'white')
 
         self.assertEqual(
             '\033[34;47msome \033[0m\033[34;47mcustom\033[0m\033[34;47m msg\033[0m',
@@ -107,10 +101,9 @@ class OutputFormatterTest(CleoTestCase):
         )
 
     def test_redefined_style(self):
-        formatter = OutputFormatter(True)
+        formatter = Formatter(True)
 
-        style = OutputFormatterStyle('blue', 'white')
-        formatter.set_style('info', style)
+        formatter.add_style('info', 'blue', 'white')
 
         self.assertEqual(
             '\033[34;47msome custom msg\033[0m',
@@ -118,7 +111,7 @@ class OutputFormatterTest(CleoTestCase):
         )
 
     def test_inline_style(self):
-        formatter = OutputFormatter(True)
+        formatter = Formatter(True)
 
         self.assertEqual(
             '\033[34;41msome text\033[0m',
@@ -134,7 +127,7 @@ class OutputFormatterTest(CleoTestCase):
         )
 
     def test_non_style_tag(self):
-        formatter = OutputFormatter(True)
+        formatter = Formatter(True)
         self.assertEqual(
             '\033[32msome \033[0m\033[32m<tag>\033[0m\033[32m \033[0m\033[32m<setting=value>\033[0m\033[32m'
             ' styled \033[0m\033[32m<p>\033[0m\033[32msingle-char tag\033[0m\033[32m</p>\033[0m',
@@ -142,7 +135,7 @@ class OutputFormatterTest(CleoTestCase):
         )
 
     def test_test_non_decorated_formatter(self):
-        formatter = OutputFormatter(False)
+        formatter = Formatter(False)
 
         self.assertTrue(formatter.has_style('error'))
         self.assertTrue(formatter.has_style('info'))
@@ -186,7 +179,7 @@ class OutputFormatterTest(CleoTestCase):
         )
 
     def test_content_with_line_breaks(self):
-        formatter = OutputFormatter(True)
+        formatter = Formatter(True)
 
         for expected, message in self.provide_content_with_line_breaks():
             self.assertEqual(expected, formatter.format(message))

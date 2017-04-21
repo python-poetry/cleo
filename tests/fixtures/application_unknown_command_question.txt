@@ -1,7 +1,2 @@
-Command "f:b" is ambiguous (foo1:bar, foo:bar and 1 more). 
-Please select one of these suggested commands:
- [0] foo1:bar
- [1] foo:bar
- [2] foo:bar1
- > interact called
-called
+
+Command "f:b" is ambiguous (foo1:bar, foo:bar and 1 more).

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import re
+import contextlib
+
 from .base_command import BaseCommand, CommandError
 from ..inputs.list_input import ListInput
 from ..parser import Parser
@@ -12,7 +14,6 @@ from ..helpers.table_separator import TableSeparator
 from ..helpers.table_cell import TableCell
 from ..helpers.table_style import TableStyle
 from ..helpers.progress_indicator import ProgressIndicator
-from ..formatters import OutputFormatterStyle
 
 
 class Command(BaseCommand):
@@ -42,9 +43,15 @@ class Command(BaseCommand):
     def __init__(self, name=None):
         self.input = None
         self.output = None
+        doc = self.__doc__ or super(self.__class__, self).__doc__
 
-        if self.__doc__:
-            self._parse_doc(self.__doc__)
+        if doc:
+            self._parse_doc(doc)
+
+        if not self.signature:
+            parent = super(self.__class__, self)
+            if hasattr(parent, 'signature'):
+                self.signature = parent.signature
 
         if self.signature:
             self._configure_using_fluent_definition()
@@ -52,7 +59,7 @@ class Command(BaseCommand):
             super(Command, self).__init__(name or self.name)
 
     def _parse_doc(self, doc):
-        doc = self.__doc__.strip().split('\n', 1)
+        doc = doc.strip().split('\n', 1)
         if len(doc) > 1:
             self.description = doc[0].strip()
             self.signature = re.sub('\s{2,}', ' ', doc[1].strip())
@@ -479,6 +486,31 @@ class Command(BaseCommand):
         """
         return ProgressIndicator(self.output, fmt, indicator_change_interval, indicator_values)
 
+    def spin(self, start_message, end_message, fmt=None, interval=100, values=None):
+        """
+        Automatically spin a progress indicator.
+        
+        :param start_message: The message to display when starting
+        :type start_message: str
+        
+        :param end_message: The message to display when finishing
+        :type end_message: str
+        
+        :param fmt: Indicator format
+        :type fmt: str or None
+
+        :param interval: Change interval in milliseconds
+        :type interval: int
+
+        :param values: Animated indicator characters
+        :type values: list or None
+
+        :rtype: ProgressIndicator
+        """
+        spinner = ProgressIndicator(self.output, fmt, interval, values)
+
+        return spinner.auto(start_message, end_message)
+
     def set_style(self, name, fg=None, bg=None, options=None):
         """
         Sets a new style
@@ -495,9 +527,7 @@ class Command(BaseCommand):
         :param options: The options
         :type options: list
         """
-        style = OutputFormatterStyle(fg, bg, options)
-
-        self.output.get_formatter().set_style(name, style)
+        self.output.get_formatter().add_style(name, fg, bg, options)
 
     def overwrite(self, text, size=None):
         """

@@ -20,7 +20,7 @@ class StreamOutput(Output):
         if decorated is None:
             decorated = self.has_color_support(decorated)
 
-        super(StreamOutput, self).__init__(verbosity, decorated, formatter)
+        super(StreamOutput, self).__init__(verbosity, decorated)
 
     def get_stream(self):
         return self.stream
@@ -54,3 +54,6 @@ class StreamOutput(Output):
             return os.isatty(self.stream.fileno())
         except UnsupportedOperation:
             return False
+
+    def flush(self):
+        return self.stream.flush()

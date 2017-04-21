@@ -3,6 +3,10 @@
 import time
 import re
 import psutil
+import threading
+
+from contextlib import contextmanager
+
 from ..exceptions import CleoException
 from ..outputs import Output
 from .helper import Helper
@@ -55,9 +59,12 @@ class ProgressIndicator(object):
 
         self._message = None
         self._indicator_update_time = None
-        self._last_message_length = 0
         self._started = False
         self._indicator_current = 0
+
+        # Auto
+        self._auto_running = None
+        self._auto_thread = None
 
         self.start_time = time.time()
 
@@ -123,17 +130,54 @@ class ProgressIndicator(object):
 
         self._display()
 
-    def finish(self, message):
+    def finish(self, message, reset_indicator=False):
         """
         Finish the indicator with message.
         """
         if not self._started:
             raise CleoException('Progress indicator has not yet been started.')
 
+        if self._auto_thread:
+            self._auto_running.set()
+            self._auto_thread.join()
+
         self._message = message
+
+        if reset_indicator:
+            self._indicator_current = 0
+
         self._display()
         self._output.writeln('')
         self._started = False
+
+    @contextmanager
+    def auto(self, start_message, end_message):
+        """
+        Auto progress. 
+        """
+        self._auto_running = threading.Event()
+        self._auto_thread = threading.Thread(target=self._spin)
+
+        self.start(start_message)
+        self._auto_thread.start()
+
+        try:
+            yield self
+        except Exception:
+            self._output.writeln('')
+
+            self._auto_running.set()
+            self._auto_thread.join()
+
+            raise
+
+        self.finish(end_message, reset_indicator=True)
+
+    def _spin(self):
+        while not self._auto_running.is_set():
+            self.advance()
+
+            time.sleep(0.1)
 
     def _display(self):
         if self._output.get_verbosity() == Output.VERBOSITY_QUIET:
@@ -156,23 +200,11 @@ class ProgressIndicator(object):
         :param message: The message
         :type message: str
         """
-        # append whitespace to match the line's length
-        if self._last_message_length is not None:
-            if (self._last_message_length > Helper.len_without_decoration(self._output.get_formatter(), message)):
-                message = message.ljust(self._last_message_length, '\x20')
-
         if self._output.is_decorated():
-            self._output.write('\x0D')
+            self._output.write('\x0D\x1B[2K')
             self._output.write(message)
         else:
             self._output.writeln(message)
-
-        self._last_message_length = 0
-
-        length = Helper.len_without_decoration(self._output.get_formatter(), message)
-
-        if length > self._last_message_length:
-            self._last_message_length = length
 
     def _determine_best_format(self):
         verbosity = self._output.get_verbosity()

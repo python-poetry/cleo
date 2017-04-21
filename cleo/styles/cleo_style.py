@@ -7,7 +7,7 @@ from .output_style import OutputStyle
 from ..outputs import BufferedOutput
 from ..helpers import Helper, Table, QuestionHelper
 from ..questions import Question, ConfirmationQuestion, ChoiceQuestion
-from ..formatters import OutputFormatter
+from ..formatters import Formatter
 
 
 class CleoStyle(OutputStyle):
@@ -58,7 +58,7 @@ class CleoStyle(OutputStyle):
 
         # Wrap and add newlines for each element
         for key, message in enumerate(messages):
-            message = OutputFormatter.escape(message)
+            message = Formatter.escape(message)
             wrap_limit = self._line_length - Helper.len(prefix)
 
             lines += os.linesep.join(textwrap.wrap(message, wrap_limit)).split(os.linesep)

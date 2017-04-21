@@ -29,6 +29,10 @@ class CommandNotFound(CleoException):
         return message
 
     @property
+    def name(self):
+        return self._name
+
+    @property
     def alternatives(self):
         return self._alternatives
 
@@ -54,13 +58,13 @@ class AmbiguousCommand(CommandNotFound):
 
     @property
     def message(self):
-        message = 'Command "{}" is ambiguous ({}).'.format(
-            self._name, self._get_abbreviation_suggestions()
+        message = '\nCommand "{}" is ambiguous ({}).'.format(
+            self._name, self.get_abbreviation_suggestions()
         )
 
         return message
 
-    def _get_abbreviation_suggestions(self):
+    def get_abbreviation_suggestions(self):
         """
         Returns abbreviated suggestions in string format.
 
@@ -80,7 +84,7 @@ class AmbiguousNamespace(AmbiguousCommand):
     @property
     def message(self):
         message = 'The namespace "{}" is ambiguous ({}).'.format(
-            self._name, self._get_abbreviation_suggestions()
+            self._name, self.get_abbreviation_suggestions()
         )
 
         return message

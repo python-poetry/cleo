@@ -11,7 +11,7 @@ class ConsoleOutput(StreamOutput):
         output_stream = sys.stdout
 
         super(ConsoleOutput, self).__init__(output_stream,
-                                            verbosity, decorated, formatter)
+                                            verbosity, decorated)
 
         self.stderr = StreamOutput(sys.stderr,
                                    verbosity, decorated, formatter)

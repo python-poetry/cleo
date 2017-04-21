@@ -589,45 +589,31 @@ If you want to overwrite the current line, you can use the ``overwrite()`` metho
 Autocompletion
 ==============
 
-.. versionchanged:: 0.4
+.. versionchanged:: 0.6.0
 
     The autocompletion has been improved and simplified.
-    The old ``bash_completion.sh`` script has been removed.
 
-Cleo supports automatic (tab) completion in ``bash`` and ``zsh``.
+    The old ``_completion`` command has been removed.
 
-To activate support for autocompletion, pass a ``complete`` keyword when initializing
-your application:
+    Support for the ``fish`` shell has also been added.
 
-.. code-block:: python
+Cleo supports automatic (tab) completion in ``bash``, ``zsh`` and ``fish``.
 
-    application = Application('My Application', '0.1', complete=True)
-
-Now, register completion for your application by running one of the following in a terminal,
+You can register completion for your application by running one of the following in a terminal,
 replacing ``[program]`` with the command you use to run your application:
 
 .. code-block:: bash
 
-    # BASH ~4.x, ZSH
-    source <([program] _completion --generate-hook)
+    # BASH - Ubuntu / Debian
+    [program] completions bash | sudo tee /etc/bash_completion.d/[program].bash-completion
 
-    # BASH ~3.x, ZSH
-    [program] _completion --generate-hook | source /dev/stdin
+    # BASH - Mac OSX (with Homebrew "bash-completion")
+    [program] completions bash > $(brew --prefix)/etc/bash_completion.d/[program].bash-completion
 
-    # BASH (any version)
-    eval $([program] _completion --generate-hook)
+    # ZSH - Config file
+    mkdir ~/.zfunc
+    echo "fpath+=~/.zfunc" >> ~/.zshrc
+    [program] completions zsh > ~/.zfunc/_test
 
-By default this registers completion for the absolute path to you application,
-which will work if the program is accessible on your PATH.
-You can specify a program name to complete for instead using the ``-p\--program`` option,
-which is required if you're using an alias to run the program.
-
-.. tip::
-
-    If you want the completion to apply automatically for all new shell sessions,
-    add the command to your shell's profile (eg. ``~/.bash_profile`` or ``~/.zshrc``)
-
-.. note::
-
-    The type of shell (zsh/bash) is automatically detected using the ``SHELL`` environment variable at run time.
-    In some circumstances, you may need to explicitly specify the shell type with the ``--shell-type`` option.
+    # FISH
+    [program] completions fish > ~/.config/fish/completions/[program].fish

@@ -14,6 +14,7 @@ from .. import CleoTestCase
 from ..fixtures.some_command import SomeCommand
 from ..fixtures.no_configure_command import NoConfigureCommand
 from ..fixtures.signature_command import SignatureCommand
+from ..fixtures.inherited_command import ChildCommand
 
 
 class CommandTest(CleoTestCase):
@@ -321,3 +322,9 @@ class CommandTest(CleoTestCase):
 
     def callable_method(self, c):
         c.line('from the code...')
+
+    def test_signature_inheritance(self):
+        command = ChildCommand()
+
+        assert 'parent' == command.name
+        assert 'Parent Command.' == command.description

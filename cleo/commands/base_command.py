@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+import sys
 import re
 import copy
 import inspect
@@ -286,6 +288,9 @@ class BaseCommand(object):
 
         h = self.get_help() or self.get_description()
 
+        h = h.replace('%script.full_name%', self._get_script_full_name())
+        h = h.replace('%script.name%', self._get_script_name())
+
         h = h.replace('%command.full_name%', self._get_command_full_name())
         h = h.replace('%command.name%', name)
 
@@ -293,6 +298,12 @@ class BaseCommand(object):
 
     def _get_command_full_name(self):
         return inspect.stack()[-1][1] + ' ' + self.name
+
+    def _get_script_full_name(self):
+        return os.path.realpath(sys.argv[0])
+
+    def _get_script_name(self):
+        return os.path.basename(self._get_script_full_name())
 
     def validate_name(self, name):
         if not re.match('^[^:]+(:[^:]+)*$', name):

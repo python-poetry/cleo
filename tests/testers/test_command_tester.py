@@ -77,4 +77,4 @@ class TestCommandTester(TestCase):
         tester.execute([])
 
         self.assertEqual(0, tester.status_code)
-        self.assertEqual('\n' + '\n\n\n'.join(questions) + '\n', tester.get_display(True))
+        self.assertEqual('\n' + ' \n\n\n'.join(questions) + ' \n', tester.get_display(True))

@@ -3,11 +3,12 @@
 import sys
 import os
 import subprocess
-import platform
+import getpass
+
 from .helper import Helper
-from ..questions import Question, ChoiceQuestion
+from ..questions import Question, ChoiceQuestion, ConfirmationQuestion
 from ..outputs import ConsoleOutput
-from ..formatters import OutputFormatterStyle
+from ..formatters import Formatter
 from ..validators import Validator, Callable
 from .._compat import decode
 
@@ -110,13 +111,42 @@ class QuestionHelper(Helper):
         :type question: Question
         """
         message = question.question
+        default = question.default
+
+        if default is None:
+            if isinstance(question, ChoiceQuestion):
+                message = '<question>{}</>: '.format(message)
+            else:
+                message = '<question>{}</> '.format(message)
+        elif isinstance(question, ConfirmationQuestion):
+            message = '<question>{} (yes/no)</> [<comment>{}</>] '.format(
+                message,
+                'yes' if default else 'no'
+            )
+        elif isinstance(question, ChoiceQuestion) and question.multiselect:
+            choices = question.choices
+            default = default.split(',')
+
+            for i, value in enumerate(default):
+                default[i] = choices[int(value.strip())]
+
+            message = '<question>{}</> [<comment>{}</>]:'.format(
+                message,
+                Formatter.escape(', '.join(default))
+            )
+        elif isinstance(question, ChoiceQuestion):
+            choices = question.choices
+            message = '<question>{}</question> [<comment>{}</>]:'.format(
+                message,
+                Formatter.escape(choices[int(default)])
+            )
 
         if isinstance(question, ChoiceQuestion):
             width = max(*map(self.len, [str(k) for k, _ in enumerate(question.choices)]))
 
             messages = [message]
             for key, value in enumerate(question.choices):
-                messages.append(' [<info>%-*s</info>] %s' % (width, key, value))
+                messages.append(' [<comment>{:{}}</>] {}'.format(key, width, value))
 
             output.writeln(messages)
 
@@ -168,7 +198,7 @@ class QuestionHelper(Helper):
         subprocess.check_output(['stty', '-icanon', '-echo'])
 
         # Add highlighted text style
-        output.get_formatter().set_style('hl', OutputFormatterStyle('black', 'white'))
+        output.get_formatter().add_style('hl', 'black', 'white')
 
         # Read a keypress
         while True:
@@ -257,33 +287,10 @@ class QuestionHelper(Helper):
 
         :rtype: str
         """
-        if platform.system().lower() == 'windows':
-            exe = os.path.join(
-                os.path.dirname(os.path.realpath(__file__)),
-                '..', 'resources', 'bin', 'hiddeninput.exe'
-            )
+        if hasattr(output, 'output'):
+            output = output.output
 
-            value = decode(os.popen(os.path.realpath(exe)).read()).strip()
-            output.writeln('')
-
-            return value
-
-        if self._has_stty_available():
-            stty_mode = decode(subprocess.check_output(['stty', '-g'])).rstrip('\n')
-
-            subprocess.check_output(['stty', '-echo'])
-            value = decode(input_stream.readline())
-            subprocess.check_output(['stty', '%s' % stty_mode])
-
-            if not value:
-                raise Exception('Aborted')
-
-            value = value.strip()
-            output.writeln('')
-
-            return value
-
-        raise Exception('Unable to hide the response')
+        return getpass.getpass('', stream=output)
 
     def _validate_attempts(self, interviewer, output, question):
         """
