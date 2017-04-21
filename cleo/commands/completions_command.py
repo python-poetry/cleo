@@ -6,6 +6,8 @@ import re
 import json
 import subprocess
 
+from pastel import Pastel
+
 from ..exceptions import InvalidArgument
 from ..helpers import DescriptorHelper
 from ..outputs import BufferedOutput
@@ -207,15 +209,16 @@ script. Consult your shells documentation for how to add such directives.
         for command in description['commands']:
             command_options = []
             commands_options_descriptions[command['name']] = {}
+            command_description = self._remove_decoration(command['description'])
             commands_descriptions.append(
-                self._zsh_describe(command['name'], command['description'])
+                self._zsh_describe(command['name'], command_description)
             )
 
             options = command['definition']['options']
             for name in sorted(list(options.keys())):
                 option = options[name]
                 name = option['name']
-                description = option['description']
+                description = self._remove_decoration(option['description'])
                 command_options.append(name)
                 options_descriptions[name] = description
                 commands_options_descriptions[command['name']][name] = description
@@ -287,13 +290,13 @@ script. Consult your shells documentation for how to add such directives.
         for command in description['commands']:
             command_options = []
             commands_options_descriptions[command['name']] = {}
-            commands_descriptions[command['name']] = command['description']
+            commands_descriptions[command['name']] = self._remove_decoration(command['description'])
 
             options = command['definition']['options']
             for name in sorted(list(options.keys())):
                 option = options[name]
                 name = option['name']
-                description = option['description']
+                description = self._remove_decoration(option['description'])
                 command_options.append(name)
                 options_descriptions[name] = description
                 commands_options_descriptions[command['name']][name] = description
@@ -400,3 +403,9 @@ script. Consult your shells documentation for how to add such directives.
         value += '"'
 
         return value
+
+    def _remove_decoration(self, text):
+        return re.sub(
+            '\033\[[^m]*m', '',
+            self.output.get_formatter().format(text)
+        )
