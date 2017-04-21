@@ -17,7 +17,7 @@ setup(
     name='cleo',
     license='MIT',
     version=__version__,
-    description='Cleo allows you to create beautiful and testable command-line commands.',
+    description='Cleo allows you to create beautiful and testable command-line interfaces.',
     long_description=open('README.rst').read(),
     author='Sébastien Eustace',
     author_email='sebastien.eustace@gmail.com',
@@ -31,6 +31,11 @@ setup(
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6'
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
 )
