@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [0.6.0] - 2017-04-21
 
 ### Added
 
@@ -12,6 +12,7 @@
 
 - Removed the `_completion` command.
 - Removes ability to choose when a command anme is ambiguous.
+
 
 ## [0.5.0] - 2016-09-21
 
@@ -71,7 +72,8 @@ This is a major release with some API changes.
 
 
 
-[Unreleased]: https://github.com/sdispater/cleo/compare/master...develop
+[Unreleased]: https://github.com/sdispater/cleo/compare/0.6.0...master
+[0.6.0]: https://github.com/sdispater/cleo/releases/tag/0.6.0
 [0.5.0]: https://github.com/sdispater/cleo/releases/tag/0.5.0
 [0.4.1]: https://github.com/sdispater/cleo/releases/tag/0.4.1
 [0.4]: https://github.com/sdispater/cleo/releases/tag/0.4
