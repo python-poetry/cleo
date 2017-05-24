@@ -195,8 +195,9 @@ class ProgressHelper(Helper):
         if self.start_time is None:
             raise Exception('You must start the progress bar before calling finish().')
 
+        self.bar_char = self.bar_char_original
+
         if not self.max_steps:
-            self.bar_char = self.bar_char_original
             self.display(True)
         else:
             if self.current_step < self.max_steps:
