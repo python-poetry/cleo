@@ -11,7 +11,7 @@
 ### Changed
 
 - Removed the `_completion` command.
-- Removes ability to choose when a command anme is ambiguous.
+- Removes ability to choose when a command name is ambiguous.
 
 
 ## [0.5.0] - 2016-09-21
