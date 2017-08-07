@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Changed
+
+- `psutil` is now opt-in to avoid failed compilations.
+
+
 ## [0.6.0] - 2017-04-21
 
 ### Added

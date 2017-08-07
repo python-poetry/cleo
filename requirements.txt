@@ -1,4 +1,3 @@
 pylev
-psutil
 backpack
 pastel
