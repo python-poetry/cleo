@@ -2,8 +2,12 @@
 
 import time
 import re
-import psutil
 import threading
+
+try:
+    import psutil
+except ImportError:
+    psutil = None
 
 from contextlib import contextmanager
 
@@ -239,6 +243,9 @@ class ProgressIndicator(object):
         return Helper.format_time(time.time() - self.start_time)
 
     def _formatter_memory(self):
+        if psutil is None:
+            return ''
+
         return Helper.format_memory(
             psutil.Process().memory_info().rss
         )
