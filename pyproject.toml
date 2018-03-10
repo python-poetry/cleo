@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "cleo"
+version = "0.6.1"
+description = "Cleo allows you to create beautiful and testable command-line interfaces."
+authors = [
+    "Sébastien Eustace <sebastien@eustace.io>"
+]
+license = "MIT"
+
+readme = "README.rst"
+
+homepage = "https://github.com/sdispater/cleo"
+
+keywords = ["cli", "commands"]
+
+# Requirements
+[tool.poetry.dependencies]
+python = ">=2.7,!3.0,!3.1,!3.2,!3.3"
+pylev = "^1.3"
+pastel = "^0.1.0"
+
+
+[tool.poetry.dev-dependencies]
+pytest = "^3.4"
+pytest-mock = "^1.7"
+mock = "^2.0"

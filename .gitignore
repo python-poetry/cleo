@@ -17,6 +17,8 @@ nosetests.xml
 
 .DS_Store
 .idea/*
+.python-version
 
 test.py
 /test
+pyproject.lock
