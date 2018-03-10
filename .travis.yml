@@ -6,5 +6,5 @@ python:
   - "pypy"
 install:
   - pip install poetry
-  - poetry install -vvv
+  - poetry install -v
 script: py.test -q tests/
