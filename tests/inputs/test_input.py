@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import mock
 from cleo.inputs import Input, InputDefinition, InputOption, InputArgument
 from cleo.inputs.input import InvalidArgument, InvalidOption
 from cleo.validators import Integer, Float

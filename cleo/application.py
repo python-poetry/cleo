@@ -8,7 +8,6 @@ import re
 from io import UnsupportedOperation
 from pylev import levenshtein
 from collections import OrderedDict
-from backpack import collect
 from .outputs.output import Output
 from .outputs.console_output import ConsoleOutput
 from .inputs.argv_input import ArgvInput
@@ -304,16 +303,19 @@ class Application(object):
             for alias in command.get_aliases():
                 namespaces.append(self.extract_namespace(alias))
 
-        return collect(namespaces).filter(lambda n: n).unique()
+        namespaces = [ns for ns in namespaces if ns]
+
+        seen = set()
+
+        return [ns for ns in namespaces if not (ns in seen or seen.add(ns))]
 
     def find_namespace(self, namespace):
         all_namespaces = self.get_namespaces()
         expr = re.sub('([^:]+|)', lambda m: re.escape(m.group(1)) + '[^:]*', namespace)
-        namespaces = (
-            collect(all_namespaces)
-                .filter(lambda x: re.findall('^%s' % expr, x))
-                .sort()
-        )
+        namespaces = sorted([
+            ns for ns in all_namespaces
+            if re.findall('^%s' % expr, ns)
+        ])
 
         if not namespaces:
             alternatives = self.find_alternatives(namespace, all_namespaces)
@@ -331,11 +333,17 @@ class Application(object):
         expr = re.sub('([^:]+|)',
                       lambda m: re.escape(m.group(1)) + '[^:]*',
                       name)
-        commands = collect(all_commands).filter(
-            lambda x: re.findall('^%s' % expr, x)
-        ).sort()
+        commands = sorted([
+            x for x in all_commands
+            if re.findall('^%s' % expr, x)
+        ])
 
-        if not commands or commands.filter(lambda x: re.findall('^%s$' % expr, x)).count() < 1:
+        filtered_commands = [
+            c for c in commands
+            if re.findall('^%s$' % expr, c)
+        ]
+
+        if not commands or len(filtered_commands) < 1:
             pos = name.find(':')
             if pos >= 0:
                 # Check if a namespace exists and contains commands
@@ -354,7 +362,7 @@ class Application(object):
 
                 return command_name == name_or_alias or (command_name not in commands)
 
-            commands = commands.filter(f).sort()
+            commands = sorted([c for c in commands if f(c)])
 
         exact = name in commands
         if len(commands) > 1 and not exact:
