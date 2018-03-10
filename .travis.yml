@@ -5,6 +5,6 @@ python:
   - "3.6"
   - "pypy"
 install:
-  - pip install -r requirements.txt
-  - pip install -r requirements.tests.txt
+  - pip install poetry
+  - poetry install
 script: py.test -q tests/
