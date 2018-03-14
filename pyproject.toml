@@ -27,3 +27,4 @@ mock = "^2.0"
 # We need to specify funcsigs here
 # since poetry does not pick it up
 funcsigs = { version = "^1.0", python = "2.7.*" }
+pbr = { version = "^3.1", python = "2.7.*" }
