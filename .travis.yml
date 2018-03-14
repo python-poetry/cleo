@@ -1,10 +1,19 @@
 language: python
 python:
-  - "2.7"
-  - "3.5"
   - "3.6"
-  - "pypy"
+
+matrix:
+  include:
+    - env: VENV='2.7'
+    - env: VENV=''
+
 install:
   - pip install poetry
-  - poetry install -v
+  - |
+      if [ "$VENV" != "" ]; then
+        virtualenv --python="$HOME/virtualenv/$VENV/bin/python" "$HOME/virtualenvs/venv-$VENV"
+        source "$HOME/virtualenvs/venv-$VENV/bin/activate"
+      fi
+  - $HOME/virtualenv/$TRAVIS_PYTHON_VERSION/bin/poetry install -v
+
 script: py.test -q tests/
