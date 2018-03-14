@@ -24,3 +24,6 @@ pastel = "^0.1.0"
 pytest = "^3.4"
 pytest-mock = "^1.7"
 mock = "^2.0"
+# We need to specify funcsigs here
+# since poetry does not pick it up
+funcsigs = { version = "^1.0", python = "2.7.*" }
