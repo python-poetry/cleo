@@ -4,16 +4,16 @@ python:
 
 matrix:
   include:
-    - env: VENV='2.7'
+    - env: VENV='2.7.14'
     - env: VENV=''
 
 install:
   - pip install poetry
   - |
       if [ "$VENV" != "" ]; then
-        virtualenv --python="$HOME/virtualenv/$VENV/bin/python" "$HOME/virtualenvs/venv-$VENV"
+        virtualenv --python="$HOME/virtualenv/python$VENV/bin/python" "$HOME/virtualenvs/venv-$VENV"
         source "$HOME/virtualenvs/venv-$VENV/bin/activate"
       fi
-  - $HOME/virtualenv/$TRAVIS_PYTHON_VERSION/bin/poetry install -v
+  - $HOME/virtualenv/python$TRAVIS_PYTHON_VERSION/bin/poetry install -v
 
 script: py.test -q tests/
