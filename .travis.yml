@@ -4,11 +4,11 @@ python:
 
 matrix:
   include:
-    - env: VENV='2.7.14'
+    - env: VENV='2.7'
     - env: VENV=''
 
 install:
-  - pip install poetry
+  - pip install poetry --pre
   - |
       if [ "$VENV" != "" ]; then
         virtualenv --python="$HOME/virtualenv/python$VENV/bin/python" "$HOME/virtualenvs/venv-$VENV"
