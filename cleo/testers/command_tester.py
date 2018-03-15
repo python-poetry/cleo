@@ -19,15 +19,15 @@ class CommandTester(object):
         :param command: A Command instance to test
         :type command: Command
         """
-        self.__command = command
-        self.__input = None
-        self.__output = None
-        self.__inputs = []
-        self.__status_code = None
+        self._command = command
+        self._input = None
+        self._output = None
+        self._inputs = []
+        self._status_code = None
 
     @property
     def status_code(self):
-        return self.__status_code
+        return self._status_code
 
     def execute(self, input_, options=None):
         """
@@ -48,22 +48,22 @@ class CommandTester(object):
         """
         options = options or {}
 
-        self.__input = ListInput(input_)
-        if self.__inputs:
-            self.__input.set_stream(self._create_stream(self.__inputs))
+        self._input = ListInput(input_)
+        if self._inputs:
+            self._input.set_stream(self._create_stream(self._inputs))
 
         if 'interactive' in options:
-            self.__input.set_interactive(options['interactive'])
+            self._input.set_interactive(options['interactive'])
 
-        self.__output = StreamOutput(BytesIO())
+        self._output = StreamOutput(BytesIO())
         if 'decorated' in options:
-            self.__output.set_decorated(options['decorated'])
+            self._output.set_decorated(options['decorated'])
         if 'verbosity' in options:
-            self.__output.set_verbosity(options['verbosity'])
+            self._output.set_verbosity(options['verbosity'])
 
-        self.__status_code = self.__command.run(self.__input, self.__output)
+        self._status_code = self._command.run(self._input, self._output)
 
-        return self.__status_code
+        return self._status_code
 
     def get_display(self, normalize=False):
         """
@@ -72,9 +72,9 @@ class CommandTester(object):
         :return: The display
         :rtype: str
         """
-        self.__output.get_stream().seek(0)
+        self._output.get_stream().seek(0)
 
-        display = self.__output.get_stream().read().decode('utf-8')
+        display = self._output.get_stream().read().decode('utf-8')
 
         if normalize:
             display = display.replace(os.linesep, '\n')
@@ -88,7 +88,7 @@ class CommandTester(object):
         :return: The current input instance
         :rtype: Input
         """
-        return self.__input
+        return self._input
 
     def get_output(self):
         """
@@ -97,7 +97,7 @@ class CommandTester(object):
         :return: The current output instance
         :rtype: Output
         """
-        return self.__output
+        return self._output
 
     def set_inputs(self, inputs):
         """
@@ -108,7 +108,7 @@ class CommandTester(object):
 
         :rtype: CommandTester
         """
-        self.__inputs = inputs
+        self._inputs = inputs
 
         return self
 

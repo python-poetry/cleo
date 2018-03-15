@@ -54,10 +54,10 @@ class InputArgument(object):
         elif not isinstance(mode, int) or mode > 7 or mode < 1:
             raise Exception('Argument mode "%s" is not valid.' % mode)
 
-        self.__name = name
-        self.__mode = mode
-        self.__description = description or ''
-        self.__validator = VALIDATORS.get(validator)
+        self._name = name
+        self._mode = mode
+        self._description = description or ''
+        self._validator = VALIDATORS.get(validator)
 
         self.set_default(default)
 
@@ -68,7 +68,7 @@ class InputArgument(object):
         :return: The argument name
         :rtype: str
         """
-        return self.__name
+        return self._name
 
     def is_required(self):
         """
@@ -77,7 +77,7 @@ class InputArgument(object):
         :return: True if parameter mode is REQUIRED, False otherwise
         :rtype: bool
         """
-        return self.__class__.REQUIRED == (self.__class__.REQUIRED & self.__mode)
+        return self.__class__.REQUIRED == (self.__class__.REQUIRED & self._mode)
 
     def is_list(self):
         """
@@ -86,7 +86,7 @@ class InputArgument(object):
         :return: True if mode is IS_LIST, False otherwise
         :rtype: bool
         """
-        return self.__class__.IS_LIST == (self.__class__.IS_LIST & self.__mode)
+        return self.__class__.IS_LIST == (self.__class__.IS_LIST & self._mode)
 
     def set_default(self, default=None):
         """
@@ -104,7 +104,7 @@ class InputArgument(object):
             elif not isinstance(default, list):
                 raise Exception('A default value for an array argument must be an array.')
 
-        self.__default = default
+        self._default = default
 
     def get_default(self):
         """
@@ -113,7 +113,7 @@ class InputArgument(object):
         :return: The default value
         :rtype: mixed
         """
-        return self.__default
+        return self._default
 
     def get_description(self):
         """
@@ -122,7 +122,7 @@ class InputArgument(object):
         :return: The description text
         :rtype: str
         """
-        return self.__description
+        return self._description
 
     def get_validator(self):
         """
@@ -131,7 +131,7 @@ class InputArgument(object):
         :return: The validator
         :rtype: Validator or callable
         """
-        return self.__validator
+        return self._validator
 
     def set_validator(self, validator):
         """
@@ -140,6 +140,6 @@ class InputArgument(object):
         :param validator: A Validator instance
         :type validator: Validator
         """
-        self.__validator = VALIDATORS.get(validator)
+        self._validator = VALIDATORS.get(validator)
 
         return self

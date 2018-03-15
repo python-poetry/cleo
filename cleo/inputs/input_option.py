@@ -77,11 +77,11 @@ class InputOption(object):
         elif not isinstance(mode, int) or mode > 15 or mode < 1:
             raise Exception('Option mode "%s" is not valid.' % mode)
 
-        self.__name = name
-        self.__shortcut = shortcut
-        self.__mode = mode
-        self.__description = description or ''
-        self.__validator = VALIDATORS.get(validator)
+        self._name = name
+        self._shortcut = shortcut
+        self._mode = mode
+        self._description = description or ''
+        self._validator = VALIDATORS.get(validator)
 
         self.set_default(default)
 
@@ -92,7 +92,7 @@ class InputOption(object):
         :return: The option shortcut
         :rtype: str
         """
-        return self.__shortcut
+        return self._shortcut
 
     def get_name(self):
         """
@@ -101,7 +101,7 @@ class InputOption(object):
         :return: The option name
         :rtype: str
         """
-        return self.__name
+        return self._name
 
     def accept_value(self):
         """
@@ -118,7 +118,7 @@ class InputOption(object):
 
         :return: True if value mode is VALUE_REQUIRED, False otherwise
         """
-        return self.__class__.VALUE_REQUIRED == (self.__class__.VALUE_REQUIRED & self.__mode)
+        return self.__class__.VALUE_REQUIRED == (self.__class__.VALUE_REQUIRED & self._mode)
 
     def is_value_optional(self):
         """
@@ -126,7 +126,7 @@ class InputOption(object):
 
         :return: True if value mode is VALUE_OPTIONAL, False otherwise
         """
-        return self.__class__.VALUE_OPTIONAL == (self.__class__.VALUE_OPTIONAL & self.__mode)
+        return self.__class__.VALUE_OPTIONAL == (self.__class__.VALUE_OPTIONAL & self._mode)
 
     def is_flag(self):
         """
@@ -134,7 +134,7 @@ class InputOption(object):
 
         :return: True if value mode is VALUE_NONE, False otherwise
         """
-        return self.__class__.VALUE_NONE == (self.__class__.VALUE_NONE & self.__mode)
+        return self.__class__.VALUE_NONE == (self.__class__.VALUE_NONE & self._mode)
 
     def is_list(self):
         """
@@ -143,7 +143,7 @@ class InputOption(object):
         :return: True if mode is VALUE_IS_LIST, False otherwise
         :rtype: bool
         """
-        return self.__class__.VALUE_IS_LIST == (self.__class__.VALUE_IS_LIST & self.__mode)
+        return self.__class__.VALUE_IS_LIST == (self.__class__.VALUE_IS_LIST & self._mode)
 
     def set_default(self, default=None):
         """
@@ -152,7 +152,7 @@ class InputOption(object):
         :param default: The default value
         :type default: mixed
         """
-        if self.__class__.VALUE_NONE == self.__mode and default is not None:
+        if self.__class__.VALUE_NONE == self._mode and default is not None:
             raise Exception('Cannot set a default value when using InputOption::VALUE_NONE mode.')
 
         if self.is_list():
@@ -161,7 +161,7 @@ class InputOption(object):
             elif not isinstance(default, list):
                 raise Exception('A default value for an array option must be an array.')
 
-        self.__default = default if self.accept_value() else False
+        self._default = default if self.accept_value() else False
 
     def get_default(self):
         """
@@ -170,7 +170,7 @@ class InputOption(object):
         :return: The default value
         :rtype: mixed
         """
-        return self.__default
+        return self._default
 
     def get_description(self):
         """
@@ -179,7 +179,7 @@ class InputOption(object):
         :return: The description text
         :rtype: basestring
         """
-        return self.__description
+        return self._description
 
     def get_validator(self):
         """
@@ -188,7 +188,7 @@ class InputOption(object):
         :return: The validator
         :rtype: Validator or callable
         """
-        return self.__validator
+        return self._validator
 
     def set_validator(self, validator):
         """
@@ -197,7 +197,7 @@ class InputOption(object):
         :param validator: A Validator instance
         :type validator: Validator
         """
-        self.__validator = VALIDATORS.get(validator)
+        self._validator = VALIDATORS.get(validator)
 
         return self
 

@@ -19,6 +19,14 @@ class InputDefinition(object):
     def __init__(self, definition=None):
         definition = definition or []
 
+        self._arguments = OrderedDict()
+        self._required_count = 0
+        self._has_an_array_argument = False
+        self._has_optional = False
+
+        self._options = OrderedDict()
+        self._shortcuts = OrderedDict()
+
         self.set_definition(definition)
 
     def set_definition(self, definition):
@@ -36,10 +44,10 @@ class InputDefinition(object):
     def set_arguments(self, arguments=None):
         arguments = arguments or []
 
-        self.__arguments = OrderedDict()
-        self.__required_count = 0
-        self.__has_an_array_argument = False
-        self.__has_optional = False
+        self._arguments = OrderedDict()
+        self._required_count = 0
+        self._has_an_array_argument = False
+        self._has_optional = False
 
         self.add_arguments(arguments)
 
@@ -50,27 +58,27 @@ class InputDefinition(object):
             self.add_argument(argument)
 
     def add_argument(self, argument):
-        if argument.get_name() in self.__arguments:
+        if argument.get_name() in self._arguments:
             raise Exception('An argument with name "%s" already exists.' % argument.get_name())
 
-        if self.__has_an_array_argument:
+        if self._has_an_array_argument:
             raise Exception('Cannot add an argument after a list argument.')
 
-        if argument.is_required() and self.__has_optional:
+        if argument.is_required() and self._has_optional:
             raise Exception('Cannot add a required argument after an optional one.')
 
         if argument.is_list():
-            self.__has_an_array_argument = True
+            self._has_an_array_argument = True
 
         if argument.is_required():
-            self.__required_count += 1
+            self._required_count += 1
         else:
-            self.__has_optional = True
+            self._has_optional = True
 
-        self.__arguments[argument.get_name()] = argument
+        self._arguments[argument.get_name()] = argument
 
     def get_argument(self, name):
-        arguments = list(self.__arguments.values()) if isinstance(name, int) else self.__arguments
+        arguments = list(self._arguments.values()) if isinstance(name, int) else self._arguments
 
         if not self.has_argument(name):
             raise Exception('The "%s" argument does not exist.' % name)
@@ -78,7 +86,7 @@ class InputDefinition(object):
         return arguments[name]
 
     def has_argument(self, name):
-        arguments = list(self.__arguments.values()) if isinstance(name, int) else self.__arguments
+        arguments = list(self._arguments.values()) if isinstance(name, int) else self._arguments
 
         try:
             arguments[name]
@@ -94,18 +102,18 @@ class InputDefinition(object):
         :return: A list of InputArguments objects
         :rtype: list
         """
-        return list(self.__arguments.values())
+        return list(self._arguments.values())
 
     def get_argument_count(self):
-        return len(self.__arguments) if not self.__has_an_array_argument else 10000000
+        return len(self._arguments) if not self._has_an_array_argument else 10000000
 
     def get_argument_required_count(self):
-        return self.__required_count
+        return self._required_count
 
     def get_argument_defaults(self):
         values = {}
 
-        for argument in self.__arguments.values():
+        for argument in self._arguments.values():
             if not argument.is_required():
                 values[argument.get_name()] = argument.get_default()
 
@@ -114,8 +122,8 @@ class InputDefinition(object):
     def set_options(self, options=None):
         options = options or []
 
-        self.__options = OrderedDict()
-        self.__shortcuts = OrderedDict()
+        self._options = OrderedDict()
+        self._shortcuts = OrderedDict()
 
         self.add_options(options)
 
@@ -126,39 +134,39 @@ class InputDefinition(object):
             self.add_option(option)
 
     def add_option(self, option):
-        if option.get_name() in self.__options \
-                and not option.equals(self.__options[option.get_name()]):
+        if option.get_name() in self._options \
+                and not option.equals(self._options[option.get_name()]):
             raise Exception('An option named "%s" already exists.' % option.get_name())
-        elif option.get_shortcut() in self.__shortcuts \
-                and not option.equals(self.__options[self.__shortcuts[option.get_shortcut()]]):
+        elif option.get_shortcut() in self._shortcuts \
+                and not option.equals(self._options[self._shortcuts[option.get_shortcut()]]):
             raise Exception('An option with shortcut "%s" already exists.' % option.get_shortcut())
 
-        self.__options[option.get_name()] = option
+        self._options[option.get_name()] = option
         if option.get_shortcut():
             for shortcut in option.get_shortcut().split('|'):
-                self.__shortcuts[shortcut] = option.get_name()
+                self._shortcuts[shortcut] = option.get_name()
 
     def get_option(self, name):
         if not self.has_option(name):
             raise Exception('The "--%s" option does not exist.' % name)
 
-        return self.__options[name]
+        return self._options[name]
 
     def has_option(self, name):
-        return name in self.__options
+        return name in self._options
 
     def get_options(self):
-        return list(self.__options.values())
+        return list(self._options.values())
 
     def has_shortcut(self, name):
-        return name in self.__shortcuts
+        return name in self._shortcuts
 
     def get_option_for_shortcut(self, shortcut):
         return self.get_option(self.shortcut_to_name(shortcut))
 
     def get_option_defaults(self):
         values = {}
-        for option in self.__options.values():
+        for option in self._options.values():
             values[option.get_name()] = option.get_default()
 
         return values
@@ -167,7 +175,7 @@ class InputDefinition(object):
         if not self.has_shortcut(shortcut):
             raise Exception('The "-%s" option does not exist.' % shortcut)
 
-        return self.__shortcuts[shortcut]
+        return self._shortcuts[shortcut]
 
     def get_synopsis(self, short=False):
         elements = []

@@ -17,15 +17,15 @@ class ArgvInput(Input):
 
         argv.pop(0)
 
-        self.__tokens = argv
-        self.__parsed = None
+        self._tokens = argv
+        self._parsed = None
 
     def parse(self):
         parse_options = True
-        self.__parsed = self.__tokens
+        self._parsed = self._tokens
         while True:
             try:
-                token = self.__parsed.pop(0)
+                token = self._parsed.pop(0)
             except IndexError:
                 break
 
@@ -53,12 +53,12 @@ class ArgvInput(Input):
         else:
             if self.definition.has_shortcut(name) and self.definition.get_option_for_shortcut(name).accept_value():
                 try:
-                    value = self.__parsed.pop(0)
+                    value = self._parsed.pop(0)
                 except IndexError:
                     value = None
 
                 if value and value.startswith('-'):
-                    self.__parsed.insert(0, value)
+                    self._parsed.insert(0, value)
                     value = None
 
                 self.add_short_option(name, value)
@@ -87,12 +87,12 @@ class ArgvInput(Input):
         else:
             if self.definition.has_option(name) and self.definition.get_option(name).accept_value():
                 try:
-                    value = self.__parsed.pop(0)
+                    value = self._parsed.pop(0)
                 except IndexError:
                     value = None
 
                 if value and value.startswith('-'):
-                    self.__parsed.insert(0, value)
+                    self._parsed.insert(0, value)
                     value = None
 
                 self.add_long_option(name, value)
@@ -131,11 +131,11 @@ class ArgvInput(Input):
         if value is not None and not option.accept_value():
             raise BadOptionUsage('The "--%s" option does not accept a value.' % name)
 
-        if value is None and option.accept_value() and len(self.__parsed):
+        if value is None and option.accept_value() and len(self._parsed):
             # if option accepts an optional or mandatory argument
             # let's see if there is one provided
             try:
-                nxt = self.__parsed.pop(0)
+                nxt = self._parsed.pop(0)
             except IndexError:
                 nxt = None
 
@@ -144,7 +144,7 @@ class ArgvInput(Input):
             elif not nxt:
                 value = ''
             else:
-                self.__parsed.insert(0, nxt)
+                self._parsed.insert(0, nxt)
 
         # This test is here to handle cases like --foo=
         # and foo option value is optional
@@ -167,7 +167,7 @@ class ArgvInput(Input):
             self.options[name] = value
 
     def get_first_argument(self):
-        for token in self.__tokens:
+        for token in self._tokens:
             if token and token[0] == '-':
                 continue
 
@@ -176,7 +176,7 @@ class ArgvInput(Input):
     def has_parameter_option(self, values):
         values = [values] if not isinstance(values, (list, tuple)) else values
 
-        for token in self.__tokens:
+        for token in self._tokens:
             for value in values:
                 if token == value or token.find(value + '=') == 0:
                     return True
@@ -186,7 +186,7 @@ class ArgvInput(Input):
     def get_parameter_option(self, values, default=False):
         values = [values] if not isinstance(values, (list, tuple)) else values
 
-        tokens = self.__tokens[:]
+        tokens = self._tokens[:]
         while True:
             try:
                 token = tokens.pop(0)
@@ -214,6 +214,6 @@ class ArgvInput(Input):
 
             return token
 
-        tokens = map(stringify, self.__tokens)
+        tokens = map(stringify, self._tokens)
 
         return ' '.join(tokens)

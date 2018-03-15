@@ -14,7 +14,7 @@ class ArgvInputTest(CleoTestCase):
 
         self.assertEqual(
             ['foo'],
-            input_._ArgvInput__tokens
+            input_._tokens
         )
         self.assertEqual(
             ['cli.py', 'foo'],
