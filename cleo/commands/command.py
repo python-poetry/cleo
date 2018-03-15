@@ -130,7 +130,7 @@ class Command(BaseCommand):
 
         options = [('command', command.get_name())] + options
 
-        return command.run(ListInput(options), self.output)
+        return command.run(ListInput(options), self.output.output)
 
     def call_silent(self, name, options=None):
         """
