@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.6.3] - 2018-03-15
+
+### Fixed
+
+- Fixed bad python version requirements.
+
+
 ## [0.6.2] - 2018-03-15
 
 ### Changed
@@ -90,7 +97,8 @@ This is a major release with some API changes.
 
 
 
-[Unreleased]: https://github.com/sdispater/cleo/compare/0.6.2...master
+[Unreleased]: https://github.com/sdispater/cleo/compare/0.6.3...master
+[0.6.3]: https://github.com/sdispater/cleo/releases/tag/0.6.3
 [0.6.2]: https://github.com/sdispater/cleo/releases/tag/0.6.2
 [0.6.1]: https://github.com/sdispater/cleo/releases/tag/0.6.1
 [0.6.0]: https://github.com/sdispater/cleo/releases/tag/0.6.0
