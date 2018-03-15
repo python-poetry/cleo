@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.6.2] - 2018-03-15
+
+### Changed
+
+- Removed the memory formatter in progress bars and indicators
+
+### Fixed
+
+- Fixed an error in the `call()` method.
+
+
 ## [0.6.1] - 2017-08-07
 
 ### Changed
@@ -79,7 +90,8 @@ This is a major release with some API changes.
 
 
 
-[Unreleased]: https://github.com/sdispater/cleo/compare/0.6.1...master
+[Unreleased]: https://github.com/sdispater/cleo/compare/0.6.2...master
+[0.6.2]: https://github.com/sdispater/cleo/releases/tag/0.6.2
 [0.6.1]: https://github.com/sdispater/cleo/releases/tag/0.6.1
 [0.6.0]: https://github.com/sdispater/cleo/releases/tag/0.6.0
 [0.5.0]: https://github.com/sdispater/cleo/releases/tag/0.5.0
