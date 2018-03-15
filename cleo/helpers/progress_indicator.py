@@ -4,11 +4,6 @@ import time
 import re
 import threading
 
-try:
-    import psutil
-except ImportError:
-    psutil = None
-
 from contextlib import contextmanager
 
 from ..exceptions import CleoException
@@ -26,8 +21,8 @@ class ProgressIndicator(object):
         'verbose': ' %indicator% %message% (%elapsed:6s%)',
         'verbose_no_ansi': ' %message% (%elapsed:6s%)',
 
-        'very_verbose': ' %indicator% %message% (%elapsed:6s%, %memory:6s%)',
-        'very_verbose_no_ansi': ' %message% (%elapsed:6s%, %memory:6s%)'
+        'very_verbose': ' %indicator% %message% (%elapsed:6s%)',
+        'very_verbose_no_ansi': ' %message% (%elapsed:6s%)'
     }
 
     def __init__(self, output, fmt=None, indicator_change_interval=100, indicator_values=None):
@@ -241,11 +236,3 @@ class ProgressIndicator(object):
 
     def _formatter_elapsed(self):
         return Helper.format_time(time.time() - self.start_time)
-
-    def _formatter_memory(self):
-        if psutil is None:
-            return ''
-
-        return Helper.format_memory(
-            psutil.Process().memory_info().rss
-        )

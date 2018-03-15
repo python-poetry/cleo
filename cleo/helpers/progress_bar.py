@@ -5,12 +5,6 @@ from __future__ import division
 import time
 import re
 import math
-
-try:
-    import psutil
-except ImportError:
-    psutil = None
-
 from ..outputs import Output, ConsoleOutput
 from ..exceptions import CleoException
 from .helper import Helper
@@ -38,8 +32,8 @@ class ProgressBar(object):
         'very_verbose': ' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s%',
         'very_verbose_nomax': ' %current% [%bar%] %elapsed:6s%',
 
-        'debug': ' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%',
-        'debug_nomax': ' %current% [%bar%] %elapsed:6s% %memory:6s%'
+        'debug': ' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s%',
+        'debug_nomax': ' %current% [%bar%] %elapsed:6s%'
     }
 
     def __init__(self, output, max=0):
@@ -390,14 +384,6 @@ class ProgressBar(object):
             )
 
         return estimated
-
-    def _formatter_memory(self):
-        if not psutil:
-            return ''
-
-        return Helper.format_memory(
-            psutil.Process().memory_info().rss
-        )
 
     def _formatter_current(self):
         return str(self._step).rjust(self._step_width, ' ')
