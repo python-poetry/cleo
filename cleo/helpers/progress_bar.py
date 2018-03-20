@@ -360,7 +360,7 @@ class ProgressBar(object):
             remaining = (
                 round(
                     (time.time() - self._start_time) / self._step
-                    * (self._max - self._max)
+                    * (self._max - self._step)
                 )
             )
 
