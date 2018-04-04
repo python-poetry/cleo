@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [0.6.5] - 2018-04-04
 
 ## Fixed
 
@@ -111,7 +111,8 @@ This is a major release with some API changes.
 
 
 
-[Unreleased]: https://github.com/sdispater/cleo/compare/0.6.4...master
+[Unreleased]: https://github.com/sdispater/cleo/compare/0.6.5...master
+[0.6.5]: https://github.com/sdispater/cleo/releases/tag/0.6.5
 [0.6.4]: https://github.com/sdispater/cleo/releases/tag/0.6.4
 [0.6.3]: https://github.com/sdispater/cleo/releases/tag/0.6.3
 [0.6.2]: https://github.com/sdispater/cleo/releases/tag/0.6.2
