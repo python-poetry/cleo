@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+## Fixed
+
+- Fixed handling of KeyboardInterrupt.
+
+
 ## [0.6.4] - 2018-03-15
 
 ### Fixed

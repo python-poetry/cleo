@@ -162,7 +162,7 @@ class ProgressIndicator(object):
 
         try:
             yield self
-        except Exception:
+        except (Exception, KeyboardInterrupt):
             self._output.writeln('')
 
             self._auto_running.set()

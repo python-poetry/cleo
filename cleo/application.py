@@ -92,6 +92,16 @@ class Application(object):
 
         try:
             status_code = self.do_run(input_, output_)
+        except KeyboardInterrupt as e:
+            status_code = 1
+
+            if output_.is_debug():
+                # If we are in debug mode
+                # Display the exception
+                if isinstance(output_, ConsoleOutput):
+                    self.render_exception(e, output_.get_error_output())
+                else:
+                    self.render_exception(e, output_)
         except Exception as e:
             if not self._catch_exceptions:
                 raise
@@ -119,7 +129,7 @@ class Application(object):
             if status_code > 255:
                 status_code = 255
 
-            exit(status_code)
+            sys.exit(status_code)
 
         return status_code
 

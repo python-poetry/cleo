@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-import contextlib
 
 from .base_command import BaseCommand, CommandError
 from ..inputs.list_input import ListInput
