@@ -102,6 +102,23 @@ class QuestionHelperTest(CleoTestCase):
             question_helper.ask(self.get_input(), self.get_output_stream(), question)
         )
 
+    def test_ask_choice_one_option(self):
+        question_helper = QuestionHelper()
+
+        helper_set = HelperSet([FormatterHelper()])
+        question_helper.set_helper_set(helper_set)
+
+        heroes = ['Superman']
+
+        question_helper.input_stream = self.get_input_stream('0\n')
+
+        question = ChoiceQuestion('What is your favorite superhero?', heroes)
+        question.max_attempts = 1
+        self.assertEqual(
+            'Superman',
+            question_helper.ask(self.get_input(), self.get_output_stream(), question)
+        )
+
     def test_ask(self):
         dialog = QuestionHelper()
         dialog.input_stream = self.get_string_input_stream('\n8AM\n')

@@ -1,8 +1,15 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed an error for choice questions with only one choice.
+
+
 ## [0.6.5] - 2018-04-04
 
-## Fixed
+### Fixed
 
 - Fixed handling of KeyboardInterrupt.
 

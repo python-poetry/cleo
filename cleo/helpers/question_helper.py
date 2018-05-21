@@ -142,7 +142,10 @@ class QuestionHelper(Helper):
             )
 
         if isinstance(question, ChoiceQuestion):
-            width = max(*map(self.len, [str(k) for k, _ in enumerate(question.choices)]))
+            if len(question.choices) > 1:
+                width = max(*map(self.len, [str(k) for k, _ in enumerate(question.choices)]))
+            else:
+                width = self.len('0')
 
             messages = [message]
             for key, value in enumerate(question.choices):
