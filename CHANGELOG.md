@@ -1,5 +1,12 @@
 # Change Log
 
+## Unreleased
+
+### Fixed
+
+- Fixed verbosity option behavior.
+
+
 ## [0.6.6] - 2018-05-21
 
 ### Fixed

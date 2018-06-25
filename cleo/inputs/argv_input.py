@@ -178,7 +178,14 @@ class ArgvInput(Input):
 
         for token in self._tokens:
             for value in values:
-                if token == value or token.find(value + '=') == 0:
+                if token == value:
+                    return True
+
+                # Options with values:
+                # For long options, test for '--option=' at beginning
+                # For short options, test for '-o' at beginning
+                leading = value + "=" if value.find("--") == 0 else value
+                if leading and token.find(leading) == 0:
                     return True
 
         return False
@@ -194,12 +201,18 @@ class ArgvInput(Input):
                 break
 
             for value in values:
-                if token == value or token.find(value + '=') == 0:
-                    pos = token.find('=')
-                    if pos != -1:
-                        return token[pos + 1:]
+                if token == value:
+                    try:
+                        return tokens.pop(0)
+                    except IndexError:
+                        return
 
-                    return tokens.pop(0)
+                # Options with values:
+                # For long options, test for '--option=' at beginning
+                # For short options, test for '-o' at beginning
+                leading = value + "=" if value.find("--") == 0 else value
+                if leading and token.find(leading) == 0:
+                    return token[len(leading):]
 
         return default
 

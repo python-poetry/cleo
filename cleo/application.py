@@ -508,15 +508,16 @@ class Application(object):
             output_.set_verbosity(Output.VERBOSITY_QUIET)
         elif input_.has_parameter_option('-vvv')\
                 or input_.has_parameter_option('--verbose=3')\
-                or input_.get_parameter_option('--verbose') == 3:
+                or input_.get_parameter_option('--verbose') == "3":
             output_.set_verbosity(Output.VERBOSITY_DEBUG)
         elif input_.has_parameter_option('-vv')\
                 or input_.has_parameter_option('--verbose=2')\
-                or input_.get_parameter_option('--verbose') == 2:
+                or input_.get_parameter_option('--verbose') == "2":
             output_.set_verbosity(Output.VERBOSITY_VERY_VERBOSE)
         elif input_.has_parameter_option('-v')\
                 or input_.has_parameter_option('--verbose=1')\
-                or input_.get_parameter_option('--verbose') == 1:
+                or input_.get_parameter_option('--verbose') == "1"\
+                or input_.get_parameter_option('--verbose', False) is not False:
             output_.set_verbosity(Output.VERBOSITY_VERBOSE)
 
     def get_command_name(self, input_):
@@ -532,7 +533,7 @@ class Application(object):
             InputOption('--help', '-h', InputOption.VALUE_NONE, 'Display this help message'),
             InputOption('--quiet', '-q', InputOption.VALUE_NONE, 'Do not output any message'),
             InputOption(
-                '--verbose', '-v|vv|vvv', InputOption.VALUE_NONE,
+                '--verbose', '-v|vv|vvv', InputOption.VALUE_OPTIONAL,
                 'Increase the verbosity of messages: 1 for normal output, '
                 '2 for more verbose output and 3 for debug'
             ),

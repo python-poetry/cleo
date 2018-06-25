@@ -22,3 +22,4 @@ nosetests.xml
 test.py
 /test
 pyproject.lock
+.pytest_cache

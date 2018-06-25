@@ -45,13 +45,13 @@ class Output(object):
         return self.VERBOSITY_QUIET == self.verbosity
 
     def is_verbose(self):
-        return self.VERBOSITY_VERBOSE == self.verbosity
+        return self.VERBOSITY_VERBOSE <= self.verbosity
 
     def is_very_verbose(self):
-        return self.VERBOSITY_VERY_VERBOSE == self.verbosity
+        return self.VERBOSITY_VERY_VERBOSE <= self.verbosity
 
     def is_debug(self):
-        return self.VERBOSITY_DEBUG == self.verbosity
+        return self.VERBOSITY_DEBUG <= self.verbosity
 
     def write(self, messages, newline=False, output_type=OUTPUT_NORMAL):
         if self.verbosity == self.VERBOSITY_QUIET:
