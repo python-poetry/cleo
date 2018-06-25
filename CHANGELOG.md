@@ -4,7 +4,11 @@
 
 ### Changed
 
-- Testers (application and command) now automatically sets `decorated` to `False`
+- Testers (application and command) now automatically sets `decorated` to `False`.
+
+### Fixed
+
+- Fixed numeric values appearing when getting terminal size on Windows.
 
 
 ## [0.6.7] - 2018-06-25

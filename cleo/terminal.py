@@ -77,8 +77,18 @@ class Terminal(object):
         # get terminal width
         # src: http://stackoverflow.com/questions/263890/how-do-i-find-the-width-height-of-a-terminal-window
         try:
-            cols = int(subprocess.check_call(shlex.split('tput cols')))
-            rows = int(subprocess.check_call(shlex.split('tput lines')))
+            cols = int(
+                subprocess.check_output(
+                    shlex.split('tput cols'),
+                    stderr=subprocess.STDOUT
+                )
+            )
+            rows = int(
+                subprocess.check_output(
+                    shlex.split('tput lines'),
+                    stderr=subprocess.STDOUT
+                )
+            )
 
             return (cols, rows)
         except:
