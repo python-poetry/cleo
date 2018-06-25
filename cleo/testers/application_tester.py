@@ -53,6 +53,9 @@ class ApplicationTester(object):
         self._output = StreamOutput(BytesIO())
         if 'decorated' in options:
             self._output.set_decorated(options['decorated'])
+        else:
+            self._output.set_decorated(False)
+
         if 'verbosity' in options:
             self._output.set_verbosity(options['verbosity'])
 
