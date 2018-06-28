@@ -64,8 +64,17 @@ class Input(object):
         raise NotImplementedError()
 
     def validate(self):
-        if len(self.get_arguments()) < self.definition.get_argument_required_count():
-            raise MissingArguments('Not enough arguments')
+        current_args = self.get_arguments()
+
+        required_arguments = [
+            argument
+            for argument in self.definition.get_arguments()
+            if argument.is_required() and not argument.is_application_argument()
+        ]
+
+        for argument in required_arguments:
+            if current_args.get(argument.get_name()) is None:
+                raise MissingArguments('Not enough arguments')
 
         self.validate_arguments()
         self.validate_options()

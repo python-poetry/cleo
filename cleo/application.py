@@ -528,7 +528,7 @@ class Application(object):
 
     def get_default_input_definition(self):
         return InputDefinition([
-            InputArgument('command', InputArgument.REQUIRED, 'The command to execute'),
+            InputArgument('command', InputArgument.REQUIRED, 'The command to execute', is_application_argument=True),
 
             InputOption('--help', '-h', InputOption.VALUE_NONE, 'Display this help message'),
             InputOption('--quiet', '-q', InputOption.VALUE_NONE, 'Do not output any message'),

@@ -34,7 +34,7 @@ class InputArgument(object):
     IS_LIST = 4
 
     def __init__(self, name, mode=None,
-                 description='', default=None, validator=None):
+                 description='', default=None, validator=None, is_application_argument=False):
         """
         Constructor
 
@@ -58,6 +58,7 @@ class InputArgument(object):
         self._mode = mode
         self._description = description or ''
         self._validator = VALIDATORS.get(validator)
+        self._is_application_argument = is_application_argument
 
         self.set_default(default)
 
@@ -87,6 +88,15 @@ class InputArgument(object):
         :rtype: bool
         """
         return self.__class__.IS_LIST == (self.__class__.IS_LIST & self._mode)
+
+    def is_application_argument(self):
+        """
+        Returns True if the argument is from application
+
+        :return: True if argument is from application, False otherwise
+        :rtype: bool
+        """
+        return self._is_application_argument
 
     def set_default(self, default=None):
         """
