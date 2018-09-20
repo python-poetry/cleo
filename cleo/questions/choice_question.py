@@ -30,6 +30,8 @@ class SelectChoiceValidator(Choice):
         :return: bool
         """
         # Collapse all spaces.
+        if selected is None and len(self.values) == 1:
+            selected = self.values[0]
         if not isinstance(selected, basestring):
             selected = decode(str(selected))
 
