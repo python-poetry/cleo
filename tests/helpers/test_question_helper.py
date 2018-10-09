@@ -278,7 +278,7 @@ class QuestionHelperTest(CleoTestCase):
         return StreamOutput(stream)
 
     def has_tty_available(self):
-        devnull = open(os.devnull, 'w')
-        exit_code = subprocess.call(['stty', '2'], stdout=devnull, stderr=devnull)
+        with open(os.devnull, 'w') as devnull:
+            exit_code = subprocess.call(['stty', '2'], stdout=devnull, stderr=devnull)
 
         return exit_code == 0

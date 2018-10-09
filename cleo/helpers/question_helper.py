@@ -355,12 +355,11 @@ class QuestionHelper(Helper):
         if self.stty is not None:
             return self.stty
 
-        devnull = open(os.devnull, 'w')
-
-        try:
-            exit_code = subprocess.call(['stty'], stdout=devnull, stderr=devnull)
-        except Exception:
-            exit_code = 2
+        with open(os.devnull, 'w') as devnull:
+            try:
+                exit_code = subprocess.call(['stty'], stdout=devnull, stderr=devnull)
+            except Exception:
+                exit_code = 2
 
         self.stty = exit_code == 0
 
