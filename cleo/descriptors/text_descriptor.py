@@ -37,7 +37,7 @@ class TextDescriptor(Descriptor):
             % (
                 argument.get_name(),
                 ' ' * spacing_width,
-                re.sub('\s*[\r\n]\s*', '\n' + (' ' * (total_width + 17)), argument.get_description() or ''),
+                re.sub(r'\s*[\r\n]\s*', '\n' + (' ' * (total_width + 17)), argument.get_description() or ''),
                 default
             ),
             **options
@@ -77,7 +77,7 @@ class TextDescriptor(Descriptor):
             % (
                 synopsis,
                 ' ' * spacing_width,
-                re.sub('\s*[\r\n]\s*', '\n' + (' ' * (total_width + 17)), option.get_description() or ''),
+                re.sub(r'\s*[\r\n]\s*', '\n' + (' ' * (total_width + 17)), option.get_description() or ''),
                 default,
                 '<comment> (multiple values allowed)</comment>' if option.is_list() else ''
             ),

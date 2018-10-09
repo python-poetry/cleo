@@ -65,7 +65,7 @@ class InputOption(object):
             if isinstance(shortcut, list):
                 shortcut = '|'.join(shortcut)
 
-            shortcuts = re.split('\|-?', shortcut.lstrip('-'))
+            shortcuts = re.split(r'\|-?', shortcut.lstrip('-'))
             shortcuts = list(filter(lambda x: x.strip() != '', shortcuts))
             shortcut = '|'.join(shortcuts)
 

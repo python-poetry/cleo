@@ -61,7 +61,7 @@ class Command(BaseCommand):
         doc = doc.strip().split('\n', 1)
         if len(doc) > 1:
             self.description = doc[0].strip()
-            self.signature = re.sub('\s{2,}', ' ', doc[1].strip())
+            self.signature = re.sub(r'\s{2,}', ' ', doc[1].strip())
         else:
             self.description = doc[0].strip()
 

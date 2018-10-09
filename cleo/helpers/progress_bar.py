@@ -208,7 +208,7 @@ class ProgressBar(object):
         if self._format is None:
             self._set_real_format(self._internal_format or self._determine_best_format())
 
-        self._overwrite(re.sub('(?i)%([a-z\-_]+)(?:\:([^%]+))?%', self._overwrite_callback, self._format))
+        self._overwrite(re.sub(r'(?i)%([a-z\-_]+)(?:\:([^%]+))?%', self._overwrite_callback, self._format))
 
     def _overwrite_callback(self, matches):
         if hasattr(self, '_formatter_%s' % matches.group(1)):

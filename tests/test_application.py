@@ -158,8 +158,8 @@ class ApplicationTest(CleoTestCase):
 
         self.assertRaisesRegexp(
             Exception,
-            'Command class "Foo5Command" is not correctly initialized\.'
-            'You probably forgot to call the parent constructor\.',
+            r'Command class "Foo5Command" is not correctly initialized\.'
+            r'You probably forgot to call the parent constructor\.',
             application.add,
             Foo5Command()
         )
@@ -286,7 +286,7 @@ class ApplicationTest(CleoTestCase):
 
         self.assertRaisesRegexp(
             Exception,
-            'The namespace "f" is ambiguous \(foo, foo1\)\.',
+            r'The namespace "f" is ambiguous \(foo, foo1\)\.',
             application.find_namespace,
             'f'
         )
@@ -299,7 +299,7 @@ class ApplicationTest(CleoTestCase):
 
         self.assertRaisesRegexp(
             Exception,
-            'There are no commands defined in the "bar" namespace\.',
+            r'There are no commands defined in the "bar" namespace\.',
             application.find_namespace,
             'bar'
         )
@@ -353,9 +353,9 @@ class ApplicationTest(CleoTestCase):
         Application.find() should raise an error when there is ambiguosity
         """
         data = [
-            ['f', 'Command "f" is not defined\.'],
-            ['a', 'Command "a" is ambiguous \(afoobar, afoobar1 and 1 more\)\.'],
-            ['foo:b', 'Command "foo:b" is ambiguous \(foo1:bar, foo:bar and 1 more\)\.'],
+            ['f', r'Command "f" is not defined\.'],
+            ['a', r'Command "a" is ambiguous \(afoobar, afoobar1 and 1 more\)\.'],
+            ['foo:b', r'Command "foo:b" is ambiguous \(foo1:bar, foo:bar and 1 more\)\.'],
         ]
 
         application = Application()

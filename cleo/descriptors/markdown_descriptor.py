@@ -17,7 +17,7 @@ class MarkdownDescriptor(Descriptor):
         name = argument.get_name() or '<none>'
         required = 'yes' if argument.is_required() else 'no'
         is_list = 'yes' if argument.is_list() else 'no'
-        description = re.sub('\s*[\r\n]\s*', '\n  ', argument.get_description() or '<none>')
+        description = re.sub(r'\s*[\r\n]\s*', '\n  ', argument.get_description() or '<none>')
         default = argument.get_default()
 
         lines = [
@@ -46,7 +46,7 @@ class MarkdownDescriptor(Descriptor):
         value_required = 'yes' if option.is_value_required() else 'no'
         accept_value = 'yes' if option.accept_value() else 'no'
         is_multiple = 'yes' if option.is_list() else 'no'
-        description = re.sub('\s*[\r\n]\s*', '\n  ', option.get_description() or '<none>')
+        description = re.sub(r'\s*[\r\n]\s*', '\n  ', option.get_description() or '<none>')
         default = option.get_default()
 
         lines = [

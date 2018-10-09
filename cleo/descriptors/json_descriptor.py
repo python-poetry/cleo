@@ -92,7 +92,7 @@ class JsonDescriptor(Descriptor):
             ('name', argument.get_name()),
             ('is_required', argument.is_required()),
             ('is_list', argument.is_list()),
-            ('description', re.sub('\s*[\r\n]\s*', ' ', argument.get_description())),
+            ('description', re.sub(r'\s*[\r\n]\s*', ' ', argument.get_description())),
             ('default', argument.get_default())
         ])
 
@@ -107,7 +107,7 @@ class JsonDescriptor(Descriptor):
             ('accept_value', option.accept_value()),
             ('is_value_required', option.is_value_required()),
             ('is_multiple', option.is_list()),
-            ('description', re.sub('\s*[\r\n]\s*', ' ', option.get_description())),
+            ('description', re.sub(r'\s*[\r\n]\s*', ' ', option.get_description())),
             ('default', option.get_default())
         ])
 

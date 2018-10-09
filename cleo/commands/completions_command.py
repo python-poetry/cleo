@@ -406,6 +406,6 @@ script. Consult your shells documentation for how to add such directives.
 
     def _remove_decoration(self, text):
         return re.sub(
-            '\033\[[^m]*m', '',
+            '\033\\[[^m]*m', '',
             self.output.get_formatter().format(text)
         )

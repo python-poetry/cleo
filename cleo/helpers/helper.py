@@ -105,7 +105,7 @@ class Helper(object):
         string = formatter.format(string)
 
         # Remove already formatted characters
-        string = re.sub('\033\[[^m]*m', '', string)
+        string = re.sub('\033\\[[^m]*m', '', string)
 
         formatter.set_decorated(is_decorated)
 

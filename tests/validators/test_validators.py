@@ -71,7 +71,7 @@ class EnumTestCase(CleoTestCase):
         except ValidationError as e:
             self.assertRegex(
                 str(e),
-                'Invalid value \'foooo\' \(str\): must be one of \{%s\}'
+                r'Invalid value \'foooo\' \(str\): must be one of \{%s\}'
                 % ', '.join(map(repr, ['foo', 'bar', 'baz']))
             )
 
@@ -91,7 +91,7 @@ class ChoiceTestCase(CleoTestCase):
         except ValidationError as e:
             self.assertRegex(
                 str(e),
-                'Invalid value \'foooo\' \(str\): must be one of \{%s\}'
+                r'Invalid value \'foooo\' \(str\): must be one of \{%s\}'
                 % ', '.join(map(repr, ['foo', 'bar', 'baz']))
             )
 

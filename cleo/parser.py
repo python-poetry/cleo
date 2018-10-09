@@ -30,7 +30,7 @@ class Parser(object):
 
         expression = expression.replace(os.linesep, '')
 
-        matches = re.match('[^\s]+', expression)
+        matches = re.match(r'[^\s]+', expression)
 
         if not matches:
             raise CleoException('Unable to determine command name from signature.')
@@ -38,7 +38,7 @@ class Parser(object):
         name = matches.group(0)
         parsed['name'] = name
 
-        tokens = re.findall('\{\s*(.*?)\s*\}', expression)
+        tokens = re.findall(r'\{\s*(.*?)\s*\}', expression)
 
         if tokens:
             parsed.update(cls._parameters(tokens))
@@ -90,7 +90,7 @@ class Parser(object):
             description = description.strip()
 
         # Checking validator:
-        matches = re.match('(.*)\((.*?)\)', token)
+        matches = re.match(r'(.*)\((.*?)\)', token)
         if matches:
             token = matches.group(1).strip()
             validator = matches.group(2).strip()
@@ -114,7 +114,7 @@ class Parser(object):
                 description
             )
 
-        matches = re.match('(.+)\=(.+)', token)
+        matches = re.match(r'(.+)\=(.+)', token)
         if matches:
             return InputArgument(
                 matches.group(1),
@@ -147,14 +147,14 @@ class Parser(object):
             description = description.strip()
 
         # Checking validator:
-        matches = re.match('(.*)\((.*?)\)', token)
+        matches = re.match(r'(.*)\((.*?)\)', token)
         if matches:
             token = matches.group(1).strip()
             validator = matches.group(2).strip()
 
         shortcut = None
 
-        matches = re.split('\s*\|\s*', token, 2)
+        matches = re.split(r'\s*\|\s*', token, 2)
 
         if len(matches) > 1:
             shortcut = matches[0].lstrip('-')
@@ -176,7 +176,7 @@ class Parser(object):
             mode = InputOption.VALUE_REQUIRED
             token = token.rstrip('=')
 
-        matches = re.match('(.+)(\=[\?\*]*)(.+)', token)
+        matches = re.match(r'(.+)(\=[\?\*]*)(.+)', token)
         if matches:
             token = matches.group(1)
             operator = matches.group(2)

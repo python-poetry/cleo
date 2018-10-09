@@ -182,7 +182,7 @@ class ProgressIndicator(object):
         if self._output.get_verbosity() == Output.VERBOSITY_QUIET:
             return
 
-        self._overwrite(re.sub('(?i)%([a-z\-_]+)(?:\:([^%]+))?%', self._overwrite_callback, self.format))
+        self._overwrite(re.sub(r'(?i)%([a-z\-_]+)(?:\:([^%]+))?%', self._overwrite_callback, self.format))
 
     def _overwrite_callback(self, matches):
         if hasattr(self, '_formatter_%s' % matches.group(1)):

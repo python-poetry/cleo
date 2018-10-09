@@ -81,7 +81,7 @@ class OutputTest(CleoTestCase):
         output = MyOutput()
         self.assertRaisesRegexp(
             Exception,
-            'Unknown output type given \(24\)',
+            r'Unknown output type given \(24\)',
             output.writeln,
             '<foo>foo</foo>',
             24

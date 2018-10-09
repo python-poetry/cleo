@@ -425,7 +425,7 @@ class Application(object):
             for splitline in [line[x:x + (width - 4)]
                               for x in range(0, len(line), width - 4)]:
                 line_length = len(
-                    re.sub('\[[^m]*m',
+                    re.sub(r'\[[^m]*m',
                            '',
                            formatter.format(splitline))) + 4
                 lines.append((splitline, line_length))

@@ -19,7 +19,7 @@ class ListCommandTest(CleoTestCase):
 
         command_tester = CommandTester(command)
         command_tester.execute([('command', command.get_name())], {'decorated': False})
-        self.assertRegex(command_tester.get_display(), 'help\s{2,}Displays help for a command')
+        self.assertRegex(command_tester.get_display(), r'help\s{2,}Displays help for a command')
 
         command_tester.execute([('command', command.get_name()), ('--raw', True)])
         output = """help   Displays help for a command
