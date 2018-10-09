@@ -4,7 +4,7 @@ from cleo import Command, CommandTester
 from .. import CleoTestCase
 
 
-class TestCommand(Command):
+class CommandTesting(Command):
     """
     Command testing.
 
@@ -25,7 +25,7 @@ class TestCommand(Command):
 class CommandTest(CleoTestCase):
 
     def test_overwrite(self):
-        command = TestCommand()
+        command = CommandTesting()
 
         tester = CommandTester(command)
         tester.execute([
