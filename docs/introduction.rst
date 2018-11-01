@@ -488,7 +488,7 @@ console:
             application = Application()
             application.add(GreetCommand())
 
-            commmand = application.find('demo:greet')
+            command = application.find('demo:greet')
             command_tester = CommandTester(command)
             command_tester.execute([('command', command.get_name())])
 
@@ -513,7 +513,7 @@ as an list of tuples to the ``CommandTester.execute()`` method:
             application = Application()
             application.add(GreetCommand())
 
-            commmand = application.find('demo:greet')
+            command = application.find('demo:greet')
             command_tester = CommandTester(command)
             command_tester.execute([
                 ('command', command.get_name()),
