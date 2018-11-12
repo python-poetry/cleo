@@ -9,7 +9,7 @@ class ConfirmationQuestion(Question):
     Represents a yes/no question.
     """
 
-    def __init__(self, question, default=True, true_answer_regex='(?i)^y'):
+    def __init__(self, question, default=True, true_answer_regex="(?i)^y"):
         """
         Constructor.
 
@@ -39,5 +39,3 @@ class ConfirmationQuestion(Question):
             return answer and answer_is_true
 
         return not answer or answer_is_true
-
-

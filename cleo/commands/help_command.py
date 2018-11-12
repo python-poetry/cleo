@@ -30,13 +30,14 @@ To display the list of available commands, please use the <info>list</info> comm
 
     def handle(self):
         if self._command is None:
-            self._command = self.get_application().find(self.argument('command_name'))
+            self._command = self.get_application().find(self.argument("command_name"))
 
         helper = DescriptorHelper()
         helper.describe(
-            self.output, self._command,
-            format=self.option('format'),
-            raw_text=self.option('raw')
+            self.output,
+            self._command,
+            format=self.option("format"),
+            raw_text=self.option("raw"),
         )
 
         self._command = None

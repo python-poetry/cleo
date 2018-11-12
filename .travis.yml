@@ -1,19 +1,33 @@
 language: python
-python:
-  - "3.6"
 
-matrix:
-  include:
-    - env: VENV='2.7'
-    - env: VENV=''
+stages:
+  - linting
+  - test
+
+cache:
+  pip: true
+  directories:
+    - $HOME/.cache/pypoetry
 
 install:
-  - pip install poetry --pre
-  - |
-      if [ "$VENV" != "" ]; then
-        virtualenv --python="$HOME/virtualenv/python$VENV/bin/python" "$HOME/virtualenvs/venv-$VENV"
-        source "$HOME/virtualenvs/venv-$VENV/bin/activate"
-      fi
-  - $HOME/virtualenv/python$TRAVIS_PYTHON_VERSION/bin/poetry install -v
+  - curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+  - source $HOME/.poetry/env
+  - poetry install
 
-script: py.test -q tests/
+script: pytest -q tests/
+
+jobs:
+  include:
+    - python: "2.7"
+    - python: "3.5"
+    - python: "3.6"
+    - python: "3.7"
+      dist: xenial
+
+    - stage: linting
+      python: "3.6"
+      install:
+        - pip install pre-commit
+        - pre-commit install-hooks
+      script:
+        - pre-commit run --all-files

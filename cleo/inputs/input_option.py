@@ -5,7 +5,6 @@ from ..validators import ValidationError, VALIDATORS
 
 
 class InvalidOption(ValidationError):
-
     def __init__(self, option, msg, value=ValidationError._UNDEFINED):
         self.option = option
         self.msg = msg
@@ -15,11 +14,12 @@ class InvalidOption(ValidationError):
 
     def to_s(self):
         if self.value != self._UNDEFINED:
-            return 'Invalid value %s (%s) for option %s: %s'\
-                   % (repr(self.value),
-                      self.value.__class__.__name__,
-                      self.option.get_name(),
-                      self.msg)
+            return "Invalid value %s (%s) for option %s: %s" % (
+                repr(self.value),
+                self.value.__class__.__name__,
+                self.option.get_name(),
+                self.msg,
+            )
 
         return self.msg
 
@@ -34,8 +34,15 @@ class InputOption(object):
     VALUE_OPTIONAL = 4
     VALUE_IS_LIST = 8
 
-    def __init__(self, name, shortcut=None, mode=None,
-                 description='', default=None, validator=None):
+    def __init__(
+        self,
+        name,
+        shortcut=None,
+        mode=None,
+        description="",
+        default=None,
+        validator=None,
+    ):
         """
         Constructor
 
@@ -52,25 +59,25 @@ class InputOption(object):
         :param validator: A Validator instance or a callable
         :type validator: Validator or callable
         """
-        if name.startswith('--'):
+        if name.startswith("--"):
             name = name[2:]
 
         if not name:
-            raise Exception('An option name cannot be empty.')
+            raise Exception("An option name cannot be empty.")
 
         if not shortcut:
             shortcut = None
 
         if shortcut is not None:
             if isinstance(shortcut, list):
-                shortcut = '|'.join(shortcut)
+                shortcut = "|".join(shortcut)
 
-            shortcuts = re.split('\|-?', shortcut.lstrip('-'))
-            shortcuts = list(filter(lambda x: x.strip() != '', shortcuts))
-            shortcut = '|'.join(shortcuts)
+            shortcuts = re.split("\|-?", shortcut.lstrip("-"))
+            shortcuts = list(filter(lambda x: x.strip() != "", shortcuts))
+            shortcut = "|".join(shortcuts)
 
             if not shortcut:
-                raise Exception('An option shortcut cannot be empty.')
+                raise Exception("An option shortcut cannot be empty.")
 
         if mode is None:
             mode = self.__class__.VALUE_NONE
@@ -80,7 +87,7 @@ class InputOption(object):
         self._name = name
         self._shortcut = shortcut
         self._mode = mode
-        self._description = description or ''
+        self._description = description or ""
         self._validator = VALIDATORS.get(validator)
 
         self.set_default(default)
@@ -118,7 +125,9 @@ class InputOption(object):
 
         :return: True if value mode is VALUE_REQUIRED, False otherwise
         """
-        return self.__class__.VALUE_REQUIRED == (self.__class__.VALUE_REQUIRED & self._mode)
+        return self.__class__.VALUE_REQUIRED == (
+            self.__class__.VALUE_REQUIRED & self._mode
+        )
 
     def is_value_optional(self):
         """
@@ -126,7 +135,9 @@ class InputOption(object):
 
         :return: True if value mode is VALUE_OPTIONAL, False otherwise
         """
-        return self.__class__.VALUE_OPTIONAL == (self.__class__.VALUE_OPTIONAL & self._mode)
+        return self.__class__.VALUE_OPTIONAL == (
+            self.__class__.VALUE_OPTIONAL & self._mode
+        )
 
     def is_flag(self):
         """
@@ -143,7 +154,9 @@ class InputOption(object):
         :return: True if mode is VALUE_IS_LIST, False otherwise
         :rtype: bool
         """
-        return self.__class__.VALUE_IS_LIST == (self.__class__.VALUE_IS_LIST & self._mode)
+        return self.__class__.VALUE_IS_LIST == (
+            self.__class__.VALUE_IS_LIST & self._mode
+        )
 
     def set_default(self, default=None):
         """
@@ -153,13 +166,15 @@ class InputOption(object):
         :type default: mixed
         """
         if self.__class__.VALUE_NONE == self._mode and default is not None:
-            raise Exception('Cannot set a default value when using InputOption::VALUE_NONE mode.')
+            raise Exception(
+                "Cannot set a default value when using InputOption::VALUE_NONE mode."
+            )
 
         if self.is_list():
             if default is None:
                 default = []
             elif not isinstance(default, list):
-                raise Exception('A default value for an array option must be an array.')
+                raise Exception("A default value for an array option must be an array.")
 
         self._default = default if self.accept_value() else False
 
@@ -210,9 +225,11 @@ class InputOption(object):
 
         :rtype: bool
         """
-        return option.get_name() == self.get_name()\
-            and option.get_shortcut() == self.get_shortcut()\
-            and option.get_default() == self.get_default()\
-            and option.is_list() == self.is_list()\
-            and option.is_value_required() == self.is_value_required()\
+        return (
+            option.get_name() == self.get_name()
+            and option.get_shortcut() == self.get_shortcut()
+            and option.get_default() == self.get_default()
+            and option.is_list() == self.is_list()
+            and option.is_value_required() == self.is_value_required()
             and option.is_value_optional() == self.is_value_optional()
+        )

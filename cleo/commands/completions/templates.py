@@ -116,8 +116,4 @@ end
 %(cmds_opts)s"""
 
 
-TEMPLATES = {
-    'bash': BASH_TEMPLATE,
-    'zsh': ZSH_TEMPLATE,
-    'fish': FISH_TEMPLATE
-}
+TEMPLATES = {"bash": BASH_TEMPLATE, "zsh": ZSH_TEMPLATE, "fish": FISH_TEMPLATE}

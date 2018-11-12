@@ -18,11 +18,21 @@ class CleoStyle(OutputStyle):
         super(CleoStyle, self).__init__(output)
 
         self._input = input
-        self._buffered_output = BufferedOutput(output.get_verbosity(), False, copy.deepcopy(output.get_formatter()))
+        self._buffered_output = BufferedOutput(
+            output.get_verbosity(), False, copy.deepcopy(output.get_formatter())
+        )
         self._line_length = min(self._get_terminal_width(), self.MAX_LINE_LENGTH)
 
-    def block(self, messages, type=None, style=None,
-              prefix=' ', padding=False, type_style=None, indent_on_type=False):
+    def block(
+        self,
+        messages,
+        type=None,
+        style=None,
+        prefix=" ",
+        padding=False,
+        type_style=None,
+        indent_on_type=False,
+    ):
         """
         Formats a message as a block of text.
 
@@ -49,69 +59,80 @@ class CleoStyle(OutputStyle):
 
         # Add type
         if type is not None:
-            messages[0] = '[%s] %s' % (type, messages[0])
+            messages[0] = "[%s] %s" % (type, messages[0])
 
             if indent_on_type:
                 for key, message in enumerate(messages[1:]):
                     key = key + 1
-                    messages[key] = ' ' * (Helper.len(type) + 1 + 2) + message
+                    messages[key] = " " * (Helper.len(type) + 1 + 2) + message
 
         # Wrap and add newlines for each element
         for key, message in enumerate(messages):
             message = Formatter.escape(message)
             wrap_limit = self._line_length - Helper.len(prefix)
 
-            lines += os.linesep.join(textwrap.wrap(message, wrap_limit)).split(os.linesep)
+            lines += os.linesep.join(textwrap.wrap(message, wrap_limit)).split(
+                os.linesep
+            )
 
             if messages and key < len(messages) - 1:
-                lines.append('')
+                lines.append("")
 
         if padding and self.is_decorated():
-            lines.insert(0, '')
-            lines.append('')
+            lines.insert(0, "")
+            lines.append("")
 
         new_lines = []
         for line in lines:
-            line = '%s%s' % (prefix, line)
-            line += ' ' * (self._line_length - Helper.len_without_decoration(self.get_formatter(), line))
+            line = "%s%s" % (prefix, line)
+            line += " " * (
+                self._line_length
+                - Helper.len_without_decoration(self.get_formatter(), line)
+            )
 
             if style:
-                line = '<%s>%s</>' % (style, line)
+                line = "<%s>%s</>" % (style, line)
 
             new_lines.append(line)
 
         if type and type_style:
             n = 0 if not padding else 1
-            split = new_lines[n].split('[%s]' % type)
+            split = new_lines[n].split("[%s]" % type)
             if len(split) > 1:
-                new_lines[n] = split[0] + '[<%s>%s</>]' % (type_style, type) + split[1]
+                new_lines[n] = split[0] + "[<%s>%s</>]" % (type_style, type) + split[1]
             else:
-                new_lines[n] = '[<%s>%s</>]' % (type_style, type) + split[0]
+                new_lines[n] = "[<%s>%s</>]" % (type_style, type) + split[0]
 
         self.writeln(new_lines)
         self.new_line()
 
     def title(self, message):
         self._auto_prepend_block()
-        self.writeln([
-            '<comment>%s</>' % message,
-            '<comment>%s</>' % ('=' * Helper.len_without_decoration(self.get_formatter(), message))
-        ])
+        self.writeln(
+            [
+                "<comment>%s</>" % message,
+                "<comment>%s</>"
+                % ("=" * Helper.len_without_decoration(self.get_formatter(), message)),
+            ]
+        )
 
         self.new_line()
 
     def section(self, message):
         self._auto_prepend_block()
-        self.writeln([
-            '<comment>%s</>' % message,
-            '<comment>%s</>' % ('-' * Helper.len_without_decoration(self.get_formatter(), message))
-        ])
+        self.writeln(
+            [
+                "<comment>%s</>" % message,
+                "<comment>%s</>"
+                % ("-" * Helper.len_without_decoration(self.get_formatter(), message)),
+            ]
+        )
 
         self.new_line()
 
     def listing(self, elements):
         self._auto_prepend_text()
-        elements = list(map(lambda element: ' * %s' % element, elements))
+        elements = list(map(lambda element: " * %s" % element, elements))
 
         self.writeln(elements)
         self.new_line()
@@ -123,25 +144,25 @@ class CleoStyle(OutputStyle):
             message = [message]
 
         for msg in message:
-            self.writeln(' // %s' % msg)
+            self.writeln(" // %s" % msg)
 
     def success(self, message):
-        self.block(message, 'OK', type_style='fg=green')
+        self.block(message, "OK", type_style="fg=green")
 
     def error(self, message):
-        self.block(message, 'ERROR', 'fg=white;bg=red', padding=True)
+        self.block(message, "ERROR", "fg=white;bg=red", padding=True)
 
     def warning(self, message):
-        self.block(message, 'WARNING', type_style='fg=red')
+        self.block(message, "WARNING", type_style="fg=red")
 
     def note(self, message):
-        self.block(message, 'NOTE', type_style='fg=blue')
+        self.block(message, "NOTE", type_style="fg=blue")
 
     def caution(self, message):
-        self.block(message, 'CAUTION', type_style='fg=red', indent_on_type=True)
+        self.block(message, "CAUTION", type_style="fg=red", indent_on_type=True)
 
     def table(self, headers, rows):
-        headers = list(map(lambda header: '<info>%s</>' % header, headers))
+        headers = list(map(lambda header: "<info>%s</>" % header, headers))
 
         table = Table(self)
         table.set_headers(headers)
@@ -163,7 +184,7 @@ class CleoStyle(OutputStyle):
 
         return self.ask_question(question)
 
-    def confirm(self, question, default=True, true_answer_regex='(?i)^y'):
+    def confirm(self, question, default=True, true_answer_regex="(?i)^y"):
         return self.ask_question(
             ConfirmationQuestion(question, default, true_answer_regex)
         )
@@ -190,7 +211,7 @@ class CleoStyle(OutputStyle):
 
         if self._input.is_interactive():
             self.new_line()
-            self._buffered_output.write('\n')
+            self._buffered_output.write("\n")
 
         return answer
 
@@ -208,9 +229,11 @@ class CleoStyle(OutputStyle):
 
     def new_line(self, count=1):
         super(CleoStyle, self).new_line(count)
-        self._buffered_output.write('\n' * count)
+        self._buffered_output.write("\n" * count)
 
-    def overwrite(self, messages, newline=False, size=None, type=OutputStyle.OUTPUT_NORMAL):
+    def overwrite(
+        self, messages, newline=False, size=None, type=OutputStyle.OUTPUT_NORMAL
+    ):
         super(CleoStyle, self).overwrite(messages, newline, size, type)
         self._buffered_output.write(self._reduce_buffer(messages), newline, type)
 
@@ -226,19 +249,19 @@ class CleoStyle(OutputStyle):
         return self.MAX_LINE_LENGTH
 
     def _auto_prepend_block(self):
-        chars = self._buffered_output.fetch().replace(os.linesep, '\n')[:-2]
+        chars = self._buffered_output.fetch().replace(os.linesep, "\n")[:-2]
 
         if not chars:
             return self.new_line()
 
         # Prepend new line for each non LF chars (This means no blank line was output before)
-        self.new_line(2 - chars.count('\n'))
+        self.new_line(2 - chars.count("\n"))
 
     def _auto_prepend_text(self):
         fetched = self._buffered_output.fetch()
 
         # Prepend new line if last char isn't EOL:
-        if fetched and fetched[-1] != '\n':
+        if fetched and fetched[-1] != "\n":
             self.new_line()
 
     def _reduce_buffer(self, messages):

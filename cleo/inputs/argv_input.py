@@ -8,7 +8,6 @@ from ..exceptions import NoSuchOption, BadOptionUsage, TooManyArguments
 
 
 class ArgvInput(Input):
-
     def __init__(self, argv=None, definition=None):
         super(ArgvInput, self).__init__(definition)
 
@@ -29,13 +28,13 @@ class ArgvInput(Input):
             except IndexError:
                 break
 
-            if parse_options and token == '':
+            if parse_options and token == "":
                 self.parse_argument(token)
-            elif parse_options and token == '--':
+            elif parse_options and token == "--":
                 parse_options = False
-            elif parse_options and token.find('--') == 0:
+            elif parse_options and token.find("--") == 0:
                 self.parse_long_option(token)
-            elif parse_options and token[0] == '-' and token != '-':
+            elif parse_options and token[0] == "-" and token != "-":
                 self.parse_short_option(token)
             else:
                 self.parse_argument(token)
@@ -44,20 +43,25 @@ class ArgvInput(Input):
         name = token[1:]
 
         if len(name) > 1:
-            if self.definition.has_shortcut(name[0])\
-                    and self.definition.get_option_for_shortcut(name[0]).accept_value():
+            if (
+                self.definition.has_shortcut(name[0])
+                and self.definition.get_option_for_shortcut(name[0]).accept_value()
+            ):
                 # an option with a value (with no space)
                 self.add_short_option(name[0], name[1:])
             else:
                 self.parse_short_option_set(name)
         else:
-            if self.definition.has_shortcut(name) and self.definition.get_option_for_shortcut(name).accept_value():
+            if (
+                self.definition.has_shortcut(name)
+                and self.definition.get_option_for_shortcut(name).accept_value()
+            ):
                 try:
                     value = self._parsed.pop(0)
                 except IndexError:
                     value = None
 
-                if value and value.startswith('-'):
+                if value and value.startswith("-"):
                     self._parsed.insert(0, value)
                     value = None
 
@@ -73,7 +77,9 @@ class ArgvInput(Input):
 
             option = self.definition.get_option_for_shortcut(name[i])
             if option.accept_value():
-                self.add_long_option(option.get_name(), None if l - 1 == i else name[i + 1:])
+                self.add_long_option(
+                    option.get_name(), None if l - 1 == i else name[i + 1 :]
+                )
 
                 break
             else:
@@ -81,17 +87,20 @@ class ArgvInput(Input):
 
     def parse_long_option(self, token):
         name = token[2:]
-        pos = name.find('=')
+        pos = name.find("=")
         if pos != -1:
-            self.add_long_option(name[:pos], name[pos + 1:])
+            self.add_long_option(name[:pos], name[pos + 1 :])
         else:
-            if self.definition.has_option(name) and self.definition.get_option(name).accept_value():
+            if (
+                self.definition.has_option(name)
+                and self.definition.get_option(name).accept_value()
+            ):
                 try:
                     value = self._parsed.pop(0)
                 except IndexError:
                     value = None
 
-                if value and value.startswith('-'):
+                if value and value.startswith("-"):
                     self._parsed.insert(0, value)
                     value = None
 
@@ -106,18 +115,23 @@ class ArgvInput(Input):
         if self.definition.has_argument(c):
             arg = self.definition.get_argument(c)
             self.arguments[arg.get_name()] = [token] if arg.is_list() else token
-        elif self.definition.has_argument(c - 1) and self.definition.get_argument(c - 1).is_list():
+        elif (
+            self.definition.has_argument(c - 1)
+            and self.definition.get_argument(c - 1).is_list()
+        ):
             arg = self.definition.get_argument(c - 1)
             self.arguments[arg.get_name()].append(token)
         # unexpected argument
         else:
-            raise TooManyArguments('Too many arguments.')
+            raise TooManyArguments("Too many arguments.")
 
     def add_short_option(self, shortcut, value):
         if not self.definition.has_shortcut(shortcut):
             raise NoSuchOption('The "-%s" option does not exist.' % shortcut)
 
-        self.add_long_option(self.definition.get_option_for_shortcut(shortcut).get_name(), value)
+        self.add_long_option(
+            self.definition.get_option_for_shortcut(shortcut).get_name(), value
+        )
 
     def add_long_option(self, name, value):
         if not self.definition.has_option(name):
@@ -139,16 +153,16 @@ class ArgvInput(Input):
             except IndexError:
                 nxt = None
 
-            if nxt and len(nxt) >= 1 and nxt[0] != '-':
+            if nxt and len(nxt) >= 1 and nxt[0] != "-":
                 value = nxt
             elif not nxt:
-                value = ''
+                value = ""
             else:
                 self._parsed.insert(0, nxt)
 
         # This test is here to handle cases like --foo=
         # and foo option value is optional
-        if value == '':
+        if value == "":
             value = None
 
         if value is None:
@@ -168,7 +182,7 @@ class ArgvInput(Input):
 
     def get_first_argument(self):
         for token in self._tokens:
-            if token and token[0] == '-':
+            if token and token[0] == "-":
                 continue
 
             return token
@@ -212,21 +226,21 @@ class ArgvInput(Input):
                 # For short options, test for '-o' at beginning
                 leading = value + "=" if value.find("--") == 0 else value
                 if leading and token.find(leading) == 0:
-                    return token[len(leading):]
+                    return token[len(leading) :]
 
         return default
 
     def __str__(self):
         def stringify(token):
-            m = re.match('^(-[^=]+=)(.+)', token)
+            m = re.match("^(-[^=]+=)(.+)", token)
             if m:
                 return m.group(1) + self.escape_token(m.group(2))
 
-            if token and token[0] != '-':
+            if token and token[0] != "-":
                 return self.escape_token(token)
 
             return token
 
         tokens = map(stringify, self._tokens)
 
-        return ' '.join(tokens)
+        return " ".join(tokens)

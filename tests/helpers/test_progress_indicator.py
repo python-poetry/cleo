@@ -10,11 +10,10 @@ from .. import CleoTestCase
 
 
 class ProgressIndicatorTestCase(CleoTestCase):
-
     def test_default_indicator(self):
         output = self.get_output_stream()
         bar = ProgressIndicator(output)
-        bar.start('Starting...')
+        bar.start("Starting...")
         time.sleep(0.101)
         bar.advance()
         time.sleep(0.101)
@@ -26,70 +25,67 @@ class ProgressIndicatorTestCase(CleoTestCase):
         time.sleep(0.101)
         bar.advance()
         time.sleep(0.101)
-        bar.set_message('Advancing...')
+        bar.set_message("Advancing...")
         bar.advance()
-        bar.finish('Done...')
-        bar.start('Starting Again...')
+        bar.finish("Done...")
+        bar.start("Starting Again...")
         time.sleep(0.101)
         bar.advance()
-        bar.finish('Done Again...')
-        bar.start('Starting Again...')
+        bar.finish("Done Again...")
+        bar.start("Starting Again...")
         time.sleep(0.101)
         bar.advance()
-        bar.finish('Done Again...', reset_indicator=True)
+        bar.finish("Done Again...", reset_indicator=True)
 
-        expected = self.generate_output([
-            ' - Starting...',
-            ' \\ Starting...',
-            ' | Starting...',
-            ' / Starting...',
-            ' - Starting...',
-            ' \\ Starting...',
-            ' \\ Advancing...',
-            ' | Advancing...',
-            ' | Done...'
-        ])
-
-        expected += os.linesep
-
-        expected += self.generate_output([
-            ' - Starting Again...',
-            ' \\ Starting Again...',
-            ' \\ Done Again...'
-        ])
-
-        expected += os.linesep
-
-        expected += self.generate_output([
-            ' - Starting Again...',
-            ' \\ Starting Again...',
-            ' - Done Again...'
-        ])
-
-        expected += os.linesep
-
-        self.assertEqual(
-            expected,
-            self.get_output_content(output)
+        expected = self.generate_output(
+            [
+                " - Starting...",
+                " \\ Starting...",
+                " | Starting...",
+                " / Starting...",
+                " - Starting...",
+                " \\ Starting...",
+                " \\ Advancing...",
+                " | Advancing...",
+                " | Done...",
+            ]
         )
 
-    def get_output_stream(self, decorated=True, verbosity=StreamOutput.VERBOSITY_NORMAL):
+        expected += os.linesep
+
+        expected += self.generate_output(
+            [" - Starting Again...", " \\ Starting Again...", " \\ Done Again..."]
+        )
+
+        expected += os.linesep
+
+        expected += self.generate_output(
+            [" - Starting Again...", " \\ Starting Again...", " - Done Again..."]
+        )
+
+        expected += os.linesep
+
+        self.assertEqual(expected, self.get_output_content(output))
+
+    def get_output_stream(
+        self, decorated=True, verbosity=StreamOutput.VERBOSITY_NORMAL
+    ):
         stream = BytesIO()
 
         return StreamOutput(stream, decorated=decorated, verbosity=verbosity)
 
     def generate_output(self, expected):
         if isinstance(expected, list):
-            expected_out = ''
+            expected_out = ""
 
             for exp in expected:
                 expected_out += self.generate_output(exp)
         else:
-            count = expected.count('\n')
+            count = expected.count("\n")
 
-            expected_out = '\x0D\x1B[2K'
+            expected_out = "\x0D\x1B[2K"
             if count:
-                expected_out += '\033[%dA' % count
+                expected_out += "\033[%dA" % count
 
             expected_out += expected
 

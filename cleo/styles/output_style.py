@@ -18,8 +18,8 @@ class OutputStyle(Output):
         :type output: Output
         """
         self._output = output
-        self._last_message = ''
-        self._last_message_err = ''
+        self._last_message = ""
+        self._last_message_err = ""
 
     @property
     def output(self):
@@ -183,12 +183,12 @@ class OutputStyle(Output):
 
         if stderr and isinstance(self._output, ConsoleOutput):
             self._output.get_error_output().write(messages, newline, type)
-            self._last_message_err = '\n'.join(messages)
+            self._last_message_err = "\n".join(messages)
 
             return
 
         self._output.write(messages, newline, type)
-        self._last_message = '\n'.join(messages)
+        self._last_message = "\n".join(messages)
 
     def writeln(self, messages, type=Output.OUTPUT_NORMAL):
         self.write(messages, True, type)
@@ -201,7 +201,7 @@ class OutputStyle(Output):
         if not isinstance(messages, list):
             messages = [messages]
 
-        messages = '\n'.join(messages)
+        messages = "\n".join(messages)
 
         # since overwrite is supposed to overwrite last message...
         if size is None:
@@ -214,20 +214,22 @@ class OutputStyle(Output):
             size = Helper.len_without_decoration(self._output.get_formatter(), message)
 
         # ...let's fill its length with backspaces
-        self._do_write('\x08' * size, False, stderr, type)
+        self._do_write("\x08" * size, False, stderr, type)
 
         # write the new message
         self._do_write(messages, False, stderr, type)
 
-        fill = size - Helper.len_without_decoration(self._output.get_formatter(), messages)
+        fill = size - Helper.len_without_decoration(
+            self._output.get_formatter(), messages
+        )
         if fill > 0:
             # whitespace whatever has left
-            self._do_write(' ' * fill, False, stderr, type)
+            self._do_write(" " * fill, False, stderr, type)
             # move the cursor back
-            self._do_write('\x08' * fill, False, stderr, type)
+            self._do_write("\x08" * fill, False, stderr, type)
 
         if newline:
-            self._do_write('', True, stderr, type)
+            self._do_write("", True, stderr, type)
 
         if stderr:
             self._last_message_err = messages

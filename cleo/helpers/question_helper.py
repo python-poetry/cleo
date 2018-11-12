@@ -15,7 +15,7 @@ from .._compat import decode
 
 class QuestionHelper(Helper):
 
-    name = 'question'
+    name = "question"
 
     _input_stream = None
     stty = None
@@ -115,41 +115,40 @@ class QuestionHelper(Helper):
 
         if default is None:
             if isinstance(question, ChoiceQuestion):
-                message = '<question>{}</>: '.format(message)
+                message = "<question>{}</>: ".format(message)
             else:
-                message = '<question>{}</> '.format(message)
+                message = "<question>{}</> ".format(message)
         elif isinstance(question, ConfirmationQuestion):
-            message = '<question>{} (yes/no)</> [<comment>{}</>] '.format(
-                message,
-                'yes' if default else 'no'
+            message = "<question>{} (yes/no)</> [<comment>{}</>] ".format(
+                message, "yes" if default else "no"
             )
         elif isinstance(question, ChoiceQuestion) and question.multiselect:
             choices = question.choices
-            default = default.split(',')
+            default = default.split(",")
 
             for i, value in enumerate(default):
                 default[i] = choices[int(value.strip())]
 
-            message = '<question>{}</> [<comment>{}</>]:'.format(
-                message,
-                Formatter.escape(', '.join(default))
+            message = "<question>{}</> [<comment>{}</>]:".format(
+                message, Formatter.escape(", ".join(default))
             )
         elif isinstance(question, ChoiceQuestion):
             choices = question.choices
-            message = '<question>{}</question> [<comment>{}</>]:'.format(
-                message,
-                Formatter.escape(choices[int(default)])
+            message = "<question>{}</question> [<comment>{}</>]:".format(
+                message, Formatter.escape(choices[int(default)])
             )
 
         if isinstance(question, ChoiceQuestion):
             if len(question.choices) > 1:
-                width = max(*map(self.len, [str(k) for k, _ in enumerate(question.choices)]))
+                width = max(
+                    *map(self.len, [str(k) for k, _ in enumerate(question.choices)])
+                )
             else:
-                width = self.len('0')
+                width = self.len("0")
 
             messages = [message]
             for key, value in enumerate(question.choices):
-                messages.append(' [<comment>{:{}}</>] {}'.format(key, width, value))
+                messages.append(" [<comment>{:{}}</>] {}".format(key, width, value))
 
             output.writeln(messages)
 
@@ -167,10 +166,12 @@ class QuestionHelper(Helper):
         :param error: A Exception instance
         :type error: Exception
         """
-        if self.helper_set is not None and self.helper_set.has('formatter'):
-            message = self.helper_set.get('formatter').format_block(decode(str(error)), 'error')
+        if self.helper_set is not None and self.helper_set.has("formatter"):
+            message = self.helper_set.get("formatter").format_block(
+                decode(str(error)), "error"
+            )
         else:
-            message = '<error>%s</error>' % decode(str(error))
+            message = "<error>%s</error>" % decode(str(error))
 
         output.writeln(message)
 
@@ -188,31 +189,31 @@ class QuestionHelper(Helper):
         """
         autocomplete = question.autocompleter_values
 
-        ret = ''
+        ret = ""
 
         i = 0
         ofs = -1
         matches = [x for x in autocomplete]
         num_matches = len(matches)
 
-        stty_mode = decode(subprocess.check_output(['stty', '-g'])).rstrip('\n')
+        stty_mode = decode(subprocess.check_output(["stty", "-g"])).rstrip("\n")
 
         # Disable icanon (so we can fread each keypress) and echo (we'll do echoing here instead)
-        subprocess.check_output(['stty', '-icanon', '-echo'])
+        subprocess.check_output(["stty", "-icanon", "-echo"])
 
         # Add highlighted text style
-        output.get_formatter().add_style('hl', 'black', 'white')
+        output.get_formatter().add_style("hl", "black", "white")
 
         # Read a keypress
         while True:
             c = input_stream.read(1)
 
             # Backspace character
-            if c == '\177':
+            if c == "\177":
                 if num_matches == 0 and i != 0:
                     i -= 1
                     # Move cursor backwards
-                    output.write('\033[1D')
+                    output.write("\033[1D")
 
                 if i == 0:
                     ofs = -1
@@ -224,28 +225,28 @@ class QuestionHelper(Helper):
                 # Pop the last character off the end of our string
                 ret = ret[:i]
             # Did we read an escape sequence
-            elif c == '\033':
+            elif c == "\033":
                 c += input_stream.read(2)
 
                 # A = Up Arrow. B = Down Arrow
-                if c[2] == 'A' or c[2] == 'B':
-                    if c[2] == 'A' and ofs == -1:
+                if c[2] == "A" or c[2] == "B":
+                    if c[2] == "A" and ofs == -1:
                         ofs = 0
 
                     if num_matches == 0:
                         continue
 
-                    ofs += -1 if c[2] == 'A' else 1
+                    ofs += -1 if c[2] == "A" else 1
                     ofs = (num_matches + ofs) % num_matches
             elif ord(c) < 32:
-                if c == '\t' or c == '\n':
+                if c == "\t" or c == "\n":
                     if num_matches > 0 and ofs != -1:
                         ret = matches[ofs]
                         # Echo out remaining chars for current match
                         output.write(ret[i:])
                         i = len(ret)
 
-                    if c == '\n':
+                    if c == "\n":
                         output.write(c)
                         break
 
@@ -267,17 +268,17 @@ class QuestionHelper(Helper):
                         matches[num_matches - 1] = value
 
             # Erase characters from cursor to end of line
-            output.write('\033[K')
+            output.write("\033[K")
 
             if num_matches > 0 and ofs != -1:
                 # Save cursor position
-                output.write('\0337')
+                output.write("\0337")
                 # Write highlighted text
-                output.write('<hl>' + matches[ofs][i:] + '</hl>')
+                output.write("<hl>" + matches[ofs][i:] + "</hl>")
                 # Restore cursor position
-                output.write('\0338')
+                output.write("\0338")
 
-        subprocess.call(['stty', '%s' % decode(stty_mode)])
+        subprocess.call(["stty", "%s" % decode(stty_mode)])
 
         return ret
 
@@ -290,10 +291,10 @@ class QuestionHelper(Helper):
 
         :rtype: str
         """
-        if hasattr(output, 'output'):
+        if hasattr(output, "output"):
             output = output.output
 
-        return getpass.getpass('', stream=output)
+        return getpass.getpass("", stream=output)
 
     def _validate_attempts(self, interviewer, output, question):
         """
@@ -347,7 +348,7 @@ class QuestionHelper(Helper):
             ret = stream.readline(4096)
 
         if not ret:
-            raise RuntimeError('Aborted')
+            raise RuntimeError("Aborted")
 
         return decode(ret.strip())
 
@@ -355,10 +356,10 @@ class QuestionHelper(Helper):
         if self.stty is not None:
             return self.stty
 
-        devnull = open(os.devnull, 'w')
+        devnull = open(os.devnull, "w")
 
         try:
-            exit_code = subprocess.call(['stty'], stdout=devnull, stderr=devnull)
+            exit_code = subprocess.call(["stty"], stdout=devnull, stderr=devnull)
         except Exception:
             exit_code = 2
 

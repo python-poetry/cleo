@@ -18,7 +18,6 @@ class CommandError(Exception):
 
 
 class BaseCommand(object):
-
     def __init__(self, name=None):
         self._definition = InputDefinition()
         self._ignore_validation_errors = False
@@ -30,24 +29,24 @@ class BaseCommand(object):
         self._synopsis = {}
         self._code = None
 
-        if hasattr(self, 'aliases'):
+        if hasattr(self, "aliases"):
             self.set_aliases(self.aliases)
         else:
             self.aliases = []
 
-        if hasattr(self, 'help'):
+        if hasattr(self, "help"):
             self.set_help(self.help)
         else:
-            self.help = ''
+            self.help = ""
 
-        self.name = name or getattr(self, 'name', None)
+        self.name = name or getattr(self, "name", None)
 
-        if hasattr(self, 'description'):
+        if hasattr(self, "description"):
             self.set_description(self.description)
         else:
-            self.description = ''
+            self.description = ""
 
-        if hasattr(self, 'usages'):
+        if hasattr(self, "usages"):
             for usage in copy.copy(self.usages):
                 self.add_usage(usage)
         else:
@@ -59,7 +58,7 @@ class BaseCommand(object):
         self.configure()
 
         if not self.name:
-            raise Exception('The command name cannot be empty.')
+            raise Exception("The command name cannot be empty.")
 
     def ignore_validation_errors(self):
         self._ignore_validation_errors = True
@@ -84,19 +83,19 @@ class BaseCommand(object):
         return True
 
     def configure(self):
-        if hasattr(self, 'arguments'):
+        if hasattr(self, "arguments"):
             for argument in self.arguments:
                 if isinstance(argument, InputArgument):
                     self._definition.add_argument(argument)
                 else:
-                    raise Exception('Invalid argument')
+                    raise Exception("Invalid argument")
 
-        if hasattr(self, 'options'):
+        if hasattr(self, "options"):
             for option in self.options:
                 if isinstance(option, InputOption):
                     self._definition.add_option(option)
                 else:
-                    raise Exception('Invalid option')
+                    raise Exception("Invalid option")
 
     def execute(self, input_, output_):
         raise NotImplementedError()
@@ -155,7 +154,7 @@ class BaseCommand(object):
 
     def set_code(self, code):
         if not callable(code):
-            raise Exception('Invalid callable provided to Command.setCode().')
+            raise Exception("Invalid callable provided to Command.setCode().")
 
         self._code = code
 
@@ -170,14 +169,17 @@ class BaseCommand(object):
         :param merge_args: Whether to merge or not the Application definition arguments to Command definition arguments
         :type merge_args: bool
         """
-        if self._application is None \
-                or (self._application_definition_merged
-                    and (self._application_definition_merged_with_args or not merge_args)):
+        if self._application is None or (
+            self._application_definition_merged
+            and (self._application_definition_merged_with_args or not merge_args)
+        ):
             return
 
         if merge_args:
             current_arguments = self._definition.get_arguments()
-            self._definition.set_arguments(self._application.get_definition().get_arguments())
+            self._definition.set_arguments(
+                self._application.get_definition().get_arguments()
+            )
             self._definition.add_arguments(current_arguments)
 
         self._definition.add_options(self._application.get_definition().get_options())
@@ -202,16 +204,24 @@ class BaseCommand(object):
     def get_native_definition(self):
         return self.get_definition()
 
-    def add_argument(self, name, mode=None,
-                     description='', default=None, validator=None):
+    def add_argument(
+        self, name, mode=None, description="", default=None, validator=None
+    ):
         self._definition.add_argument(
             InputArgument(name, mode, description, default, validator)
         )
 
         return self
 
-    def add_option(self, name, shortcut=None, mode=None,
-                   description='', default=None, validator=None):
+    def add_option(
+        self,
+        name,
+        shortcut=None,
+        mode=None,
+        description="",
+        default=None,
+        validator=None,
+    ):
         self._definition.add_option(
             InputOption(name, shortcut, mode, description, default, validator)
         )
@@ -257,7 +267,7 @@ class BaseCommand(object):
 
     def add_usage(self, usage):
         if usage.find(self.name) != 0:
-            usage = '%s %s' % (self.name, usage)
+            usage = "%s %s" % (self.name, usage)
 
         self._usages.append(usage)
 
@@ -267,15 +277,13 @@ class BaseCommand(object):
         return self._usages
 
     def get_synopsis(self, short=False):
-        key = 'long'
+        key = "long"
         if short:
-            key = 'short'
+            key = "short"
 
         if key not in self._synopsis:
             self._synopsis[key] = (
-                '%s %s'
-                % (self.name,
-                   self._definition.get_synopsis(short))
+                "%s %s" % (self.name, self._definition.get_synopsis(short))
             ).strip()
 
         return self._synopsis[key]
@@ -288,16 +296,16 @@ class BaseCommand(object):
 
         h = self.get_help() or self.get_description()
 
-        h = h.replace('%script.full_name%', self._get_script_full_name())
-        h = h.replace('%script.name%', self._get_script_name())
+        h = h.replace("%script.full_name%", self._get_script_full_name())
+        h = h.replace("%script.name%", self._get_script_name())
 
-        h = h.replace('%command.full_name%', self._get_command_full_name())
-        h = h.replace('%command.name%', name)
+        h = h.replace("%command.full_name%", self._get_command_full_name())
+        h = h.replace("%command.name%", name)
 
         return h
 
     def _get_command_full_name(self):
-        return inspect.stack()[-1][1] + ' ' + self.name
+        return inspect.stack()[-1][1] + " " + self.name
 
     def _get_script_full_name(self):
         return os.path.realpath(sys.argv[0])
@@ -306,5 +314,5 @@ class BaseCommand(object):
         return os.path.basename(self._get_script_full_name())
 
     def validate_name(self, name):
-        if not re.match('^[^:]+(:[^:]+)*$', name):
+        if not re.match("^[^:]+(:[^:]+)*$", name):
             raise CommandError('Command name "%s" is invalid.' % name)

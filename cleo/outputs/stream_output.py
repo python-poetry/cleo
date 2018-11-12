@@ -9,11 +9,13 @@ from .._compat import encode
 
 
 class StreamOutput(Output):
-
-    def __init__(self, stream, verbosity=Output.VERBOSITY_NORMAL, decorated=None, formatter=None):
-        if not hasattr(stream, 'write') or not callable(stream.write):
-            raise Exception('The StreamOutput class needs a stream '
-                            'as its first argument.')
+    def __init__(
+        self, stream, verbosity=Output.VERBOSITY_NORMAL, decorated=None, formatter=None
+    ):
+        if not hasattr(stream, "write") or not callable(stream.write):
+            raise Exception(
+                "The StreamOutput class needs a stream " "as its first argument."
+            )
 
         self.stream = stream
 
@@ -26,7 +28,7 @@ class StreamOutput(Output):
         return self.stream
 
     def do_write(self, message, newline):
-        message = (message + (os.linesep if newline else ''))
+        message = message + (os.linesep if newline else "")
 
         # This try/catch block is a small hack
         # to handle the cases where the stream is a class
@@ -40,14 +42,14 @@ class StreamOutput(Output):
         self.stream.flush()
 
     def has_color_support(self, decorated):
-        if platform.system().lower() == 'windows':
+        if platform.system().lower() == "windows":
             return (
-                os.getenv('ANSICON') is not None
-                or 'ON' == os.getenv('ConEmuANSI')
-                or 'xterm' == os.getenv('Term')
+                os.getenv("ANSICON") is not None
+                or "ON" == os.getenv("ConEmuANSI")
+                or "xterm" == os.getenv("Term")
             )
 
-        if not hasattr(self.stream, 'fileno'):
+        if not hasattr(self.stream, "fileno"):
             return False
 
         try:

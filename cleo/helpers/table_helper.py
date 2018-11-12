@@ -16,11 +16,12 @@ class TableHelper(Helper):
     LAYOUT_COMPACT = 2
 
     def __init__(self):
-        warnings.warn('TableHelper class is deprecated. '
-                      'Use the Table class instead', DeprecationWarning)
+        warnings.warn(
+            "TableHelper class is deprecated. " "Use the Table class instead",
+            DeprecationWarning,
+        )
 
         self._table = Table(NullOutput())
-
 
     def set_layout(self, layout):
         """
@@ -32,11 +33,11 @@ class TableHelper(Helper):
         :rtype: TableHelper
         """
         if layout == self.LAYOUT_BORDERLESS:
-            self._table.set_style('borderless')
+            self._table.set_style("borderless")
         elif layout == self.LAYOUT_COMPACT:
-            self._table.set_style('compact')
+            self._table.set_style("compact")
         elif layout == self.LAYOUT_DEFAULT:
-            self._table.set_style('default')
+            self._table.set_style("default")
         else:
             raise Exception('Invalid table layout "%s".' % layout)
 
@@ -134,4 +135,4 @@ class TableHelper(Helper):
         return self._table.render()
 
     def get_name(self):
-        return 'table'
+        return "table"

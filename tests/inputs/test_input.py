@@ -8,35 +8,24 @@ from .. import CleoTestCase
 
 
 class MockInput(Input):
-
     def parse(self):
-        self.arguments = {
-            'arg': '57'
-        }
-        self.options = {
-            'opt': '37.25'
-        }
+        self.arguments = {"arg": "57"}
+        self.options = {"opt": "37.25"}
 
     def validate(self):
         pass
 
 
 class MockWrongInput(Input):
-
     def parse(self):
-        self.arguments = {
-            'arg': 'foo'
-        }
-        self.options = {
-            'opt': 'bar'
-        }
+        self.arguments = {"arg": "foo"}
+        self.options = {"opt": "bar"}
 
     def validate(self):
         pass
 
 
 class InputTest(CleoTestCase):
-
     def test_init(self):
         input = MockInput()
 
@@ -44,49 +33,36 @@ class InputTest(CleoTestCase):
         self.assertEqual(input.arguments, {})
         self.assertEqual(input.arguments, {})
 
-        definition = InputDefinition([
-            InputArgument('arg'),
-            InputOption('opt')
-        ])
+        definition = InputDefinition([InputArgument("arg"), InputOption("opt")])
 
         input = MockInput(definition)
 
         self.assertEqual(definition, input.definition)
-        self.assertEqual('57', input.arguments['arg'])
-        self.assertEqual('37.25', input.options['opt'])
+        self.assertEqual("57", input.arguments["arg"])
+        self.assertEqual("37.25", input.options["opt"])
 
     def test_validate_arguments(self):
-        definition = InputDefinition([
-            InputArgument('arg', validator=Integer())
-        ])
+        definition = InputDefinition([InputArgument("arg", validator=Integer())])
 
         input = MockInput(definition)
 
         input.validate_arguments()
-        self.assertIsInstance(input.get_argument('arg'), int)
+        self.assertIsInstance(input.get_argument("arg"), int)
 
         # Wrong type
         input = MockWrongInput(definition)
 
-        self.assertRaises(
-            InvalidArgument,
-            input.validate_arguments
-        )
+        self.assertRaises(InvalidArgument, input.validate_arguments)
 
     def test_validate_options(self):
-        definition = InputDefinition([
-            InputOption('opt', validator=Float())
-        ])
+        definition = InputDefinition([InputOption("opt", validator=Float())])
 
         input = MockInput(definition)
 
         input.validate_options()
-        self.assertIsInstance(input.get_option('opt'), float)
+        self.assertIsInstance(input.get_option("opt"), float)
 
         # Wrong type
         input = MockWrongInput(definition)
 
-        self.assertRaises(
-            InvalidOption,
-            input.validate_options
-        )
+        self.assertRaises(InvalidOption, input.validate_options)

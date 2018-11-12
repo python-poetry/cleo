@@ -8,7 +8,6 @@ from .._compat import basestring, decode
 
 
 class SelectChoiceValidator(Choice):
-
     def __init__(self, question, validator=None):
         """
         Constructor.
@@ -33,14 +32,14 @@ class SelectChoiceValidator(Choice):
         if not isinstance(selected, basestring):
             selected = decode(str(selected))
 
-        selected_choices = selected.replace(' ', '')
+        selected_choices = selected.replace(" ", "")
 
         if self.question.multiselect:
             # Check for a separated comma values
-            if not re.match('^[a-zA-Z0-9_-]+(?:,[a-zA-Z0-9_-]+)*$', selected_choices):
+            if not re.match("^[a-zA-Z0-9_-]+(?:,[a-zA-Z0-9_-]+)*$", selected_choices):
                 raise CleoException(self.question.error_message % selected)
 
-            selected_choices = selected_choices.split(',')
+            selected_choices = selected_choices.split(",")
         else:
             selected_choices = [selected]
 
@@ -54,8 +53,8 @@ class SelectChoiceValidator(Choice):
 
             if len(results) > 1:
                 raise CleoException(
-                    'The provided answer is ambiguous. Value should be one of %s.'
-                    % ' or '.join(results)
+                    "The provided answer is ambiguous. Value should be one of %s."
+                    % " or ".join(results)
                 )
 
             try:
@@ -90,7 +89,7 @@ class ChoiceQuestion(Question):
     """
 
     multiselect = False
-    prompt = ' > '
+    prompt = " > "
     error_message = 'Value "%s" is invalid'
 
     def __init__(self, question, choices, default=None):

@@ -22,7 +22,7 @@ def decode(string, encodings=None):
         return string
 
     if encodings is None:
-        encodings = ['utf-8', 'latin1', 'ascii']
+        encodings = ["utf-8", "latin1", "ascii"]
 
     for encoding in encodings:
         try:
@@ -30,7 +30,7 @@ def decode(string, encodings=None):
         except (UnicodeEncodeError, UnicodeDecodeError):
             pass
 
-    return string.decode(encodings[0], errors='ignore')
+    return string.decode(encodings[0], errors="ignore")
 
 
 def encode(string, encodings=None):
@@ -41,7 +41,7 @@ def encode(string, encodings=None):
         return string
 
     if encodings is None:
-        encodings = ['utf-8', 'latin1', 'ascii']
+        encodings = ["utf-8", "latin1", "ascii"]
 
     for encoding in encodings:
         try:
@@ -49,5 +49,4 @@ def encode(string, encodings=None):
         except (UnicodeEncodeError, UnicodeDecodeError):
             pass
 
-    return string.encode(encodings[0], errors='ignore')
-
+    return string.encode(encodings[0], errors="ignore")

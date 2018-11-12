@@ -10,6 +10,6 @@ class DescriptorCommand3(Command):
     descriptor:command3
     """
 
-    help = 'command 3 help'
+    help = "command 3 help"
 
     hidden = True

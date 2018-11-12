@@ -8,12 +8,11 @@ from cleo.commands import BaseCommand
 
 
 class DescriptorTestCase(CleoTestCase):
-
     def setUp(self):
         super(DescriptorTestCase, self).setUp()
 
         self.original = BaseCommand._get_command_full_name
-        BaseCommand._get_command_full_name = lambda self: 'app/console ' + self.name
+        BaseCommand._get_command_full_name = lambda self: "app/console " + self.name
 
     def tearDown(self):
         super(DescriptorTestCase, self).tearDown()
@@ -58,7 +57,7 @@ class DescriptorTestCase(CleoTestCase):
     def get_description_test_data(self, objects):
         data = []
         for name, obj in objects.items():
-            description = self.open_fixture('%s.%s' % (name, self.get_format()))
+            description = self.open_fixture("%s.%s" % (name, self.get_format()))
             data.append((obj, description))
 
         return data
@@ -66,6 +65,6 @@ class DescriptorTestCase(CleoTestCase):
     def assertDescription(self, expected_description, described_object):
         output = BufferedOutput(BufferedOutput.VERBOSITY_NORMAL, True)
         self.get_descriptor().describe(output, described_object, raw_output=True)
-        fetched = output.fetch().replace(os.linesep, '\n').strip()
+        fetched = output.fetch().replace(os.linesep, "\n").strip()
 
         self.assertEqual(expected_description.strip(), fetched)

@@ -8,7 +8,6 @@ from .inputs.input_option import InputOption
 
 
 class Parser(object):
-
     @classmethod
     def parse(cls, expression):
         """
@@ -19,26 +18,22 @@ class Parser(object):
 
         :rtype: dict
         """
-        parsed = {
-            'name': None,
-            'arguments': [],
-            'options': []
-        }
+        parsed = {"name": None, "arguments": [], "options": []}
 
         if not expression.strip():
-            raise CleoException('Console command signature is empty.')
+            raise CleoException("Console command signature is empty.")
 
-        expression = expression.replace(os.linesep, '')
+        expression = expression.replace(os.linesep, "")
 
-        matches = re.match('[^\s]+', expression)
+        matches = re.match("[^\s]+", expression)
 
         if not matches:
-            raise CleoException('Unable to determine command name from signature.')
+            raise CleoException("Unable to determine command name from signature.")
 
         name = matches.group(0)
-        parsed['name'] = name
+        parsed["name"] = name
 
-        tokens = re.findall('\{\s*(.*?)\s*\}', expression)
+        tokens = re.findall("\{\s*(.*?)\s*\}", expression)
 
         if tokens:
             parsed.update(cls._parameters(tokens))
@@ -59,15 +54,12 @@ class Parser(object):
         options = []
 
         for token in tokens:
-            if not token.startswith('--'):
+            if not token.startswith("--"):
                 arguments.append(cls._parse_argument(token))
             else:
                 options.append(cls._parse_option(token))
 
-        return {
-            'arguments': arguments,
-            'options': options
-        }
+        return {"arguments": arguments, "options": options}
 
     @classmethod
     def _parse_argument(cls, token):
@@ -82,49 +74,39 @@ class Parser(object):
         description = None
         validator = None
 
-        if ' : ' in token:
-            token, description = tuple(token.split(' : ', 2))
+        if " : " in token:
+            token, description = tuple(token.split(" : ", 2))
 
             token = token.strip()
 
             description = description.strip()
 
         # Checking validator:
-        matches = re.match('(.*)\((.*?)\)', token)
+        matches = re.match("(.*)\((.*?)\)", token)
         if matches:
             token = matches.group(1).strip()
             validator = matches.group(2).strip()
 
-        if token.endswith('?*'):
+        if token.endswith("?*"):
+            return InputArgument(token.rstrip("?*"), InputArgument.IS_LIST, description)
+        elif token.endswith("*"):
             return InputArgument(
-                token.rstrip('?*'),
-                InputArgument.IS_LIST,
-                description
-            )
-        elif token.endswith('*'):
-            return InputArgument(
-                token.rstrip('*'),
+                token.rstrip("*"),
                 InputArgument.IS_LIST | InputArgument.REQUIRED,
-                description
+                description,
             )
-        elif token.endswith('?'):
-            return InputArgument(
-                token.rstrip('?'),
-                InputArgument.OPTIONAL,
-                description
-            )
+        elif token.endswith("?"):
+            return InputArgument(token.rstrip("?"), InputArgument.OPTIONAL, description)
 
-        matches = re.match('(.+)\=(.+)', token)
+        matches = re.match("(.+)\=(.+)", token)
         if matches:
             return InputArgument(
-                matches.group(1),
-                InputArgument.OPTIONAL,
-                description,
-                matches.group(2)
+                matches.group(1), InputArgument.OPTIONAL, description, matches.group(2)
             )
 
-        return InputArgument(token, InputArgument.REQUIRED, description,
-                             validator=validator)
+        return InputArgument(
+            token, InputArgument.REQUIRED, description, validator=validator
+        )
 
     @classmethod
     def _parse_option(cls, token):
@@ -139,57 +121,58 @@ class Parser(object):
         description = None
         validator = None
 
-        if ' : ' in token:
-            token, description = tuple(token.split(' : ', 2))
+        if " : " in token:
+            token, description = tuple(token.split(" : ", 2))
 
             token = token.strip()
 
             description = description.strip()
 
         # Checking validator:
-        matches = re.match('(.*)\((.*?)\)', token)
+        matches = re.match("(.*)\((.*?)\)", token)
         if matches:
             token = matches.group(1).strip()
             validator = matches.group(2).strip()
 
         shortcut = None
 
-        matches = re.split('\s*\|\s*', token, 2)
+        matches = re.split("\s*\|\s*", token, 2)
 
         if len(matches) > 1:
-            shortcut = matches[0].lstrip('-')
+            shortcut = matches[0].lstrip("-")
             token = matches[1]
 
         default = None
         mode = InputOption.VALUE_NONE
 
-        if token.endswith('=*'):
+        if token.endswith("=*"):
             mode = InputOption.VALUE_REQUIRED | InputOption.VALUE_IS_LIST
-            token = token.rstrip('=*')
-        elif token.endswith('=?*'):
+            token = token.rstrip("=*")
+        elif token.endswith("=?*"):
             mode = InputOption.VALUE_OPTIONAL | InputOption.VALUE_IS_LIST
-            token = token.rstrip('=?*')
+            token = token.rstrip("=?*")
         elif token.endswith("=?"):
             mode = InputOption.VALUE_OPTIONAL
-            token = token.rstrip('=?')
-        elif token.endswith('='):
+            token = token.rstrip("=?")
+        elif token.endswith("="):
             mode = InputOption.VALUE_REQUIRED
-            token = token.rstrip('=')
+            token = token.rstrip("=")
 
-        matches = re.match('(.+)(\=[\?\*]*)(.+)', token)
+        matches = re.match("(.+)(\=[\?\*]*)(.+)", token)
         if matches:
             token = matches.group(1)
             operator = matches.group(2)
             default = matches.group(3)
 
-            if operator == '=*':
+            if operator == "=*":
                 mode = InputOption.VALUE_REQUIRED | InputOption.VALUE_IS_LIST
-            elif operator == '=?*':
+            elif operator == "=?*":
                 mode = InputOption.VALUE_OPTIONAL | InputOption.VALUE_IS_LIST
-            elif operator == '=?':
+            elif operator == "=?":
                 mode = InputOption.VALUE_OPTIONAL
-            elif operator == '=':
+            elif operator == "=":
                 mode = InputOption.VALUE_REQUIRED
 
-        return InputOption(token, shortcut, mode, description, default,
-                           validator=validator)
+        return InputOption(
+            token, shortcut, mode, description, default, validator=validator
+        )

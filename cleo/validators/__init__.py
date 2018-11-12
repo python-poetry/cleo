@@ -18,16 +18,16 @@ class ValidationError(ValueError):
 
     def to_s(self):
         if self.value != self._UNDEFINED:
-            return 'Invalid value %s (%s): %s'\
-                   % (repr(self.value),
-                      self.value.__class__.__name__,
-                      self.msg)
+            return "Invalid value %s (%s): %s" % (
+                repr(self.value),
+                self.value.__class__.__name__,
+                self.msg,
+            )
 
         return self.msg
 
 
 class Validator(object):
-
     def validate(self, value):
         """Check if ``value`` is valid.
 
@@ -60,11 +60,10 @@ class Validator(object):
     @property
     def humanized_name(self):
         """Return a human-friendly string name for this validator."""
-        return getattr(self, 'name', self.__class__.__name__)
+        return getattr(self, "name", self.__class__.__name__)
 
 
 class ValidatorSet(object):
-
     def __init__(self, validators=None):
         self.validators = {}
 
@@ -74,9 +73,9 @@ class ValidatorSet(object):
 
     def register(self, validator):
         if not issubclass(validator, Validator):
-            raise Exception('A validator must be a subclass of the Validator class')
+            raise Exception("A validator must be a subclass of the Validator class")
 
-        if hasattr(validator, 'name'):
+        if hasattr(validator, "name"):
             if isinstance(validator.name, (list, tuple)):
                 for name in validator.name:
                     self._register_validator(name, validator)
@@ -90,7 +89,7 @@ class ValidatorSet(object):
         if isinstance(validator, basestring):
             if validator in self.validators:
                 return self.validators[validator]()
-            elif validator == 'string':
+            elif validator == "string":
                 return None
             else:
                 raise Exception('Unable to find a validator with name "%s"' % validator)
@@ -111,7 +110,9 @@ class ValidatorSet(object):
 
     def _register_validator(self, name, validator):
         if validator.name in self.validators:
-            raise Exception('A validator with name "%s" is already registered' % validator.name)
+            raise Exception(
+                'A validator with name "%s" is already registered' % validator.name
+            )
 
         self.validators[name] = validator
 
@@ -123,6 +124,7 @@ class Callable(Validator):
     Attributes:
         - callable: The callable
     """
+
     def __init__(self, callable_):
         """
         :param callable_: The callable
@@ -147,7 +149,7 @@ class Enum(Validator):
         - values: The collection of valid values.
     """
 
-    name = ('enum', 'choice')
+    name = ("enum", "choice")
 
     values = ()
 
@@ -194,15 +196,15 @@ class Boolean(Validator):
     and their negatives or native boolean types (True, False).
     """
 
-    name = 'boolean'
+    name = "boolean"
 
     def validate(self, value):
         if isinstance(value, str):
             value_ = value.lower()
 
-            if value_ in ['1', 'true', 'yes', 'y', 'on']:
+            if value_ in ["1", "true", "yes", "y", "on"]:
                 return True
-            if value_ in ['0', 'false', 'no', 'n', 'off']:
+            if value_ in ["0", "false", "no", "n", "off"]:
                 return False
 
             self.error(value)
@@ -216,7 +218,7 @@ class Integer(Validator):
     """A validator that accepts integers
     """
 
-    name = 'integer'
+    name = "integer"
 
     def validate(self, value):
         try:
@@ -229,7 +231,7 @@ class Float(Validator):
     """A validator that accepts floats
     """
 
-    name = 'float'
+    name = "float"
 
     def validate(self, value):
         try:
@@ -245,11 +247,16 @@ class Range(Validator):
     like integers, floats or string.
     """
 
-    name = 'range'
+    name = "range"
 
-    def __init__(self, min=None, max=None,
-                 include_min=True, include_max=True,
-                 validator=Integer()):
+    def __init__(
+        self,
+        min=None,
+        max=None,
+        include_min=True,
+        include_max=True,
+        validator=Integer(),
+    ):
         self.min = min
         self.max = max
         self.include_min = include_min
@@ -261,34 +268,26 @@ class Range(Validator):
             value = self.validator.validate(value)
 
         if self.min is not None:
-            if value < self.min \
-                or (value == self.min
-                    and self.include_min is False):
+            if value < self.min or (value == self.min and self.include_min is False):
                 self.error(value)
 
         if self.max is not None:
-            if value > self.max \
-                or (value == self.max
-                    and self.include_max is False):
+            if value > self.max or (value == self.max and self.include_max is False):
                 self.error(value)
 
         return value
 
     @property
     def humanized_name(self):
-        left_boundary = '[' if self.include_min else ']'
-        right_boundary = ']' if self.include_max else '['
+        left_boundary = "[" if self.include_min else "]"
+        right_boundary = "]" if self.include_max else "["
 
-        return "in range %s%s, %s%s"\
-               % (left_boundary,
-                  repr(self.min), repr(self.max),
-                  right_boundary)
+        return "in range %s%s, %s%s" % (
+            left_boundary,
+            repr(self.min),
+            repr(self.max),
+            right_boundary,
+        )
 
 
-VALIDATORS = ValidatorSet([
-    Boolean,
-    Enum,
-    Integer,
-    Float,
-    Range
-])
+VALIDATORS = ValidatorSet([Boolean, Enum, Integer, Float, Range])

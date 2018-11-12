@@ -9,12 +9,12 @@ from .list_input import ListInput
 from .api import argument, option
 
 __all__ = [
-    'argument',
-    'option',
-    'ArgvInput',
-    'Input',
-    'InputArgument',
-    'InputDefinition',
-    'InputOption',
-    'ListInput'
+    "argument",
+    "option",
+    "ArgvInput",
+    "Input",
+    "InputArgument",
+    "InputDefinition",
+    "InputOption",
+    "ListInput",
 ]

@@ -15,17 +15,17 @@ class ProgressIndicator(object):
 
     formatters = None
     formats = {
-        'normal': ' %indicator% %message%',
-        'normal_no_ansi': ' %message%',
-
-        'verbose': ' %indicator% %message% (%elapsed:6s%)',
-        'verbose_no_ansi': ' %message% (%elapsed:6s%)',
-
-        'very_verbose': ' %indicator% %message% (%elapsed:6s%)',
-        'very_verbose_no_ansi': ' %message% (%elapsed:6s%)'
+        "normal": " %indicator% %message%",
+        "normal_no_ansi": " %message%",
+        "verbose": " %indicator% %message% (%elapsed:6s%)",
+        "verbose_no_ansi": " %message% (%elapsed:6s%)",
+        "very_verbose": " %indicator% %message% (%elapsed:6s%)",
+        "very_verbose_no_ansi": " %message% (%elapsed:6s%)",
     }
 
-    def __init__(self, output, fmt=None, indicator_change_interval=100, indicator_values=None):
+    def __init__(
+        self, output, fmt=None, indicator_change_interval=100, indicator_values=None
+    ):
         """
         Constructor.
 
@@ -47,10 +47,10 @@ class ProgressIndicator(object):
             fmt = self._determine_best_format()
 
         if indicator_values is None:
-            indicator_values = ['-', '\\', '|', '/']
+            indicator_values = ["-", "\\", "|", "/"]
 
         if len(indicator_values) < 2:
-            raise CleoException('Must have at least 2 indicator value characters.')
+            raise CleoException("Must have at least 2 indicator value characters.")
 
         self.format = self.formats[fmt]
         self.indicator_change_interval = indicator_change_interval
@@ -88,7 +88,9 @@ class ProgressIndicator(object):
 
         :rtype: str
         """
-        return self.indicator_values[self._indicator_current % len(self.indicator_values)]
+        return self.indicator_values[
+            self._indicator_current % len(self.indicator_values)
+        ]
 
     def start(self, message):
         """
@@ -97,13 +99,15 @@ class ProgressIndicator(object):
         :type message: str
         """
         if self._started:
-            raise CleoException('Progress indicator already started.')
+            raise CleoException("Progress indicator already started.")
 
         self._message = message
         self._started = True
         self._last_message_length = 0
         self.start_time = time.time()
-        self._indicator_update_time = self._get_current_time_in_milliseconds() + self.indicator_change_interval
+        self._indicator_update_time = (
+            self._get_current_time_in_milliseconds() + self.indicator_change_interval
+        )
         self._indicator_current = 0
 
         self._display()
@@ -113,7 +117,7 @@ class ProgressIndicator(object):
         Advance the indicator.
         """
         if not self._started:
-            raise CleoException('Progress indicator has not yet been started.')
+            raise CleoException("Progress indicator has not yet been started.")
 
         if not self._output.is_decorated():
             return
@@ -134,7 +138,7 @@ class ProgressIndicator(object):
         Finish the indicator with message.
         """
         if not self._started:
-            raise CleoException('Progress indicator has not yet been started.')
+            raise CleoException("Progress indicator has not yet been started.")
 
         if self._auto_thread:
             self._auto_running.set()
@@ -146,7 +150,7 @@ class ProgressIndicator(object):
             self._indicator_current = 0
 
         self._display()
-        self._output.writeln('')
+        self._output.writeln("")
         self._started = False
 
     @contextmanager
@@ -163,7 +167,7 @@ class ProgressIndicator(object):
         try:
             yield self
         except (Exception, KeyboardInterrupt):
-            self._output.writeln('')
+            self._output.writeln("")
 
             self._auto_running.set()
             self._auto_thread.join()
@@ -182,11 +186,15 @@ class ProgressIndicator(object):
         if self._output.get_verbosity() == Output.VERBOSITY_QUIET:
             return
 
-        self._overwrite(re.sub('(?i)%([a-z\-_]+)(?:\:([^%]+))?%', self._overwrite_callback, self.format))
+        self._overwrite(
+            re.sub(
+                "(?i)%([a-z\-_]+)(?:\:([^%]+))?%", self._overwrite_callback, self.format
+            )
+        )
 
     def _overwrite_callback(self, matches):
-        if hasattr(self, '_formatter_%s' % matches.group(1)):
-            text = str(getattr(self, '_formatter_%s' % matches.group(1))())
+        if hasattr(self, "_formatter_%s" % matches.group(1)):
+            text = str(getattr(self, "_formatter_%s" % matches.group(1))())
         else:
             text = matches.group(0)
 
@@ -200,7 +208,7 @@ class ProgressIndicator(object):
         :type message: str
         """
         if self._output.is_decorated():
-            self._output.write('\x0D\x1B[2K')
+            self._output.write("\x0D\x1B[2K")
             self._output.write(message)
         else:
             self._output.writeln(message)
@@ -211,19 +219,19 @@ class ProgressIndicator(object):
 
         if verbosity == Output.VERBOSITY_VERBOSE:
             if decorated:
-                return 'verbose'
+                return "verbose"
 
-            return 'verbose_no_ansi'
+            return "verbose_no_ansi"
         elif verbosity in [Output.VERBOSITY_VERY_VERBOSE, Output.VERBOSITY_DEBUG]:
             if decorated:
-                return 'very_verbose'
+                return "very_verbose"
 
-            return 'very_verbose_no_ansi'
+            return "very_verbose_no_ansi"
 
         if decorated:
-            return 'normal'
+            return "normal"
 
-        return 'normal_no_ansi'
+        return "normal_no_ansi"
 
     def _get_current_time_in_milliseconds(self):
         return round(time.time() * 1000)

@@ -15,14 +15,17 @@ from .table_style import TableStyle
 from .descriptor_helper import DescriptorHelper
 
 __all__ = [
-    'DescriptorHelper',
-    'QuestionHelper',
-    'FormatterHelper',
-    'Helper',
-    'HelperSet',
-    'ProgressHelper',
-    'ProgressBar', 'ProgressIndicator',
-    'TableHelper',
-    'Table',
-    'TableCell', 'TableSeparator', 'TableStyle'
+    "DescriptorHelper",
+    "QuestionHelper",
+    "FormatterHelper",
+    "Helper",
+    "HelperSet",
+    "ProgressHelper",
+    "ProgressBar",
+    "ProgressIndicator",
+    "TableHelper",
+    "Table",
+    "TableCell",
+    "TableSeparator",
+    "TableStyle",
 ]

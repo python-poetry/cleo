@@ -16,19 +16,19 @@ from cleo._compat import decode
 class TableTest(CleoTestCase):
 
     books = [
-        ['99921-58-10-7', 'Divine Comedy', 'Dante Alighieri'],
-        ['9971-5-0210-0', 'A Tale of Two Cities', 'Charles Dickens'],
-        ['960-425-059-0', 'The Lord of the Rings', 'J. R. R. Tolkien'],
-        ['80-902734-1-6', 'And Then There Were None', 'Agatha Christie'],
-        ['9782070409341', 'Le Père Goriot', 'Honoré de Balzac']
+        ["99921-58-10-7", "Divine Comedy", "Dante Alighieri"],
+        ["9971-5-0210-0", "A Tale of Two Cities", "Charles Dickens"],
+        ["960-425-059-0", "The Lord of the Rings", "J. R. R. Tolkien"],
+        ["80-902734-1-6", "And Then There Were None", "Agatha Christie"],
+        ["9782070409341", "Le Père Goriot", "Honoré de Balzac"],
     ]
 
     _render_data = [
         (
-            ['ISBN', 'Title', 'Author'],
+            ["ISBN", "Title", "Author"],
             books,
-            'default',
-'''+---------------+--------------------------+------------------+
+            "default",
+            """+---------------+--------------------------+------------------+
 | ISBN          | Title                    | Author           |
 +---------------+--------------------------+------------------+
 | 99921-58-10-7 | Divine Comedy            | Dante Alighieri  |
@@ -37,25 +37,25 @@ class TableTest(CleoTestCase):
 | 80-902734-1-6 | And Then There Were None | Agatha Christie  |
 | 9782070409341 | Le Père Goriot           | Honoré de Balzac |
 +---------------+--------------------------+------------------+
-'''
+""",
         ),
         (
-            ['ISBN', 'Title', 'Author'],
+            ["ISBN", "Title", "Author"],
             books,
-            'compact',
-''' ISBN          Title                    Author           
+            "compact",
+            """ ISBN          Title                    Author           
  99921-58-10-7 Divine Comedy            Dante Alighieri  
  9971-5-0210-0 A Tale of Two Cities     Charles Dickens  
  960-425-059-0 The Lord of the Rings    J. R. R. Tolkien 
  80-902734-1-6 And Then There Were None Agatha Christie  
  9782070409341 Le Père Goriot           Honoré de Balzac 
-'''
+""",
         ),
         (
-            ['ISBN', 'Title', 'Author'],
+            ["ISBN", "Title", "Author"],
             books,
-            'borderless',
-''' =============== ========================== ================== 
+            "borderless",
+            """ =============== ========================== ================== 
   ISBN            Title                      Author            
  =============== ========================== ================== 
   99921-58-10-7   Divine Comedy              Dante Alighieri   
@@ -64,18 +64,18 @@ class TableTest(CleoTestCase):
   80-902734-1-6   And Then There Were None   Agatha Christie   
   9782070409341   Le Père Goriot             Honoré de Balzac  
  =============== ========================== ================== 
-'''
+""",
         ),
         (
-            ['ISBN', 'Title'],
+            ["ISBN", "Title"],
             [
-                ['99921-58-10-7', 'Divine Comedy', 'Dante Alighieri'],
-                ['9971-5-0210-0'],
-                ['960-425-059-0', 'The Lord of the Rings', 'J. R. R. Tolkien'],
-                ['80-902734-1-6', 'And Then There Were None', 'Agatha Christie']
+                ["99921-58-10-7", "Divine Comedy", "Dante Alighieri"],
+                ["9971-5-0210-0"],
+                ["960-425-059-0", "The Lord of the Rings", "J. R. R. Tolkien"],
+                ["80-902734-1-6", "And Then There Were None", "Agatha Christie"],
             ],
-            'default',
-'''+---------------+--------------------------+------------------+
+            "default",
+            """+---------------+--------------------------+------------------+
 | ISBN          | Title                    |                  |
 +---------------+--------------------------+------------------+
 | 99921-58-10-7 | Divine Comedy            | Dante Alighieri  |
@@ -83,50 +83,53 @@ class TableTest(CleoTestCase):
 | 960-425-059-0 | The Lord of the Rings    | J. R. R. Tolkien |
 | 80-902734-1-6 | And Then There Were None | Agatha Christie  |
 +---------------+--------------------------+------------------+
-'''
+""",
         ),
         (
             [],
             [
-                ['99921-58-10-7', 'Divine Comedy', 'Dante Alighieri'],
-                ['9971-5-0210-0'],
-                ['960-425-059-0', 'The Lord of the Rings', 'J. R. R. Tolkien'],
-                ['80-902734-1-6', 'And Then There Were None', 'Agatha Christie']
+                ["99921-58-10-7", "Divine Comedy", "Dante Alighieri"],
+                ["9971-5-0210-0"],
+                ["960-425-059-0", "The Lord of the Rings", "J. R. R. Tolkien"],
+                ["80-902734-1-6", "And Then There Were None", "Agatha Christie"],
             ],
-            'default',
-'''+---------------+--------------------------+------------------+
+            "default",
+            """+---------------+--------------------------+------------------+
 | 99921-58-10-7 | Divine Comedy            | Dante Alighieri  |
 | 9971-5-0210-0 |                          |                  |
 | 960-425-059-0 | The Lord of the Rings    | J. R. R. Tolkien |
 | 80-902734-1-6 | And Then There Were None | Agatha Christie  |
 +---------------+--------------------------+------------------+
-'''
+""",
         ),
         (
-            ['ISBN', 'Title'],
+            ["ISBN", "Title"],
             [],
-            'default',
-'''+------+-------+
+            "default",
+            """+------+-------+
 | ISBN | Title |
 +------+-------+
-'''
+""",
         ),
+        ([], [], "default", ""),
         (
-            [],
-            [],
-            'default',
-            ''
-        ),
-        (
-            ['ISBN', 'Title', 'Author'],
+            ["ISBN", "Title", "Author"],
             [
-                ['99921-58-10-7', "Divine\nComedy", 'Dante Alighieri'],
-                ['9971-5-0210-2', "Harry Potter\nand the Chamber of Secrets", "Rowling\nJoanne K."],
-                ['9971-5-0210-2', "Harry Potter\nand the Chamber of Secrets", "Rowling\nJoanne K."],
-                ['960-425-059-0', 'The Lord of the Rings', "J. R. R.\nTolkien"]
+                ["99921-58-10-7", "Divine\nComedy", "Dante Alighieri"],
+                [
+                    "9971-5-0210-2",
+                    "Harry Potter\nand the Chamber of Secrets",
+                    "Rowling\nJoanne K.",
+                ],
+                [
+                    "9971-5-0210-2",
+                    "Harry Potter\nand the Chamber of Secrets",
+                    "Rowling\nJoanne K.",
+                ],
+                ["960-425-059-0", "The Lord of the Rings", "J. R. R.\nTolkien"],
             ],
-            'default',
-'''+---------------+----------------------------+-----------------+
+            "default",
+            """+---------------+----------------------------+-----------------+
 | ISBN          | Title                      | Author          |
 +---------------+----------------------------+-----------------+
 | 99921-58-10-7 | Divine                     | Dante Alighieri |
@@ -138,36 +141,40 @@ class TableTest(CleoTestCase):
 | 960-425-059-0 | The Lord of the Rings      | J. R. R.        |
 |               |                            | Tolkien         |
 +---------------+----------------------------+-----------------+
-'''
+""",
         ),
         (
-            ['ISBN', 'Title', 'Author'],
+            ["ISBN", "Title", "Author"],
             [
-                ['<info>99921-58-10-7</info>', '<error>Divine Comedy</error>', '<fg=blue;bg=white>Dante Alighieri</fg=blue;bg=white>'],
-                ['9971-5-0210-0', 'A Tale of Two Cities', '<info>Charles Dickens</>'],
+                [
+                    "<info>99921-58-10-7</info>",
+                    "<error>Divine Comedy</error>",
+                    "<fg=blue;bg=white>Dante Alighieri</fg=blue;bg=white>",
+                ],
+                ["9971-5-0210-0", "A Tale of Two Cities", "<info>Charles Dickens</>"],
             ],
-            'default',
-'''+---------------+----------------------+-----------------+
+            "default",
+            """+---------------+----------------------+-----------------+
 | ISBN          | Title                | Author          |
 +---------------+----------------------+-----------------+
 | 99921-58-10-7 | Divine Comedy        | Dante Alighieri |
 | 9971-5-0210-0 | A Tale of Two Cities | Charles Dickens |
 +---------------+----------------------+-----------------+
-'''
+""",
         ),
         (
-            ['ISBN', 'Title', 'Author'],
+            ["ISBN", "Title", "Author"],
             [
-                ['99921-58-10-7', 'Divine Comedy', 'Dante Alighieri'],
+                ["99921-58-10-7", "Divine Comedy", "Dante Alighieri"],
                 TableSeparator(),
-                [TableCell('Divine Comedy(Dante Alighieri)', colspan=3)],
+                [TableCell("Divine Comedy(Dante Alighieri)", colspan=3)],
                 TableSeparator(),
-                [TableCell('Arduino: A Quick-Start Guide', colspan=2), 'Mark Schmidt'],
+                [TableCell("Arduino: A Quick-Start Guide", colspan=2), "Mark Schmidt"],
                 TableSeparator(),
-                ['9971-5-0210-0', TableCell('A Tale of \nTwo Cities', colspan=2)]
+                ["9971-5-0210-0", TableCell("A Tale of \nTwo Cities", colspan=2)],
             ],
-            'default',
-'''+----------------+---------------+-----------------+
+            "default",
+            """+----------------+---------------+-----------------+
 | ISBN           | Title         | Author          |
 +----------------+---------------+-----------------+
 | 99921-58-10-7  | Divine Comedy | Dante Alighieri |
@@ -179,20 +186,28 @@ class TableTest(CleoTestCase):
 | 9971-5-0210-0  | A Tale of                       |
 |                | Two Cities                      |
 +----------------+---------------+-----------------+
-'''
+""",
         ),
         (
-            ['ISBN', 'Title', 'Author'],
+            ["ISBN", "Title", "Author"],
             [
-                [TableCell('9971-5-0210-0', rowspan=3), 'Divine Comedy', 'Dante Alighieri'],
-                ['A Tale of Two Cities', 'Charles Dickens'],
+                [
+                    TableCell("9971-5-0210-0", rowspan=3),
+                    "Divine Comedy",
+                    "Dante Alighieri",
+                ],
+                ["A Tale of Two Cities", "Charles Dickens"],
                 ["The Lord of \nthe Rings", "J. R. \nR. Tolkien"],
                 TableSeparator(),
-                ['80-902734-1-6', TableCell("And Then \nThere \nWere None", rowspan=3), 'Agatha Christie'],
-                ['80-902734-1-7', 'Test']
+                [
+                    "80-902734-1-6",
+                    TableCell("And Then \nThere \nWere None", rowspan=3),
+                    "Agatha Christie",
+                ],
+                ["80-902734-1-7", "Test"],
             ],
-            'default',
-'''+---------------+----------------------+-----------------+
+            "default",
+            """+---------------+----------------------+-----------------+
 | ISBN          | Title                | Author          |
 +---------------+----------------------+-----------------+
 | 9971-5-0210-0 | Divine Comedy        | Dante Alighieri |
@@ -204,20 +219,20 @@ class TableTest(CleoTestCase):
 | 80-902734-1-7 | There                | Test            |
 |               | Were None            |                 |
 +---------------+----------------------+-----------------+
-'''
+""",
         ),
         (
-            ['ISBN', 'Title', 'Author'],
+            ["ISBN", "Title", "Author"],
             [
-                [TableCell('9971-5-0210-0', rowspan=2, colspan=2), 'Dante Alighieri'],
-                ['Charles Dickens'],
+                [TableCell("9971-5-0210-0", rowspan=2, colspan=2), "Dante Alighieri"],
+                ["Charles Dickens"],
                 TableSeparator(),
-                ['Dante Alighieri', TableCell('9971-5-0210-0', rowspan=3, colspan=2)],
-                ['J. R. R. Tolkien'],
-                ['J. R. R']
+                ["Dante Alighieri", TableCell("9971-5-0210-0", rowspan=3, colspan=2)],
+                ["J. R. R. Tolkien"],
+                ["J. R. R"],
             ],
-            'default',
-'''+------------------+--------+-----------------+
+            "default",
+            """+------------------+--------+-----------------+
 | ISBN             | Title  | Author          |
 +------------------+--------+-----------------+
 | 9971-5-0210-0             | Dante Alighieri |
@@ -227,24 +242,30 @@ class TableTest(CleoTestCase):
 | J. R. R. Tolkien |                          |
 | J. R. R          |                          |
 +------------------+--------+-----------------+
-'''
+""",
         ),
         (
-            ['ISBN', 'Title', 'Author'],
+            ["ISBN", "Title", "Author"],
             [
-                [TableCell("9971\n-5-\n021\n0-0", rowspan=2, colspan=2), 'Dante Alighieri'],
-                ['Charles Dickens'],
+                [
+                    TableCell("9971\n-5-\n021\n0-0", rowspan=2, colspan=2),
+                    "Dante Alighieri",
+                ],
+                ["Charles Dickens"],
                 TableSeparator(),
-                ['Dante Alighieri', TableCell("9971\n-5-\n021\n0-0", rowspan=2, colspan=2)],
-                ['Charles Dickens'],
+                [
+                    "Dante Alighieri",
+                    TableCell("9971\n-5-\n021\n0-0", rowspan=2, colspan=2),
+                ],
+                ["Charles Dickens"],
                 TableSeparator(),
                 [
                     TableCell("9971\n-5-\n021\n0-0", rowspan=2, colspan=2),
-                    TableCell("Dante \nAlighieri", rowspan=2, colspan=1)
-                ]
+                    TableCell("Dante \nAlighieri", rowspan=2, colspan=1),
+                ],
             ],
-            'default',
-'''+-----------------+-------+-----------------+
+            "default",
+            """+-----------------+-------+-----------------+
 | ISBN            | Title | Author          |
 +-----------------+-------+-----------------+
 | 9971                    | Dante Alighieri |
@@ -262,18 +283,24 @@ class TableTest(CleoTestCase):
 | 021                     |                 |
 | 0-0                     |                 |
 +-----------------+-------+-----------------+
-'''
+""",
         ),
         (
-            ['ISBN', 'Title', 'Author'],
+            ["ISBN", "Title", "Author"],
             [
-                [TableCell("9971\n-5-\n021\n0-0", rowspan=2, colspan=2), 'Dante Alighieri'],
-                ['Charles Dickens'],
-                ['Dante Alighieri', TableCell("9971\n-5-\n021\n0-0", rowspan=2, colspan=2)],
-                ['Charles Dickens']
+                [
+                    TableCell("9971\n-5-\n021\n0-0", rowspan=2, colspan=2),
+                    "Dante Alighieri",
+                ],
+                ["Charles Dickens"],
+                [
+                    "Dante Alighieri",
+                    TableCell("9971\n-5-\n021\n0-0", rowspan=2, colspan=2),
+                ],
+                ["Charles Dickens"],
             ],
-            'default',
-'''+-----------------+-------+-----------------+
+            "default",
+            """+-----------------+-------+-----------------+
 | ISBN            | Title | Author          |
 +-----------------+-------+-----------------+
 | 9971                    | Dante Alighieri |
@@ -285,55 +312,52 @@ class TableTest(CleoTestCase):
 |                 | 021                     |
 |                 | 0-0                     |
 +-----------------+-------+-----------------+
-'''
+""",
         ),
         (
-            ['ISBN', 'Author'],
+            ["ISBN", "Author"],
             [
-                [TableCell('9971-5-0210-0', rowspan=3, colspan=1), 'Dante Alighieri'],
+                [TableCell("9971-5-0210-0", rowspan=3, colspan=1), "Dante Alighieri"],
                 [TableSeparator()],
-                ['Charles Dickens']
+                ["Charles Dickens"],
             ],
-            'default',
-'''+---------------+-----------------+
+            "default",
+            """+---------------+-----------------+
 | ISBN          | Author          |
 +---------------+-----------------+
 | 9971-5-0210-0 | Dante Alighieri |
 |               |-----------------|
 |               | Charles Dickens |
 +---------------+-----------------+
-'''
+""",
         ),
         (
-            [
-                [TableCell('Main title', colspan=3)],
-                ['ISBN', 'Title', 'Author']
-            ],
+            [[TableCell("Main title", colspan=3)], ["ISBN", "Title", "Author"]],
             [],
-            'default',
-'''+------+-------+--------+
+            "default",
+            """+------+-------+--------+
 | Main title            |
 +------+-------+--------+
 | ISBN | Title | Author |
 +------+-------+--------+
-'''
+""",
         ),
         (
             [],
             [
                 [
-                    TableCell('1', colspan=3),
-                    TableCell('2', colspan=2),
-                    TableCell('3', colspan=2),
-                    TableCell('4', colspan=2)
+                    TableCell("1", colspan=3),
+                    TableCell("2", colspan=2),
+                    TableCell("3", colspan=2),
+                    TableCell("4", colspan=2),
                 ]
             ],
-            'default',
-'''+--+--+--+--+--+--+--+--+--+
+            "default",
+            """+--+--+--+--+--+--+--+--+--+
 | 1      | 2   | 3   | 4   |
 +--+--+--+--+--+--+--+--+--+
-'''
-        )
+""",
+        ),
     ]
 
     @property
@@ -356,9 +380,7 @@ class TableTest(CleoTestCase):
 
             output = self.get_output_stream()
             table = Table(output)
-            table.set_headers(headers)\
-                .set_rows(rows)\
-                .set_style(layout)
+            table.set_headers(headers).set_rows(rows).set_style(layout)
 
             table.render()
 
@@ -373,9 +395,7 @@ class TableTest(CleoTestCase):
 
             output = self.get_output_stream()
             table = Table(output)
-            table.set_headers(headers)\
-                .add_rows(rows)\
-                .set_style(layout)
+            table.set_headers(headers).add_rows(rows).set_style(layout)
 
             table.render()
 
@@ -390,8 +410,7 @@ class TableTest(CleoTestCase):
 
             output = self.get_output_stream()
             table = Table(output)
-            table.set_headers(headers)\
-                .set_style(layout)
+            table.set_headers(headers).set_style(layout)
 
             for row in rows:
                 table.add_row(row)
@@ -402,25 +421,25 @@ class TableTest(CleoTestCase):
 
     def test_style(self):
         style = TableStyle()
-        style.set_horizontal_border_char('.')
-        style.set_vertical_border_char('.')
-        style.set_crossing_char('.')
+        style.set_horizontal_border_char(".")
+        style.set_vertical_border_char(".")
+        style.set_crossing_char(".")
 
-        Table.set_style_definition('dotfull', style)
+        Table.set_style_definition("dotfull", style)
         output = self.get_output_stream()
         table = Table(output)
-        table.set_headers(['Foo'])
-        table.set_rows([['Bar']])
-        table.set_style('dotfull')
+        table.set_headers(["Foo"])
+        table.set_rows([["Bar"]])
+        table.set_style("dotfull")
 
         table.render()
 
-        expected = '''.......
+        expected = """.......
 . Foo .
 .......
 . Bar .
 .......
-'''
+"""
 
         self.assertEqual(expected, self.get_output_content(output))
 
@@ -428,18 +447,14 @@ class TableTest(CleoTestCase):
         output = self.get_output_stream()
 
         table = Table(output)
-        table.set_headers(['Foo'])
-        table.set_rows([
-            ['Bar1'],
-            TableSeparator(),
-            ['Bar2'],
-            TableSeparator(),
-            ['Bar3']
-        ])
+        table.set_headers(["Foo"])
+        table.set_rows(
+            [["Bar1"], TableSeparator(), ["Bar2"], TableSeparator(), ["Bar3"]]
+        )
 
         table.render()
 
-        expected = '''+------+
+        expected = """+------+
 | Foo  |
 +------+
 | Bar1 |
@@ -448,7 +463,7 @@ class TableTest(CleoTestCase):
 +------+
 | Bar3 |
 +------+
-'''
+"""
 
         self.assertEqual(expected, self.get_output_content(output))
 
@@ -456,14 +471,12 @@ class TableTest(CleoTestCase):
         output = self.get_output_stream()
 
         table = Table(output)
-        table.set_rows([
-            [TableCell('foo', colspan=2)]
-        ])
+        table.set_rows([[TableCell("foo", colspan=2)]])
         table.render()
         table.render()
         table.render()
 
-        expected = '''+---+--+
+        expected = """+---+--+
 | foo  |
 +---+--+
 +---+--+
@@ -472,7 +485,7 @@ class TableTest(CleoTestCase):
 +---+--+
 | foo  |
 +---+--+
-'''
+"""
 
         self.assertEqual(expected, self.get_output_content(output))
 
@@ -480,25 +493,27 @@ class TableTest(CleoTestCase):
         output = self.get_output_stream()
 
         table = Table(output)
-        table.set_headers(['ISBN', 'Title', 'Author', 'Price'])
-        table.set_rows([
-            ['99921-58-10-7', 'Divine Comedy', 'Dante Alighieri', '9.95'],
-            ['9971-5-0210-0', 'A Tale of Two Cities', 'Charles Dickens', '139.25']
-        ])
+        table.set_headers(["ISBN", "Title", "Author", "Price"])
+        table.set_rows(
+            [
+                ["99921-58-10-7", "Divine Comedy", "Dante Alighieri", "9.95"],
+                ["9971-5-0210-0", "A Tale of Two Cities", "Charles Dickens", "139.25"],
+            ]
+        )
 
         style = TableStyle()
-        style.set_pad_type('left')
+        style.set_pad_type("left")
         table.set_column_style(3, style)
 
         table.render()
 
-        expected = '''+---------------+----------------------+-----------------+--------+
+        expected = """+---------------+----------------------+-----------------+--------+
 | ISBN          | Title                | Author          |  Price |
 +---------------+----------------------+-----------------+--------+
 | 99921-58-10-7 | Divine Comedy        | Dante Alighieri |   9.95 |
 | 9971-5-0210-0 | A Tale of Two Cities | Charles Dickens | 139.25 |
 +---------------+----------------------+-----------------+--------+
-'''
+"""
 
         self.assertEqual(expected, self.get_output_content(output))
 

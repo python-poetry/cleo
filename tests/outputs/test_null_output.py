@@ -6,7 +6,6 @@ from .. import CleoTestCase
 
 
 class NullOutputTest(CleoTestCase):
-
     def test_init(self):
         output = NullOutput()
 

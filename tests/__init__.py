@@ -13,14 +13,12 @@ else:
 
 
 class CleoTestCase(TestCase):
-
     def setUp(self):
         self.fixtures_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            'fixtures'
+            os.path.dirname(os.path.realpath(__file__)), "fixtures"
         )
-        os.environ['COLUMNS'] = '80'
-        os.environ['LINES'] = '24'
+        os.environ["COLUMNS"] = "80"
+        os.environ["LINES"] = "24"
 
     def assertRegex(self, *args, **kwargs):
         if PY3:

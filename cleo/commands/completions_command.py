@@ -26,7 +26,7 @@ class CompletionsCommand(Command):
         { --alias=* : Alias for the current command. } 
     """
 
-    SUPPORTED_SHELLS = ('bash', 'zsh', 'fish')
+    SUPPORTED_SHELLS = ("bash", "zsh", "fish")
 
     hidden = True
 
@@ -99,60 +99,62 @@ script. Consult your shells documentation for how to add such directives.
 """
 
     def handle(self):
-        shell = self.argument('shell')
+        shell = self.argument("shell")
         if not shell:
             shell = self.get_shell_type()
 
         if shell not in self.SUPPORTED_SHELLS:
             raise InvalidArgument(
-                '[shell] argument must be one of {}'
-                .format(', '.join(self.SUPPORTED_SHELLS))
+                "[shell] argument must be one of {}".format(
+                    ", ".join(self.SUPPORTED_SHELLS)
+                )
             )
 
         self.line(self.render(shell))
 
     def render(self, shell):
-        return getattr(self, 'render_{}'.format(shell))()
+        return getattr(self, "render_{}".format(shell))()
 
     def render_bash(self):
-        template = TEMPLATES['bash']
+        template = TEMPLATES["bash"]
 
         script_path = self._get_script_full_name()
         script_name = self._get_script_name()
-        aliases = [
-            script_name,
-            script_path
-        ]
-        aliases += self.option('alias')
+        aliases = [script_name, script_path]
+        aliases += self.option("alias")
 
         function = self._generate_function_name(script_name, script_path)
 
         description = self._get_json_description()
-        global_options = set([
-            '--' + o.get_name()
-            for o in self.get_application().get_definition().get_options()
-        ])
+        global_options = set(
+            [
+                "--" + o.get_name()
+                for o in self.get_application().get_definition().get_options()
+            ]
+        )
         commands = []
         options_descriptions = {}
         commands_options = {}
-        for command in description['commands']:
+        for command in description["commands"]:
             command_options = []
-            commands.append(command['name'])
+            commands.append(command["name"])
 
-            options = command['definition']['options']
+            options = command["definition"]["options"]
             for name in sorted(list(options.keys())):
                 option = options[name]
-                name = option['name']
-                description = option['description']
+                name = option["name"]
+                description = option["description"]
                 command_options.append(name)
                 options_descriptions[name] = description
 
-            commands_options[command['name']] = command_options
+            commands_options[command["name"]] = command_options
 
-        compdefs = '\n'.join([
-            'complete -o default -F {} {}'.format(function, alias)
-            for alias in aliases
-        ])
+        compdefs = "\n".join(
+            [
+                "complete -o default -F {} {}".format(function, alias)
+                for alias in aliases
+            ]
+        )
 
         commands = sorted(commands)
 
@@ -160,75 +162,73 @@ script. Consult your shells documentation for how to add such directives.
         for i, command in enumerate(commands):
             options = set(commands_options[command]).difference(global_options)
             options = sorted(options)
-            options = [
-                self._zsh_describe(opt, None).strip('"')
-                for opt in options
-            ]
+            options = [self._zsh_describe(opt, None).strip('"') for opt in options]
 
             desc = [
-                '            ({})'.format(command),
-                '            opts="${{opts}} {}"'.format(' '.join(options)),
-                '            ;;',
+                "            ({})".format(command),
+                '            opts="${{opts}} {}"'.format(" ".join(options)),
+                "            ;;",
             ]
 
             if i < len(commands) - 1:
-                desc.append('')
+                desc.append("")
 
-            command_list.append('\n'.join(desc))
+            command_list.append("\n".join(desc))
 
         output = template % {
-            'script_name': script_name,
-            'function': function,
-            'opts': ' '.join(sorted(global_options)),
-            'coms': ' '.join(commands),
-            'command_list': '\n'.join(command_list),
-            'compdefs': compdefs
+            "script_name": script_name,
+            "function": function,
+            "opts": " ".join(sorted(global_options)),
+            "coms": " ".join(commands),
+            "command_list": "\n".join(command_list),
+            "compdefs": compdefs,
         }
 
         return output
 
     def render_zsh(self):
-        template = TEMPLATES['zsh']
+        template = TEMPLATES["zsh"]
 
         script_path = self._get_script_full_name()
         script_name = self._get_script_name()
         aliases = [script_path]
-        aliases += self.option('alias')
+        aliases += self.option("alias")
 
         function = self._generate_function_name(script_name, script_path)
 
         description = self._get_json_description()
-        global_options = set([
-            '--' + o.get_name()
-            for o in self.get_application().get_definition().get_options()
-        ])
+        global_options = set(
+            [
+                "--" + o.get_name()
+                for o in self.get_application().get_definition().get_options()
+            ]
+        )
         commands_descriptions = []
         options_descriptions = {}
         commands_options_descriptions = {}
         commands_options = {}
-        for command in description['commands']:
+        for command in description["commands"]:
             command_options = []
-            commands_options_descriptions[command['name']] = {}
-            command_description = self._remove_decoration(command['description'])
+            commands_options_descriptions[command["name"]] = {}
+            command_description = self._remove_decoration(command["description"])
             commands_descriptions.append(
-                self._zsh_describe(command['name'], command_description)
+                self._zsh_describe(command["name"], command_description)
             )
 
-            options = command['definition']['options']
+            options = command["definition"]["options"]
             for name in sorted(list(options.keys())):
                 option = options[name]
-                name = option['name']
-                description = self._remove_decoration(option['description'])
+                name = option["name"]
+                description = self._remove_decoration(option["description"])
                 command_options.append(name)
                 options_descriptions[name] = description
-                commands_options_descriptions[command['name']][name] = description
+                commands_options_descriptions[command["name"]][name] = description
 
-            commands_options[command['name']] = command_options
+            commands_options[command["name"]] = command_options
 
-        compdefs = '\n'.join([
-            'compdef {} {}'.format(function, alias)
-            for alias in aliases
-        ])
+        compdefs = "\n".join(
+            ["compdef {} {}".format(function, alias) for alias in aliases]
+        )
 
         commands = sorted(list(commands_options.keys()))
         command_list = []
@@ -241,78 +241,79 @@ script. Consult your shells documentation for how to add such directives.
             ]
 
             desc = [
-                '            ({})'.format(command),
-                '            opts+=({})'.format(' '.join(options)),
-                '            ;;',
+                "            ({})".format(command),
+                "            opts+=({})".format(" ".join(options)),
+                "            ;;",
             ]
 
             if i < len(commands) - 1:
-                desc.append('')
+                desc.append("")
 
-            command_list.append('\n'.join(desc))
+            command_list.append("\n".join(desc))
 
         opts = []
         for opt in global_options:
-            opts.append(
-                self._zsh_describe(opt, options_descriptions[opt])
-            )
+            opts.append(self._zsh_describe(opt, options_descriptions[opt]))
 
         output = template % {
-            'script_name': script_name,
-            'function': function,
-            'opts': ' '.join(sorted(opts)),
-            'coms': ' '.join(sorted(commands_descriptions)),
-            'command_list': '\n'.join(command_list),
-            'compdefs': compdefs
+            "script_name": script_name,
+            "function": function,
+            "opts": " ".join(sorted(opts)),
+            "coms": " ".join(sorted(commands_descriptions)),
+            "command_list": "\n".join(command_list),
+            "compdefs": compdefs,
         }
 
         return output
 
     def render_fish(self):
-        template = TEMPLATES['fish']
+        template = TEMPLATES["fish"]
 
         script_path = self._get_script_full_name()
         script_name = self._get_script_name()
         aliases = [script_name]
-        aliases += self.option('alias')
+        aliases += self.option("alias")
 
         function = self._generate_function_name(script_name, script_path)
 
         description = self._get_json_description()
-        global_options = set([
-            '--' + o.get_name()
-            for o in self.get_application().get_definition().get_options()
-        ])
+        global_options = set(
+            [
+                "--" + o.get_name()
+                for o in self.get_application().get_definition().get_options()
+            ]
+        )
         commands_descriptions = {}
         options_descriptions = {}
         commands_options_descriptions = {}
         commands_options = {}
-        for command in description['commands']:
+        for command in description["commands"]:
             command_options = []
-            commands_options_descriptions[command['name']] = {}
-            commands_descriptions[command['name']] = self._remove_decoration(command['description'])
+            commands_options_descriptions[command["name"]] = {}
+            commands_descriptions[command["name"]] = self._remove_decoration(
+                command["description"]
+            )
 
-            options = command['definition']['options']
+            options = command["definition"]["options"]
             for name in sorted(list(options.keys())):
                 option = options[name]
-                name = option['name']
-                description = self._remove_decoration(option['description'])
+                name = option["name"]
+                description = self._remove_decoration(option["description"])
                 command_options.append(name)
                 options_descriptions[name] = description
-                commands_options_descriptions[command['name']][name] = description
+                commands_options_descriptions[command["name"]][name] = description
 
-            commands_options[command['name']] = command_options
+            commands_options[command["name"]] = command_options
 
         opts = []
         for opt in sorted(global_options):
             opts.append(
                 "complete -c {} -n '__fish{}_no_subcommand' "
-                "-l {} -d '{}'"
-                .format(
+                "-l {} -d '{}'".format(
                     script_name,
                     function,
                     opt[2:],
-                    options_descriptions[opt].replace("'", "\\'")
+                    options_descriptions[opt].replace("'", "\\'"),
                 )
             )
 
@@ -323,51 +324,49 @@ script. Consult your shells documentation for how to add such directives.
         for i, cmd in enumerate(cmds_names):
             cmds.append(
                 "complete -c {} -f -n '__fish{}_no_subcommand' "
-                "-a {} -d '{}'"
-                .format(
+                "-a {} -d '{}'".format(
                     script_name,
                     function,
                     cmd,
-                    commands_descriptions[cmd].replace("'", "\\'")
+                    commands_descriptions[cmd].replace("'", "\\'"),
                 )
             )
 
-            cmds_opts += ['# {}'.format(cmd)]
+            cmds_opts += ["# {}".format(cmd)]
             options = set(commands_options[cmd]).difference(global_options)
             options = sorted(options)
 
             for opt in options:
                 cmds_opts.append(
                     "complete -c {} -A -n '__fish_seen_subcommand_from {}' "
-                    "-l {} -d '{}'"
-                    .format(
+                    "-l {} -d '{}'".format(
                         script_name,
                         cmd,
                         opt[2:],
-                        commands_options_descriptions[cmd][opt].replace("'", "\\'")
+                        commands_options_descriptions[cmd][opt].replace("'", "\\'"),
                     )
                 )
 
             if i < len(cmds_names) - 1:
-                cmds_opts.append('')
+                cmds_opts.append("")
 
         output = template % {
-            'script_name': script_name,
-            'function': function,
-            'cmds_names': ' '.join(cmds_names),
-            'opts': '\n'.join(opts),
-            'cmds': '\n'.join(cmds),
-            'cmds_opts': '\n'.join(cmds_opts)
+            "script_name": script_name,
+            "function": function,
+            "cmds_names": " ".join(cmds_names),
+            "opts": "\n".join(opts),
+            "cmds": "\n".join(cmds),
+            "cmds_opts": "\n".join(cmds_opts),
         }
 
         return output
 
     def get_shell_type(self):
-        shell = os.getenv('SHELL')
+        shell = os.getenv("SHELL")
         if not shell:
             raise RuntimeError(
-                'Could not read SHELL environment variable. '
-                'Please specify your shell type by passing it as the first argument.'
+                "Could not read SHELL environment variable. "
+                "Please specify your shell type by passing it as the first argument."
             )
 
         return os.path.basename(shell)
@@ -375,37 +374,32 @@ script. Consult your shells documentation for how to add such directives.
     def _get_json_description(self):
         helper = DescriptorHelper()
         output = BufferedOutput()
-        helper.describe(
-            output,
-            self.get_application(),
-            format='json'
-        )
+        helper.describe(output, self.get_application(), format="json")
 
         return json.loads(output.fetch())
 
     def _generate_function_name(self, script_name, script_path):
-        return '_{}_{}_complete'.format(
+        return "_{}_{}_complete".format(
             self._sanitize_for_function_name(script_name),
-            hashlib.md5(encode(script_path)).hexdigest()[0:16]
+            hashlib.md5(encode(script_path)).hexdigest()[0:16],
         )
 
     def _sanitize_for_function_name(self, name):
-        name = name.replace('-', '_')
+        name = name.replace("-", "_")
 
-        return re.sub('[^A-Za-z0-9_]+', '', name)
+        return re.sub("[^A-Za-z0-9_]+", "", name)
 
     def _zsh_describe(self, value, description=None):
-        value = '"' + value.replace(':', '\\:')
+        value = '"' + value.replace(":", "\\:")
         if description:
-            description = re.sub(r'(["\'#&;`|*?~<>^()\[\]{}$\\\x0A\xFF])', r'\\\1', description)
-            value += ':{}'.format(subprocess.list2cmdline([description]).strip('"'))
+            description = re.sub(
+                r'(["\'#&;`|*?~<>^()\[\]{}$\\\x0A\xFF])', r"\\\1", description
+            )
+            value += ":{}".format(subprocess.list2cmdline([description]).strip('"'))
 
         value += '"'
 
         return value
 
     def _remove_decoration(self, text):
-        return re.sub(
-            '\033\[[^m]*m', '',
-            self.output.get_formatter().format(text)
-        )
+        return re.sub("\033\[[^m]*m", "", self.output.get_formatter().format(text))

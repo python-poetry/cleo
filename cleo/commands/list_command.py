@@ -37,7 +37,7 @@ It's also possible to get raw list of commands (useful for embedding command run
         helper.describe(
             self.output,
             self.get_application(),
-            format=self.option('format'),
-            raw_text=self.option('raw'),
-            namespace=self.argument('namespace')
+            format=self.option("format"),
+            raw_text=self.option("raw"),
+            namespace=self.argument("namespace"),
         )

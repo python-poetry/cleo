@@ -5,16 +5,14 @@ from .stream_output import StreamOutput
 
 
 class ConsoleOutput(StreamOutput):
-
-    def __init__(self, verbosity=StreamOutput.VERBOSITY_NORMAL,
-                 decorated=None, formatter=None):
+    def __init__(
+        self, verbosity=StreamOutput.VERBOSITY_NORMAL, decorated=None, formatter=None
+    ):
         output_stream = sys.stdout
 
-        super(ConsoleOutput, self).__init__(output_stream,
-                                            verbosity, decorated)
+        super(ConsoleOutput, self).__init__(output_stream, verbosity, decorated)
 
-        self.stderr = StreamOutput(sys.stderr,
-                                   verbosity, decorated, formatter)
+        self.stderr = StreamOutput(sys.stderr, verbosity, decorated, formatter)
 
     def set_decorated(self, decorated):
         super(ConsoleOutput, self).set_decorated(decorated)

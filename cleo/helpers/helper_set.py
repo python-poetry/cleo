@@ -2,7 +2,6 @@
 
 
 class HelperSet(object):
-
     def __init__(self, helpers=None):
         helpers = helpers or []
 

@@ -4,9 +4,9 @@ from .input_argument import InputArgument
 from .input_option import InputOption
 
 
-def argument(name, description='',
-             required=False, default=None, is_list=False,
-             validator=None):
+def argument(
+    name, description="", required=False, default=None, is_list=False, validator=None
+):
     """
     Helper function to create a new argument.
 
@@ -40,9 +40,16 @@ def argument(name, description='',
     return InputArgument(name, mode, description, default, validator)
 
 
-def option(name, shortcut=None, description='',
-           flag=True, value_required=None, is_list=False,
-           default=None, validator=None):
+def option(
+    name,
+    shortcut=None,
+    description="",
+    flag=True,
+    value_required=None,
+    is_list=False,
+    default=None,
+    validator=None,
+):
     """
     Helper function to create an option.
 
@@ -82,8 +89,4 @@ def option(name, shortcut=None, description='',
     if is_list:
         mode |= InputOption.VALUE_IS_LIST
 
-    return InputOption(
-        name, shortcut, mode, description,
-        default, validator
-    )
-
+    return InputOption(name, shortcut, mode, description, default, validator)

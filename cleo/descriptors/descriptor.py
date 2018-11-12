@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ..inputs import (
-    InputArgument, InputOption, InputDefinition
-)
+from ..inputs import InputArgument, InputOption, InputDefinition
 
 from ..commands import BaseCommand
 from ..exceptions import CleoException
@@ -41,7 +39,9 @@ class Descriptor(object):
         elif isinstance(obj, Application):
             self._describe_application(obj, **options)
         else:
-            raise CleoException('Object of type "%s" is not describable' % obj.__class__.__name__)
+            raise CleoException(
+                'Object of type "%s" is not describable' % obj.__class__.__name__
+            )
 
     def _write(self, content, decorated=False):
         """

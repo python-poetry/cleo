@@ -5,7 +5,6 @@ from cleo.descriptors import TextDescriptor
 
 
 class TextDescriptorTestCase(DescriptorTestCase):
-
     def test_describe_input_arguments(self):
         return self._test_describe_input_arguments()
 
@@ -25,4 +24,4 @@ class TextDescriptorTestCase(DescriptorTestCase):
         return TextDescriptor()
 
     def get_format(self):
-        return 'txt'
+        return "txt"

@@ -47,17 +47,17 @@ class ApplicationTester(object):
         if self._inputs:
             self._input.set_stream(self._create_stream(self._inputs))
 
-        if 'interactive' in options:
-            self._input.set_interactive(options['interactive'])
+        if "interactive" in options:
+            self._input.set_interactive(options["interactive"])
 
         self._output = StreamOutput(BytesIO())
-        if 'decorated' in options:
-            self._output.set_decorated(options['decorated'])
+        if "decorated" in options:
+            self._output.set_decorated(options["decorated"])
         else:
             self._output.set_decorated(False)
 
-        if 'verbosity' in options:
-            self._output.set_verbosity(options['verbosity'])
+        if "verbosity" in options:
+            self._output.set_verbosity(options["verbosity"])
 
         self._application.run(self._input, self._output)
 
@@ -70,10 +70,10 @@ class ApplicationTester(object):
         """
         self._output.get_stream().seek(0)
 
-        display = self._output.get_stream().read().decode('utf-8')
+        display = self._output.get_stream().read().decode("utf-8")
 
         if normalize:
-            display = display.replace(os.linesep, '\n')
+            display = display.replace(os.linesep, "\n")
 
         return display
 

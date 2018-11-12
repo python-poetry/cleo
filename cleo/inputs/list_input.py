@@ -10,6 +10,7 @@ class ListInput(Input):
     Usage:
     >>> input_ = ListInput([('name', 'foo'), ('--bar', 'foobar')])
     """
+
     def __init__(self, parameters, definition=None):
         """
         Constructor
@@ -39,7 +40,7 @@ class ListInput(Input):
                 key = item
                 value = item
 
-            if key and '-' == key[0]:
+            if key and "-" == key[0]:
                 continue
 
             return value
@@ -114,9 +115,9 @@ class ListInput(Input):
                 key = item
                 value = None
 
-            if key.startswith('--'):
+            if key.startswith("--"):
                 self.add_long_option(key[2:], value)
-            elif key[0] == '-':
+            elif key[0] == "-":
                 self.add_short_option(key[1:], value)
             else:
                 self.add_argument(key, value)
@@ -133,7 +134,9 @@ class ListInput(Input):
         if not self.definition.has_shortcut(shortcut):
             raise Exception('The "-%s" option does not exist.' % shortcut)
 
-        self.add_long_option(self.definition.get_option_for_shortcut(shortcut).get_name(), value)
+        self.add_long_option(
+            self.definition.get_option_for_shortcut(shortcut).get_name(), value
+        )
 
     def add_long_option(self, name, value):
         """

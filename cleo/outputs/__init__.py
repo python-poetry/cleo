@@ -7,9 +7,10 @@ from .stream_output import StreamOutput
 from .null_output import NullOutput
 
 __all__ = [
-    'BufferedOutput',
-    'ConsoleOutput',
-    'Output', 'OutputError',
-    'StreamOutput',
-    'NullOutput'
+    "BufferedOutput",
+    "ConsoleOutput",
+    "Output",
+    "OutputError",
+    "StreamOutput",
+    "NullOutput",
 ]

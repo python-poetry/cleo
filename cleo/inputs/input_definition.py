@@ -15,7 +15,6 @@ from .input_option import InputOption
 
 
 class InputDefinition(object):
-
     def __init__(self, definition=None):
         definition = definition or []
 
@@ -59,13 +58,15 @@ class InputDefinition(object):
 
     def add_argument(self, argument):
         if argument.get_name() in self._arguments:
-            raise Exception('An argument with name "%s" already exists.' % argument.get_name())
+            raise Exception(
+                'An argument with name "%s" already exists.' % argument.get_name()
+            )
 
         if self._has_an_array_argument:
-            raise Exception('Cannot add an argument after a list argument.')
+            raise Exception("Cannot add an argument after a list argument.")
 
         if argument.is_required() and self._has_optional:
-            raise Exception('Cannot add a required argument after an optional one.')
+            raise Exception("Cannot add a required argument after an optional one.")
 
         if argument.is_list():
             self._has_an_array_argument = True
@@ -78,7 +79,9 @@ class InputDefinition(object):
         self._arguments[argument.get_name()] = argument
 
     def get_argument(self, name):
-        arguments = list(self._arguments.values()) if isinstance(name, int) else self._arguments
+        arguments = (
+            list(self._arguments.values()) if isinstance(name, int) else self._arguments
+        )
 
         if not self.has_argument(name):
             raise Exception('The "%s" argument does not exist.' % name)
@@ -86,7 +89,9 @@ class InputDefinition(object):
         return arguments[name]
 
     def has_argument(self, name):
-        arguments = list(self._arguments.values()) if isinstance(name, int) else self._arguments
+        arguments = (
+            list(self._arguments.values()) if isinstance(name, int) else self._arguments
+        )
 
         try:
             arguments[name]
@@ -134,16 +139,20 @@ class InputDefinition(object):
             self.add_option(option)
 
     def add_option(self, option):
-        if option.get_name() in self._options \
-                and not option.equals(self._options[option.get_name()]):
+        if option.get_name() in self._options and not option.equals(
+            self._options[option.get_name()]
+        ):
             raise Exception('An option named "%s" already exists.' % option.get_name())
-        elif option.get_shortcut() in self._shortcuts \
-                and not option.equals(self._options[self._shortcuts[option.get_shortcut()]]):
-            raise Exception('An option with shortcut "%s" already exists.' % option.get_shortcut())
+        elif option.get_shortcut() in self._shortcuts and not option.equals(
+            self._options[self._shortcuts[option.get_shortcut()]]
+        ):
+            raise Exception(
+                'An option with shortcut "%s" already exists.' % option.get_shortcut()
+            )
 
         self._options[option.get_name()] = option
         if option.get_shortcut():
-            for shortcut in option.get_shortcut().split('|'):
+            for shortcut in option.get_shortcut().split("|"):
                 self._shortcuts[shortcut] = option.get_name()
 
     def get_option(self, name):
@@ -181,43 +190,44 @@ class InputDefinition(object):
         elements = []
 
         if short and self.get_options():
-            elements.append('[options]')
+            elements.append("[options]")
         elif not short:
             for option in self.get_options():
-                value = ''
-
+                value = ""
 
                 if option.accept_value():
-                    left = ''
-                    right = ''
+                    left = ""
+                    right = ""
 
                     if option.is_value_optional():
-                        left = '['
-                        right = ']'
+                        left = "["
+                        right = "]"
 
-                    value = ' %s%s%s' % (left, option.get_name().upper(), right)
+                    value = " %s%s%s" % (left, option.get_name().upper(), right)
 
-                shortcut = '-%s|' % option.get_shortcut() if option.get_shortcut() else ''
+                shortcut = (
+                    "-%s|" % option.get_shortcut() if option.get_shortcut() else ""
+                )
 
-                elements.append('[%s--%s%s]' % (shortcut, option.get_name(), value))
+                elements.append("[%s--%s%s]" % (shortcut, option.get_name(), value))
 
         if len(elements) and self.get_arguments():
-            elements.append('[--]')
+            elements.append("[--]")
 
         for argument in self.get_arguments():
-            element = '<%s>' % argument.get_name()
+            element = "<%s>" % argument.get_name()
 
             if not argument.is_required():
-                element = '[%s]' % element
+                element = "[%s]" % element
             elif argument.is_list():
-                element = '%s (%s)' % (element, element)
+                element = "%s (%s)" % (element, element)
 
             if argument.is_list():
-                element += '...'
+                element += "..."
 
             elements.append(element)
 
-        return ' '.join(elements)
+        return " ".join(elements)
 
     def format_default_value(self, default):
         return json.dumps(default)

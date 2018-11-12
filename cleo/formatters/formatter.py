@@ -4,7 +4,6 @@ from pastel import Pastel
 
 
 class Formatter(Pastel):
-
     def format(self, message):
         return self.colorize(message)
 

@@ -6,7 +6,6 @@ from .. import CleoTestCase
 
 
 class ConsoleOutputTest(CleoTestCase):
-
     def test_init(self):
         output = ConsoleOutput(Output.VERBOSITY_QUIET, True)
 

@@ -35,7 +35,7 @@ class Table(object):
         if not self.__class__.styles:
             self.__class__.styles = self._init_styles()
 
-        self.set_style('default')
+        self.set_style("default")
 
     @classmethod
     def set_style_definition(cls, name, table_style):
@@ -140,7 +140,7 @@ class Table(object):
             return self
 
         if not isinstance(row, list):
-            raise CleoException('A row must be a list or a TableSeparator instance.')
+            raise CleoException("A row must be a list or a TableSeparator instance.")
 
         self._rows.append(row)
 
@@ -204,8 +204,10 @@ class Table(object):
 
         markup = self._style.crossing_char
         for column in range(0, count):
-            markup += self._style.horizontal_border_char * self._column_widths[column]\
-                      + self._style.crossing_char
+            markup += (
+                self._style.horizontal_border_char * self._column_widths[column]
+                + self._style.crossing_char
+            )
 
         self._output.writeln(self._style.border_format % markup)
 
@@ -236,7 +238,7 @@ class Table(object):
             self._render_cell(row, column, cell_format)
             self._render_column_separator()
 
-        self._output.writeln('')
+        self._output.writeln("")
 
     def _render_cell(self, row, column, cell_format):
         """
@@ -253,13 +255,16 @@ class Table(object):
         try:
             cell = row[column]
         except IndexError:
-            cell = ''
+            cell = ""
 
         width = self._column_widths[column]
         if isinstance(cell, TableCell) and cell.colspan > 1:
             # add the width of the following columns(numbers of colspan).
             for next_column in range(column + 1, column + cell.colspan):
-                width += self._get_column_separator_width() + self._column_widths[next_column]
+                width += (
+                    self._get_column_separator_width()
+                    + self._column_widths[next_column]
+                )
 
         # Encoding fix
         width += len(cell) - Helper.len(cell)
@@ -267,11 +272,18 @@ class Table(object):
         style = self.get_column_style(column)
 
         if isinstance(cell, TableSeparator):
-            self._output.write(style.border_format % (style.horizontal_border_char * width))
+            self._output.write(
+                style.border_format % (style.horizontal_border_char * width)
+            )
         else:
-            width += Helper.len(cell) - Helper.len_without_decoration(self._output.get_formatter(), cell)
+            width += Helper.len(cell) - Helper.len_without_decoration(
+                self._output.get_formatter(), cell
+            )
             content = style.cell_row_content_format % cell
-            self._output.write(cell_format % getattr(content, style.pad_type)(width, style.padding_char))
+            self._output.write(
+                cell_format
+                % getattr(content, style.pad_type)(width, style.padding_char)
+            )
 
     def _calculate_number_of_columns(self):
         """
@@ -298,10 +310,10 @@ class Table(object):
 
             # Remove any new line breaks and replace it with a new line
             for column, cell in enumerate(rows[row_key]):
-                if '\n' not in cell:
+                if "\n" not in cell:
                     continue
 
-                lines = cell.split('\n')
+                lines = cell.split("\n")
                 for line_key, line in enumerate(lines):
                     if isinstance(cell, TableCell):
                         line = TableCell(line, colspan=cell.colspan)
@@ -332,12 +344,14 @@ class Table(object):
                             if column in unmerged_rows[row_key][line]:
                                 new_row.append(unmerged_rows[row_key][line][column])
                             else:
-                                new_row.append('')
+                                new_row.append("")
 
                         table_rows.append(new_row)
                     else:
                         for column in unmerged_rows[row_key][line]:
-                            table_rows[line][column] = unmerged_rows[row_key][line][column]
+                            table_rows[line][column] = unmerged_rows[row_key][line][
+                                column
+                            ]
 
         return table_rows
 
@@ -359,15 +373,17 @@ class Table(object):
                 nb_lines = cell.rowspan - 1
                 lines = [cell]
 
-                if '\n' in cell:
-                    lines = cell.split('\n')
+                if "\n" in cell:
+                    lines = cell.split("\n")
                     if len(lines) > nb_lines:
-                        nb_lines = cell.count('\n')
+                        nb_lines = cell.count("\n")
 
                     rows[line][column] = TableCell(lines[0], colspan=cell.colspan)
 
                 # Create a two dimensional array (rowspan x colspan)
-                placeholder = OrderedDict([(k, OrderedDict()) for k in range(line + 1, line + 1 + nb_lines)])
+                placeholder = OrderedDict(
+                    [(k, OrderedDict()) for k in range(line + 1, line + 1 + nb_lines)]
+                )
                 for k, v in unmerged_rows.items():
                     if k in placeholder:
                         for l, m in unmerged_rows[k].items():
@@ -381,19 +397,27 @@ class Table(object):
                 unmerged_rows = placeholder
 
                 for unmerged_row_key, unmerged_row in unmerged_rows.items():
-                    value = ''
+                    value = ""
                     if unmerged_row_key - line < len(lines):
                         value = lines[unmerged_row_key - line]
 
-                    unmerged_rows[unmerged_row_key][column] = TableCell(value, colspan=cell.colspan)
+                    unmerged_rows[unmerged_row_key][column] = TableCell(
+                        value, colspan=cell.colspan
+                    )
 
         for unmerged_row_key, unmerged_row in unmerged_rows.items():
             # we need to know if unmerged_row will be merged or inserted into rows
-            if (unmerged_row_key < len(rows)
+            if (
+                unmerged_row_key < len(rows)
                 and isinstance(rows[unmerged_row_key], list)
-                and (self._get_number_of_columns(rows[unmerged_row_key])
-                     + self._get_number_of_columns(list(unmerged_rows[unmerged_row_key].values()))
-                        <= self._number_of_columns)):
+                and (
+                    self._get_number_of_columns(rows[unmerged_row_key])
+                    + self._get_number_of_columns(
+                        list(unmerged_rows[unmerged_row_key].values())
+                    )
+                    <= self._number_of_columns
+                )
+            ):
                 # insert cell into row at cell_key position
                 for cell_key, cell in unmerged_row.items():
                     rows[unmerged_row_key].insert(cell_key, cell)
@@ -423,7 +447,7 @@ class Table(object):
             if isinstance(cell, TableCell) and cell.colspan > 1:
                 for position in range(column + 1, column + cell.colspan):
                     # insert empty value at column position
-                    new_row.append('')
+                    new_row.append("")
 
         if new_row:
             return new_row
@@ -443,9 +467,9 @@ class Table(object):
         row = [x for x in rows[line]]
 
         for cell_key, cell_value in enumerate(row):
-            row[cell_key] = ''
+            row[cell_key] = ""
             if isinstance(cell_value, TableCell):
-                row[cell_key] = TableCell('', colspan=cell_value.colspan)
+                row[cell_key] = TableCell("", colspan=cell_value.colspan)
 
         return row
 
@@ -478,7 +502,11 @@ class Table(object):
         for cell_key, cell in enumerate(row):
             if isinstance(cell, TableCell) and cell.colspan > 1:
                 # exclude grouped columns.
-                columns = [x for x in columns if x not in list(range(cell_key + 1, cell_key + cell.colspan))]
+                columns = [
+                    x
+                    for x in columns
+                    if x not in list(range(cell_key + 1, cell_key + cell.colspan))
+                ]
 
         return columns
 
@@ -494,7 +522,9 @@ class Table(object):
 
                 lengths.append(self._get_cell_width(row, column))
 
-            self._column_widths[column] = max(lengths) + len(self._style.cell_row_content_format) - 2
+            self._column_widths[column] = (
+                max(lengths) + len(self._style.cell_row_content_format) - 2
+            )
 
     def _get_column_separator_width(self):
         return len(self._style.border_format % self._style.vertical_border_char)
@@ -511,7 +541,9 @@ class Table(object):
         """
         try:
             cell = row[column]
-            cell_width = Helper.len_without_decoration(self._output.get_formatter(), cell)
+            cell_width = Helper.len_without_decoration(
+                self._output.get_formatter(), cell
+            )
 
             if isinstance(cell, TableCell) and cell.colspan > 1:
                 # we assume that cell value will be across more than one column.
@@ -529,20 +561,14 @@ class Table(object):
     @classmethod
     def _init_styles(cls):
         borderless = TableStyle()
-        borderless.set_horizontal_border_char('=')
-        borderless.set_vertical_border_char(' ')
-        borderless.set_crossing_char(' ')
+        borderless.set_horizontal_border_char("=")
+        borderless.set_vertical_border_char(" ")
+        borderless.set_crossing_char(" ")
 
         compact = TableStyle()
-        compact.set_horizontal_border_char('')
-        compact.set_vertical_border_char(' ')
-        compact.set_crossing_char('')
-        compact.set_cell_row_content_format('%s')
+        compact.set_horizontal_border_char("")
+        compact.set_vertical_border_char(" ")
+        compact.set_crossing_char("")
+        compact.set_cell_row_content_format("%s")
 
-        return {
-            'default': TableStyle(),
-            'borderless': borderless,
-            'compact': compact
-        }
-
-
+        return {"default": TableStyle(), "borderless": borderless, "compact": compact}

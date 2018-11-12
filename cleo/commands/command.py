@@ -21,18 +21,18 @@ class Command(BaseCommand):
 
     signature = None
 
-    description = ''
+    description = ""
 
-    help = ''
+    help = ""
 
     verbosity = Output.VERBOSITY_NORMAL
 
     verbosity_map = {
-        'v': Output.VERBOSITY_VERBOSE,
-        'vv': Output.VERBOSITY_VERY_VERBOSE,
-        'vvv': Output.VERBOSITY_DEBUG,
-        'quiet': Output.VERBOSITY_QUIET,
-        'normal': Output.VERBOSITY_NORMAL
+        "v": Output.VERBOSITY_VERBOSE,
+        "vv": Output.VERBOSITY_VERY_VERBOSE,
+        "vvv": Output.VERBOSITY_DEBUG,
+        "quiet": Output.VERBOSITY_QUIET,
+        "normal": Output.VERBOSITY_NORMAL,
     }
 
     validation = None
@@ -49,7 +49,7 @@ class Command(BaseCommand):
 
         if not self.signature:
             parent = super(self.__class__, self)
-            if hasattr(parent, 'signature'):
+            if hasattr(parent, "signature"):
                 self.signature = parent.signature
 
         if self.signature:
@@ -58,10 +58,10 @@ class Command(BaseCommand):
             super(Command, self).__init__(name or self.name)
 
     def _parse_doc(self, doc):
-        doc = doc.strip().split('\n', 1)
+        doc = doc.strip().split("\n", 1)
         if len(doc) > 1:
             self.description = doc[0].strip()
-            self.signature = re.sub('\s{2,}', ' ', doc[1].strip())
+            self.signature = re.sub("\s{2,}", " ", doc[1].strip())
         else:
             self.description = doc[0].strip()
 
@@ -71,17 +71,17 @@ class Command(BaseCommand):
         """
         definition = Parser.parse(self.signature)
 
-        super(Command, self).__init__(definition['name'])
+        super(Command, self).__init__(definition["name"])
 
-        for argument in definition['arguments']:
+        for argument in definition["arguments"]:
             if self.validation and argument.get_name() in self.validation:
                 argument.set_validator(self.validation[argument.get_name()])
 
             self.get_definition().add_argument(argument)
 
-        for option in definition['options']:
-            if self.validation and '--%s' % option.get_name() in self.validation:
-                option.set_validator(self.validation['--%s' % option.get_name()])
+        for option in definition["options"]:
+            if self.validation and "--%s" % option.get_name() in self.validation:
+                option.set_validator(self.validation["--%s" % option.get_name()])
 
             self.get_definition().add_option(option)
 
@@ -94,7 +94,7 @@ class Command(BaseCommand):
         """
         self.input = i
         self.output = CleoStyle(i, o)
-        
+
         return super(Command, self).run(i, o)
 
     def execute(self, i, o):
@@ -127,7 +127,7 @@ class Command(BaseCommand):
 
         command = self.get_application().find(name)
 
-        options = [('command', command.get_name())] + options
+        options = [("command", command.get_name())] + options
 
         return command.run(ListInput(options), self.output.output)
 
@@ -146,7 +146,7 @@ class Command(BaseCommand):
 
         command = self.get_application().find(name)
 
-        options = [('command', command.get_name())] + options
+        options = [("command", command.get_name())] + options
 
         return command.run(ListInput(options), NullOutput())
 
@@ -178,7 +178,7 @@ class Command(BaseCommand):
 
         return self.input.get_option(key)
 
-    def confirm(self, question, default=False, true_answer_regex='(?i)^y'):
+    def confirm(self, question, default=False, true_answer_regex="(?i)^y"):
         """
         Confirm a question with the user.
 
@@ -208,7 +208,7 @@ class Command(BaseCommand):
         :rtype: str
         """
         if isinstance(question, Question):
-            return self.get_helper('question').ask(self.input, self.output, question)
+            return self.get_helper("question").ask(self.input, self.output, question)
 
         return self.output.ask(question, default)
 
@@ -263,13 +263,13 @@ class Command(BaseCommand):
         if not type:
             return Question(question, **kwargs)
 
-        if type == 'choice':
+        if type == "choice":
             return ChoiceQuestion(question, **kwargs)
 
-        if type == 'confirmation':
+        if type == "confirmation":
             return ConfirmationQuestion(question, **kwargs)
 
-    def table(self, headers=None, rows=None, style='default'):
+    def table(self, headers=None, rows=None, style="default"):
         """
         Return a Table instance.
 
@@ -294,7 +294,7 @@ class Command(BaseCommand):
 
         return table
 
-    def render_table(self, headers, rows, style='default'):
+    def render_table(self, headers, rows, style="default"):
         """
         Format input to textual table.
 
@@ -353,7 +353,7 @@ class Command(BaseCommand):
         :type style: str
         """
         if style:
-            styled = '<%s>%s</>' % (style, text)
+            styled = "<%s>%s</>" % (style, text)
         else:
             styled = text
 
@@ -373,7 +373,7 @@ class Command(BaseCommand):
         :type verbosity: None or int str
         """
         if style:
-            styled = '<%s>%s</>' % (style, text)
+            styled = "<%s>%s</>" % (style, text)
         else:
             styled = text
 
@@ -393,7 +393,7 @@ class Command(BaseCommand):
         :type verbosity: None or int str
         """
         if style:
-            styled = '<%s>%s</>' % (style, text)
+            styled = "<%s>%s</>" % (style, text)
         else:
             styled = text
 
@@ -406,7 +406,7 @@ class Command(BaseCommand):
         :param text: The line to write
         :type text: str
         """
-        self.line(text, 'info')
+        self.line(text, "info")
 
     def comment(self, text):
         """
@@ -415,7 +415,7 @@ class Command(BaseCommand):
         :param text: The line to write
         :type text: str
         """
-        self.line(text, 'comment')
+        self.line(text, "comment")
 
     def question(self, text):
         """
@@ -424,7 +424,7 @@ class Command(BaseCommand):
         :param text: The line to write
         :type text: str
         """
-        self.line(text, 'question')
+        self.line(text, "question")
 
     def error(self, text, block=False):
         """
@@ -436,7 +436,7 @@ class Command(BaseCommand):
         if block:
             return self.output.error(text)
 
-        self.line(text, 'error')
+        self.line(text, "error")
 
     def warning(self, text):
         """
@@ -467,8 +467,9 @@ class Command(BaseCommand):
         """
         return self.output.create_progress_bar(max)
 
-    def progress_indicator(self, fmt=None, indicator_change_interval=100,
-                           indicator_values=None):
+    def progress_indicator(
+        self, fmt=None, indicator_change_interval=100, indicator_values=None
+    ):
         """
         Creates a new progress indicator.
 
@@ -483,7 +484,9 @@ class Command(BaseCommand):
 
         :rtype: ProgressIndicator
         """
-        return ProgressIndicator(self.output, fmt, indicator_change_interval, indicator_values)
+        return ProgressIndicator(
+            self.output, fmt, indicator_change_interval, indicator_values
+        )
 
     def spin(self, start_message, end_message, fmt=None, interval=100, values=None):
         """

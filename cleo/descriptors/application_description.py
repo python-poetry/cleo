@@ -5,7 +5,7 @@ from collections import OrderedDict
 
 class ApplicationDescription(object):
 
-    GLOBAL_NAMESPACE = '_global'
+    GLOBAL_NAMESPACE = "_global"
 
     def __init__(self, application, namespace=None):
         """
@@ -30,7 +30,7 @@ class ApplicationDescription(object):
 
     def get_command(self, name):
         if name not in self._commands and name not in self._aliases:
-            raise ValueError('Command %s does not exist.' % name)
+            raise ValueError("Command %s does not exist." % name)
 
         return self._commands.get(name, self._aliases.get(name))
 
@@ -55,7 +55,7 @@ class ApplicationDescription(object):
 
                 names.append(name)
 
-            self._namespaces[namespace] = {'id': namespace, 'commands': names}
+            self._namespaces[namespace] = {"id": namespace, "commands": names}
 
     def _sort_commands(self, commands):
         """
@@ -70,7 +70,7 @@ class ApplicationDescription(object):
         for name, command in commands.items():
             key = self._application.extract_namespace(name, 1)
             if not key:
-                key = '_global'
+                key = "_global"
 
             if key in namespaced_commands:
                 namespaced_commands[key][name] = command
@@ -78,9 +78,10 @@ class ApplicationDescription(object):
                 namespaced_commands[key] = {name: command}
 
         for namespace, commands in namespaced_commands.items():
-            namespaced_commands[namespace] = sorted(commands.items(), key=lambda x: x[0])
+            namespaced_commands[namespace] = sorted(
+                commands.items(), key=lambda x: x[0]
+            )
 
         namespaced_commands = sorted(namespaced_commands.items(), key=lambda x: x[0])
 
         return namespaced_commands
-

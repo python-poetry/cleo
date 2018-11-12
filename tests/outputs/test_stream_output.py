@@ -8,7 +8,6 @@ from .. import CleoTestCase
 
 
 class StreamOutputTest(CleoTestCase):
-
     def setUp(self):
         self.stream = BytesIO()
 
@@ -23,9 +22,9 @@ class StreamOutputTest(CleoTestCase):
     def test_stream_is_required(self):
         self.assertRaisesRegexp(
             Exception,
-            'The StreamOutput class needs a stream as its first argument.',
+            "The StreamOutput class needs a stream as its first argument.",
             StreamOutput,
-            'foo'
+            "foo",
         )
 
     def test_get_stream(self):
@@ -34,12 +33,12 @@ class StreamOutputTest(CleoTestCase):
 
     def test_do_write(self):
         output = StreamOutput(self.stream)
-        output.writeln('foo')
+        output.writeln("foo")
         output.get_stream().seek(0)
-        self.assertEqual('foo\n', output.get_stream().read().decode('utf-8'))
+        self.assertEqual("foo\n", output.get_stream().read().decode("utf-8"))
 
     def test_do_write_non_ascii(self):
         output = StreamOutput(self.stream)
-        output.writeln('féàù—')
+        output.writeln("féàù—")
         output.get_stream().seek(0)
-        self.assertEqual(u'féàù—\n', output.get_stream().read().decode('utf-8'))
+        self.assertEqual(u"féàù—\n", output.get_stream().read().decode("utf-8"))

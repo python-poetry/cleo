@@ -13,7 +13,6 @@ from cleo.outputs import BufferedOutput
 
 
 class JsonDescriptorTestCase(DescriptorTestCase):
-
     def test_describe_input_arguments(self):
         return self._test_describe_input_arguments()
 
@@ -33,11 +32,11 @@ class JsonDescriptorTestCase(DescriptorTestCase):
         return JsonDescriptor()
 
     def get_format(self):
-        return 'json'
+        return "json"
 
     def assertDescription(self, expected_description, described_object):
         output = BufferedOutput(BufferedOutput.VERBOSITY_NORMAL, True)
         self.get_descriptor().describe(output, described_object, raw_output=True)
-        fetched = output.fetch().replace(os.linesep, '\n').strip()
+        fetched = output.fetch().replace(os.linesep, "\n").strip()
 
         self.assertEqual(json.loads(expected_description), json.loads(fetched))

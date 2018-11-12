@@ -21,13 +21,11 @@ from .fixtures.bar_buc_command import BarBucCommand
 
 
 class ApplicationTest(CleoTestCase):
-
     def ensure_static_command_help(self, application):
         for command in application.all().values():
             command.set_help(
                 command.get_help().replace(
-                    '%command.full_name%',
-                    'app/console %command.name%'
+                    "%command.full_name%", "app/console %command.name%"
                 )
             )
 
@@ -35,50 +33,57 @@ class ApplicationTest(CleoTestCase):
         """
         Application.__init__() behaves properly
         """
-        application = Application('foo', 'bar')
+        application = Application("foo", "bar")
 
-        self.assertEqual('foo',
-                         application.get_name(),
-                         msg='__init__() takes the application name as its first argument')
-        self.assertEqual('bar',
-                         application.get_version(),
-                         msg='__init__() takes the application version as its second argument')
-        self.assertEqual(['help', 'list'].sort(),
-                         list(application.all().keys()).sort(),
-                         msg='__init__() registered the help and list commands by default')
+        self.assertEqual(
+            "foo",
+            application.get_name(),
+            msg="__init__() takes the application name as its first argument",
+        )
+        self.assertEqual(
+            "bar",
+            application.get_version(),
+            msg="__init__() takes the application version as its second argument",
+        )
+        self.assertEqual(
+            ["help", "list"].sort(),
+            list(application.all().keys()).sort(),
+            msg="__init__() registered the help and list commands by default",
+        )
 
     def test_set_get_name(self):
         """
         Application name accessors behave properly
         """
         application = Application()
-        application.set_name('foo')
+        application.set_name("foo")
 
-        self.assertEqual('foo',
-                         application.get_name(),
-                         msg='.set_name() sets the name of the application')
+        self.assertEqual(
+            "foo",
+            application.get_name(),
+            msg=".set_name() sets the name of the application",
+        )
 
     def test_set_get_version(self):
         """
         Application version accessors behave properly
         """
         application = Application()
-        application.set_version('bar')
+        application.set_version("bar")
 
-        self.assertEqual('bar',
-                         application.get_version(),
-                         msg='.set_version() sets the version of the application')
+        self.assertEqual(
+            "bar",
+            application.get_version(),
+            msg=".set_version() sets the version of the application",
+        )
 
     def test_get_long_version(self):
         """
         Application.get_long_version() returns the long version of the application
         """
-        application = Application('foo', 'bar')
+        application = Application("foo", "bar")
 
-        self.assertEqual(
-            'foo <info>bar</info>',
-            application.get_long_version()
-        )
+        self.assertEqual("foo <info>bar</info>", application.get_long_version())
 
     def test_help(self):
         """
@@ -87,8 +92,7 @@ class ApplicationTest(CleoTestCase):
         application = Application()
 
         self.assertEqual(
-            self.open_fixture('application_gethelp.txt'),
-            application.get_help()
+            self.open_fixture("application_gethelp.txt"), application.get_help()
         )
 
     def test_all(self):
@@ -99,17 +103,17 @@ class ApplicationTest(CleoTestCase):
         commands = application.all()
 
         self.assertEqual(
-            'HelpCommand',
-            commands['help'].__class__.__name__,
-            msg='.all() returns the registered commands'
+            "HelpCommand",
+            commands["help"].__class__.__name__,
+            msg=".all() returns the registered commands",
         )
 
         application.add(FooCommand())
 
         self.assertEqual(
             1,
-            len(application.all('foo')),
-            msg='.all() take a namespace as first argument'
+            len(application.all("foo")),
+            msg=".all() take a namespace as first argument",
         )
 
     def test_register(self):
@@ -117,12 +121,10 @@ class ApplicationTest(CleoTestCase):
         Application.register() registers a new command
         """
         application = Application()
-        command = application.register('foo')
+        command = application.register("foo")
 
         self.assertEqual(
-            'foo',
-            command.get_name(),
-            msg='.register() registers a new command'
+            "foo", command.get_name(), msg=".register() registers a new command"
         )
 
     def test_add(self):
@@ -134,9 +136,7 @@ class ApplicationTest(CleoTestCase):
         application.add(foo)
 
         self.assertEqual(
-            foo,
-            application.all()['foo:bar'],
-            msg='.add() registers a command'
+            foo, application.all()["foo:bar"], msg=".add() registers a command"
         )
 
         application = Application()
@@ -146,8 +146,8 @@ class ApplicationTest(CleoTestCase):
 
         self.assertEqual(
             [foo, foo1],
-            [commands['foo:bar'], commands['foo:bar1']],
-            msg='.add_commands() registers a list of commands'
+            [commands["foo:bar"], commands["foo:bar1"]],
+            msg=".add_commands() registers a list of commands",
         )
 
     def test_add_command_with_empty_constructor(self):
@@ -159,9 +159,9 @@ class ApplicationTest(CleoTestCase):
         self.assertRaisesRegexp(
             Exception,
             'Command class "Foo5Command" is not correctly initialized\.'
-            'You probably forgot to call the parent constructor\.',
+            "You probably forgot to call the parent constructor\.",
             application.add,
-            Foo5Command()
+            Foo5Command(),
         )
 
     def test_has_get(self):
@@ -171,30 +171,26 @@ class ApplicationTest(CleoTestCase):
         application = Application()
 
         self.assertTrue(
-            application.has('list'),
-            msg='.has() returns true if a command is registered'
+            application.has("list"),
+            msg=".has() returns true if a command is registered",
         )
         self.assertFalse(
-            application.has('afoobar'),
-            msg='.has() returns false if a command is not registered'
+            application.has("afoobar"),
+            msg=".has() returns false if a command is not registered",
         )
 
         foo = FooCommand()
         application.add(foo)
 
         self.assertTrue(
-            application.has('afoobar'),
-            msg='.has() returns true if an alias is registered'
+            application.has("afoobar"),
+            msg=".has() returns true if an alias is registered",
         )
         self.assertEqual(
-            foo,
-            application.get('foo:bar'),
-            msg='.get() returns a command by name'
+            foo, application.get("foo:bar"), msg=".get() returns a command by name"
         )
         self.assertEqual(
-            foo,
-            application.get('afoobar'),
-            msg='.get() returns a command by alias'
+            foo, application.get("afoobar"), msg=".get() returns a command by alias"
         )
 
         application = Application()
@@ -202,8 +198,8 @@ class ApplicationTest(CleoTestCase):
         # Simulate help
         application._want_helps = True
         self.assertTrue(
-            isinstance(application.get('foo:bar'), HelpCommand),
-            msg='.get() returns the help command if --help is provided as the input'
+            isinstance(application.get("foo:bar"), HelpCommand),
+            msg=".get() returns the help command if --help is provided as the input",
         )
 
     def test_silent_help(self):
@@ -215,13 +211,9 @@ class ApplicationTest(CleoTestCase):
         application.set_catch_exceptions(False)
 
         tester = ApplicationTester(application)
-        tester.run(
-            [('-h', True),
-             ('-q', True)],
-            {'decorated': False}
-        )
+        tester.run([("-h", True), ("-q", True)], {"decorated": False})
 
-        self.assertEqual('', tester.get_display())
+        self.assertEqual("", tester.get_display())
 
     def test_get_invalid_command(self):
         """
@@ -229,10 +221,7 @@ class ApplicationTest(CleoTestCase):
         """
         application = Application()
         self.assertRaisesRegexp(
-            Exception,
-            'The command "foofoo" does not exist',
-            application.get,
-            'foofoo'
+            Exception, 'The command "foofoo" does not exist', application.get, "foofoo"
         )
 
     def test_get_namespaces(self):
@@ -244,9 +233,9 @@ class ApplicationTest(CleoTestCase):
         application.add(Foo1Command())
 
         self.assertEqual(
-            ['foo'],
+            ["foo"],
             application.get_namespaces(),
-            msg='.get_namespaces() returns an array of unique used namespaces'
+            msg=".get_namespaces() returns an array of unique used namespaces",
         )
 
     def test_find_namespace(self):
@@ -257,22 +246,22 @@ class ApplicationTest(CleoTestCase):
         application.add(FooCommand())
 
         self.assertEqual(
-            'foo',
-            application.find_namespace('foo'),
-            msg='.find_namespace() returns the given namespace if it exists'
+            "foo",
+            application.find_namespace("foo"),
+            msg=".find_namespace() returns the given namespace if it exists",
         )
         self.assertEqual(
-            'foo',
-            application.find_namespace('f'),
-            msg='.find_namespace() finds a namespace given an abbreviation'
+            "foo",
+            application.find_namespace("f"),
+            msg=".find_namespace() finds a namespace given an abbreviation",
         )
 
         application.add(Foo2Command())
 
         self.assertEqual(
-            'foo',
-            application.find_namespace('foo'),
-            msg='.find_namespace() returns the given namespace if it exists'
+            "foo",
+            application.find_namespace("foo"),
+            msg=".find_namespace() returns the given namespace if it exists",
         )
 
     def test_find_ambiguous_namespace(self):
@@ -288,7 +277,7 @@ class ApplicationTest(CleoTestCase):
             Exception,
             'The namespace "f" is ambiguous \(foo, foo1\)\.',
             application.find_namespace,
-            'f'
+            "f",
         )
 
     def find_invalid_namespace(self):
@@ -301,7 +290,7 @@ class ApplicationTest(CleoTestCase):
             Exception,
             'There are no commands defined in the "bar" namespace\.',
             application.find_namespace,
-            'bar'
+            "bar",
         )
 
     def test_find_unique_name_but_namespace_name(self):
@@ -314,10 +303,7 @@ class ApplicationTest(CleoTestCase):
         application.add(Foo2Command())
 
         self.assertRaisesRegexp(
-            Exception,
-            'Command "foo1" is not defined',
-            application.find,
-            'foo1'
+            Exception, 'Command "foo1" is not defined', application.find, "foo1"
         )
 
     def test_find(self):
@@ -328,24 +314,24 @@ class ApplicationTest(CleoTestCase):
         application.add(FooCommand())
 
         self.assertTrue(
-            isinstance(application.find('foo:bar'), FooCommand),
-            msg='.find() returns a command if its name exists'
+            isinstance(application.find("foo:bar"), FooCommand),
+            msg=".find() returns a command if its name exists",
         )
         self.assertTrue(
-            isinstance(application.find('h'), HelpCommand),
-            msg='.find() returns a command if its name exists'
+            isinstance(application.find("h"), HelpCommand),
+            msg=".find() returns a command if its name exists",
         )
         self.assertTrue(
-            isinstance(application.find('f:bar'), FooCommand),
-            msg='.find() returns a command if the abbreviation for the namespace exists'
+            isinstance(application.find("f:bar"), FooCommand),
+            msg=".find() returns a command if the abbreviation for the namespace exists",
         )
         self.assertTrue(
-            isinstance(application.find('f:b'), FooCommand),
-            msg='.find() returns a command if the abbreviation for the namespace and the command name exist'
+            isinstance(application.find("f:b"), FooCommand),
+            msg=".find() returns a command if the abbreviation for the namespace and the command name exist",
         )
         self.assertTrue(
-            isinstance(application.find('a'), FooCommand),
-            msg='.find() returns a command if the abbreviation exists for an alias'
+            isinstance(application.find("a"), FooCommand),
+            msg=".find() returns a command if the abbreviation exists for an alias",
         )
 
     def test_find_with_ambiguous_abbreviations(self):
@@ -353,9 +339,12 @@ class ApplicationTest(CleoTestCase):
         Application.find() should raise an error when there is ambiguosity
         """
         data = [
-            ['f', 'Command "f" is not defined\.'],
-            ['a', 'Command "a" is ambiguous \(afoobar, afoobar1 and 1 more\)\.'],
-            ['foo:b', 'Command "foo:b" is ambiguous \(foo1:bar, foo:bar and 1 more\)\.'],
+            ["f", 'Command "f" is not defined\.'],
+            ["a", 'Command "a" is ambiguous \(afoobar, afoobar1 and 1 more\)\.'],
+            [
+                "foo:b",
+                'Command "foo:b" is ambiguous \(foo1:bar, foo:bar and 1 more\)\.',
+            ],
         ]
 
         application = Application()
@@ -364,12 +353,7 @@ class ApplicationTest(CleoTestCase):
         application.add(Foo2Command())
 
         for d in data:
-            self.assertRaisesRegexp(
-                Exception,
-                d[1],
-                application.find,
-                d[0]
-            )
+            self.assertRaisesRegexp(Exception, d[1], application.find, d[0])
 
     def test_find_command_equal_namesapce(self):
         """
@@ -380,12 +364,12 @@ class ApplicationTest(CleoTestCase):
         application.add(Foo4Command())
 
         self.assertTrue(
-            isinstance(application.find('foo3:bar'), Foo3Command),
-            msg='.find() returns the good command even if a namespace has same name'
+            isinstance(application.find("foo3:bar"), Foo3Command),
+            msg=".find() returns the good command even if a namespace has same name",
         )
         self.assertTrue(
-            isinstance(application.find('foo3:bar:toh'), Foo4Command),
-            msg='.find() returns a command even if its namespace equals another command name'
+            isinstance(application.find("foo3:bar:toh"), Foo4Command),
+            msg=".find() returns a command even if its namespace equals another command name",
         )
 
     def test_find_command_with_ambiguous_namespace_but_unique_name(self):
@@ -396,9 +380,7 @@ class ApplicationTest(CleoTestCase):
         application.add(FooCommand())
         application.add(FoobarCommand())
 
-        self.assertTrue(
-            isinstance(application.find('f:f'), FoobarCommand)
-        )
+        self.assertTrue(isinstance(application.find("f:f"), FoobarCommand))
 
     def test_find_command_with_missing_namespace(self):
         """
@@ -407,29 +389,19 @@ class ApplicationTest(CleoTestCase):
         application = Application()
         application.add(Foo4Command())
 
-        self.assertTrue(
-            isinstance(application.find('f::t'), Foo4Command)
-        )
+        self.assertTrue(isinstance(application.find("f::t"), Foo4Command))
 
     def test_find_alternative_exception_message_single(self):
         """
         Application.find() raises an exception when an alternative has been found
         """
-        data = [
-            'foo3:baR',
-            'foO3:bar'
-        ]
+        data = ["foo3:baR", "foO3:bar"]
 
         application = Application()
         application.add(Foo3Command())
 
         for d in data:
-            self.assertRaisesRegexp(
-                Exception,
-                'Did you mean this',
-                application.find,
-                d
-            )
+            self.assertRaisesRegexp(Exception, "Did you mean this", application.find, d)
 
     def test_find_alternative_exception_message_multiple(self):
         """
@@ -441,50 +413,35 @@ class ApplicationTest(CleoTestCase):
         application.add(Foo2Command())
 
         try:
-            application.find('foo:baR')
-            self.fail('.find() raises an Exception if command does not exist, with alternatives')
+            application.find("foo:baR")
+            self.fail(
+                ".find() raises an Exception if command does not exist, with alternatives"
+            )
         except Exception as e:
-            self.assertRegexpMatches(
-                str(e),
-                'Did you mean one of these'
-            )
-            self.assertRegexpMatches(
-                str(e),
-                'foo1:bar'
-            )
-            self.assertRegexpMatches(
-                str(e),
-                'foo:bar'
-            )
+            self.assertRegexpMatches(str(e), "Did you mean one of these")
+            self.assertRegexpMatches(str(e), "foo1:bar")
+            self.assertRegexpMatches(str(e), "foo:bar")
 
         try:
-            application.find('foo2:baR')
-            self.fail('.find() raises an Exception if command does not exist, with alternatives')
+            application.find("foo2:baR")
+            self.fail(
+                ".find() raises an Exception if command does not exist, with alternatives"
+            )
         except Exception as e:
-            self.assertRegexpMatches(
-                str(e),
-                'Did you mean one of these'
-            )
-            self.assertRegexpMatches(
-                str(e),
-                'foo1'
-            )
+            self.assertRegexpMatches(str(e), "Did you mean one of these")
+            self.assertRegexpMatches(str(e), "foo1")
 
         application.add(Foo3Command())
         application.add(Foo4Command())
 
         try:
-            application.find('foo3:')
-            self.fail('.find() raises an Exception if command does not exist, with alternatives')
+            application.find("foo3:")
+            self.fail(
+                ".find() raises an Exception if command does not exist, with alternatives"
+            )
         except Exception as e:
-            self.assertRegexpMatches(
-                str(e),
-                'foo3:bar'
-            )
-            self.assertRegexpMatches(
-                str(e),
-                'foo3:bar:toh'
-            )
+            self.assertRegexpMatches(str(e), "foo3:bar")
+            self.assertRegexpMatches(str(e), "foo3:bar:toh")
 
     def test_find_alternative_commands(self):
         application = Application()
@@ -492,46 +449,33 @@ class ApplicationTest(CleoTestCase):
         application.add(Foo1Command())
         application.add(Foo2Command())
 
-        command_name = 'Unknown command'
+        command_name = "Unknown command"
         try:
             application.find(command_name)
-            self.fail('.find() raises an Exception if command does not exist')
+            self.fail(".find() raises an Exception if command does not exist")
         except Exception as e:
-            self.assertEqual(
-                'Command "%s" is not defined.' % command_name,
-                str(e)
-            )
+            self.assertEqual('Command "%s" is not defined.' % command_name, str(e))
 
-        command_name = 'bar1'
+        command_name = "bar1"
         try:
             application.find(command_name)
-            self.fail('.find() raises an Exception if command does not exist')
+            self.fail(".find() raises an Exception if command does not exist")
         except Exception as e:
             self.assertRegexpMatches(
-                str(e),
-                'Command "%s" is not defined.' % command_name
+                str(e), 'Command "%s" is not defined.' % command_name
             )
-            self.assertRegexpMatches(
-                str(e),
-                'afoobar1',
-            )
-            self.assertRegexpMatches(
-                str(e),
-                'foo:bar1',
-            )
-            self.assertNotRegex(
-                str(e),
-                'foo:bar$'
-            )
+            self.assertRegexpMatches(str(e), "afoobar1")
+            self.assertRegexpMatches(str(e), "foo:bar1")
+            self.assertNotRegex(str(e), "foo:bar$")
 
     def find_alternative_commands_with_an_alias(self):
         foo_command = FooCommand()
-        foo_command.set_aliases(['foo2'])
+        foo_command.set_aliases(["foo2"])
 
         application = Application()
         application.add(foo_command)
 
-        result = application.find('foo')
+        result = application.find("foo")
 
         self.assertEqual(foo_command, result)
 
@@ -544,64 +488,61 @@ class ApplicationTest(CleoTestCase):
         application.add(Foo3Command())
 
         try:
-            application.find('Unknown-namespace:Unknown-command')
-            self.fail('.find() raises an Exception if namespace does not exist')
+            application.find("Unknown-namespace:Unknown-command")
+            self.fail(".find() raises an Exception if namespace does not exist")
         except Exception as e:
             self.assertRegex(
                 str(e),
-                'There are no commands defined in the "Unknown-namespace" namespace.'
+                'There are no commands defined in the "Unknown-namespace" namespace.',
             )
 
         try:
-            application.find('foo2:command')
-            self.fail('.find() raises an tException if namespace does not exist')
+            application.find("foo2:command")
+            self.fail(".find() raises an tException if namespace does not exist")
         except Exception as e:
             self.assertRegex(
-                str(e),
-                'There are no commands defined in the "foo2" namespace.'
+                str(e), 'There are no commands defined in the "foo2" namespace.'
             )
             self.assertRegex(
                 str(e),
-                'foo',
-                msg='.find() raises an tException if namespace does not exist, with alternative "foo"'
+                "foo",
+                msg='.find() raises an tException if namespace does not exist, with alternative "foo"',
             )
             self.assertRegex(
                 str(e),
-                'foo1',
-                msg='.find() raises an tException if namespace does not exist, with alternative "foo1"'
+                "foo1",
+                msg='.find() raises an tException if namespace does not exist, with alternative "foo1"',
             )
             self.assertRegex(
                 str(e),
-                'foo3',
-                msg='.find() raises an Exception if namespace does not exist, with alternative "foo2"'
+                "foo3",
+                msg='.find() raises an Exception if namespace does not exist, with alternative "foo2"',
             )
 
     def test_find_namespace_does_not_fail_on_deep_similar_namespaces(self):
         applicaton = Application()
-        applicaton.get_namespaces = self.mock().MagicMock(return_value=['foo:sublong', 'bar:sub'])
-
-        self.assertEqual(
-            'foo:sublong',
-            applicaton.find_namespace('f:sub')
+        applicaton.get_namespaces = self.mock().MagicMock(
+            return_value=["foo:sublong", "bar:sub"]
         )
+
+        self.assertEqual("foo:sublong", applicaton.find_namespace("f:sub"))
 
     def test_set_catch_exceptions(self):
         application = Application()
         application.set_auto_exit(False)
-        os.environ['COLUMNS'] = '120'
+        os.environ["COLUMNS"] = "120"
         tester = ApplicationTester(application)
 
         application.set_catch_exceptions(True)
-        tester.run([('command', 'foo')], {'decorated': False})
+        tester.run([("command", "foo")], {"decorated": False})
         self.assertEqual(
-            self.open_fixture('application_renderexception1.txt'),
-            tester.get_display()
+            self.open_fixture("application_renderexception1.txt"), tester.get_display()
         )
 
         application.set_catch_exceptions(False)
         try:
-            tester.run([('command', 'foo')], {'decorated': False})
-            self.fail('.set_catch_exceptions() sets the catch exception flag')
+            tester.run([("command", "foo")], {"decorated": False})
+            self.fail(".set_catch_exceptions() sets the catch exception flag")
         except Exception as e:
             self.assertEqual('Command "foo" is not defined.', str(e))
 
@@ -612,55 +553,48 @@ class ApplicationTest(CleoTestCase):
         application = Application()
         application.set_auto_exit(False)
 
-        os.environ['COLUMNS'] = '120'
+        os.environ["COLUMNS"] = "120"
         tester = ApplicationTester(application)
 
-        tester.run([('command', 'foo')], {'decorated': False})
+        tester.run([("command", "foo")], {"decorated": False})
         self.assertEqual(
-            self.open_fixture('application_renderexception1.txt'),
-            tester.get_display()
+            self.open_fixture("application_renderexception1.txt"), tester.get_display()
         )
 
-        tester.run([('command', 'foo')],
-                   {'decorated': False, 'verbosity': Output.VERBOSITY_VERBOSE})
-        self.assertRegex(
-            tester.get_display(),
-            'Exception trace'
+        tester.run(
+            [("command", "foo")],
+            {"decorated": False, "verbosity": Output.VERBOSITY_VERBOSE},
         )
+        self.assertRegex(tester.get_display(), "Exception trace")
 
-        tester.run([('command', 'list'), ('--foo', True)], {'decorated': False})
+        tester.run([("command", "list"), ("--foo", True)], {"decorated": False})
         self.assertEqual(
-            self.open_fixture('application_renderexception2.txt'),
-            tester.get_display()
+            self.open_fixture("application_renderexception2.txt"), tester.get_display()
         )
 
         application.add(Foo3Command())
         tester = ApplicationTester(application)
-        tester.run([('command', 'foo3:bar')], {'decorated': False})
+        tester.run([("command", "foo3:bar")], {"decorated": False})
         self.assertEqual(
-            self.open_fixture('application_renderexception3.txt'),
-            tester.get_display()
+            self.open_fixture("application_renderexception3.txt"), tester.get_display()
         )
         tester = ApplicationTester(application)
-        tester.run([('command', 'foo3:bar')], {'decorated': True})
+        tester.run([("command", "foo3:bar")], {"decorated": True})
         self.assertEqual(
-            self.open_fixture('application_renderexception3decorated.txt'),
-            tester.get_display()
+            self.open_fixture("application_renderexception3decorated.txt"),
+            tester.get_display(),
         )
-
 
         application = Application()
         application.set_auto_exit(False)
 
-        os.environ['COLUMNS'] = '31'
+        os.environ["COLUMNS"] = "31"
         tester = ApplicationTester(application)
 
-        tester.run([('command', 'foo')], {'decorated': False})
+        tester.run([("command", "foo")], {"decorated": False})
         self.assertEqual(
-            self.open_fixture('application_renderexception4.txt'),
-            tester.get_display()
+            self.open_fixture("application_renderexception4.txt"), tester.get_display()
         )
-
 
     def test_run(self):
         application = Application()
@@ -669,18 +603,12 @@ class ApplicationTest(CleoTestCase):
         command = Foo1Command()
         application.add(command)
 
-        sys.argv = ['cli.py', 'foo:bar1']
+        sys.argv = ["cli.py", "foo:bar1"]
 
         application.run()
 
-        self.assertEqual(
-            'ArgvInput',
-            command.input.__class__.__name__
-        )
-        self.assertEqual(
-            'ConsoleOutput',
-            command.output.__class__.__name__
-        )
+        self.assertEqual("ArgvInput", command.input.__class__.__name__)
+        self.assertEqual("ConsoleOutput", command.output.__class__.__name__)
 
         application = Application()
         application.set_auto_exit(False)
@@ -689,77 +617,58 @@ class ApplicationTest(CleoTestCase):
         self.ensure_static_command_help(application)
         tester = ApplicationTester(application)
 
-        tester.run([], {'decorated': False})
+        tester.run([], {"decorated": False})
         self.assertEqual(
-            self.open_fixture('application_run1.txt'),
-            tester.get_display()
+            self.open_fixture("application_run1.txt"), tester.get_display()
         )
 
-        tester.run([('--help', True)], {'decorated': False})
+        tester.run([("--help", True)], {"decorated": False})
         self.assertEqual(
-            self.open_fixture('application_run2.txt'),
-            tester.get_display()
+            self.open_fixture("application_run2.txt"), tester.get_display()
         )
 
-        tester.run([('-h', True)], {'decorated': False})
+        tester.run([("-h", True)], {"decorated": False})
         self.assertEqual(
-            self.open_fixture('application_run2.txt'),
-            tester.get_display()
+            self.open_fixture("application_run2.txt"), tester.get_display()
         )
 
-        tester.run([('command', 'list'), ('--help', True)], {'decorated': False})
+        tester.run([("command", "list"), ("--help", True)], {"decorated": False})
         self.assertEqual(
-            self.open_fixture('application_run3.txt'),
-            tester.get_display()
+            self.open_fixture("application_run3.txt"), tester.get_display()
         )
 
-        tester.run([('command', 'list'), ('-h', True)], {'decorated': False})
+        tester.run([("command", "list"), ("-h", True)], {"decorated": False})
         self.assertEqual(
-            self.open_fixture('application_run3.txt'),
-            tester.get_display()
+            self.open_fixture("application_run3.txt"), tester.get_display()
         )
 
-        tester.run([('--ansi', True)])
+        tester.run([("--ansi", True)])
         self.assertTrue(tester.get_output().is_decorated())
 
-        tester.run([('--no-ansi', True)])
+        tester.run([("--no-ansi", True)])
         self.assertFalse(tester.get_output().is_decorated())
 
-        tester.run([('--version', True)], {'decorated': False})
+        tester.run([("--version", True)], {"decorated": False})
         self.assertEqual(
-            self.open_fixture('application_run4.txt'),
-            tester.get_display()
+            self.open_fixture("application_run4.txt"), tester.get_display()
         )
 
-        tester.run([('-V', True)], {'decorated': False})
+        tester.run([("-V", True)], {"decorated": False})
         self.assertEqual(
-            self.open_fixture('application_run4.txt'),
-            tester.get_display()
+            self.open_fixture("application_run4.txt"), tester.get_display()
         )
 
-        tester.run([('command', 'list'), ('--quiet', True)])
-        self.assertEqual(
-            '',
-            tester.get_display()
-        )
+        tester.run([("command", "list"), ("--quiet", True)])
+        self.assertEqual("", tester.get_display())
 
-        tester.run([('command', 'list'), ('-q', True)])
-        self.assertEqual(
-            '',
-            tester.get_display()
-        )
+        tester.run([("command", "list"), ("-q", True)])
+        self.assertEqual("", tester.get_display())
 
-        tester.run([('command', 'list'), ('--verbose', True)])
-        self.assertEqual(
-            Output.VERBOSITY_VERBOSE,
-            tester.get_output().get_verbosity()
-        )
+        tester.run([("command", "list"), ("--verbose", True)])
+        self.assertEqual(Output.VERBOSITY_VERBOSE, tester.get_output().get_verbosity())
 
-        tester.run([('command', 'list'), ('-v', True)])
-        self.assertEqual(
-            Output.VERBOSITY_VERBOSE,
-            tester.get_output().get_verbosity()
-        )
+        tester.run([("command", "list"), ("-v", True)])
+        self.assertEqual(Output.VERBOSITY_VERBOSE, tester.get_output().get_verbosity())
 
         application = Application()
         application.set_auto_exit(False)
@@ -767,20 +676,16 @@ class ApplicationTest(CleoTestCase):
         application.add(FooCommand())
         tester = ApplicationTester(application)
 
-        tester.run([('command', 'foo:bar'), ('--no-interaction', True)], {'decorated': False})
-        self.assertEqual(
-            'called\n',
-            tester.get_display()
+        tester.run(
+            [("command", "foo:bar"), ("--no-interaction", True)], {"decorated": False}
         )
+        self.assertEqual("called\n", tester.get_display())
 
-        tester.run([('command', 'foo:bar'), ('-n', True)], {'decorated': False})
-        self.assertEqual(
-            'called\n',
-            tester.get_display()
-        )
+        tester.run([("command", "foo:bar"), ("-n", True)], {"decorated": False})
+        self.assertEqual("called\n", tester.get_display())
 
     def test_run_returns_integer_exit_code(self):
-        exception = OSError(4, '')
+        exception = OSError(4, "")
 
         application = Application()
         application.set_auto_exit(False)
@@ -791,7 +696,7 @@ class ApplicationTest(CleoTestCase):
         self.assertEqual(4, exit_code)
 
     def test_run_return_exit_code_one_for_exception_code_zero(self):
-        exception = OSError(0, '')
+        exception = OSError(0, "")
 
         application = Application()
         application.set_auto_exit(False)
@@ -803,28 +708,23 @@ class ApplicationTest(CleoTestCase):
 
     def test_adding_already_set_definition_element_data(self):
         data = [
-            [InputArgument('command', InputArgument.REQUIRED)],
-            [InputOption('quiet', '', InputOption.VALUE_NONE)],
-            [InputOption('query', 'q', InputOption.VALUE_NONE)]
+            [InputArgument("command", InputArgument.REQUIRED)],
+            [InputOption("quiet", "", InputOption.VALUE_NONE)],
+            [InputOption("query", "q", InputOption.VALUE_NONE)],
         ]
 
         for d in data:
             application = Application()
             application.set_auto_exit(False)
             application.set_catch_exceptions(False)
-            application.register('foo')\
-                .set_definition(d)\
-                .set_code(lambda in_, out_: None)
+            application.register("foo").set_definition(d).set_code(
+                lambda in_, out_: None
+            )
 
-            input_ = ListInput([('command', 'foo')])
+            input_ = ListInput([("command", "foo")])
             output_ = NullOutput()
 
-            self.assertRaises(
-                Exception,
-                application.run,
-                input_,
-                output_
-            )
+            self.assertRaises(Exception, application.run, input_, output_)
 
     def test_get_default_helper_set_returns_default_values(self):
         application = Application()
@@ -833,36 +733,32 @@ class ApplicationTest(CleoTestCase):
 
         helper_set = application.get_helper_set()
 
-        self.assertTrue(helper_set.has('formatter'))
-        self.assertTrue(helper_set.has('question'))
+        self.assertTrue(helper_set.has("formatter"))
+        self.assertTrue(helper_set.has("question"))
 
     def test_adding_single_helper_set_overwrites_default_values(self):
         application = Application()
         application.set_auto_exit(False)
         application.set_catch_exceptions(False)
 
-        application.set_helper_set(
-            HelperSet([FormatterHelper()])
-        )
+        application.set_helper_set(HelperSet([FormatterHelper()]))
 
         helper_set = application.get_helper_set()
 
-        self.assertTrue(helper_set.has('formatter'))
-        self.assertFalse(helper_set.has('question'))
+        self.assertTrue(helper_set.has("formatter"))
+        self.assertFalse(helper_set.has("question"))
 
     def test_overwriting_single_helper_set_overwrites_default_values(self):
         application = CustomApplication()
         application.set_auto_exit(False)
         application.set_catch_exceptions(False)
 
-        application.set_helper_set(
-            HelperSet([FormatterHelper()])
-        )
+        application.set_helper_set(HelperSet([FormatterHelper()]))
 
         helper_set = application.get_helper_set()
 
-        self.assertTrue(helper_set.has('formatter'))
-        self.assertFalse(helper_set.has('question'))
+        self.assertTrue(helper_set.has("formatter"))
+        self.assertFalse(helper_set.has("question"))
 
     def test_get_default_input_definition_returns_default_values(self):
         application = Application()
@@ -871,15 +767,15 @@ class ApplicationTest(CleoTestCase):
 
         definition = application.get_definition()
 
-        self.assertTrue(definition.has_argument('command'))
+        self.assertTrue(definition.has_argument("command"))
 
-        self.assertTrue(definition.has_option('help'))
-        self.assertTrue(definition.has_option('quiet'))
-        self.assertTrue(definition.has_option('verbose'))
-        self.assertTrue(definition.has_option('version'))
-        self.assertTrue(definition.has_option('ansi'))
-        self.assertTrue(definition.has_option('no-ansi'))
-        self.assertTrue(definition.has_option('no-interaction'))
+        self.assertTrue(definition.has_option("help"))
+        self.assertTrue(definition.has_option("quiet"))
+        self.assertTrue(definition.has_option("verbose"))
+        self.assertTrue(definition.has_option("version"))
+        self.assertTrue(definition.has_option("ansi"))
+        self.assertTrue(definition.has_option("no-ansi"))
+        self.assertTrue(definition.has_option("no-interaction"))
 
     def test_overwriting_input_definition_overwrites_default_values(self):
         application = CustomApplication()
@@ -888,42 +784,49 @@ class ApplicationTest(CleoTestCase):
 
         definition = application.get_definition()
 
-        self.assertFalse(definition.has_argument('command'))
+        self.assertFalse(definition.has_argument("command"))
 
-        self.assertFalse(definition.has_option('help'))
-        self.assertFalse(definition.has_option('quiet'))
-        self.assertFalse(definition.has_option('verbose'))
-        self.assertFalse(definition.has_option('version'))
-        self.assertFalse(definition.has_option('ansi'))
-        self.assertFalse(definition.has_option('no-ansi'))
-        self.assertFalse(definition.has_option('no-interaction'))
+        self.assertFalse(definition.has_option("help"))
+        self.assertFalse(definition.has_option("quiet"))
+        self.assertFalse(definition.has_option("verbose"))
+        self.assertFalse(definition.has_option("version"))
+        self.assertFalse(definition.has_option("ansi"))
+        self.assertFalse(definition.has_option("no-ansi"))
+        self.assertFalse(definition.has_option("no-interaction"))
 
-        self.assertTrue(definition.has_option('custom'))
+        self.assertTrue(definition.has_option("custom"))
 
     def test_setting_input_definition_overwrites_default_values(self):
         application = Application()
         application.set_auto_exit(False)
         application.set_catch_exceptions(False)
 
-        application.set_definition(InputDefinition([
-            InputOption('--custom', '-c',
+        application.set_definition(
+            InputDefinition(
+                [
+                    InputOption(
+                        "--custom",
+                        "-c",
                         InputOption.VALUE_NONE,
-                        'Set the custom input definition.')
-        ]))
+                        "Set the custom input definition.",
+                    )
+                ]
+            )
+        )
 
         definition = application.get_definition()
 
-        self.assertFalse(definition.has_argument('command'))
+        self.assertFalse(definition.has_argument("command"))
 
-        self.assertFalse(definition.has_option('help'))
-        self.assertFalse(definition.has_option('quiet'))
-        self.assertFalse(definition.has_option('verbose'))
-        self.assertFalse(definition.has_option('version'))
-        self.assertFalse(definition.has_option('ansi'))
-        self.assertFalse(definition.has_option('no-ansi'))
-        self.assertFalse(definition.has_option('no-interaction'))
+        self.assertFalse(definition.has_option("help"))
+        self.assertFalse(definition.has_option("quiet"))
+        self.assertFalse(definition.has_option("verbose"))
+        self.assertFalse(definition.has_option("version"))
+        self.assertFalse(definition.has_option("ansi"))
+        self.assertFalse(definition.has_option("no-ansi"))
+        self.assertFalse(definition.has_option("no-interaction"))
 
-        self.assertTrue(definition.has_option('custom'))
+        self.assertTrue(definition.has_option("custom"))
 
     def test_set_run_custom_default_command(self):
         """
@@ -937,20 +840,14 @@ class ApplicationTest(CleoTestCase):
 
         tester = ApplicationTester(application)
         tester.run([])
-        self.assertEqual(
-            'interact called\ncalled\n',
-            tester.get_display()
-        )
+        self.assertEqual("interact called\ncalled\n", tester.get_display())
 
         application = CustomDefaultCommandApplication()
         application.set_auto_exit(False)
 
         tester = ApplicationTester(application)
         tester.run([])
-        self.assertEqual(
-            'interact called\ncalled\n',
-            tester.get_display()
-        )
+        self.assertEqual("interact called\ncalled\n", tester.get_display())
 
     def test_set_run_custom_single_command(self):
         command = FooCommand()
@@ -963,44 +860,48 @@ class ApplicationTest(CleoTestCase):
         tester = ApplicationTester(application)
 
         tester.run([])
-        self.assertIn('called', tester.get_display())
+        self.assertIn("called", tester.get_display())
 
-        tester.run([('--help', True)])
-        self.assertIn('The foo:bar command', tester.get_display())
+        tester.run([("--help", True)])
+        self.assertIn("The foo:bar command", tester.get_display())
 
     def test_find_alternative_commands_with_question(self):
         application = Application()
         application.set_auto_exit(False)
-        os.environ['COLUMNS'] = '120'
-        os.environ['SHELL_INTERACTIVE'] = '1'
+        os.environ["COLUMNS"] = "120"
+        os.environ["SHELL_INTERACTIVE"] = "1"
         application.add(FooCommand())
         application.add(Foo1Command())
         application.add(Foo2Command())
 
         tester = ApplicationTester(application)
-        tester.set_inputs(['1\n'])
-        tester.run([('command', 'f:b')], {'interactive': True})
+        tester.set_inputs(["1\n"])
+        tester.run([("command", "f:b")], {"interactive": True})
 
         self.assertEqual(
-            self.open_fixture('application_unknown_command_question.txt'),
-            tester.get_display(True)
+            self.open_fixture("application_unknown_command_question.txt"),
+            tester.get_display(True),
         )
 
-class CustomApplication(Application):
 
+class CustomApplication(Application):
     def get_default_input_definition(self):
-        return InputDefinition([
-            InputOption('--custom', '-c',
-                        InputOption.VALUE_NONE,
-                        'Set the custom input definition.')
-        ])
+        return InputDefinition(
+            [
+                InputOption(
+                    "--custom",
+                    "-c",
+                    InputOption.VALUE_NONE,
+                    "Set the custom input definition.",
+                )
+            ]
+        )
 
     def get_default_helper_set(self):
         return HelperSet([FormatterHelper()])
 
 
 class CustomDefaultCommandApplication(Application):
-
     def __init__(self):
         super(CustomDefaultCommandApplication, self).__init__()
 

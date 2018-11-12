@@ -5,7 +5,6 @@ from ..formatters import Formatter
 
 
 class NullOutput(Output):
-
     def set_formatter(self, formatter):
         pass
 
@@ -27,7 +26,5 @@ class NullOutput(Output):
     def writeln(self, messages, output_type=Output.OUTPUT_NORMAL):
         pass
 
-    def write(self, messages,
-              newline=False,
-              output_type=Output.OUTPUT_NORMAL):
+    def write(self, messages, newline=False, output_type=Output.OUTPUT_NORMAL):
         pass

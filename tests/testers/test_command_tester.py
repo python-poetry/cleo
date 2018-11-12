@@ -7,18 +7,21 @@ from cleo.outputs.output import Output
 
 
 class TestCommandTester(TestCase):
-
     def setUp(self):
-        self.command = Command('foo')
-        self.command.add_argument('command')
-        self.command.add_argument('foo')
-        self.command.set_code(lambda c: c.line('foo'))
+        self.command = Command("foo")
+        self.command.add_argument("command")
+        self.command.add_argument("foo")
+        self.command.set_code(lambda c: c.line("foo"))
 
         self.tester = CommandTester(self.command)
-        self.tester.execute([('foo', 'bar')],
-                            {'interactive': False,
-                             'decorated': False,
-                             'verbosity': Output.VERBOSITY_VERBOSE})
+        self.tester.execute(
+            [("foo", "bar")],
+            {
+                "interactive": False,
+                "decorated": False,
+                "verbosity": Output.VERBOSITY_VERBOSE,
+            },
+        )
 
     def tearDown(self):
         self.command = None
@@ -28,53 +31,67 @@ class TestCommandTester(TestCase):
         """
         CommandTester.execute() behaves properly
         """
-        self.assertFalse(self.tester.get_input().is_interactive(),
-                         msg='.execute() takes an interactive option.')
-        self.assertFalse(self.tester.get_output().is_decorated(),
-                         msg='.execute() takes a decorated option.')
-        self.assertEqual(Output.VERBOSITY_VERBOSE, self.tester.get_output().get_verbosity(),
-                         msg='.execute() takes an interactive option.')
+        self.assertFalse(
+            self.tester.get_input().is_interactive(),
+            msg=".execute() takes an interactive option.",
+        )
+        self.assertFalse(
+            self.tester.get_output().is_decorated(),
+            msg=".execute() takes a decorated option.",
+        )
+        self.assertEqual(
+            Output.VERBOSITY_VERBOSE,
+            self.tester.get_output().get_verbosity(),
+            msg=".execute() takes an interactive option.",
+        )
 
     def test_get_input(self):
         """
         CommandTester.get_input() behaves properly
         """
-        self.assertEqual('bar', self.tester.get_input().get_argument('foo'),
-                         msg='.get_input() returns the current input instance.')
+        self.assertEqual(
+            "bar",
+            self.tester.get_input().get_argument("foo"),
+            msg=".get_input() returns the current input instance.",
+        )
 
     def test_get_output(self):
         """
         CommandTester.get_output() behaves properly
         """
         self.tester.get_output().get_stream().seek(0)
-        self.assertEqual('foo\n', self.tester.get_output().get_stream().read().decode(),
-                         msg='.get_output() returns the current output instance.')
+        self.assertEqual(
+            "foo\n",
+            self.tester.get_output().get_stream().read().decode(),
+            msg=".get_output() returns the current output instance.",
+        )
 
     def test_get_display(self):
         """
         CommandTester.get_display() behaves properly
         """
-        self.assertEqual('foo\n', self.tester.get_display(),
-                         msg='.get_display() returns the display of the last execution.')
+        self.assertEqual(
+            "foo\n",
+            self.tester.get_display(),
+            msg=".get_display() returns the display of the last execution.",
+        )
 
     def test_command_with_inputs(self):
-        questions = [
-            'What\'s your name?',
-            'How are you?',
-            'Where do you come from?',
-        ]
+        questions = ["What's your name?", "How are you?", "Where do you come from?"]
 
         def code(c):
             c.ask(questions[0])
             c.ask(questions[1])
             c.ask(questions[2])
 
-        command = Command('foo')
+        command = Command("foo")
         command.set_code(code)
 
         tester = CommandTester(command)
-        tester.set_inputs(['Bobby', 'Fine', 'France'])
+        tester.set_inputs(["Bobby", "Fine", "France"])
         tester.execute([])
 
         self.assertEqual(0, tester.status_code)
-        self.assertEqual('\n' + ' \n\n\n'.join(questions) + ' \n', tester.get_display(True))
+        self.assertEqual(
+            "\n" + " \n\n\n".join(questions) + " \n", tester.get_display(True)
+        )

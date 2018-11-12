@@ -5,7 +5,7 @@ from .output import Output
 
 class BufferedOutput(Output):
 
-    buffer = ''
+    buffer = ""
 
     def fetch(self):
         """
@@ -14,7 +14,7 @@ class BufferedOutput(Output):
         :rtype: str
         """
         content = self.buffer
-        self.buffer = ''
+        self.buffer = ""
 
         return content
 
@@ -22,4 +22,4 @@ class BufferedOutput(Output):
         self.buffer += message
 
         if newline:
-            self.buffer += '\n'
+            self.buffer += "\n"

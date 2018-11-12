@@ -27,21 +27,18 @@ class CommandTest(CleoTestCase):
         """
         self.assertRaises(Exception, Command)
 
-        command = Command('foo:bar')
+        command = Command("foo:bar")
         self.assertEqual(
-            'foo:bar',
+            "foo:bar",
             command.get_name(),
-            msg='__init__() takes the command name as its first argument'
+            msg="__init__() takes the command name as its first argument",
         )
 
     def test_command_name_cannot_be_empty(self):
         """
         A command name cannot be empty.
         """
-        self.assertRaises(
-            Exception,
-            Command
-        )
+        self.assertRaises(Exception, Command)
 
     def test_set_application(self):
         """
@@ -50,7 +47,11 @@ class CommandTest(CleoTestCase):
         application = Application()
         command = SomeCommand()
         command.set_application(application)
-        self.assertEqual(application, command.get_application(), msg='.set_application() sets the current application')
+        self.assertEqual(
+            application,
+            command.get_application(),
+            msg=".set_application() sets the current application",
+        )
 
     def test_set_get_definition(self):
         """
@@ -59,14 +60,23 @@ class CommandTest(CleoTestCase):
         command = SomeCommand()
         definition = InputDefinition()
         ret = command.set_definition(definition)
-        self.assertEqual(command, ret, msg='.set_definition() implements a fluent interface')
-        self.assertEqual(definition, command.get_definition(),
-                         msg='.set_definition() sets the current InputDefinition instance')
-        command.set_definition([InputArgument('foo'), InputOption('bar')])
-        self.assertTrue(command.get_definition().has_argument('foo'),
-                        msg='.set_definition() also takes an array of InputArguments and InputOptions as an argument')
-        self.assertTrue(command.get_definition().has_option('bar'),
-                        msg='.set_definition() also takes an array of InputArguments and InputOptions as an argument')
+        self.assertEqual(
+            command, ret, msg=".set_definition() implements a fluent interface"
+        )
+        self.assertEqual(
+            definition,
+            command.get_definition(),
+            msg=".set_definition() sets the current InputDefinition instance",
+        )
+        command.set_definition([InputArgument("foo"), InputOption("bar")])
+        self.assertTrue(
+            command.get_definition().has_argument("foo"),
+            msg=".set_definition() also takes an array of InputArguments and InputOptions as an argument",
+        )
+        self.assertTrue(
+            command.get_definition().has_option("bar"),
+            msg=".set_definition() also takes an array of InputArguments and InputOptions as an argument",
+        )
         command.set_definition(InputDefinition())
 
     def test_add_argument(self):
@@ -74,94 +84,86 @@ class CommandTest(CleoTestCase):
         Command.add_argument() adds an argument to command.
         """
         command = SomeCommand()
-        ret = command.add_argument('foo')
+        ret = command.add_argument("foo")
 
         self.assertEqual(ret, command)
-        self.assertTrue(command.get_definition().has_argument('foo'))
+        self.assertTrue(command.get_definition().has_argument("foo"))
 
     def test_add_option(self):
         """
         Command.add_option() adds an option to command.
         """
         command = SomeCommand()
-        ret = command.add_option('foo')
+        ret = command.add_option("foo")
 
         self.assertEqual(ret, command)
-        self.assertTrue(command.get_definition().has_option('foo'))
+        self.assertTrue(command.get_definition().has_option("foo"))
 
     def test_get_namespace_get_name_set_name(self):
         command = SomeCommand()
-        self.assertEqual('namespace:name', command.get_name())
+        self.assertEqual("namespace:name", command.get_name())
 
-        command.set_name('foo')
-        self.assertEqual('foo', command.get_name())
+        command.set_name("foo")
+        self.assertEqual("foo", command.get_name())
 
-        ret = command.set_name('foobar:bar')
+        ret = command.set_name("foobar:bar")
         self.assertEqual(ret, command)
-        self.assertEqual('foobar:bar', command.get_name())
+        self.assertEqual("foobar:bar", command.get_name())
 
     def test_invalid_command_names(self):
-        data = ['', 'foo:']
+        data = ["", "foo:"]
 
         command = SomeCommand()
 
         for d in data:
             self.assertRaisesRegexp(
-                CommandError,
-                'Command name "%s" is invalid.' % d,
-                command.set_name,
-                d
+                CommandError, 'Command name "%s" is invalid.' % d, command.set_name, d
             )
 
     def test_set_get_description(self):
         command = SomeCommand()
 
-        self.assertEqual('description', command.get_description())
+        self.assertEqual("description", command.get_description())
 
-        ret = command.set_description('description1')
+        ret = command.set_description("description1")
         self.assertEqual(ret, command)
-        self.assertEqual('description1', command.get_description())
+        self.assertEqual("description1", command.get_description())
 
     def test_set_get_help(self):
         command = SomeCommand()
 
-        self.assertEqual('help', command.get_help())
+        self.assertEqual("help", command.get_help())
 
-        ret = command.set_description('help1')
+        ret = command.set_description("help1")
         self.assertEqual(ret, command)
-        self.assertEqual('help1', command.get_description())
+        self.assertEqual("help1", command.get_description())
 
     def test_get_processed_help(self):
         command = SomeCommand()
 
-        command.set_help('The %command.name% command does... Example: python %command.full_name%.')
+        command.set_help(
+            "The %command.name% command does... Example: python %command.full_name%."
+        )
         self.assertRegex(
-            command.get_processed_help(),
-            'The namespace:name command does...'
+            command.get_processed_help(), "The namespace:name command does..."
         )
-        self.assertNotRegex(
-            command.get_processed_help(),
-            '%command.full_name%'
-        )
+        self.assertNotRegex(command.get_processed_help(), "%command.full_name%")
 
     def test_set_get_aliases(self):
         command = SomeCommand()
 
-        self.assertEqual(['name'], command.get_aliases())
+        self.assertEqual(["name"], command.get_aliases())
 
-        ret = command.set_aliases(['name1'])
+        ret = command.set_aliases(["name1"])
         self.assertEqual(ret, command)
-        self.assertEqual(['name1'], command.get_aliases())
+        self.assertEqual(["name1"], command.get_aliases())
 
     def test_get_synposis(self):
         command = SomeCommand()
-        command.add_argument('bar')
-        command.add_option('foo')
+        command.add_argument("bar")
+        command.add_option("foo")
 
-        self.assertEqual(
-            'namespace:name [--foo] [--] [<bar>]',
-            command.get_synopsis()
-        )
+        self.assertEqual("namespace:name [--foo] [--] [<bar>]", command.get_synopsis())
 
     def test_get_helper(self):
         application = Application()
@@ -170,8 +172,7 @@ class CommandTest(CleoTestCase):
         formatter_helper = FormatterHelper()
 
         self.assertEqual(
-            formatter_helper.get_name(),
-            command.get_helper('formatter').get_name()
+            formatter_helper.get_name(), command.get_helper("formatter").get_name()
         )
 
     def test_merge_application_definition(self):
@@ -179,22 +180,19 @@ class CommandTest(CleoTestCase):
         Command.merge_application_definition() merges command and application.
         """
         application1 = Application()
-        application1.get_definition().add_arguments([InputArgument('foo')])
-        application1.get_definition().add_options([InputOption('bar')])
+        application1.get_definition().add_arguments([InputArgument("foo")])
+        application1.get_definition().add_options([InputOption("bar")])
         command = SomeCommand()
         command.set_application(application1)
         command.set_definition(
-            InputDefinition([
-                InputArgument('bar'),
-                InputOption('foo')
-            ])
+            InputDefinition([InputArgument("bar"), InputOption("foo")])
         )
 
         command.merge_application_definition()
-        self.assertTrue(command.get_definition().has_argument('foo'))
-        self.assertTrue(command.get_definition().has_option('foo'))
-        self.assertTrue(command.get_definition().has_argument('bar'))
-        self.assertTrue(command.get_definition().has_option('bar'))
+        self.assertTrue(command.get_definition().has_argument("foo"))
+        self.assertTrue(command.get_definition().has_option("foo"))
+        self.assertTrue(command.get_definition().has_argument("bar"))
+        self.assertTrue(command.get_definition().has_option("bar"))
 
         # It should not merge the definitions twice
         command.merge_application_definition()
@@ -202,18 +200,18 @@ class CommandTest(CleoTestCase):
 
     def test_merge_application_definition_without_args_then_with_args_adds_args(self):
         application1 = Application()
-        application1.get_definition().add_arguments([InputArgument('foo')])
-        application1.get_definition().add_options([InputOption('bar')])
+        application1.get_definition().add_arguments([InputArgument("foo")])
+        application1.get_definition().add_options([InputOption("bar")])
         command = SomeCommand()
         command.set_application(application1)
         command.set_definition(InputDefinition())
 
         command.merge_application_definition(False)
-        self.assertFalse(command.get_definition().has_argument('foo'))
-        self.assertTrue(command.get_definition().has_option('bar'))
+        self.assertFalse(command.get_definition().has_argument("foo"))
+        self.assertTrue(command.get_definition().has_option("bar"))
 
         command.merge_application_definition(True)
-        self.assertTrue(command.get_definition().has_argument('foo'))
+        self.assertTrue(command.get_definition().has_argument("foo"))
 
         # It should not merge the definitions twice
         command.merge_application_definition()
@@ -222,31 +220,20 @@ class CommandTest(CleoTestCase):
     def test_run_interactive(self):
         tester = CommandTester(SomeCommand())
 
-        tester.execute([], {'interactive': True})
+        tester.execute([], {"interactive": True})
 
-        self.assertEqual(
-            'interact called\nexecute called\n',
-            tester.get_display()
-        )
+        self.assertEqual("interact called\nexecute called\n", tester.get_display())
 
     def test_run_non_interactive(self):
         tester = CommandTester(SomeCommand())
 
-        tester.execute([], {'interactive': False})
+        tester.execute([], {"interactive": False})
 
-        self.assertEqual(
-            'execute called\n',
-            tester.get_display()
-        )
+        self.assertEqual("execute called\n", tester.get_display())
 
     def test_execute_method_needs_to_be_overwridden(self):
-        command = Command('foo')
-        self.assertRaises(
-            NotImplementedError,
-            command.run,
-            ListInput([]),
-            NullOutput()
-        )
+        command = Command("foo")
+        self.assertRaises(NotImplementedError, command.run, ListInput([]), NullOutput())
 
     def test_run_with_invalid_option(self):
         command = SomeCommand()
@@ -256,7 +243,7 @@ class CommandTest(CleoTestCase):
             Exception,
             'The "--bar" option does not exist.',
             tester.execute,
-            [('--bar', True)]
+            [("--bar", True)],
         )
 
     def test_run_returns_integer_exit_code(self):
@@ -271,60 +258,58 @@ class CommandTest(CleoTestCase):
 
     def test_set_code(self):
         command = SomeCommand()
-        ret = command.set_code(lambda c: c.line('from the code...'))
+        ret = command.set_code(lambda c: c.line("from the code..."))
         self.assertEqual(ret, command)
 
         tester = CommandTester(command)
         tester.execute([])
-        self.assertEqual(
-            'interact called\nfrom the code...\n',
-            tester.get_display()
-        )
+        self.assertEqual("interact called\nfrom the code...\n", tester.get_display())
 
         command = SomeCommand()
         command.set_code(self.callable_method)
         tester = CommandTester(command)
         tester.execute([])
-        self.assertEqual(
-            'interact called\nfrom the code...\n',
-            tester.get_display()
-        )
+        self.assertEqual("interact called\nfrom the code...\n", tester.get_display())
 
     def test_set_code_with_non_callable(self):
         command = SomeCommand()
 
         self.assertRaisesRegexp(
             Exception,
-            'Invalid callable provided to Command.setCode().',
+            "Invalid callable provided to Command.setCode().",
             command.set_code,
-            self.NON_CALLABLE
+            self.NON_CALLABLE,
         )
 
     def test_without_configure(self):
         command = NoConfigureCommand()
 
-        self.assertEqual('no:configure', command.get_name())
-        self.assertEqual('description', command.get_description())
-        self.assertEqual('help', command.get_help())
+        self.assertEqual("no:configure", command.get_name())
+        self.assertEqual("description", command.get_description())
+        self.assertEqual("help", command.get_help())
         self.assertEqual(2, command.get_definition().get_argument_count())
         self.assertEqual(2, len(command.get_definition().get_options()))
 
     def test_with_signature(self):
         command = SignatureCommand()
 
-        self.assertEqual('signature:command', command.name)
-        self.assertEqual('description', command.description)
-        self.assertEqual('help', command.help)
+        self.assertEqual("signature:command", command.name)
+        self.assertEqual("description", command.description)
+        self.assertEqual("help", command.help)
         self.assertEqual(2, command.get_definition().get_argument_count())
         self.assertEqual(2, len(command.get_definition().get_options()))
-        self.assertIsInstance(command.get_definition().get_argument('foo').get_validator(), Integer)
-        self.assertIsInstance(command.get_definition().get_option('baz').get_validator(), Boolean)
+        self.assertIsInstance(
+            command.get_definition().get_argument("foo").get_validator(), Integer
+        )
+        self.assertIsInstance(
+            command.get_definition().get_option("baz").get_validator(), Boolean
+        )
 
     def callable_method(self, c):
-        c.line('from the code...')
+        c.line("from the code...")
 
     def test_signature_inheritance(self):
         command = ChildCommand()
 
-        assert 'parent' == command.name
-        assert 'Parent Command.' == command.description
+        assert "parent" == command.name
+        assert "Parent Command." == command.description

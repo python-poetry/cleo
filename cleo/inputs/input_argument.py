@@ -4,7 +4,6 @@ from ..validators import ValidationError, VALIDATORS
 
 
 class InvalidArgument(ValidationError):
-
     def __init__(self, argument, msg, value=ValidationError._UNDEFINED):
         self.argument = argument
         self.msg = msg
@@ -14,12 +13,12 @@ class InvalidArgument(ValidationError):
 
     def to_s(self):
         if self.value != self._UNDEFINED:
-            return 'Invalid value %s (%s) ' \
-                   'for argument %s: %s'\
-                   % (repr(self.value),
-                      self.value.__class__.__name__,
-                      self.argument.get_name(),
-                      self.msg)
+            return "Invalid value %s (%s) " "for argument %s: %s" % (
+                repr(self.value),
+                self.value.__class__.__name__,
+                self.argument.get_name(),
+                self.msg,
+            )
 
         return self.msg
 
@@ -33,8 +32,7 @@ class InputArgument(object):
     OPTIONAL = 2
     IS_LIST = 4
 
-    def __init__(self, name, mode=None,
-                 description='', default=None, validator=None):
+    def __init__(self, name, mode=None, description="", default=None, validator=None):
         """
         Constructor
 
@@ -56,7 +54,7 @@ class InputArgument(object):
 
         self._name = name
         self._mode = mode
-        self._description = description or ''
+        self._description = description or ""
         self._validator = VALIDATORS.get(validator)
 
         self.set_default(default)
@@ -96,13 +94,17 @@ class InputArgument(object):
         :type default: mixed
         """
         if self.is_required() and default is not None:
-            raise Exception('Cannot set a default value except for InputArgument::OPTIONAL mode.')
+            raise Exception(
+                "Cannot set a default value except for InputArgument::OPTIONAL mode."
+            )
 
         if self.is_list():
             if default is None:
                 default = []
             elif not isinstance(default, list):
-                raise Exception('A default value for an array argument must be an array.')
+                raise Exception(
+                    "A default value for an array argument must be an array."
+                )
 
         self._default = default
 

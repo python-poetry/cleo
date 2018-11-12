@@ -35,7 +35,7 @@ class Question(object):
     @hidden.setter
     def hidden(self, value):
         if self.autocompleter_values:
-            raise CleoException('A hidden question cannot use the autocompleter.')
+            raise CleoException("A hidden question cannot use the autocompleter.")
 
         self._hidden = value
 
@@ -52,10 +52,10 @@ class Question(object):
         :type values: list or None
         """
         if values is not None and not isinstance(values, list):
-            raise CleoException('Autocompleter values can be either a list or None.')
+            raise CleoException("Autocompleter values can be either a list or None.")
 
         if self.hidden:
-            raise CleoException('A hidden question cannot use the autocompleter.')
+            raise CleoException("A hidden question cannot use the autocompleter.")
 
         self._autocompleter_values = values
 
@@ -66,8 +66,6 @@ class Question(object):
     @max_attempts.setter
     def max_attempts(self, attempts):
         if attempts is not None and attempts < 1:
-            raise CleoException('Maximum number of attempts must be a positive value.')
+            raise CleoException("Maximum number of attempts must be a positive value.")
 
         self._attempts = attempts
-
-

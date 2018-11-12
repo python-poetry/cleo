@@ -23,8 +23,10 @@ from .helpers import HelperSet, FormatterHelper, QuestionHelper
 from .terminal import Terminal
 from .exceptions import (
     CleoException,
-    CommandNotFound, AmbiguousCommand,
-    NamespaceNotFound, AmbiguousNamespace
+    CommandNotFound,
+    AmbiguousCommand,
+    NamespaceNotFound,
+    AmbiguousNamespace,
 )
 
 
@@ -40,7 +42,7 @@ class Application(object):
     >>> app.run()
     """
 
-    def __init__(self, name='UNKNOWN', version='UNKNOWN', complete=True):
+    def __init__(self, name="UNKNOWN", version="UNKNOWN", complete=True):
         """
         Constructor
 
@@ -54,7 +56,7 @@ class Application(object):
         self._catch_exceptions = True
         self._auto_exit = True
         self._commands = OrderedDict()
-        self._default_command = 'list'
+        self._default_command = "list"
         self._definition = self.get_default_input_definition()
         self._want_helps = False
         self._helper_set = self.get_default_helper_set()
@@ -117,7 +119,7 @@ class Application(object):
             if isinstance(e, CleoException):
                 status_code = e.code
             else:
-                status_code = e.errno if hasattr(e, 'errno') else 1
+                status_code = e.errno if hasattr(e, "errno") else 1
 
             if status_code == 0:
                 status_code = 1
@@ -145,23 +147,23 @@ class Application(object):
         :return: 0 if everything went fine, or an error code
         :rtype: int
         """
-        if input_.has_parameter_option(['--version', '-V']):
+        if input_.has_parameter_option(["--version", "-V"]):
             output_.writeln(self.get_long_version())
 
             return 0
 
         name = self.get_command_name(input_)
 
-        if input_.has_parameter_option(['--help', '-h']):
+        if input_.has_parameter_option(["--help", "-h"]):
             if not name:
-                name = 'help'
-                input_ = ListInput([('command', 'help')])
+                name = "help"
+                input_ = ListInput([("command", "help")])
             else:
                 self._want_helps = True
 
         if not name:
             name = self._default_command
-            input_ = ListInput([('command', name)])
+            input_ = ListInput([("command", name)])
 
         # the command name MUST be the first element of the input
         command = None
@@ -172,21 +174,19 @@ class Application(object):
             except AmbiguousCommand as e:
                 alternatives = e.alternatives
 
-                if (not alternatives
-                    or not input_.is_interactive()):
-                        raise
+                if not alternatives or not input_.is_interactive():
+                    raise
 
-                rest = ''
+                rest = ""
                 if len(alternatives) > 2:
-                    rest = ' and <info>{}</> more'.format(len(alternatives) - 2)
+                    rest = " and <info>{}</> more".format(len(alternatives) - 2)
 
-                commands = '<info>{}</>, <info>{}</>{}'.format(
+                commands = "<info>{}</>, <info>{}</>{}".format(
                     alternatives[0], alternatives[1], rest
                 )
 
-                message = (
-                    '\n<comment>Command "<info>{}</>" is ambiguous ({}).</>'
-                    .format(e.name, commands)
+                message = '\n<comment>Command "<info>{}</>" is ambiguous ({}).</>'.format(
+                    e.name, commands
                 )
 
                 output_.writeln(message)
@@ -239,10 +239,10 @@ class Application(object):
         self._version = version
 
     def get_long_version(self):
-        if 'UNKNOWN' != self.get_name() and 'UNKNOWN' != self.get_version():
-            return '%s <info>%s</info>' % (self.get_name(), self.get_version())
+        if "UNKNOWN" != self.get_name() and "UNKNOWN" != self.get_version():
+            return "%s <info>%s</info>" % (self.get_name(), self.get_version())
 
-        return 'Console Tool'
+        return "Console Tool"
 
     def register(self, name):
         return self.add(Command(name))
@@ -275,7 +275,7 @@ class Application(object):
         except AttributeError:
             raise Exception(
                 'Command class "%s" is not correctly initialized.'
-                'You probably forgot to call the parent constructor.'
+                "You probably forgot to call the parent constructor."
                 % command.__class__.__name__
             )
 
@@ -295,7 +295,7 @@ class Application(object):
         if self._want_helps:
             self._want_helps = False
 
-            help_command = self.get('help')
+            help_command = self.get("help")
             help_command.set_command(command)
 
             return help_command
@@ -321,11 +321,10 @@ class Application(object):
 
     def find_namespace(self, namespace):
         all_namespaces = self.get_namespaces()
-        expr = re.sub('([^:]+|)', lambda m: re.escape(m.group(1)) + '[^:]*', namespace)
-        namespaces = sorted([
-            ns for ns in all_namespaces
-            if re.findall('^%s' % expr, ns)
-        ])
+        expr = re.sub("([^:]+|)", lambda m: re.escape(m.group(1)) + "[^:]*", namespace)
+        namespaces = sorted(
+            [ns for ns in all_namespaces if re.findall("^%s" % expr, ns)]
+        )
 
         if not namespaces:
             alternatives = self.find_alternatives(namespace, all_namespaces)
@@ -340,21 +339,13 @@ class Application(object):
 
     def find(self, name):
         all_commands = list(self._commands.keys())
-        expr = re.sub('([^:]+|)',
-                      lambda m: re.escape(m.group(1)) + '[^:]*',
-                      name)
-        commands = sorted([
-            x for x in all_commands
-            if re.findall('^%s' % expr, x)
-        ])
+        expr = re.sub("([^:]+|)", lambda m: re.escape(m.group(1)) + "[^:]*", name)
+        commands = sorted([x for x in all_commands if re.findall("^%s" % expr, x)])
 
-        filtered_commands = [
-            c for c in commands
-            if re.findall('^%s$' % expr, c)
-        ]
+        filtered_commands = [c for c in commands if re.findall("^%s$" % expr, c)]
 
         if not commands or len(filtered_commands) < 1:
-            pos = name.find(':')
+            pos = name.find(":")
             if pos >= 0:
                 # Check if a namespace exists and contains commands
                 self.find_namespace(name[:pos])
@@ -386,7 +377,7 @@ class Application(object):
 
         commands = OrderedDict()
         for name, command in self._commands.items():
-            if namespace == self.extract_namespace(name, namespace.count(':') + 1):
+            if namespace == self.extract_namespace(name, namespace.count(":") + 1):
                 commands[name] = command
 
         return commands
@@ -413,7 +404,7 @@ class Application(object):
     def render_exception(self, e, output_):
         tb = traceback.extract_tb(sys.exc_info()[2])
 
-        title = '  [%s]  ' % e.__class__.__name__
+        title = "  [%s]  " % e.__class__.__name__
         l = len(title)
         width = self._terminal.width
         if not width:
@@ -421,37 +412,40 @@ class Application(object):
 
         formatter = output_.get_formatter()
         lines = []
-        for line in re.split('\r?\n', str(e)):
-            for splitline in [line[x:x + (width - 4)]
-                              for x in range(0, len(line), width - 4)]:
-                line_length = len(
-                    re.sub('\[[^m]*m',
-                           '',
-                           formatter.format(splitline))) + 4
+        for line in re.split("\r?\n", str(e)):
+            for splitline in [
+                line[x : x + (width - 4)] for x in range(0, len(line), width - 4)
+            ]:
+                line_length = (
+                    len(re.sub("\[[^m]*m", "", formatter.format(splitline))) + 4
+                )
                 lines.append((splitline, line_length))
 
                 l = max(line_length, l)
 
-        messages = ['']
-        empty_line = formatter.format('<error>%s</error>' % (' ' * l))
+        messages = [""]
+        empty_line = formatter.format("<error>%s</error>" % (" " * l))
         messages.append(empty_line)
-        messages.append(formatter.format('<error>%s%s</error>'
-                                         % (title,
-                                            ' ' * max(0, l - len(title)))))
+        messages.append(
+            formatter.format(
+                "<error>%s%s</error>" % (title, " " * max(0, l - len(title)))
+            )
+        )
 
         for line in lines:
             messages.append(
-                formatter.format('<error>  %s  %s</error>'
-                                 % (line[0], ' ' * (l - line[1])))
+                formatter.format(
+                    "<error>  %s  %s</error>" % (line[0], " " * (l - line[1]))
+                )
             )
 
         messages.append(empty_line)
-        messages.append('')
+        messages.append("")
 
         output_.writeln(messages, Output.OUTPUT_RAW)
 
         if Output.VERBOSITY_VERBOSE <= output_.get_verbosity():
-            output_.writeln('<comment>Exception trace:</comment>')
+            output_.writeln("<comment>Exception trace:</comment>")
 
             for exc_info in tb:
                 file_ = exc_info[0]
@@ -459,18 +453,18 @@ class Application(object):
                 function = exc_info[2]
                 line = exc_info[3]
 
-                output_.writeln(' <info>%s</info> in <fg=cyan>%s()</> '
-                                'at line <info>%s</info>'
-                                % (file_, function, line_number))
-                output_.writeln('   %s' % line)
+                output_.writeln(
+                    " <info>%s</info> in <fg=cyan>%s()</> "
+                    "at line <info>%s</info>" % (file_, function, line_number)
+                )
+                output_.writeln("   %s" % line)
 
-            output_.writeln('')
+            output_.writeln("")
 
         if self._running_command is not None:
-            output_.writeln('<info>%s</info>'
-                            % self._running_command.get_synopsis())
+            output_.writeln("<info>%s</info>" % self._running_command.get_synopsis())
 
-            output_.writeln('')
+            output_.writeln("")
 
     def configure_io(self, input_, output_):
         """
@@ -481,19 +475,19 @@ class Application(object):
         :param output_: An Output instance
         :type output_: Output
         """
-        if input_.has_parameter_option('--ansi'):
+        if input_.has_parameter_option("--ansi"):
             output_.set_decorated(True)
-        elif input_.has_parameter_option('--no-ansi'):
+        elif input_.has_parameter_option("--no-ansi"):
             output_.set_decorated(False)
 
-        if input_.has_parameter_option(['--no-interaction', '-n']):
+        if input_.has_parameter_option(["--no-interaction", "-n"]):
             input_.set_interactive(False)
-        elif self.get_helper_set().has('question'):
-            input_stream = self.get_helper_set().get('question').input_stream
+        elif self.get_helper_set().has("question"):
+            input_stream = self.get_helper_set().get("question").input_stream
             try:
-                is_atty = hasattr(input_stream, 'fileno')
+                is_atty = hasattr(input_stream, "fileno")
 
-                if hasattr(input_stream, 'isatty'):
+                if hasattr(input_stream, "isatty"):
                     is_atty = is_atty and input_stream.isatty()
                 else:
                     is_atty = is_atty and os.isatty(input_stream)
@@ -501,23 +495,29 @@ class Application(object):
             except (UnsupportedOperation, TypeError):
                 is_atty = False
 
-            if not is_atty and os.getenv('SHELL_INTERACTIVE') is None:
+            if not is_atty and os.getenv("SHELL_INTERACTIVE") is None:
                 input_.set_interactive(False)
 
-        if input_.has_parameter_option(['--quiet', '-q']):
+        if input_.has_parameter_option(["--quiet", "-q"]):
             output_.set_verbosity(Output.VERBOSITY_QUIET)
-        elif input_.has_parameter_option('-vvv')\
-                or input_.has_parameter_option('--verbose=3')\
-                or input_.get_parameter_option('--verbose') == "3":
+        elif (
+            input_.has_parameter_option("-vvv")
+            or input_.has_parameter_option("--verbose=3")
+            or input_.get_parameter_option("--verbose") == "3"
+        ):
             output_.set_verbosity(Output.VERBOSITY_DEBUG)
-        elif input_.has_parameter_option('-vv')\
-                or input_.has_parameter_option('--verbose=2')\
-                or input_.get_parameter_option('--verbose') == "2":
+        elif (
+            input_.has_parameter_option("-vv")
+            or input_.has_parameter_option("--verbose=2")
+            or input_.get_parameter_option("--verbose") == "2"
+        ):
             output_.set_verbosity(Output.VERBOSITY_VERY_VERBOSE)
-        elif input_.has_parameter_option('-v')\
-                or input_.has_parameter_option('--verbose=1')\
-                or input_.get_parameter_option('--verbose') == "1"\
-                or input_.get_parameter_option('--verbose', False) is not False:
+        elif (
+            input_.has_parameter_option("-v")
+            or input_.has_parameter_option("--verbose=1")
+            or input_.get_parameter_option("--verbose") == "1"
+            or input_.get_parameter_option("--verbose", False) is not False
+        ):
             output_.set_verbosity(Output.VERBOSITY_VERBOSE)
 
     def get_command_name(self, input_):
@@ -527,21 +527,42 @@ class Application(object):
         return input_.get_first_argument()
 
     def get_default_input_definition(self):
-        return InputDefinition([
-            InputArgument('command', InputArgument.REQUIRED, 'The command to execute'),
-
-            InputOption('--help', '-h', InputOption.VALUE_NONE, 'Display this help message'),
-            InputOption('--quiet', '-q', InputOption.VALUE_NONE, 'Do not output any message'),
-            InputOption(
-                '--verbose', '-v|vv|vvv', InputOption.VALUE_OPTIONAL,
-                'Increase the verbosity of messages: 1 for normal output, '
-                '2 for more verbose output and 3 for debug'
-            ),
-            InputOption('--version', '-V', InputOption.VALUE_NONE, 'Display this application version'),
-            InputOption('--ansi', '', InputOption.VALUE_NONE, 'Force ANSI output'),
-            InputOption('--no-ansi', '', InputOption.VALUE_NONE, 'Disable ANSI output'),
-            InputOption('--no-interaction', '-n', InputOption.VALUE_NONE, 'Do not ask any interactive question')
-        ])
+        return InputDefinition(
+            [
+                InputArgument(
+                    "command", InputArgument.REQUIRED, "The command to execute"
+                ),
+                InputOption(
+                    "--help", "-h", InputOption.VALUE_NONE, "Display this help message"
+                ),
+                InputOption(
+                    "--quiet", "-q", InputOption.VALUE_NONE, "Do not output any message"
+                ),
+                InputOption(
+                    "--verbose",
+                    "-v|vv|vvv",
+                    InputOption.VALUE_OPTIONAL,
+                    "Increase the verbosity of messages: 1 for normal output, "
+                    "2 for more verbose output and 3 for debug",
+                ),
+                InputOption(
+                    "--version",
+                    "-V",
+                    InputOption.VALUE_NONE,
+                    "Display this application version",
+                ),
+                InputOption("--ansi", "", InputOption.VALUE_NONE, "Force ANSI output"),
+                InputOption(
+                    "--no-ansi", "", InputOption.VALUE_NONE, "Disable ANSI output"
+                ),
+                InputOption(
+                    "--no-interaction",
+                    "-n",
+                    InputOption.VALUE_NONE,
+                    "Do not ask any interactive question",
+                ),
+            ]
+        )
 
     def get_default_commands(self):
         commands = [HelpCommand(), ListCommand()]
@@ -552,10 +573,7 @@ class Application(object):
         return commands
 
     def get_default_helper_set(self):
-        return HelperSet([
-            FormatterHelper(),
-            QuestionHelper()
-        ])
+        return HelperSet([FormatterHelper(), QuestionHelper()])
 
     def sort_commands(self, commands):
         """
@@ -570,7 +588,7 @@ class Application(object):
         for name, command in commands.items():
             key = self.extract_namespace(name, 1)
             if not key:
-                key = '_global'
+                key = "_global"
 
             if key in namespaced_commands:
                 namespaced_commands[key][name] = command
@@ -578,17 +596,19 @@ class Application(object):
                 namespaced_commands[key] = {name: command}
 
         for namespace, commands in namespaced_commands.items():
-            namespaced_commands[namespace] = sorted(commands.items(), key=lambda x: x[0])
+            namespaced_commands[namespace] = sorted(
+                commands.items(), key=lambda x: x[0]
+            )
 
         namespaced_commands = sorted(namespaced_commands.items(), key=lambda x: x[0])
 
         return namespaced_commands
 
     def extract_namespace(self, name, limit=None):
-        parts = name.split(':')
+        parts = name.split(":")
         parts.pop()
 
-        return ':'.join(parts[:limit] if limit else parts)
+        return ":".join(parts[:limit] if limit else parts)
 
     def find_alternatives(self, name, collection):
         """
@@ -606,9 +626,9 @@ class Application(object):
 
         collection_parts = {}
         for item in collection:
-            collection_parts[item] = item.split(':')
+            collection_parts[item] = item.split(":")
 
-        for i, subname in enumerate(name.split(':')):
+        for i, subname in enumerate(name.split(":")):
             for collection_name, parts in collection_parts.items():
                 exists = collection_name in alternatives
                 if i not in parts and exists:

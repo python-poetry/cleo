@@ -65,7 +65,7 @@ class Input(object):
 
     def validate(self):
         if len(self.get_arguments()) < self.definition.get_argument_required_count():
-            raise MissingArguments('Not enough arguments')
+            raise MissingArguments("Not enough arguments")
 
         self.validate_arguments()
         self.validate_options()
@@ -85,7 +85,9 @@ class Input(object):
                     if callable(validator):
                         validator = Callable(validator)
                     else:
-                        raise Exception('Invalid validator specified for argument %s' % arg.name)
+                        raise Exception(
+                            "Invalid validator specified for argument %s" % arg.name
+                        )
 
                 try:
                     validated_value = validator.validate(arg_value)
@@ -109,7 +111,9 @@ class Input(object):
                     if callable(validator):
                         validator = Callable(validator)
                     else:
-                        raise Exception('Invalid validator specified for option %s' % opt.name)
+                        raise Exception(
+                            "Invalid validator specified for option %s" % opt.name
+                        )
 
                 try:
                     validated_value = validator.validate(opt_value)
@@ -131,7 +135,9 @@ class Input(object):
         if not self.definition.has_argument(name):
             raise Exception('Argument "%s" does not exist' % name)
 
-        return self.arguments.get(name, self.definition.get_argument(name).get_default())
+        return self.arguments.get(
+            name, self.definition.get_argument(name).get_default()
+        )
 
     def set_argument(self, name, value):
         if not self.definition.has_argument(name):
@@ -161,7 +167,7 @@ class Input(object):
         return self.definition.has_option(name)
 
     def escape_token(self, token):
-        if re.match('^[\w-]+$', token):
+        if re.match("^[\w-]+$", token):
             return token
         else:
             return "\\'".join("'" + p + "'" for p in token.split("'"))

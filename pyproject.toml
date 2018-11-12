@@ -23,3 +23,4 @@ pastel = "^0.1.0"
 [tool.poetry.dev-dependencies]
 pytest = "^3.4"
 pytest-mock = "^1.7"
+pre-commit = "^1.12"

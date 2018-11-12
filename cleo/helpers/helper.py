@@ -12,15 +12,15 @@ class Helper(object):
     helper_set = None
 
     time_formats = [
-        (0, '< 1 sec'),
-        (2, '1 sec'),
-        (59, 'secs', 1),
-        (60, '1 min'),
-        (3600, 'mins', 60),
-        (5400, '1 hr'),
-        (86400, 'hrs', 3600),
-        (129600, '1 day'),
-        (604800, 'days', 86400),
+        (0, "< 1 sec"),
+        (2, "1 sec"),
+        (59, "secs", 1),
+        (60, "1 min"),
+        (3600, "mins", 60),
+        (5400, "1 hr"),
+        (86400, "hrs", 3600),
+        (129600, "1 day"),
+        (604800, "days", 86400),
     ]
 
     def set_helper_set(self, helper_set=None):
@@ -72,7 +72,7 @@ class Helper(object):
             if len(fmt) == 2:
                 return fmt[1]
 
-            return '%s %s' % (int(math.ceil(secs / fmt[2])), fmt[1])
+            return "%s %s" % (int(math.ceil(secs / fmt[2])), fmt[1])
 
     @classmethod
     def format_memory(cls, memory):
@@ -85,16 +85,16 @@ class Helper(object):
         :return: The memory representation
         :rtype: str
         """
-        if memory >= 1024**3:
-            return '%.1f GiB' % (memory / 1024**3)
+        if memory >= 1024 ** 3:
+            return "%.1f GiB" % (memory / 1024 ** 3)
 
-        if memory >= 1024 **2:
-            return '%.1f MiB' % (memory / 1024**2)
+        if memory >= 1024 ** 2:
+            return "%.1f MiB" % (memory / 1024 ** 2)
 
         if memory >= 1024:
-            return '%.1f KiB' % (memory / 1024)
+            return "%.1f KiB" % (memory / 1024)
 
-        return '%.1f B' % memory
+        return "%.1f B" % memory
 
     @classmethod
     def len_without_decoration(cls, formatter, string):
@@ -105,7 +105,7 @@ class Helper(object):
         string = formatter.format(string)
 
         # Remove already formatted characters
-        string = re.sub('\033\[[^m]*m', '', string)
+        string = re.sub("\033\[[^m]*m", "", string)
 
         formatter.set_decorated(is_decorated)
 

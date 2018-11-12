@@ -18,7 +18,7 @@ class Terminal(object):
 
     @property
     def width(self):
-        width = os.getenv('COLUMNS', '').strip()
+        width = os.getenv("COLUMNS", "").strip()
         if width:
             return int(width)
 
@@ -29,7 +29,7 @@ class Terminal(object):
 
     @property
     def height(self):
-        height = os.getenv('LINES', '').strip()
+        height = os.getenv("LINES", "").strip()
         if height:
             return int(height)
 
@@ -42,11 +42,13 @@ class Terminal(object):
         current_os = platform.system().lower()
         dimensions = None
 
-        if current_os.lower() == 'windows':
+        if current_os.lower() == "windows":
             dimensions = self._get_terminal_size_windows()
             if dimensions is None:
                 dimensions = self._get_terminal_size_tput()
-        elif current_os.lower() in ['linux', 'darwin'] or current_os.startswith('cygwin'):
+        elif current_os.lower() in ["linux", "darwin"] or current_os.startswith(
+            "cygwin"
+        ):
             dimensions = self._get_terminal_size_linux()
 
         if dimensions is None:
@@ -57,6 +59,7 @@ class Terminal(object):
     def _get_terminal_size_windows(self):
         try:
             from ctypes import windll, create_string_buffer
+
             # stdin handle is -10
             # stdout handle is -11
             # stderr handle is -12
@@ -64,9 +67,19 @@ class Terminal(object):
             csbi = create_string_buffer(22)
             res = windll.kernel32.GetConsoleScreenBufferInfo(h, csbi)
             if res:
-                (bufx, bufy, curx, cury, wattr,
-                 left, top, right, bottom,
-                 maxx, maxy) = struct.unpack("hhhhHhhhhhh", csbi.raw)
+                (
+                    bufx,
+                    bufy,
+                    curx,
+                    cury,
+                    wattr,
+                    left,
+                    top,
+                    right,
+                    bottom,
+                    maxx,
+                    maxy,
+                ) = struct.unpack("hhhhHhhhhhh", csbi.raw)
                 sizex = right - left + 1
                 sizey = bottom - top + 1
                 return sizex, sizey
@@ -79,14 +92,12 @@ class Terminal(object):
         try:
             cols = int(
                 subprocess.check_output(
-                    shlex.split('tput cols'),
-                    stderr=subprocess.STDOUT
+                    shlex.split("tput cols"), stderr=subprocess.STDOUT
                 )
             )
             rows = int(
                 subprocess.check_output(
-                    shlex.split('tput lines'),
-                    stderr=subprocess.STDOUT
+                    shlex.split("tput lines"), stderr=subprocess.STDOUT
                 )
             )
 
@@ -99,8 +110,8 @@ class Terminal(object):
             try:
                 import fcntl
                 import termios
-                cr = struct.unpack('hh',
-                                   fcntl.ioctl(fd, termios.TIOCGWINSZ, '1234'))
+
+                cr = struct.unpack("hh", fcntl.ioctl(fd, termios.TIOCGWINSZ, "1234"))
                 return cr
             except:
                 pass
@@ -116,7 +127,7 @@ class Terminal(object):
 
         if not cr:
             try:
-                cr = (os.environ['LINES'], os.environ['COLUMNS'])
+                cr = (os.environ["LINES"], os.environ["COLUMNS"])
             except:
                 return None
 

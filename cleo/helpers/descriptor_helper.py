@@ -12,9 +12,9 @@ class DescriptorHelper(Helper):
     def __init__(self):
         self._descriptors = {}
 
-        self.register('txt', TextDescriptor())
-        self.register('json', JsonDescriptor())
-        self.register('md', MarkdownDescriptor())
+        self.register("txt", TextDescriptor())
+        self.register("json", JsonDescriptor())
+        self.register("md", MarkdownDescriptor())
 
     def describe(self, output, obj, **options):
         """
@@ -27,17 +27,14 @@ class DescriptorHelper(Helper):
         :type output: Output
         :type obj: mixed
         """
-        actual_options = {
-            'raw_text': False,
-            'format': 'txt'
-        }
+        actual_options = {"raw_text": False, "format": "txt"}
 
         actual_options.update(options)
 
-        if actual_options['format'] not in self._descriptors:
-            raise ValueError('Unsupported format "%s".' % actual_options['format'])
+        if actual_options["format"] not in self._descriptors:
+            raise ValueError('Unsupported format "%s".' % actual_options["format"])
 
-        descriptor = self._descriptors[options['format']]
+        descriptor = self._descriptors[options["format"]]
         descriptor.describe(output, obj, **options)
 
     def register(self, name, descriptor):

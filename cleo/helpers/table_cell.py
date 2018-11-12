@@ -6,12 +6,9 @@ class TableCell(str):
     Represents a table cell
     """
 
-    _options = {
-        'rowspan': 1,
-        "colspan": 1
-    }
+    _options = {"rowspan": 1, "colspan": 1}
 
-    def __new__(cls, value = '', **options):
+    def __new__(cls, value="", **options):
         self = super(TableCell, cls).__new__(cls, value)
 
         return self
@@ -27,8 +24,8 @@ class TableCell(str):
 
     @property
     def colspan(self):
-        return self.options['colspan']
+        return self.options["colspan"]
 
     @property
     def rowspan(self):
-        return self.options['rowspan']
+        return self.options["rowspan"]

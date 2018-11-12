@@ -13,18 +13,18 @@ class ProgressHelper(Helper):
     The Progress class providers helpers to display progress output.
     """
 
-    FORMAT_QUIET = ' %percent%%'
-    FORMAT_NORMAL = ' %current%/%max% [%bar%] %percent%%'
-    FORMAT_VERBOSE = ' %current%/%max% [%bar%] %percent% Elapsed: %elapsed%'
-    FORMAT_QUIET_NOMAX = ' %current%'
-    FORMAT_NORMAL_NOMAX = ' %current% [%bar%]'
-    FORMAT_VERBOSE_NOMAX = ' %current% [%bar%] Elapsed: %elapsed%'
+    FORMAT_QUIET = " %percent%%"
+    FORMAT_NORMAL = " %current%/%max% [%bar%] %percent%%"
+    FORMAT_VERBOSE = " %current%/%max% [%bar%] %percent% Elapsed: %elapsed%"
+    FORMAT_QUIET_NOMAX = " %current%"
+    FORMAT_NORMAL_NOMAX = " %current% [%bar%]"
+    FORMAT_VERBOSE_NOMAX = " %current% [%bar%] Elapsed: %elapsed%"
 
     # options
     bar_width = 28
-    bar_char = '='
-    empty_bar_char = '-'
-    progress_char = '>'
+    bar_char = "="
+    empty_bar_char = "-"
+    progress_char = ">"
     display_format = None
     redraw_freq = 1
 
@@ -36,38 +36,29 @@ class ProgressHelper(Helper):
     max_steps = 0
     start_time = None
 
-    default_format_vars = [
-        'current',
-        'max',
-        'bar',
-        'percent',
-        'elapsed'
-    ]
+    default_format_vars = ["current", "max", "bar", "percent", "elapsed"]
 
     format_vars = []
 
-    widths = {
-        'current': 4,
-        'max': 4,
-        'percent': 3,
-        'elapsed': 6
-    }
+    widths = {"current": 4, "max": 4, "percent": 3, "elapsed": 6}
 
     time_formats = [
-        (0, '???'),
-        (2, '1 sec'),
-        (59, 'secs', 1),
-        (60, '1 min'),
-        (3600, 'mins', 60),
-        (5400, '1 hr'),
-        (86400, 'hrs', 3600),
-        (129600, '1 day'),
-        (604800, 'days', 86400)
+        (0, "???"),
+        (2, "1 sec"),
+        (59, "secs", 1),
+        (60, "1 min"),
+        (3600, "mins", 60),
+        (5400, "1 hr"),
+        (86400, "hrs", 3600),
+        (129600, "1 day"),
+        (604800, "days", 86400),
     ]
 
     def __init__(self):
-        warnings.warn('ProgressHelper class is deprecated. '
-                      'Use the ProgressBar class instead', DeprecationWarning)
+        warnings.warn(
+            "ProgressHelper class is deprecated. " "Use the ProgressBar class instead",
+            DeprecationWarning,
+        )
 
     def set_bar_width(self, size):
         """
@@ -163,7 +154,7 @@ class ProgressHelper(Helper):
         :type redraw: bool
         """
         if self.start_time is None:
-            raise Exception('You must start the progress bar before calling advance().')
+            raise Exception("You must start the progress bar before calling advance().")
 
         if self.current_step == 0:
             redraw = True
@@ -180,11 +171,11 @@ class ProgressHelper(Helper):
         :type finish: bool
         """
         if self.start_time is None:
-            raise Exception('You must start the progress bar before calling display().')
+            raise Exception("You must start the progress bar before calling display().")
 
         message = self.display_format
         for name, value in self.generate(finish).items():
-            message = message.replace('%' + name + '%', str(value))
+            message = message.replace("%" + name + "%", str(value))
 
         self.overwrite(self.output, message)
 
@@ -193,7 +184,7 @@ class ProgressHelper(Helper):
         Finishes the progress output
         """
         if self.start_time is None:
-            raise Exception('You must start the progress bar before calling finish().')
+            raise Exception("You must start the progress bar before calling finish().")
 
         if not self.max_steps:
             self.bar_char = self.bar_char_original
@@ -203,7 +194,7 @@ class ProgressHelper(Helper):
                 self.advance(self.max_steps - self.current_step)
 
         self.start_time = None
-        self.output.writeln('')
+        self.output.writeln("")
         self.output = None
 
     def initialize(self):
@@ -212,12 +203,12 @@ class ProgressHelper(Helper):
         """
         self.format_vars = []
         for v in self.default_format_vars:
-            if self.display_format.find('%' + v + '%') != -1:
+            if self.display_format.find("%" + v + "%") != -1:
                 self.format_vars.append(v)
 
         if self.max_steps > 0:
-            self.widths['max'] = len(str(self.max_steps))
-            self.widths['current'] = self.widths['max']
+            self.widths["max"] = len(str(self.max_steps))
+            self.widths["current"] = self.widths["max"]
         else:
             self.bar_char_original = self.bar_char
             self.bar_char = self.empty_bar_char
@@ -238,7 +229,7 @@ class ProgressHelper(Helper):
             percent = round(float(self.current_step) / self.max_steps, 2)
 
         # bar
-        if 'bar' in self.format_vars:
+        if "bar" in self.format_vars:
             if self.max_steps > 0:
                 complete_bars = math.floor(percent * self.bar_width)
             else:
@@ -253,24 +244,30 @@ class ProgressHelper(Helper):
                 bar += self.progress_char
                 bar += self.empty_bar_char * int(empty_bars)
 
-            format_vars['bar'] = bar
+            format_vars["bar"] = bar
 
         # elapsed
-        if 'elapsed' in self.format_vars:
+        if "elapsed" in self.format_vars:
             elapsed = time.time() - self.start_time
-            format_vars['elapsed'] = self.humane_time(elapsed).rjust(self.widths['elapsed'], ' ')
+            format_vars["elapsed"] = self.humane_time(elapsed).rjust(
+                self.widths["elapsed"], " "
+            )
 
         # current
-        if 'current' in self.format_vars:
-            format_vars['current'] = str(self.current_step).rjust(self.widths['current'], ' ')
+        if "current" in self.format_vars:
+            format_vars["current"] = str(self.current_step).rjust(
+                self.widths["current"], " "
+            )
 
         # max steps
-        if 'max' in self.format_vars:
-            format_vars['max'] = self.max_steps
+        if "max" in self.format_vars:
+            format_vars["max"] = self.max_steps
 
         # percent
-        if 'percent' in self.format_vars:
-            format_vars['percent'] = str(int(round(percent * 100))).rjust(self.widths['percent'], ' ')
+        if "percent" in self.format_vars:
+            format_vars["percent"] = str(int(round(percent * 100))).rjust(
+                self.widths["percent"], " "
+            )
 
         return format_vars
 
@@ -284,14 +281,18 @@ class ProgressHelper(Helper):
         :return: Time in human-readable format
         :rtype: str
         """
-        text = ''
+        text = ""
         for time_format in self.time_formats:
             if secs < time_format[0]:
                 if len(time_format) == 2:
                     text = time_format[1]
                     break
                 else:
-                    text = str(int(math.ceil(secs / time_format[2]))) + ' ' + time_format[1]
+                    text = (
+                        str(int(math.ceil(secs / time_format[2])))
+                        + " "
+                        + time_format[1]
+                    )
                     break
 
         return text
@@ -309,13 +310,13 @@ class ProgressHelper(Helper):
 
         # append whitespace to match the last line's length
         if self.last_messages_length is not None and self.last_messages_length > length:
-            messages = messages.ljust(self.last_messages_length, '\x20')
+            messages = messages.ljust(self.last_messages_length, "\x20")
 
         # carriage return
-        output_.write('\x0D')
+        output_.write("\x0D")
         output_.write(messages)
 
         self.last_messages_length = len(messages)
 
     def get_name(self):
-        return 'progress'
+        return "progress"

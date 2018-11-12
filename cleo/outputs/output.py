@@ -68,7 +68,7 @@ class Output(object):
             elif output_type == self.OUTPUT_PLAIN:
                 message = self.formatter.colorize(message)
             else:
-                raise OutputError('Unknown output type given (%s)' % output_type)
+                raise OutputError("Unknown output type given (%s)" % output_type)
 
             self.do_write(message, newline)
 

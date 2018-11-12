@@ -8,7 +8,6 @@ from cleo.outputs import BufferedOutput
 
 
 class MarkdownDescriptorTestCase(DescriptorTestCase):
-
     def test_describe_input_arguments(self):
         return self._test_describe_input_arguments()
 
@@ -28,4 +27,4 @@ class MarkdownDescriptorTestCase(DescriptorTestCase):
         return MarkdownDescriptor()
 
     def get_format(self):
-        return 'md'
+        return "md"

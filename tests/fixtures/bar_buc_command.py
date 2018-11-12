@@ -4,6 +4,5 @@ from cleo.commands import Command
 
 
 class BarBucCommand(Command):
-
     def configure(self):
-        self.set_name('bar:buc')
+        self.set_name("bar:buc")

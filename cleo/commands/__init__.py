@@ -7,9 +7,10 @@ from .list_command import ListCommand
 from .completions_command import CompletionsCommand
 
 __all__ = [
-    'BaseCommand',
-    'Command', 'CommandError',
-    'HelpCommand',
-    'ListCommand',
-    'CompletionsCommand'
+    "BaseCommand",
+    "Command",
+    "CommandError",
+    "HelpCommand",
+    "ListCommand",
+    "CompletionsCommand",
 ]

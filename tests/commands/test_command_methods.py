@@ -13,28 +13,24 @@ class TestCommand(Command):
     """
 
     def handle(self):
-        action = self.argument('action')
+        action = self.argument("action")
 
-        getattr(self, '_' + action)()
+        getattr(self, "_" + action)()
 
     def _overwrite(self):
-        self.write('Processing...')
-        self.overwrite('Done!')
+        self.write("Processing...")
+        self.overwrite("Done!")
 
 
 class CommandTest(CleoTestCase):
-
     def test_overwrite(self):
         command = TestCommand()
 
         tester = CommandTester(command)
-        tester.execute([
-            ('action', 'overwrite')
-        ])
+        tester.execute([("action", "overwrite")])
 
         print(tester.get_display())
 
         self.assertRegex(
-            tester.get_display(),
-            '^Processing...{}Done!        '.format('\x08' * 13)
+            tester.get_display(), "^Processing...{}Done!        ".format("\x08" * 13)
         )

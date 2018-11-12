@@ -9,4 +9,4 @@ class TableSeparator(TableCell):
     """
 
     def __init__(self, **options):
-        super(TableSeparator, self).__init__('', **options)
+        super(TableSeparator, self).__init__("", **options)

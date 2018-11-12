@@ -6,24 +6,18 @@ from cleo.inputs import InputArgument, InputOption
 
 class NoConfigureCommand(Command):
 
-    name = 'no:configure'
+    name = "no:configure"
 
-    description = 'description'
+    description = "description"
 
-    help = 'help'
+    help = "help"
 
-    arguments = [
-        InputArgument('foo'),
-        InputArgument('bar')
-    ]
+    arguments = [InputArgument("foo"), InputArgument("bar")]
 
-    options = [
-        InputOption('baz', 'z'),
-        InputOption('bazz', 'Z')
-    ]
+    options = [InputOption("baz", "z"), InputOption("bazz", "Z")]
 
     def execute(self, input_, output_):
-        output_.writeln('execute called')
+        output_.writeln("execute called")
 
     def interact(self, input_, output_):
-        output_.writeln('interact called')
+        output_.writeln("interact called")

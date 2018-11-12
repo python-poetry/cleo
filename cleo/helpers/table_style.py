@@ -5,19 +5,19 @@ from ..exceptions import CleoException
 
 class TableStyle(object):
 
-    padding_char = ' '
-    horizontal_border_char = '-'
-    vertical_border_char = '|'
-    crossing_char = '+'
-    cell_header_format = '<info>%s</info>'
-    cell_row_format = '%s'
-    cell_row_content_format = ' %s '
-    border_format = '%s'
-    pad_type = 'ljust'
+    padding_char = " "
+    horizontal_border_char = "-"
+    vertical_border_char = "|"
+    crossing_char = "+"
+    cell_header_format = "<info>%s</info>"
+    cell_row_format = "%s"
+    cell_row_content_format = " %s "
+    border_format = "%s"
+    pad_type = "ljust"
 
     def set_padding_char(self, padding_char):
         if not padding_char:
-            raise CleoException('Padding char must not be empty')
+            raise CleoException("Padding char must not be empty")
 
         self.padding_char = padding_char
 
@@ -59,14 +59,12 @@ class TableStyle(object):
         return self
 
     def set_pad_type(self, pad_type):
-        pad_types = {
-            'left': 'rjust',
-            'right': 'ljust',
-            'center': 'center'
-        }
+        pad_types = {"left": "rjust", "right": "ljust", "center": "center"}
 
         if pad_type not in pad_types:
-            raise CleoException('Invalid pad type. Must be either "left", "right" or "center".')
+            raise CleoException(
+                'Invalid pad type. Must be either "left", "right" or "center".'
+            )
 
         self.pad_type = pad_types[pad_type]
 
