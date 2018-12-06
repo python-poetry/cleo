@@ -1,2 +1,0 @@
-
-Command "f:b" is ambiguous (foo1:bar, foo:bar and 1 more).

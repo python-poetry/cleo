@@ -1,19 +1,16 @@
-# -*- coding: utf-8 -*-
-
 from cleo.commands.command import Command
-from cleo.validators import Integer, Boolean
 
 
 class SignatureCommand(Command):
 
     name = "no:configure"
-    signature = "signature:command {foo} {bar?} {--z|baz} {--Z|bazz}"
+    signature = (
+        "signature:command {foo : Foo} {bar? : Bar} {--z|baz : Baz} {--Z|bazz : Bazz}"
+    )
 
     description = "description"
 
     help = "help"
 
-    validation = {"foo": Integer(), "--baz": Boolean()}
-
     def handle(self):
-        self.output.line("handle called")
+        self.line("handle called")

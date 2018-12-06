@@ -3,8 +3,8 @@
 import os
 import pytest
 
-from cleo import Application, CommandTester
-from cleo.exceptions.input import InvalidArgument
+from cleo import Application
+from cleo import CommandTester
 
 from .fixtures.hello_command import HelloCommand
 from .fixtures.command_with_colons import CommandWithColons
@@ -18,13 +18,14 @@ def test_invalid_shell():
     command = app.find("completions")
     tester = CommandTester(command)
 
-    with pytest.raises(InvalidArgument):
-        tester.execute([("shell", "pomodoro")])
+    with pytest.raises(ValueError):
+        tester.execute("pomodoro")
 
 
 def test_bash(mocker):
     mocker.patch(
-        "cleo.commands.completions_command.CompletionsCommand._get_script_full_name",
+        "clikit.api.args.args.Args.script_name",
+        new_callable=mocker.PropertyMock,
         return_value="/path/to/my/script",
     )
     mocker.patch(
@@ -34,19 +35,18 @@ def test_bash(mocker):
 
     command = app.find("completions")
     tester = CommandTester(command)
-    tester.execute([("shell", "bash")])
-
-    output = tester.get_display()
+    tester.execute("bash")
 
     with open(os.path.join(os.path.dirname(__file__), "fixtures", "bash.txt")) as f:
         expected = f.read()
 
-    assert expected == output
+    assert expected == tester.io.fetch_output()
 
 
 def test_zsh(mocker):
     mocker.patch(
-        "cleo.commands.completions_command.CompletionsCommand._get_script_full_name",
+        "clikit.api.args.args.Args.script_name",
+        new_callable=mocker.PropertyMock,
         return_value="/path/to/my/script",
     )
     mocker.patch(
@@ -56,19 +56,18 @@ def test_zsh(mocker):
 
     command = app.find("completions")
     tester = CommandTester(command)
-    tester.execute([("shell", "zsh")])
-
-    output = tester.get_display()
+    tester.execute("zsh")
 
     with open(os.path.join(os.path.dirname(__file__), "fixtures", "zsh.txt")) as f:
         expected = f.read()
 
-    assert expected == output
+    assert expected == tester.io.fetch_output()
 
 
 def test_fish(mocker):
     mocker.patch(
-        "cleo.commands.completions_command.CompletionsCommand._get_script_full_name",
+        "clikit.api.args.args.Args.script_name",
+        new_callable=mocker.PropertyMock,
         return_value="/path/to/my/script",
     )
     mocker.patch(
@@ -78,11 +77,9 @@ def test_fish(mocker):
 
     command = app.find("completions")
     tester = CommandTester(command)
-    tester.execute([("shell", "fish")])
-
-    output = tester.get_display()
+    tester.execute("fish")
 
     with open(os.path.join(os.path.dirname(__file__), "fixtures", "fish.txt")) as f:
         expected = f.read()
 
-    assert expected == output
+    assert expected == tester.io.fetch_output()

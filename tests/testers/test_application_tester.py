@@ -1,78 +1,37 @@
-# -*- coding: utf-8 -*-
+import pytest
 
-from unittest import TestCase
-from cleo.testers.application_tester import ApplicationTester
+from cleo.commands import Command
 from cleo.application import Application
-from cleo.outputs.output import Output
+from cleo.testers.application_tester import ApplicationTester
 
 
-class TestApplicationTester(TestCase):
-    def setUp(self):
-        self.application = Application()
-        self.application.set_auto_exit(False)
-        self.application.register("foo").add_argument("foo").set_code(
-            lambda c: c.line("foo")
-        )
+class FooCommand(Command):
+    """
+    Foo command
 
-        self.tester = ApplicationTester(self.application)
-        self.tester.run(
-            [("command", "foo"), ("foo", "bar")],
-            {
-                "interactive": False,
-                "decorated": False,
-                "verbosity": Output.VERBOSITY_VERBOSE,
-            },
-        )
+    foo
+        {foo : Foo argument}
+    """
 
-    def tearDown(self):
-        self.application = None
-        self.tester = None
+    def handle(self):
+        self.line(self.argument("foo"))
 
-    def test_run(self):
-        """
-        ApplicationTester.run() behaves properly
-        """
-        self.assertFalse(
-            self.tester.get_input().is_interactive(),
-            msg=".run() takes an interactive option.",
-        )
-        self.assertFalse(
-            self.tester.get_output().is_decorated(),
-            msg=".run() takes a decorated option.",
-        )
-        self.assertEqual(
-            Output.VERBOSITY_VERBOSE,
-            self.tester.get_output().get_verbosity(),
-            msg=".run() takes an interactive option.",
-        )
 
-    def test_get_input(self):
-        """
-        ApplicationTester.get_input() behaves properly
-        """
-        self.assertEqual(
-            "bar",
-            self.tester.get_input().get_argument("foo"),
-            msg=".get_input() returns the current input instance.",
-        )
+@pytest.fixture()
+def app():
+    app = Application()
+    app.config.set_terminate_after_run(False)
+    app.add(FooCommand())
 
-    def test_get_output(self):
-        """
-        ApplicationTester.get_output() behaves properly
-        """
-        self.tester.get_output().get_stream().seek(0)
-        self.assertEqual(
-            "foo\n",
-            self.tester.get_output().get_stream().read().decode("utf-8"),
-            msg=".get_output() returns the current output instance.",
-        )
+    return app
 
-    def test_get_display(self):
-        """
-        ApplicationTester.get_display() behaves properly
-        """
-        self.assertEqual(
-            "foo\n",
-            self.tester.get_display(),
-            msg=".get_display() returns the display of the last execution.",
-        )
+
+@pytest.fixture()
+def tester(app):
+    return ApplicationTester(app)
+
+
+def test_execute(tester):
+    assert 0 == tester.execute("foo bar")
+    assert 0 == tester.status_code
+    assert "bar\n" == tester.io.fetch_output()

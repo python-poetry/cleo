@@ -14,7 +14,7 @@ install:
   - source $HOME/.poetry/env
   - poetry install
 
-script: pytest -q tests/
+script: pytest --cov cleo -q tests/
 
 jobs:
   include:

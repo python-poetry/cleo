@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
+from clikit.args import StringArgs
 
-import os
-from io import BytesIO
-
-from ..inputs.list_input import ListInput
-from ..outputs.stream_output import StreamOutput
+from cleo import Application
+from cleo.io import BufferedIO
 
 
 class ApplicationTester(object):
@@ -12,112 +9,43 @@ class ApplicationTester(object):
     Eases the testing of console applications.
     """
 
-    def __init__(self, application):
-        """
-        Constructor
-
-        :param application: A Application instance to test
-        :type application: Application
-        """
+    def __init__(self, application):  # type: (Application) -> None
         self._application = application
-        self._input = None
-        self._output = None
-        self._inputs = []
+        self._io = BufferedIO()
+        self._status_code = 0
 
-    def run(self, input_, options=None):
+    @property
+    def io(self):  # type: () -> BufferedIO
+        return self._io
+
+    @property
+    def status_code(self):  # type: () -> int
+        return self._status_code
+
+    def execute(self, args, **options):  # type: (str, ...) -> int
         """
         Executes the command
 
         Available options:
             * interactive: Sets the input interactive flag
-            * decorated: Sets the output decorated flag
             * verbosity: Sets the output verbosity flag
-
-        :param input_: A dict of argument and options
-        :type input_: list
-        :param options: A dict of options
-        :type options: dict
-
-        :return: The command exit code
-        :rtype: integer
         """
-        options = options or {}
+        args = StringArgs(args)
 
-        self._input = ListInput(input_)
-        if self._inputs:
-            self._input.set_stream(self._create_stream(self._inputs))
+        if "inputs" in options:
+            self._io.set_input(options["inputs"])
 
         if "interactive" in options:
-            self._input.set_interactive(options["interactive"])
-
-        self._output = StreamOutput(BytesIO())
-        if "decorated" in options:
-            self._output.set_decorated(options["decorated"])
-        else:
-            self._output.set_decorated(False)
+            self._io.set_interactive(options["interactive"])
 
         if "verbosity" in options:
-            self._output.set_verbosity(options["verbosity"])
+            self._io.set_verbosity(options["verbosity"])
 
-        self._application.run(self._input, self._output)
+        self._status_code = self._application.run(
+            args,
+            self._io.input.stream,
+            self._io.output.stream,
+            self._io.error_output.stream,
+        )
 
-    def get_display(self, normalize=False):
-        """
-        Gets the display returned by the last execution command
-
-        :return: The display
-        :rtype: str
-        """
-        self._output.get_stream().seek(0)
-
-        display = self._output.get_stream().read().decode("utf-8")
-
-        if normalize:
-            display = display.replace(os.linesep, "\n")
-
-        return display
-
-    def get_input(self):
-        """
-        Gets the input instance used by the last execution of the command.
-
-        :return: The current input instance
-        :rtype: Input
-        """
-        return self._input
-
-    def get_output(self):
-        """
-        Gets the output instance used by the last execution of the command.
-
-        :return: The current output instance
-        :rtype: Output
-        """
-        return self._output
-
-    def set_inputs(self, inputs):
-        """
-        Sets the user inputs.
-
-        :param inputs: The user inputs
-        :type inputs: list
-
-        :rtype: CommandTester
-        """
-        self._inputs = inputs
-
-        return self
-
-    def _create_stream(self, inputs):
-        """
-        Create a stream from inputs.
-
-        :type inputs: list
-
-        :rtype:
-        """
-        stream = BytesIO()
-        stream.write(os.linesep.join(inputs).encode())
-        stream.seek(0)
-
-        return stream
+        return self._status_code

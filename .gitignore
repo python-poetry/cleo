@@ -23,3 +23,4 @@ test.py
 /test
 poetry.lock
 .pytest_cache
+.vscode

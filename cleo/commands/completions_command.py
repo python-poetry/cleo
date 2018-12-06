@@ -3,14 +3,8 @@
 import os
 import hashlib
 import re
-import json
 import subprocess
 
-from pastel import Pastel
-
-from ..exceptions import InvalidArgument
-from ..helpers import DescriptorHelper
-from ..outputs import BufferedOutput
 from .._compat import encode
 
 from .command import Command
@@ -20,10 +14,10 @@ from .completions.templates import TEMPLATES
 class CompletionsCommand(Command):
     """
     Generate completion scripts for your shell.
-    
+
     completions
         { shell? : The shell to generate scripts for. }
-        { --alias=* : Alias for the current command. } 
+        { --alias=* : Alias for the current command. }
     """
 
     SUPPORTED_SHELLS = ("bash", "zsh", "fish")
@@ -98,13 +92,13 @@ to add the proper directives, such as `source`ing inside your login
 script. Consult your shells documentation for how to add such directives.
 """
 
-    def handle(self):
+    def handle(self):  # type: () -> int
         shell = self.argument("shell")
         if not shell:
             shell = self.get_shell_type()
 
         if shell not in self.SUPPORTED_SHELLS:
-            raise InvalidArgument(
+            raise ValueError(
                 "[shell] argument must be one of {}".format(
                     ", ".join(self.SUPPORTED_SHELLS)
                 )
@@ -112,42 +106,49 @@ script. Consult your shells documentation for how to add such directives.
 
         self.line(self.render(shell))
 
-    def render(self, shell):
+        return 0
+
+    def render(self, shell):  # type: (str) -> str
         return getattr(self, "render_{}".format(shell))()
 
-    def render_bash(self):
+    def render_bash(self):  # type: () -> str
         template = TEMPLATES["bash"]
 
-        script_path = self._get_script_full_name()
-        script_name = self._get_script_name()
+        script_path = os.path.realpath(self._args.script_name)
+        script_name = os.path.basename(script_path)
         aliases = [script_name, script_path]
         aliases += self.option("alias")
 
         function = self._generate_function_name(script_name, script_path)
 
-        description = self._get_json_description()
-        global_options = set(
-            [
-                "--" + o.get_name()
-                for o in self.get_application().get_definition().get_options()
-            ]
-        )
         commands = []
+        global_options = set()
         options_descriptions = {}
         commands_options = {}
-        for command in description["commands"]:
-            command_options = []
-            commands.append(command["name"])
+        for option in self.application.config.options.values():
+            options_descriptions["--" + option.long_name] = self.io.remove_format(
+                option.description
+            )
+            global_options.add("--" + option.long_name)
 
-            options = command["definition"]["options"]
-            for name in sorted(list(options.keys())):
+        for command in self.application.commands:
+            command_config = command.config
+
+            if not command_config.is_enabled() or command_config.is_hidden():
+                continue
+
+            command_options = []
+            commands.append(command_config.name)
+
+            options = command_config.options
+            for name in sorted(options.keys()):
                 option = options[name]
-                name = option["name"]
-                description = option["description"]
+                name = "--" + option.long_name
+                description = option.description
                 command_options.append(name)
                 options_descriptions[name] = description
 
-            commands_options[command["name"]] = command_options
+            commands_options[command_config.name] = command_options
 
         compdefs = "\n".join(
             [
@@ -189,42 +190,46 @@ script. Consult your shells documentation for how to add such directives.
     def render_zsh(self):
         template = TEMPLATES["zsh"]
 
-        script_path = self._get_script_full_name()
-        script_name = self._get_script_name()
+        script_path = os.path.realpath(self._args.script_name)
+        script_name = os.path.basename(script_path)
         aliases = [script_path]
         aliases += self.option("alias")
 
         function = self._generate_function_name(script_name, script_path)
 
-        description = self._get_json_description()
-        global_options = set(
-            [
-                "--" + o.get_name()
-                for o in self.get_application().get_definition().get_options()
-            ]
-        )
+        global_options = set()
         commands_descriptions = []
         options_descriptions = {}
         commands_options_descriptions = {}
         commands_options = {}
-        for command in description["commands"]:
+        for option in self.application.config.options.values():
+            options_descriptions["--" + option.long_name] = self.io.remove_format(
+                option.description
+            )
+            global_options.add("--" + option.long_name)
+
+        for command in self.application.commands:
+            command_config = command.config
+            if not command_config.is_enabled() or command_config.is_hidden():
+                continue
+
             command_options = []
-            commands_options_descriptions[command["name"]] = {}
-            command_description = self._remove_decoration(command["description"])
+            commands_options_descriptions[command_config.name] = {}
+            command_description = self._io.remove_format(command_config.description)
             commands_descriptions.append(
-                self._zsh_describe(command["name"], command_description)
+                self._zsh_describe(command_config.name, command_description)
             )
 
-            options = command["definition"]["options"]
-            for name in sorted(list(options.keys())):
+            options = command_config.options
+            for name in sorted(options.keys()):
                 option = options[name]
-                name = option["name"]
-                description = self._remove_decoration(option["description"])
+                name = "--" + option.long_name
+                description = self.io.remove_format(option.description)
                 command_options.append(name)
                 options_descriptions[name] = description
-                commands_options_descriptions[command["name"]][name] = description
+                commands_options_descriptions[command_config.name][name] = description
 
-            commands_options[command["name"]] = command_options
+            commands_options[command_config.name] = command_options
 
         compdefs = "\n".join(
             ["compdef {} {}".format(function, alias) for alias in aliases]
@@ -269,41 +274,45 @@ script. Consult your shells documentation for how to add such directives.
     def render_fish(self):
         template = TEMPLATES["fish"]
 
-        script_path = self._get_script_full_name()
-        script_name = self._get_script_name()
+        script_path = os.path.realpath(self._args.script_name)
+        script_name = os.path.basename(script_path)
         aliases = [script_name]
         aliases += self.option("alias")
 
         function = self._generate_function_name(script_name, script_path)
 
-        description = self._get_json_description()
-        global_options = set(
-            [
-                "--" + o.get_name()
-                for o in self.get_application().get_definition().get_options()
-            ]
-        )
+        global_options = set()
         commands_descriptions = {}
         options_descriptions = {}
         commands_options_descriptions = {}
         commands_options = {}
-        for command in description["commands"]:
+        for option in self.application.config.options.values():
+            options_descriptions["--" + option.long_name] = self.io.remove_format(
+                option.description
+            )
+            global_options.add("--" + option.long_name)
+
+        for command in self.application.commands:
+            command_config = command.config
+            if not command_config.is_enabled() or command_config.is_hidden():
+                continue
+
             command_options = []
-            commands_options_descriptions[command["name"]] = {}
-            commands_descriptions[command["name"]] = self._remove_decoration(
-                command["description"]
+            commands_options_descriptions[command_config.name] = {}
+            commands_descriptions[command_config.name] = self._io.remove_format(
+                command_config.description
             )
 
-            options = command["definition"]["options"]
-            for name in sorted(list(options.keys())):
+            options = command_config.options
+            for name in sorted(options.keys()):
                 option = options[name]
-                name = option["name"]
-                description = self._remove_decoration(option["description"])
+                name = "--" + option.long_name
+                description = self._io.remove_format(option.description)
                 command_options.append(name)
                 options_descriptions[name] = description
-                commands_options_descriptions[command["name"]][name] = description
+                commands_options_descriptions[command_config.name][name] = description
 
-            commands_options[command["name"]] = command_options
+            commands_options[command_config.name] = command_options
 
         opts = []
         for opt in sorted(global_options):
@@ -371,13 +380,6 @@ script. Consult your shells documentation for how to add such directives.
 
         return os.path.basename(shell)
 
-    def _get_json_description(self):
-        helper = DescriptorHelper()
-        output = BufferedOutput()
-        helper.describe(output, self.get_application(), format="json")
-
-        return json.loads(output.fetch())
-
     def _generate_function_name(self, script_name, script_path):
         return "_{}_{}_complete".format(
             self._sanitize_for_function_name(script_name),
@@ -400,6 +402,3 @@ script. Consult your shells documentation for how to add such directives.
         value += '"'
 
         return value
-
-    def _remove_decoration(self, text):
-        return re.sub("\033\[[^m]*m", "", self.output.get_formatter().format(text))

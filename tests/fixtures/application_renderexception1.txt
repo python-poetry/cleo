@@ -1,6 +1,0 @@
-
-                                 
-  [CommandNotFound]              
-  Command "foo" is not defined.  
-                                 
-

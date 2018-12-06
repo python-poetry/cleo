@@ -1,0 +1,3 @@
+[report]
+omit =
+  cleo/_compat.py
