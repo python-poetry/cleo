@@ -26,3 +26,9 @@ pytest = "^3.4"
 pytest-mock = "^1.7"
 pre-commit = "^1.12"
 pytest-cov = "^2.6"
+tox = "^3.5"
+
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

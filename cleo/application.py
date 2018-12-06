@@ -8,7 +8,7 @@ from .commands.completions_command import CompletionsCommand
 from .config import ApplicationConfig
 
 
-class Application(ConsoleApplication):
+class Application(ConsoleApplication, object):
     """
     An Application is the container for a collection of commands.
 
