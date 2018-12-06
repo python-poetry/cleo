@@ -1,9 +1,15 @@
 Installation
 ############
 
-You can install Cleo in 2 different ways:
+You can install Cleo in various ways:
 
-* The easier and more straightforward is to use pip
+* Using [Poetry](https://poetry.eustace.io):
+
+    .. code-block:: bash
+
+        $ poetry add cleo
+
+* Using ``pip``
 
     .. code-block:: bash
 

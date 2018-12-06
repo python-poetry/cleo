@@ -7,6 +7,10 @@ Cleo
 
 Create beautiful and testable command-line interfaces.
 
+Cleo is mostly a higher level wrapper for `CliKit <https://github.com/sdispater/clikit>`_, so
+a lot of the components and utilities comes from it. Refer to its documentation for more
+information.
+
 Resources
 =========
 
@@ -29,7 +33,7 @@ create ``greet_command.py`` and add the following to it:
         """
         Greets someone
 
-        demo:greet
+        greet
             {name? : Who do you want to greet?}
             {--y|yell : If set, the task will yell in uppercase letters}
         """
@@ -38,7 +42,7 @@ create ``greet_command.py`` and add the following to it:
             name = self.argument('name')
 
             if name:
-                text = 'Hello %s' % name
+                text = 'Hello {}'.format(name)
             else:
                 text = 'Hello'
 
@@ -54,7 +58,6 @@ an ``Application`` and adds commands to it:
 .. code-block:: python
 
     #!/usr/bin/env python
-    # -*- coding: utf-8 -*-
 
     from greet_command import GreetCommand
     from cleo import Application
@@ -69,7 +72,7 @@ Test the new command by running the following
 
 .. code-block:: bash
 
-    $ python application.py demo:greet John
+    $ python application.py greet John
 
 This will print the following to the command line:
 
@@ -81,7 +84,7 @@ You can also use the ``--yell`` option to make everything uppercase:
 
 .. code-block:: bash
 
-    $ python application.py demo:greet John --yell
+    $ python application.py greet John --yell
 
 This prints:
 
@@ -141,20 +144,11 @@ output. For example:
 
 The closing tag can be replaced by ``</>``, which revokes all formatting options established by the last opened tag.
 
-You can also use the corresponding methods:
+It is possible to define your own styles using the ``add_style()`` method:
 
 .. code-block:: python
 
-    self.info('foo')
-    self.comment('foo')
-    self.question('foo')
-    self.error('foo')
-
-It is possible to define your own styles using the ``set_style()`` method:
-
-.. code-block:: python
-
-    self.set_style('fire', fg='red', bg='yellow', options=['bold', 'blink'])
+    self.add_style('fire', fg='red', bg='yellow', options=['bold', 'blink'])
     self.line('<fire>foo</fire>')
 
 Available foreground and background colors are: ``black``, ``red``, ``green``,
@@ -162,7 +156,7 @@ Available foreground and background colors are: ``black``, ``red``, ``green``,
 
 And available options are: ``bold``, ``underscore``, ``blink``, ``reverse`` and ``conceal``.
 
-You can also set these colors and options inside the tagname:
+You can also set these colors and options inside the tag name:
 
 .. code-block:: python
 
@@ -179,16 +173,16 @@ You can also set these colors and options inside the tagname:
 Verbosity Levels
 ----------------
 
-Cleo has five verbosity levels. These are defined in the ``Output`` class:
+Cleo has four verbosity levels. These are defined in the ``Output`` class:
 
 =======================================  ================================== ======================
 Mode                                     Meaning                            Console option
 =======================================  ================================== ======================
-``Output.VERBOSITY_QUIET``               Do not output any messages         ``-q`` or ``--quiet``
-``Output.VERBOSITY_NORMAL``              The default verbosity level        (none)
-``Output.VERBOSITY_VERBOSE``             Increased verbosity of messages    ``-v``
-``Output.VERBOSITY_VERY_VERBOSE``        Informative non essential messages ``-vv``
-``Output.VERBOSITY_DEBUG``               Debug messages                     ``-vvv``
+``NA``                                   Do not output any messages         ``-q`` or ``--quiet``
+``clikit.VERBOSITY_NORMAL``              The default verbosity level        (none)
+``clikit.VERBOSITY_VERBOSE``             Increased verbosity of messages    ``-v``
+``clikit.VERBOSITY_VERY_VERBOSE``        Informative non essential messages ``-vv``
+``clikit.VERBOSITY_DEBUG``               Debug messages                     ``-vvv``
 =======================================  ================================== ======================
 
 It is possible to print a message in a command for only a specific verbosity
@@ -196,7 +190,7 @@ level. For example:
 
 .. code-block:: python
 
-    if Output.VERBOSITY_VERBOSE <= self.output.get_verbosity():
+    if clikit.VERBOSITY_VERBOSE <= self.io.verbosity:
         self.line(...)
 
 There are also more semantic methods you can use to test for each of the
@@ -210,8 +204,13 @@ verbosity levels:
     if self.output.is_verbose():
         # ...
 
-When the quiet level is used, all output is suppressed as the default
-``Output.write()`` method returns without actually printing.
+You can also pass the verbosity flag directly to `line()`.
+
+.. code-block:: python
+
+    self.line("", verbosity=clikit.VERBOSITY_VERBOSE)
+
+When the quiet level is used, all output is suppressed.
 
 
 Using Arguments
@@ -229,7 +228,7 @@ and make the ``name`` argument required:
         """
         Greets someone
 
-        demo:greet
+        greet
             {name : Who do you want to greet?}
             {last_name? : Your last name?}
             {--y|yell : If set, the task will yell in uppercase letters}
@@ -241,14 +240,14 @@ You now have access to a ``last_name`` argument in your command:
 
     last_name = self.argument('last_name')
     if last_name:
-        text += ' %s' % last_name
+        text += ' {}'.format(last_name)
 
 The command can now be used in either of the following ways:
 
 .. code-block:: bash
 
-    $ python application.py demo:greet John
-    $ python application.py demo:greet John Doe
+    $ python application.py greet John
+    $ python application.py greet John Doe
 
 It is also possible to let an argument take a list of values (imagine you want
 to greet all your friends). For this it must be specified at the end of the
@@ -260,7 +259,7 @@ argument list:
         """
         Greets someone
 
-        demo:greet
+        greet
             {names* : Who do you want to greet?}
             {--y|yell : If set, the task will yell in uppercase letters}
         """
@@ -277,19 +276,19 @@ You can access the ``names`` argument as a list:
 
     names = self.argument('names')
     if names:
-        text += ' %s' % ', '.join(names)
+        text += ' {}'.format(', '.join(names))
 
 There are 3 argument variants you can use:
 
-=========================== ==================================== ===============================================================================================================
-Mode                        Notation                             Value
-=========================== ==================================== ===============================================================================================================
-``InputArgument.REQUIRED``  none (just write the argument name)  The argument is required
-``InputArgument.OPTIONAL``  ``argument?``                        The argument is optional and therefore can be omitted
-``InputArgument.IS_LIST``   ``argument*``                        The argument can contain an indefinite number of arguments and must be used at the end of the argument list
-=========================== ==================================== ===============================================================================================================
+================================ ==================================== ===============================================================================================================
+Mode                             Notation                             Value
+================================ ==================================== ===============================================================================================================
+``clikit.ARGUMENT_REQUIRED``     none (just write the argument name)  The argument is required
+``clikit.ARGUMENT_OPTIONAL``     ``argument?``                        The argument is optional and therefore can be omitted
+``clikit.ARGUMENT_MULTI_VALUED`` ``argument*``                        The argument can contain an indefinite number of arguments and must be used at the end of the argument list
+================================ ==================================== ===============================================================================================================
 
-You can combine ``IS_LIST`` with ``REQUIRED`` and ``OPTIONAL`` like this:
+You can combine them like this:
 
 .. code-block:: python
 
@@ -297,7 +296,7 @@ You can combine ``IS_LIST`` with ``REQUIRED`` and ``OPTIONAL`` like this:
         """
         Greets someone
 
-        demo:greet
+        greet
             {names?* : Who do you want to greet?}
             {--y|yell : If set, the task will yell in uppercase letters}
         """
@@ -336,7 +335,7 @@ how many times in a row the message should be printed:
         """
         Greets someone
 
-        demo:greet
+        greet
             {name? : Who do you want to greet?}
             {--y|yell : If set, the task will yell in uppercase letters}
             {--iterations=1 : How many times should the message be printed?}
@@ -371,16 +370,16 @@ will work:
 
 There are 4 option variants you can use:
 
-===============================  =================================== ======================================================================================
-Option                           Notation                            Value
-===============================  =================================== ======================================================================================
-``InputOption.VALUE_IS_LIST``    ``--option=*``                      This option accepts multiple values (e.g. ``--dir=/foo --dir=/bar``)
-``InputOption.VALUE_NONE``       ``--option``                        Do not accept input for this option (e.g. ``--yell``)
-``InputOption.VALUE_REQUIRED``   ``--option=``                       This value is required (e.g. ``--iterations=5``), the option itself is still optional
-``InputOption.VALUE_OPTIONAL``   ``--option=?``                      This option may or may not have a value (e.g. ``--yell`` or ``--yell=loud``)
-===============================  =================================== ======================================================================================
+================================  =================================== ======================================================================================
+Option                            Notation                            Value
+================================  =================================== ======================================================================================
+``clikit.OPTION_MULTI_VALUED``    ``--option=*``                      This option accepts multiple values (e.g. ``--dir=/foo --dir=/bar``)
+``clikit.OPTION_NO_VALUE``        ``--option``                        Do not accept input for this option (e.g. ``--yell``)
+``clikit.OPTION_REQUIRED_VALUE``  ``--option=``                       This value is required (e.g. ``--iterations=5``), the option itself is still optional
+``clikit.OPTION_OPTIONAL_VALUE``  ``--option=?``                      This option may or may not have a value (e.g. ``--yell`` or ``--yell=loud``)
+================================  =================================== ======================================================================================
 
-You can combine ``VALUE_IS_LIST`` with ``VALUE_REQUIRED`` or ``VALUE_OPTIONAL`` like this:
+You can combine them like this:
 
 .. code-block:: python
 
@@ -388,7 +387,7 @@ You can combine ``VALUE_IS_LIST`` with ``VALUE_REQUIRED`` or ``VALUE_OPTIONAL`` 
         """
         Greets someone
 
-        demo:greet
+        greet
             {name? : Who do you want to greet?}
             {--y|yell : If set, the task will yell in uppercase letters}
             {--iterations=?*1 : How many times should the message be printed?}
@@ -400,53 +399,49 @@ Testing Commands
 
 Cleo provides several tools to help you test your commands. The most
 useful one is the ``CommandTester`` class.
-It uses special input and output classes to ease testing without a real
+It uses a special IO class to ease testing without a real
 console:
 
 .. code-block:: python
 
-    from unittest import TestCase
-    from cleo import Application, CommandTester
+    import pytest
 
-    class GreetCommandTest(TestCase):
+    from cleo import Application
+    from cleo import CommandTester
 
-        def test_execute(self):
-            application = Application()
-            application.add(GreetCommand())
+    def test_execute(self):
+        application = Application()
+        application.add(GreetCommand())
 
-            command = application.find('demo:greet')
-            command_tester = CommandTester(command)
-            command_tester.execute([('command', command.get_name())])
+        command = application.find('demo:greet')
+        command_tester = CommandTester(command)
+        command_tester.execute()
 
-            self.assertRegex('...', command_tester.get_display())
+        assert "..." == tester.io.fetch_output()
 
-            # ...
-
-The ``CommandTester.get_display()`` method returns what would have been displayed
-during a normal call from the console.
+The ``CommandTester.io.fetch_output()`` method returns what would have been displayed
+during a normal call from the console. ``CommandTester.io.fetch_error()`` is also available
+to get what you have been written to the stderr.
 
 You can test sending arguments and options to the command by passing them
-as an list of tuples to the ``CommandTester.execute()`` method:
+as a string to the ``CommandTester.execute()`` method:
 
 .. code-block:: python
 
-    from unittest import TestCase
-    from cleo import Application, CommandTester
+    import pytest
 
-    class GreetCommandTest(TestCase):
+    from cleo import Application
+    from cleo import CommandTester
 
-        def test_name_is_output(self):
-            application = Application()
-            application.add(GreetCommand())
+    def test_execute(self):
+        application = Application()
+        application.add(GreetCommand())
 
-            commmand = application.find('demo:greet')
-            command_tester = CommandTester(command)
-            command_tester.execute([
-                ('command', command.get_name()),
-                ('name', 'John')
-            ])
+        command = application.find('demo:greet')
+        command_tester = CommandTester(command)
+        command_tester.execute("John")
 
-            self.assertRegex('John', command_tester.get_display())
+        assert "John" in tester.io.fetch_output()
 
 You can also test a whole console application by using the ``ApplicationTester`` class.
 
@@ -464,10 +459,7 @@ Calling a command from another one is straightforward:
 .. code-block:: python
 
     def handle(self):
-        return_code = self.call('demo:greet', [
-            ('name', 'John'),
-            ('--yell', True)
-        ])
+        return_code = self.call('demo:greet', "John --yell")
 
         # ...
 
@@ -479,7 +471,7 @@ you can use the ``call_silent()`` method instead.
 Autocompletion
 --------------
 
-Cleo supports automatic (tab) completion in ``bash`` and ``zsh``.
+Cleo supports automatic (tab) completion in ``bash``, ``zsh`` and ``fish``.
 
 To activate support for autocompletion, pass a ``complete`` keyword when initializing
 your application:
@@ -493,22 +485,16 @@ replacing ``[program]`` with the command you use to run your application:
 
 .. code-block:: bash
 
-    # BASH ~4.x, ZSH
-    source <([program] _completion --generate-hook)
+    # BASH - Ubuntu / Debian
+    [program] completions bash | sudo tee /etc/bash_completion.d/[program].bash-completion
 
-    # BASH ~3.x, ZSH
-    [program] _completion --generate-hook | source /dev/stdin
+    # BASH - Mac OSX (with Homebrew "bash-completion")
+    [program] completions bash > $(brew --prefix)/etc/bash_completion.d/[program].bash-completion
 
-    # BASH (any version)
-    eval $([program] _completion --generate-hook)
+    # ZSH - Config file
+    mkdir ~/.zfunc
+    echo "fpath+=~/.zfunc" >> ~/.zshrc
+    [program] completions zsh > ~/.zfunc/_test
 
-By default this registers completion for the absolute path to you application,
-which will work if the program is accessible on your PATH.
-You can specify a program name to complete for instead using the ``-p\--program`` option,
-which is required if you're using an alias to run the program.
-
-If you want the completion to apply automatically for all new shell sessions,
-add the command to your shell's profile (eg. ``~/.bash_profile`` or ``~/.zshrc``)
-
-The type of shell (zsh/bash) is automatically detected using the ``SHELL`` environment variable at run time.
-In some circumstances, you may need to explicitly specify the shell type with the ``--shell-type`` option.
+    # FISH
+    [program] completions fish > ~/.config/fish/completions/[program].fish

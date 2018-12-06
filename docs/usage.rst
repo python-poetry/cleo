@@ -25,19 +25,6 @@ built-in options as well as a couple of built-in commands for Cleo.
 Built-in Commands
 =================
 
-There is a built-in command ``list`` which outputs all the standard options
-and the registered commands:
-
-.. code-block:: bash
-
-    $ python application.py list
-
-You can get the same output by not running any command as well
-
-.. code-block:: bash
-
-    $ python application.py
-
 The help command lists the help information for the specified command. For
 example, to get the help for the ``list`` command:
 
@@ -56,56 +43,53 @@ Global Options
 ==============
 
 You can get help information for any command with the ``--help`` option. To
-get help for the list command:
+get help for the ``greet`` command:
 
 .. code-block:: bash
 
-    $ python application.py list --help
-    $ python application.py list -h
+    $ python application.py greet --help
+    $ python application.py greet -h
 
 You can suppress output with:
 
 .. code-block:: bash
 
-    $ python application.py list --quiet
-    $ python application.py list -q
+    $ python application.py greet --quiet
+    $ python application.py greet -q
 
 You can get more verbose messages (if this is supported for a command)
 with:
 
 .. code-block:: bash
 
-    $ python application.py list --verbose
-    $ python application.py list -v
+    $ python application.py greet --verbose
+    $ python application.py greet -v
 
-The verbose flag can optionally take a value between 1 (default) and 3 to
-output even more verbose messages:
+If you need more verbose output, use `-vv` or `-vvv`
 
 .. code-block:: bash
 
-    $ python application.py list --verbose=2
-    $ python application.py list -vv
-    $ python application.py list --verbose=3
-    $ python application.py list -vvv
+    $ python application.py greet -vv
+    $ python application.py greet -vvv
 
 If you set the optional arguments to give your application a name and version:
 
 .. code-block:: python
 
-    application = Application('My Console Application', '1.2')
+    application = Application('console', '1.2')
 
 then you can use:
 
 .. code-block:: bash
 
-    $ python application.py list --version
-    $ python application.py list -V
+    $ python application.py --version
+    $ python application.py -V
 
 to get this information output:
 
 .. code-block:: text
 
-    My Console Application 1.2
+    Console version 1.2
 
 If you do not provide both arguments then it will just output:
 
@@ -117,20 +101,20 @@ You can force turning on ANSI output coloring with:
 
 .. code-block:: bash
 
-    $ python application.py list --ansi
+    $ python application.py greet --ansi
 
 or turn it off with:
 
 .. code-block:: bash
 
-    $ python application.py list --no-ansi
+    $ python application.py greet --no-ansi
 
 You can suppress any interactive questions from the command you are running with:
 
 .. code-block:: bash
 
-    $ python application.py list --no-interaction
-    $ python application.py list -n
+    $ python application.py greet --no-interaction
+    $ python application.py greet -n
 
 
 Shortcut Syntax
@@ -143,16 +127,3 @@ commands, then you can run ``help`` like this:
 .. code-block:: bash
 
     $ python application.py h
-
-If you have commands using ``:`` to namespace commands then you just have
-to type the shortest unambiguous text for each part. If you have created the
-``demo:greet`` as shown in :doc:`introduction` then you
-can run it with:
-
-.. code-block:: bash
-
-    $ python application.py d:g John
-
-If you enter a short command that's ambiguous (i.e. there are more than one
-command that match), then no command will be run and some suggestions of
-the possible commands to choose from will be output.

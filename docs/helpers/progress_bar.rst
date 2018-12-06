@@ -74,26 +74,26 @@ Built-in Formats
 ----------------
 
 By default, the information rendered on a progress bar depends
-on the current level of verbosity of the ``Output`` instance:
+on the current level of verbosity of the ``IO`` instance:
 
 .. code-block:: text
 
-    # Output.VERBOSITY_NORMAL (CLI with no verbosity flag)
+    # clikit.VERBOSITY_NORMAL (CLI with no verbosity flag)
      0/3 [>---------------------------]   0%
      1/3 [=========>------------------]  33%
      3/3 [============================] 100%
 
-    # Output.VERBOSITY_VERBOSE (-v)
+    # clikit.VERBOSITY_VERBOSE (-v)
      0/3 [>---------------------------]   0%  1 sec
      1/3 [=========>------------------]  33%  1 sec
      3/3 [============================] 100%  1 sec
 
-    # Output.VERBOSITY_VERY_VERBOSE (-vv)
+    # clikit.VERBOSITY_VERY_VERBOSE (-vv)
      0/3 [>---------------------------]   0%  1 sec
      1/3 [=========>------------------]  33%  1 sec
      3/3 [============================] 100%  1 sec
 
-    # Output.VERBOSITY_DEBUG (-vvv)
+    # clikit.VERBOSITY_DEBUG (-vvv)
      0/3 [>---------------------------]   0%  1 sec/1 sec  1.0 MB
      1/3 [=========>------------------]  33%  1 sec/1 sec  1.0 MB
      3/3 [============================] 100%  1 sec/1 sec  1.0 MB

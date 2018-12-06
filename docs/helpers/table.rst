@@ -21,7 +21,7 @@ To display a table, use the ``table()`` method, set the headers, set the rows an
     def handle(self):
         table = self.table()
 
-        table.set_headers(['ISBN', 'Title', 'Author'])
+        table.set_header_row(['ISBN', 'Title', 'Author'])
         table.set_rows([
             ['99921-58-10-7', 'Divine Comedy', 'Dante Alighieri'],
             ['9971-5-0210-0', 'A Tale of Two Cities', 'Charles Dickens'],
@@ -29,7 +29,7 @@ To display a table, use the ``table()`` method, set the headers, set the rows an
             ['80-902734-1-6', 'And Then There Were None', 'Agatha Christie']
         ])
 
-        table.render()
+        table.render(self.io)
 
 .. tip::
 
@@ -81,7 +81,6 @@ The table style can be changed to any built-in styles via ``set_style()``:
 
     # changes the default style to compact
     table.set_style('compact')
-    table.render()
 
 This code results in:
 
@@ -98,7 +97,6 @@ You can also set the style to ``borderless``:
 .. code-block:: python
 
     table.set_style('borderless')
-    table.render()
 
 which outputs:
 

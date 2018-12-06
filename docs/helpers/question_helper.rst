@@ -1,10 +1,5 @@
 Question Helper
 ###############
-
-The ``QuestionHelper`` provides functions to ask the user for more information.
-It is included in the default helper set and can be used either directly or via helper methods.
-
-
 Asking the User for Confirmation
 ================================
 
@@ -107,12 +102,11 @@ These will be autocompleted as the user types:
 .. code-block:: python
 
     def handle(self):
-        helper = self.get_helper('question')
         names = ['John', 'Jane', 'Paul']
         question = self.create_question('Please enter a name', default='John')
-        question.autocompleter_values = names
+        question.set_autocomplete_values(names)
 
-        name = helper.ask(self.input, self.output, question)
+        name = self.ask(question)
 
 Hiding the User's Response
 --------------------------
@@ -135,20 +129,18 @@ For instance, you might only accept integers:
 .. code-block:: python
 
     def handle(self):
-        helper = self.get_helper('question')
         question = self.create_question('Choose a number')
-        question.validator = Integer()
+        question.set_validator(int)
+        question.set_max_attempts(2)
 
-        question.max_attempts = 2
+        number = self.ask(question)
 
-        number = helper.ask(self.input, self.output, question)
-
-The ``validator`` is a ``Validator`` instance or a callback which handles the validation.
+The ``validator`` a callback which handles the validation.
 It should throw an exception if there is something wrong.
 The exception message is displayed in the console, so it is a good practice to put some useful information in it.
 The validator or the callback function should also return the value of the user's input if the validation was successful.
 
-You can set the max number of times to ask with the ``max_attempts`` attribute.
+You can set the max number of times to ask with the ``set_max_attempts()`` method.
 If you reach this max number it will use the default value.
 Using ``None`` means the amount of attempts is infinite.
 The user will be asked as long as they provide an invalid answer
@@ -165,19 +157,7 @@ you need to set the helper input stream:
 
     def test_execute_command(self):
         command_tester = CommandTester(command)
-
-        helper = command.get_helper('question')
-        helper.set_input_stream(self.get_input_stream('Test\n'))
         # Equals to a user inputting "Test" and hitting ENTER
         # If you need to enter a confirmation, "yes\n" will work
 
-        command_tester.execute([('command', command.get_name())])
-
-        # self.assertRegex('...', command_tester.get_display())
-
-    def get_input_stream(self, input)
-        stream = BytesIO()
-        stream.write(input_.encode())
-        stream.seek(0)
-
-        return stream
+        command_tester.execute(inputs="Test\n")
