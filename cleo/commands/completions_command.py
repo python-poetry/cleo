@@ -2,6 +2,7 @@
 
 import os
 import hashlib
+import posixpath
 import re
 import subprocess
 
@@ -114,7 +115,7 @@ script. Consult your shells documentation for how to add such directives.
     def render_bash(self):  # type: () -> str
         template = TEMPLATES["bash"]
 
-        script_path = os.path.realpath(self._args.script_name)
+        script_path = posixpath.realpath(self._args.script_name)
         script_name = os.path.basename(script_path)
         aliases = [script_name, script_path]
         aliases += self.option("alias")
@@ -190,7 +191,7 @@ script. Consult your shells documentation for how to add such directives.
     def render_zsh(self):
         template = TEMPLATES["zsh"]
 
-        script_path = os.path.realpath(self._args.script_name)
+        script_path = posixpath.realpath(self._args.script_name)
         script_name = os.path.basename(script_path)
         aliases = [script_path]
         aliases += self.option("alias")
@@ -274,7 +275,7 @@ script. Consult your shells documentation for how to add such directives.
     def render_fish(self):
         template = TEMPLATES["fish"]
 
-        script_path = os.path.realpath(self._args.script_name)
+        script_path = posixpath.realpath(self._args.script_name)
         script_name = os.path.basename(script_path)
         aliases = [script_name]
         aliases += self.option("alias")

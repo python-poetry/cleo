@@ -40,7 +40,7 @@ def test_bash(mocker):
     with open(os.path.join(os.path.dirname(__file__), "fixtures", "bash.txt")) as f:
         expected = f.read()
 
-    assert expected == tester.io.fetch_output()
+    assert expected == tester.io.fetch_output().replace("\r\n", "\n")
 
 
 def test_zsh(mocker):
@@ -61,7 +61,7 @@ def test_zsh(mocker):
     with open(os.path.join(os.path.dirname(__file__), "fixtures", "zsh.txt")) as f:
         expected = f.read()
 
-    assert expected == tester.io.fetch_output()
+    assert expected == tester.io.fetch_output().replace("\r\n", "\n")
 
 
 def test_fish(mocker):
@@ -82,4 +82,4 @@ def test_fish(mocker):
     with open(os.path.join(os.path.dirname(__file__), "fixtures", "fish.txt")) as f:
         expected = f.read()
 
-    assert expected == tester.io.fetch_output()
+    assert expected == tester.io.fetch_output().replace("\r\n", "\n")
