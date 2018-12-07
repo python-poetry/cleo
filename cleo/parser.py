@@ -93,12 +93,15 @@ class Parser(object):
 
         if token.endswith("?*"):
             return _argument(
-                token.rstrip("?*"), Argument.MULTI_VALUED, description, None
+                token.rstrip("?*"),
+                Argument.MULTI_VALUED | Argument.OPTIONAL,
+                description,
+                None,
             )
         elif token.endswith("*"):
             return _argument(
                 token.rstrip("*"),
-                Argument.MULTI_VALUED & Argument.REQUIRED,
+                Argument.MULTI_VALUED | Argument.REQUIRED,
                 description,
                 None,
             )
@@ -156,7 +159,7 @@ class Parser(object):
             mode = Option.MULTI_VALUED
             token = token.rstrip("=*")
         elif token.endswith("=?*"):
-            mode = Option.OPTIONAL_VALUE & Option.MULTI_VALUED
+            mode = Option.OPTIONAL_VALUE | Option.MULTI_VALUED
             token = token.rstrip("=?*")
         elif token.endswith("=?"):
             mode = Option.OPTIONAL_VALUE
@@ -172,9 +175,9 @@ class Parser(object):
             default = matches.group(3)
 
             if operator == "=*":
-                mode = Option.REQUIRED_VALUE & Option.MULTI_VALUED
+                mode = Option.REQUIRED_VALUE | Option.MULTI_VALUED
             elif operator == "=?*":
-                mode = Option.OPTIONAL_VALUE & Option.MULTI_VALUED
+                mode = Option.OPTIONAL_VALUE | Option.MULTI_VALUED
             elif operator == "=?":
                 mode = Option.OPTIONAL_VALUE
             elif operator == "=":

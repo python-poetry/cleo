@@ -20,7 +20,7 @@ def test_basic_parameter_parsing():
 
     assert "command:name" == results["name"]
     assert "argument" == results["arguments"][0].name
-    assert Argument.MULTI_VALUED & Argument.REQUIRED == results["arguments"][0].flags
+    assert Argument.MULTI_VALUED | Argument.REQUIRED == results["arguments"][0].flags
     assert "option" == results["options"][0].long_name
     assert Option.REQUIRED_VALUE == results["options"][0].flags
 
@@ -28,7 +28,7 @@ def test_basic_parameter_parsing():
 
     assert "command:name" == results["name"]
     assert "argument" == results["arguments"][0].name
-    assert Argument.MULTI_VALUED == results["arguments"][0].flags
+    assert Argument.MULTI_VALUED | Argument.OPTIONAL == results["arguments"][0].flags
     assert "option" == results["options"][0].long_name
     assert Option.MULTI_VALUED == results["options"][0].flags
 
@@ -39,7 +39,7 @@ def test_basic_parameter_parsing():
     assert "command:name" == results["name"]
     assert "argument" == results["arguments"][0].name
     assert "The argument description." == results["arguments"][0].description
-    assert Argument.MULTI_VALUED == results["arguments"][0].flags
+    assert Argument.MULTI_VALUED | Argument.OPTIONAL == results["arguments"][0].flags
     assert "option" == results["options"][0].long_name
     assert "The option description." == results["options"][0].description
     assert Option.MULTI_VALUED == results["options"][0].flags
@@ -53,7 +53,7 @@ def test_basic_parameter_parsing():
     assert "command:name" == results["name"]
     assert "argument" == results["arguments"][0].name
     assert "The argument description." == results["arguments"][0].description
-    assert Argument.MULTI_VALUED == results["arguments"][0].flags
+    assert Argument.MULTI_VALUED | Argument.OPTIONAL == results["arguments"][0].flags
     assert "option" == results["options"][0].long_name
     assert "The option description." == results["options"][0].description
     assert Option.MULTI_VALUED == results["options"][0].flags

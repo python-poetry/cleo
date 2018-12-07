@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed parser not setting proper flags.
+
+
 ## [0.7.0] - 2018-12-07
 
 This version breaks backwards compatibility and caution is advised when updating.
