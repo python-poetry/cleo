@@ -26,14 +26,14 @@ class CompletionsCommand(Command):
     hidden = True
 
     help = """
-One can generate a completion script for `<options=bold>%script.name%</>` that is compatible with
-a given shell. The script is output on `<options=bold>stdout</>` allowing one to re-direct
-the output to the file of their choosing. Where you place the file will
-depend on which shell, and which operating system you are using. Your
-particular configuration may also determine where these scripts need
+One can generate a completion script for `<options=bold>{script_name}</>` that is compatible with \
+a given shell. The script is output on `<options=bold>stdout</>` allowing one to re-direct \
+the output to the file of their choosing. Where you place the file will \
+depend on which shell, and which operating system you are using. Your \
+particular configuration may also determine where these scripts need \
 to be placed.
 
-Here are some common set ups for the three supported shells under
+Here are some common set ups for the three supported shells under \
 Unix and similar operating systems (such as GNU/Linux).
 
 <options=bold>BASH</>:
@@ -42,31 +42,32 @@ Completion files are commonly stored in `<options=bold>/etc/bash_completion.d/</
 
 Run the command:
 
-`<options=bold>%script.name% %command.name% bash > /etc/bash_completion.d/%script.name%.bash-completion</>`
+`<options=bold>{script_name} {command_name} bash > /etc/bash_completion.d/{script_name}.bash-completion</>`
 
-This installs the completion script. You may have to log out and log
+This installs the completion script. You may have to log out and log \
 back in to your shell session for the changes to take effect.
 
 <options=bold>FISH</>:
 
-Fish completion files are commonly stored in
+Fish completion files are commonly stored in\
 `<options=bold>$HOME/.config/fish/completions</>`
 
 Run the command:
-`<options=bold>%script.name% %command.name% fish > ~/.config/fish/completions/%script.name%.fish</>`
 
-This installs the completion script. You may have to log out and log
+`<options=bold>{script_name} {command_name} fish > ~/.config/fish/completions/{script_name}.fish</>`
+
+This installs the completion script. You may have to log out and log \
 back in to your shell session for the changes to take effect.
 
 <options=bold>ZSH</>:
 
-ZSH completions are commonly stored in any directory listed in your
-`<options=bold>$fpath</>` variable. To use these completions, you must either add the
-generated script to one of those directories, or add your own
+ZSH completions are commonly stored in any directory listed in your \
+`<options=bold>$fpath</>` variable. To use these completions, you must either add the \
+generated script to one of those directories, or add your own \
 to this list.
 
-Adding a custom directory is often the safest best if you're unsure
-of which directory to use. First create the directory, for this
+Adding a custom directory is often the safest best if you're unsure \
+of which directory to use. First create the directory, for this \
 example we'll create a hidden directory inside our `<options=bold>$HOME</>` directory
 
 `<options=bold>mkdir ~/.zfunc</>`
@@ -77,7 +78,7 @@ Then add the following lines to your `<options=bold>.zshrc</>` just before `<opt
 
 Now you can install the completions script using the following command
 
-`<options=bold>%script.name% %command.name% zsh > ~/.zfunc/_%script.name%</>`
+`<options=bold>{script_name} {command_name} zsh > ~/.zfunc/_{script_name}</>`
 
 You must then either log out and log back in, or simply run
 
@@ -87,9 +88,9 @@ For the new completions to take affect.
 
 <options=bold>CUSTOM LOCATIONS</>:
 
-Alternatively, you could save these files to the place of your choosing,
-such as a custom directory inside your $HOME. Doing so will require you
-to add the proper directives, such as `source`ing inside your login
+Alternatively, you could save these files to the place of your choosing, \
+such as a custom directory inside your $HOME. Doing so will require you \
+to add the proper directives, such as `source`ing inside your login \
 script. Consult your shells documentation for how to add such directives.
 """
 

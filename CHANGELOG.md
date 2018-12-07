@@ -1,5 +1,34 @@
 # Change Log
 
+## [0.7.0] - 2018-12-07
+
+This version breaks backwards compatibility and caution is advised when updating.
+
+While the public API of the `Command` class is mostly the same, a lot of the internals has changed
+or has been removed.
+
+Cleo is now mostly a higher level wrapper for [CliKit](https://github.com/sdispater/clikit) which is 
+more flexible.
+
+### Added
+
+- Added a sub command system via CliKit.
+- Added an event system via CliKit.
+
+### Changed
+
+- All helper classes have been removed. If you use the `Command` methods this should not affect you.
+- The testers `get_display()` method has been removed. Use `tester.io.fetch_output()`.
+- The testers `execute()` method no longer requires the command name and requires a string as arguments instead of a list.
+- The testers `execute()` method now accepts a `inputs` keyword argument to pass user inputs.
+- The `call()` method no longer requires the command name and requires a string as arguments instead of a list.
+- The tables now automatically wraps the cells based on the available width.
+- The table separators and table cells elements have been removed.
+- The look and feel of the `help` command has changed.
+- Namespace commands are no longer supported and will be treated as standard commands.
+- The `list` command has been removed and merged with `help`.
+
+
 ## [0.6.8] - 2018-06-25
 
 ### Changed
@@ -136,7 +165,8 @@ This is a major release with some API changes.
 
 
 
-[Unreleased]: https://github.com/sdispater/cleo/compare/0.6.8...master
+[Unreleased]: https://github.com/sdispater/cleo/compare/0.7.0...master
+[0.7.0]: https://github.com/sdispater/cleo/releases/tag/0.7.0
 [0.6.8]: https://github.com/sdispater/cleo/releases/tag/0.6.8
 [0.6.7]: https://github.com/sdispater/cleo/releases/tag/0.6.7
 [0.6.6]: https://github.com/sdispater/cleo/releases/tag/0.6.6
