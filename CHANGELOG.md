@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed invalid combination of OPTIONAL_VALUE and MULTI_VALUED flags for options.
+
+
 ## [0.7.1] - 2018-12-07
 
 ### Fixed
@@ -14,7 +21,7 @@ This version breaks backwards compatibility and caution is advised when updating
 While the public API of the `Command` class is mostly the same, a lot of the internals has changed
 or has been removed.
 
-Cleo is now mostly a higher level wrapper for [CliKit](https://github.com/sdispater/clikit) which is 
+Cleo is now mostly a higher level wrapper for [CliKit](https://github.com/sdispater/clikit) which is
 more flexible.
 
 ### Added
