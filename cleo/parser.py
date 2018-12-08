@@ -159,7 +159,7 @@ class Parser(object):
             mode = Option.MULTI_VALUED
             token = token.rstrip("=*")
         elif token.endswith("=?*"):
-            mode = Option.OPTIONAL_VALUE | Option.MULTI_VALUED
+            mode = Option.MULTI_VALUED
             token = token.rstrip("=?*")
         elif token.endswith("=?"):
             mode = Option.OPTIONAL_VALUE
@@ -177,7 +177,7 @@ class Parser(object):
             if operator == "=*":
                 mode = Option.REQUIRED_VALUE | Option.MULTI_VALUED
             elif operator == "=?*":
-                mode = Option.OPTIONAL_VALUE | Option.MULTI_VALUED
+                mode = Option.MULTI_VALUED
             elif operator == "=?":
                 mode = Option.OPTIONAL_VALUE
             elif operator == "=":
