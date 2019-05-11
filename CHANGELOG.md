@@ -9,6 +9,7 @@
 ### Fixed
 
 - Fixed the `decorated` option for the command tester.
+- Fixed tested applications being terminated after execution.
 
 
 ## [0.7.2] - 2018-12-08

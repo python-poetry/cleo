@@ -11,6 +11,7 @@ class ApplicationTester(object):
 
     def __init__(self, application):  # type: (Application) -> None
         self._application = application
+        self._application.config.set_terminate_after_run(False)
         self._io = BufferedIO()
         self._status_code = 0
 
