@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Added
+
+- Added the `argument` and `option` helpers.
+
+
 ## [0.7.2] - 2018-12-08
 
 ### Fixed

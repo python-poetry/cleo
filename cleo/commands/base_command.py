@@ -42,8 +42,8 @@ class BaseCommand(object):
 
         for option in self.options:
             self._config.add_option(
-                option.name,
-                option.shortcut,
+                option.long_name,
+                option.short_name,
                 option.flags,
                 option.description,
                 option.default,
