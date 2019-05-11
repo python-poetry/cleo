@@ -54,7 +54,7 @@ class CommandTester(object):
             self._io.set_verbosity(options["verbosity"])
 
         if "decorated" in options and options["decorated"]:
-            self._io.set_formatter(AnsiFormatter())
+            self._io.set_formatter(AnsiFormatter(forced=True))
 
         command = Command(self._command.config, self._command.application)
 

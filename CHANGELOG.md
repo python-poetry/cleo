@@ -6,6 +6,10 @@
 
 - Added the `argument` and `option` helpers.
 
+### Fixed
+
+- Fixed the `decorated` option for the command tester.
+
 
 ## [0.7.2] - 2018-12-08
 
