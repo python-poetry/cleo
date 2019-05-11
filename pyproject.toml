@@ -18,15 +18,16 @@ keywords = ["cli", "commands"]
 python = "~2.7 || ^3.4"
 pylev = "^1.3"
 pastel = "^0.1.0"
-clikit = "^0.2.2"
+clikit = "^0.2.4"
 
 
 [tool.poetry.dev-dependencies]
-pytest = "^3.4"
+pytest = "^4.4"
 pytest-mock = "^1.7"
 pre-commit = "^1.12"
 pytest-cov = "^2.6"
 tox = "^3.5"
+black = {version = "^19.3b0", python = "^3.6"}
 
 
 [build-system]
