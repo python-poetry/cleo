@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from cleo.application import Application
 from cleo.commands.command import Command
+from cleo.helpers import argument
 from cleo.testers import CommandTester
 
 from ..fixtures.signature_command import SignatureCommand
@@ -23,6 +24,19 @@ class MyCommand(Command):
     def _overwrite(self):
         self.write("Processing...")
         self.overwrite("Done!")
+
+
+class MySecondCommand(Command):
+
+    name = "test2"
+    description = "Command testing"
+
+    arguments = [argument("foo", "Bar", multiple=True)]
+
+    def handle(self):
+        foos = self.argument("foo")
+
+        self.line(",".join(foos))
 
 
 def test_set_application():
@@ -57,7 +71,15 @@ def test_overwrite():
 
     tester = CommandTester(command)
     tester.execute("overwrite", decorated=True)
-    print(repr(tester.io.fetch_output()))
 
     expected = "Processing...{}Done!        {}".format("\x08" * 13, "\x08" * 8)
     assert expected == tester.io.fetch_output()
+
+
+def test_explicit_multiple_argument():
+    command = MySecondCommand()
+
+    tester = CommandTester(command)
+    tester.execute("1 2 3")
+
+    assert "1,2,3\n" == tester.io.fetch_output()

@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed command construction with the `argument` and `option` helpers.
+
+
 ## [0.7.3] - 2019-05-12
 
 ### Added

@@ -36,18 +36,10 @@ class BaseCommand(object):
         self._config.set_description(self.description)
         self._config.set_help(self.help)
         for argument in self.arguments:
-            self._config.add_argument(
-                argument.name, argument.flags, argument.description, argument.default
-            )
+            self._config._format_builder.add_argument(argument)
 
         for option in self.options:
-            self._config.add_option(
-                option.long_name,
-                option.short_name,
-                option.flags,
-                option.description,
-                option.default,
-            )
+            self._config._format_builder.add_option(option)
 
         for alias in self.aliases:
             self._config.add_alias(alias)
