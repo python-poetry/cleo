@@ -7,19 +7,26 @@ import re
 import subprocess
 
 from .._compat import encode
+from ..helpers import argument
+from ..helpers import option
 
 from .command import Command
 from .completions.templates import TEMPLATES
 
 
 class CompletionsCommand(Command):
-    """
-    Generate completion scripts for your shell.
 
-    completions
-        { shell? : The shell to generate scripts for. }
-        { --alias=* : Alias for the current command. }
-    """
+    name = "completions"
+    description = "Generate completion scripts for your shell."
+
+    arguments = [
+        argument("shell", "The shell to generate the scripts for.", optional=True)
+    ]
+    options = [
+        option(
+            "alias", None, "Alias for the current command.", flag=False, multiple=True
+        )
+    ]
 
     SUPPORTED_SHELLS = ("bash", "zsh", "fish")
 
