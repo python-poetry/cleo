@@ -16,7 +16,7 @@ keywords = ["cli", "commands"]
 # Requirements
 [tool.poetry.dependencies]
 python = "~2.7 || ^3.4"
-clikit = "^0.3.1"
+clikit = "^0.4.0"
 
 
 [tool.poetry.dev-dependencies]
