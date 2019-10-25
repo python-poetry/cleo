@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cleo"
-version = "0.7.5"
+version = "0.7.6"
 description = "Cleo allows you to create beautiful and testable command-line interfaces."
 authors = [
     "Sébastien Eustace <sebastien@eustace.io>"
@@ -29,5 +29,5 @@ black = {version = "^19.3b0", python = "^3.6"}
 
 
 [build-system]
-requires = ["poetry>=0.12"]
+requires = ["poetry>=1.0.0b2"]
 build-backend = "poetry.masonry.api"

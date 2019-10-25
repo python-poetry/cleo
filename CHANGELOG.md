@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.7.6] - 2019-10-25
+
+### Fixed
+
+- Upgraded `clikit` to fix issues in option parsing.
+
+
 ## [0.7.5] - 2019-06-28
 
 ### Fixed
@@ -205,7 +212,8 @@ This is a major release with some API changes.
 
 
 
-[Unreleased]: https://github.com/sdispater/cleo/compare/0.7.5...master
+[Unreleased]: https://github.com/sdispater/cleo/compare/0.7.6...master
+[0.7.6]: https://github.com/sdispater/cleo/releases/tag/0.7.6
 [0.7.5]: https://github.com/sdispater/cleo/releases/tag/0.7.5
 [0.7.4]: https://github.com/sdispater/cleo/releases/tag/0.7.4
 [0.7.3]: https://github.com/sdispater/cleo/releases/tag/0.7.3
