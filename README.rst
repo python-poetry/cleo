@@ -491,10 +491,13 @@ replacing ``[program]`` with the command you use to run your application:
     # BASH - Mac OSX (with Homebrew "bash-completion")
     [program] completions bash > $(brew --prefix)/etc/bash_completion.d/[program].bash-completion
 
-    # ZSH - Config file
+    # Zsh - Config file
     mkdir ~/.zfunc
     echo "fpath+=~/.zfunc" >> ~/.zshrc
-    [program] completions zsh > ~/.zfunc/_test
+    [program] completions zsh > ~/.zfunc/_[program]
+    
+    # Zsh (macOS/Homebrew)
+    [program] completions zsh > $(brew --prefix)/share/zsh/site-functions/_[program]
 
     # FISH
     [program] completions fish > ~/.config/fish/completions/[program].fish
