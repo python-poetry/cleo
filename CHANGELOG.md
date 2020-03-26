@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.8.0] - 2020-03-26
+
+### Added
+
+- Errors are now rendered in a nicer way for Python 3.6+.
+
+
 ## [0.7.6] - 2019-10-25
 
 ### Fixed
@@ -212,7 +219,8 @@ This is a major release with some API changes.
 
 
 
-[Unreleased]: https://github.com/sdispater/cleo/compare/0.7.6...master
+[Unreleased]: https://github.com/sdispater/cleo/compare/0.8.0...master
+[0.8.0]: https://github.com/sdispater/cleo/releases/tag/0.8.0
 [0.7.6]: https://github.com/sdispater/cleo/releases/tag/0.7.6
 [0.7.5]: https://github.com/sdispater/cleo/releases/tag/0.7.5
 [0.7.4]: https://github.com/sdispater/cleo/releases/tag/0.7.4
