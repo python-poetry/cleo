@@ -1,0 +1,130 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+
+  Linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get tag
+      id: tag
+      run: |
+        echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install and set up Poetry
+      run: |
+        curl -fsS -o get-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
+        python get-poetry.py --preview -y
+    - name: Build distributions
+      run: |
+        source $HOME/.poetry/env
+        poetry build -vvv
+    - name: Upload distribution artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: project-dist
+        path: dist
+
+  MacOS:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get tag
+      id: tag
+      run: |
+        echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install and set up Poetry
+      run: |
+        curl -fsS -o get-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
+        python get-poetry.py --preview -y
+    - name: Build distributions
+      run: |
+        source $HOME/.poetry/env
+        poetry build -vvv
+    - name: Upload distribution artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: project-dist
+        path: dist
+
+  Windows:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get tag
+      id: tag
+      shell: bash
+      run: |
+        echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install and setup Poetry
+      run: |
+        Invoke-WebRequest https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py -O get-poetry.py
+        python get-poetry.py --preview -y
+    - name: Build distributions
+      run: |
+        $env:Path += ";$env:Userprofile\.poetry\bin"
+        poetry build -vvv
+    - name: Upload distribution artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: project-dist
+        path: dist
+
+  Release:
+    needs: [Linux, MacOS, Windows]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Get tag
+        id: tag
+        run: |
+          echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
+      - name: Download distribution artifact
+        uses: actions/download-artifact@master
+        with:
+          name: project-dist
+          path: dist
+      - name: Install and set up Poetry
+        run: |
+          curl -fsS -o get-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
+          python get-poetry.py --preview -y
+      - name: Check distributions
+        run: |
+          ls -la dist
+      - name: Publish to PyPI
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          source $HOME/.poetry/env
+          poetry publish
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          release_name: ${{ steps.tag.outputs.tag }}
+          draft: false
+          prerelease: false

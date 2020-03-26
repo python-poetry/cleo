@@ -25,7 +25,7 @@ pytest-mock = "^1.7"
 pre-commit = "^1.12"
 pytest-cov = "^2.6"
 tox = "^3.5"
-black = {version = "^19.3b0", python = "^3.6"}
+black = {version = "^19.3b0", markers= "python_version >= '3.6' and implementation_name != 'pypy'"}
 
 
 [build-system]

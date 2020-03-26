@@ -35,4 +35,4 @@ def tester(app):
 def test_execute(tester):
     assert 0 == tester.execute("foo bar")
     assert 0 == tester.status_code
-    assert "bar" + os.linesep == tester.io.fetch_output()
+    assert "bar\n" == tester.io.fetch_output()
