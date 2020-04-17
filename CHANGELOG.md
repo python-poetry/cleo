@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.8.1] - 2020-04-17
+
+### Changed
+
+- Upgraded `clikit` to version `^0.6.0`.
+
+
 ## [0.8.0] - 2020-03-26
 
 ### Added
@@ -219,7 +226,8 @@ This is a major release with some API changes.
 
 
 
-[Unreleased]: https://github.com/sdispater/cleo/compare/0.8.0...master
+[Unreleased]: https://github.com/sdispater/cleo/compare/0.8.1...master
+[0.8.1]: https://github.com/sdispater/cleo/releases/tag/0.8.1
 [0.8.0]: https://github.com/sdispater/cleo/releases/tag/0.8.0
 [0.7.6]: https://github.com/sdispater/cleo/releases/tag/0.7.6
 [0.7.5]: https://github.com/sdispater/cleo/releases/tag/0.7.5
