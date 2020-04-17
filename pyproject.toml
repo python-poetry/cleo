@@ -16,7 +16,7 @@ keywords = ["cli", "commands"]
 # Requirements
 [tool.poetry.dependencies]
 python = "~2.7 || ^3.4"
-clikit = "^0.5.0"
+clikit = "^0.6.0"
 
 
 [tool.poetry.dev-dependencies]
@@ -29,5 +29,5 @@ black = {version = "^19.3b0", markers= "python_version >= '3.6' and implementati
 
 
 [build-system]
-requires = ["poetry-core>=1.0.0a3"]
-build-backend = "poetry_core.masonry.api"
+requires = ["poetry-core>=1.0.0a5"]
+build-backend = "poetry.core.masonry.api"
