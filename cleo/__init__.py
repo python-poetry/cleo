@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
-
 from .application import Application
 from .commands import Command
-from .helpers import argument, option
-from .testers import ApplicationTester, CommandTester
+from .helpers import argument
+from .helpers import option
+from .testers import ApplicationTester
+from .testers import CommandTester
 
 
-__version__ = "0.8.1"
+__version__ = "1.0.0a0"

@@ -1,0 +1,2 @@
+
+The command "foo" does not exist.

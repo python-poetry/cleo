@@ -1,26 +1,20 @@
-import re
 import os
+import re
 
 from collections import namedtuple
+from typing import Any
+from typing import Dict
+from typing import List
 
-from clikit.api.args.format import Argument
-from clikit.api.args.format import Option
-
-
-_argument = namedtuple("argument", "name flags description default")
-_option = namedtuple("option", "long_name short_name flags description default")
+from cleo.io.inputs.argument import Argument
+from cleo.io.inputs.option import Option
 
 
 class Parser(object):
     @classmethod
-    def parse(cls, expression):
+    def parse(cls, expression: str) -> Dict[str, Any]:
         """
         Parse the given console command definition into a dict.
-
-        :param expression: The expression to parse
-        :type expression: str
-
-        :rtype: dict
         """
         parsed = {"name": None, "arguments": [], "options": []}
 
@@ -45,14 +39,9 @@ class Parser(object):
         return parsed
 
     @classmethod
-    def _parameters(cls, tokens):
+    def _parameters(cls, tokens: List[str]) -> Dict[str, Any]:
         """
         Extract all of the parameters from the tokens.
-
-        :param tokens: The tokens to extract the parameters from
-        :type tokens: list
-
-        :rtype: dict
         """
         arguments = []
         options = []
@@ -66,14 +55,9 @@ class Parser(object):
         return {"arguments": arguments, "options": options}
 
     @classmethod
-    def _parse_argument(cls, token):
+    def _parse_argument(cls, token: str) -> Argument:
         """
         Parse an argument expression.
-
-        :param token: The argument expression
-        :type token: str
-
-        :rtype: InputArgument
         """
         description = ""
         validator = None
@@ -92,39 +76,43 @@ class Parser(object):
             validator = matches.group(2).strip()
 
         if token.endswith("?*"):
-            return _argument(
+            return Argument(
                 token.rstrip("?*"),
-                Argument.MULTI_VALUED | Argument.OPTIONAL,
-                description,
-                None,
+                required=False,
+                is_list=True,
+                description=description,
             )
         elif token.endswith("*"):
-            return _argument(
+            return Argument(
                 token.rstrip("*"),
-                Argument.MULTI_VALUED | Argument.REQUIRED,
-                description,
-                None,
+                is_list=True,
+                description=description,
             )
         elif token.endswith("?"):
-            return _argument(token.rstrip("?"), Argument.OPTIONAL, description, None)
+            return Argument(
+                token.rstrip("?"),
+                required=False,
+                description=description,
+            )
 
         matches = re.match(r"(.+)=(.+)", token)
         if matches:
-            return _argument(
-                matches.group(1), Argument.OPTIONAL, description, matches.group(2)
+            return Argument(
+                matches.group(1),
+                required=False,
+                description=description,
+                default=matches.group(2),
             )
 
-        return _argument(token, Argument.REQUIRED, description, None)
+        return Argument(
+            token,
+            description=description,
+        )
 
     @classmethod
-    def _parse_option(cls, token):
+    def _parse_option(cls, token: str) -> Option:
         """
         Parse an option expression.
-
-        :param token: The option expression
-        :type token: str
-
-        :rtype: InputOption
         """
         description = ""
         validator = None
@@ -153,34 +141,50 @@ class Parser(object):
             token = token.lstrip("-")
 
         default = None
-        mode = Option.NO_VALUE
+        flag = True
+        requires_value = False
+        is_list = False
 
         if token.endswith("=*"):
-            mode = Option.MULTI_VALUED
+            flag = False
+            is_list = True
+            requires_value = True
             token = token.rstrip("=*")
         elif token.endswith("=?*"):
-            mode = Option.MULTI_VALUED
+            flag = False
+            is_list = True
             token = token.rstrip("=?*")
         elif token.endswith("=?"):
-            mode = Option.OPTIONAL_VALUE
+            flag = False
             token = token.rstrip("=?")
         elif token.endswith("="):
-            mode = Option.REQUIRED_VALUE
+            flag = False
+            requires_value = True
             token = token.rstrip("=")
+        else:
+            matches = re.match(r"(.+)(=[?*]*)(.+)", token)
+            if matches:
+                flag = False
+                token = matches.group(1)
+                operator = matches.group(2)
+                default = matches.group(3)
 
-        matches = re.match(r"(.+)(=[?*]*)(.+)", token)
-        if matches:
-            token = matches.group(1)
-            operator = matches.group(2)
-            default = matches.group(3)
+                if operator == "=*":
+                    requires_value = True
+                    is_list = True
+                elif operator == "=?*":
+                    is_list = True
+                elif operator == "=?":
+                    requires_value = False
+                elif operator == "=":
+                    requires_value = True
 
-            if operator == "=*":
-                mode = Option.REQUIRED_VALUE | Option.MULTI_VALUED
-            elif operator == "=?*":
-                mode = Option.MULTI_VALUED
-            elif operator == "=?":
-                mode = Option.OPTIONAL_VALUE
-            elif operator == "=":
-                mode = Option.REQUIRED_VALUE
-
-        return _option(token, shortcut, mode, description, default)
+        return Option(
+            token,
+            shortcut,
+            flag=flag,
+            requires_value=requires_value,
+            is_list=is_list,
+            description=description,
+            default=default,
+        )

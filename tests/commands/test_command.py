@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 from cleo.application import Application
 from cleo.commands.command import Command
 from cleo.helpers import argument
 from cleo.testers import CommandTester
 
-from ..fixtures.signature_command import SignatureCommand
 from ..fixtures.inherited_command import ChildCommand
+from ..fixtures.signature_command import SignatureCommand
 
 
 class MyCommand(Command):
@@ -49,21 +48,19 @@ def test_set_application():
 
 def test_with_signature():
     command = SignatureCommand()
-    config = command.config
 
-    assert "signature:command" == config.name
-    assert "description" == config.description
-    assert "help" == config.help
-    assert 2 == len(config.arguments)
-    assert 2 == len(config.options)
+    assert "signature:command" == command.name
+    assert "description" == command.description
+    assert "help" == command.help
+    assert 2 == len(command.definition.arguments)
+    assert 2 == len(command.definition.options)
 
 
 def test_signature_inheritance():
     command = ChildCommand()
-    config = command.config
 
-    assert "parent" == config.name
-    assert "Parent Command." == config.description
+    assert "parent" == command.name
+    assert "Parent Command." == command.description
 
 
 def test_overwrite():
@@ -72,7 +69,7 @@ def test_overwrite():
     tester = CommandTester(command)
     tester.execute("overwrite", decorated=True)
 
-    expected = "Processing...{}Done!        {}".format("\x08" * 13, "\x08" * 8)
+    expected = "Processing...\x1b[1G\x1b[2KDone!"
     assert expected == tester.io.fetch_output()
 
 

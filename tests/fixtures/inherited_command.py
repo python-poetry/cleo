@@ -6,7 +6,7 @@ from cleo import Command
 class ParentCommand(Command):
     """
     Parent Command.
-    
+
     parent
     """
 

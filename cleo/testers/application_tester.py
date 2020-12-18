@@ -1,7 +1,10 @@
-from clikit.args import StringArgs
+from io import StringIO
+from typing import Optional
 
 from cleo import Application
-from cleo.io import BufferedIO
+from cleo.io.buffered_io import BufferedIO
+from cleo.io.inputs.string_input import StringInput
+from cleo.io.outputs.output import Verbosity
 
 
 class ApplicationTester(object):
@@ -9,11 +12,15 @@ class ApplicationTester(object):
     Eases the testing of console applications.
     """
 
-    def __init__(self, application):  # type: (Application) -> None
+    def __init__(self, application: Application) -> None:
         self._application = application
-        self._application.config.set_terminate_after_run(False)
+        self._application.auto_exits(False)
         self._io = BufferedIO()
         self._status_code = 0
+
+    @property
+    def application(self) -> Application:
+        return self._application
 
     @property
     def io(self):  # type: () -> BufferedIO
@@ -23,30 +30,39 @@ class ApplicationTester(object):
     def status_code(self):  # type: () -> int
         return self._status_code
 
-    def execute(self, args, **options):  # type: (str, ...) -> int
+    def execute(
+        self,
+        args: Optional[str] = "",
+        inputs: Optional[str] = None,
+        interactive: Optional[bool] = None,
+        verbosity: Optional[Verbosity] = None,
+        decorated: bool = False,
+        supports_utf8: bool = True,
+    ) -> int:
         """
         Executes the command
-
-        Available options:
-            * interactive: Sets the input interactive flag
-            * verbosity: Sets the output verbosity flag
         """
-        args = StringArgs(args)
+        self._io.clear()
 
-        if "inputs" in options:
-            self._io.set_input(options["inputs"])
+        input = StringInput(args)
+        self._io.set_input(input)
+        self._io.decorated(decorated)
+        self._io.output.set_supports_utf8(supports_utf8)
+        self._io.error_output.set_supports_utf8(supports_utf8)
 
-        if "interactive" in options:
-            self._io.set_interactive(options["interactive"])
+        if inputs is not None:
+            self._io.input.set_stream(StringIO(inputs))
 
-        if "verbosity" in options:
-            self._io.set_verbosity(options["verbosity"])
+        if interactive is not None:
+            self._io.interactive(interactive)
+
+        if verbosity is not None:
+            self._io.set_verbosity(verbosity)
 
         self._status_code = self._application.run(
-            args,
-            self._io.input.stream,
-            self._io.output.stream,
-            self._io.error_output.stream,
+            self._io.input,
+            self._io.output,
+            self._io.error_output,
         )
 
         return self._status_code

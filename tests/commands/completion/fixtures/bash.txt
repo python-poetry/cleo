@@ -37,6 +37,10 @@ _my_function()
             opts="${opts} "
             ;;
 
+            (list)
+            opts="${opts} "
+            ;;
+
         esac
 
         COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
@@ -47,7 +51,7 @@ _my_function()
 
     # completing for a command
     if [[ $cur == $com ]]; then
-        coms="command:with:colons hello help"
+        coms="command:with:colons hello help list"
 
         COMPREPLY=($(compgen -W "${coms}" -- ${cur}))
         __ltrim_colon_completions "$cur"
