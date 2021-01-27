@@ -32,6 +32,7 @@ from .io.io import IO
 from .io.outputs.output import Output
 from .io.outputs.output import Verbosity
 from .io.outputs.stream_output import StreamOutput
+from .loaders.command_loader import CommandLoader
 from .terminal import Terminal
 from .ui.ui import UI
 
@@ -66,6 +67,8 @@ class Application:
 
         # TODO: signals support
         self._event_dispatcher = None
+
+        self._command_loader: Optional[CommandLoader] = None
 
     @property
     def name(self) -> str:
@@ -139,6 +142,9 @@ class Application:
     def set_ui(self, ui: UI) -> None:
         self._ui = ui
 
+    def set_command_loader(self, command_loader: CommandLoader) -> None:
+        self._command_loader = command_loader
+
     def auto_exits(self, auto_exits: bool = True) -> None:
         self._auto_exit = auto_exits
 
@@ -203,8 +209,15 @@ class Application:
     def has(self, name: str) -> bool:
         self._init()
 
-        # TODO: Command loader
-        return name in self._commands
+        if name in self._commands:
+            return True
+
+        if not self._command_loader:
+            return False
+
+        return self._command_loader.has(name) and self.add(
+            self._command_loader.get(name)
+        )
 
     def get_namespaces(self) -> List[str]:
         namespaces = []
@@ -245,7 +258,11 @@ class Application:
         if self.has(name):
             return self.get(name)
 
-        all_commands = [
+        all_commands = []
+        if self._command_loader:
+            all_commands += self._command_loader.names
+
+        all_commands += [
             name for name, command in self._commands.items() if not command.hidden
         ]
 
@@ -255,8 +272,15 @@ class Application:
         self._init()
 
         if namespace is None:
-            # TODO: Command loader
-            return self._commands.copy()
+            commands = self._commands.copy()
+            if not self._command_loader:
+                return commands
+
+            for name in self._command_loader.names:
+                if name not in commands and self.has(name):
+                    commands[name] = self.get(name)
+
+            return commands
 
         commands = {}
 
@@ -264,7 +288,14 @@ class Application:
             if namespace == self.extract_namespace(name, name.count(" ") + 1):
                 commands[name] = command
 
-        # TODO: Command loader
+        if self._command_loader:
+            for name in self._command_loader.names:
+                if (
+                    name not in commands
+                    and namespace == self.extract_namespace(name, name.count(" ") + 1)
+                    and self.has(name)
+                ):
+                    commands[name] = self.get(name)
 
         return commands
 
