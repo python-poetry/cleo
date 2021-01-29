@@ -1,7 +1,7 @@
 from cleo.application import Application
 from cleo.commands.command import Command
 from cleo.helpers import argument
-from cleo.testers import CommandTester
+from cleo.testers.command_tester import CommandTester
 
 from ..fixtures.inherited_command import ChildCommand
 from ..fixtures.signature_command import SignatureCommand

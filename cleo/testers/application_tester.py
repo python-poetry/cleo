@@ -1,7 +1,7 @@
 from io import StringIO
 from typing import Optional
 
-from cleo import Application
+from cleo.application import Application
 from cleo.io.buffered_io import BufferedIO
 from cleo.io.inputs.string_input import StringInput
 from cleo.io.outputs.output import Verbosity

@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from cleo import Command
+from cleo.commands.command import Command
 
 
 class ParentCommand(Command):

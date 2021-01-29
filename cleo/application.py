@@ -7,7 +7,7 @@ from typing import List
 from typing import Optional
 from typing import cast
 
-from .commands import Command
+from .commands.command import Command
 from .commands.completions_command import CompletionsCommand
 from .commands.help_command import HelpCommand
 from .commands.list_command import ListCommand

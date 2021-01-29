@@ -1,7 +1,7 @@
 from io import StringIO
 from typing import Optional
 
-from cleo.commands import Command
+from cleo.commands.command import Command
 from cleo.io.buffered_io import BufferedIO
 from cleo.io.inputs.argv_input import ArgvInput
 from cleo.io.inputs.string_input import StringInput

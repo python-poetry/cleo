@@ -1,7 +1,7 @@
 import pytest
 
 from cleo.application import Application
-from cleo.commands import Command
+from cleo.commands.command import Command
 from cleo.testers.application_tester import ApplicationTester
 
 

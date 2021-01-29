@@ -4,8 +4,8 @@ import os
 
 import pytest
 
-from cleo import Application
-from cleo import CommandTester
+from cleo.application import Application
+from cleo.testers.command_tester import CommandTester
 
 from .fixtures.command_with_colons import CommandWithColons
 from .fixtures.hello_command import HelloCommand
