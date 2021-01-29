@@ -1,8 +1,5 @@
-from clikit.api.args.format import Argument
-from clikit.api.args.format import Option
-
-from cleo import argument
-from cleo import option
+from cleo.helpers import argument
+from cleo.helpers import option
 
 
 def test_argument():
@@ -10,29 +7,25 @@ def test_argument():
 
     assert "Foo" == arg.description
     assert arg.is_required()
-    assert not arg.is_optional()
-    assert not arg.is_multi_valued()
+    assert not arg.is_list()
     assert arg.default is None
 
     arg = argument("foo", "Foo", optional=True, default="bar")
 
     assert not arg.is_required()
-    assert arg.is_optional()
-    assert not arg.is_multi_valued()
+    assert not arg.is_list()
     assert "bar" == arg.default
 
     arg = argument("foo", "Foo", multiple=True)
 
     assert arg.is_required()
-    assert not arg.is_optional()
-    assert arg.is_multi_valued()
+    assert arg.is_list()
     assert [] == arg.default
 
     arg = argument("foo", "Foo", optional=True, multiple=True, default=["bar"])
 
     assert not arg.is_required()
-    assert arg.is_optional()
-    assert arg.is_multi_valued()
+    assert arg.is_list()
     assert ["bar"] == arg.default
 
 
@@ -41,41 +34,37 @@ def test_option():
 
     assert "Foo" == opt.description
     assert not opt.accepts_value()
-    assert not opt.is_value_optional()
-    assert not opt.is_value_required()
-    assert not opt.is_multi_valued()
-    assert opt.default is None
+    assert not opt.requires_value()
+    assert not opt.is_list()
+    assert opt.default is False
 
     opt = option("foo", "f", "Foo", flag=False)
 
     assert "Foo" == opt.description
     assert opt.accepts_value()
-    assert not opt.is_value_optional()
-    assert opt.is_value_required()
-    assert not opt.is_multi_valued()
+    assert opt.requires_value()
+    assert not opt.is_list()
+    assert opt.default is None
 
     opt = option("foo", "f", "Foo", flag=False, value_required=False)
 
     assert "Foo" == opt.description
     assert opt.accepts_value()
-    assert opt.is_value_optional()
-    assert not opt.is_value_required()
-    assert not opt.is_multi_valued()
+    assert not opt.requires_value()
+    assert not opt.is_list()
 
     opt = option("foo", "f", "Foo", flag=False, multiple=True)
 
     assert "Foo" == opt.description
     assert opt.accepts_value()
-    assert not opt.is_value_optional()
-    assert opt.is_value_required()
-    assert opt.is_multi_valued()
+    assert opt.requires_value()
+    assert opt.is_list()
     assert [] == opt.default
 
     opt = option("foo", "f", "Foo", flag=False, default="bar")
 
     assert "Foo" == opt.description
     assert opt.accepts_value()
-    assert not opt.is_value_optional()
-    assert opt.is_value_required()
-    assert not opt.is_multi_valued()
+    assert opt.requires_value()
+    assert not opt.is_list()
     assert "bar" == opt.default

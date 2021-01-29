@@ -1,9 +1,11 @@
-from clikit.api.command import Command
-from clikit.args import StringArgs
-from clikit.formatter import AnsiFormatter
+from io import StringIO
+from typing import Optional
 
-from cleo.commands import BaseCommand
-from cleo.io import BufferedIO
+from cleo.commands.command import Command
+from cleo.io.buffered_io import BufferedIO
+from cleo.io.inputs.argv_input import ArgvInput
+from cleo.io.inputs.string_input import StringInput
+from cleo.io.outputs.output import Verbosity
 
 
 class CommandTester(object):
@@ -11,53 +13,66 @@ class CommandTester(object):
     Eases the testing of console commands.
     """
 
-    def __init__(self, command):  # type: (BaseCommand) -> None
-        """
-        Constructor
-        """
+    def __init__(self, command: Command) -> None:
         self._command = command
         self._io = BufferedIO()
         self._inputs = []
         self._status_code = None
 
-        if self._command.application:
-            for style in self._command.application.config.style_set.styles.values():
-                self._io.output.formatter.add_style(style)
-                self._io.error_output.formatter.add_style(style)
+    @property
+    def command(self) -> Command:
+        return self._command
 
     @property
-    def io(self):  # type: () -> BufferedIO
+    def io(self) -> BufferedIO:
         return self._io
 
     @property
     def status_code(self):  # type: () -> int
         return self._status_code
 
-    def execute(self, args="", **options):  # type: (str, ...) -> int
+    def execute(
+        self,
+        args: Optional[str] = "",
+        inputs: Optional[str] = None,
+        interactive: Optional[bool] = None,
+        verbosity: Optional[Verbosity] = None,
+        decorated: Optional[bool] = None,
+        supports_utf8: bool = True,
+    ) -> int:
         """
         Executes the command
-
-        Available options:
-            * interactive: Sets the input interactive flag
-            * decorated: Sets the output decorated flag
-            * verbosity: Sets the output verbosity flag
         """
-        args = StringArgs(args)
+        application = self._command.application
 
-        if "inputs" in options:
-            self._io.set_input(options["inputs"])
+        input = StringInput(args)
+        if application is not None and application.definition.has_argument("command"):
+            name = self._command.name
+            if " " in name:
+                # If the command is namespaced we rearrange
+                # the input to parse it as a single argument
+                argv = [application.name, self._command.name] + input._tokens
 
-        if "interactive" in options:
-            self._io.set_interactive(options["interactive"])
+                input = ArgvInput(argv)
+            else:
+                input = StringInput(name + " " + args)
 
-        if "verbosity" in options:
-            self._io.set_verbosity(options["verbosity"])
+        self._io.set_input(input)
+        self._io.output.set_supports_utf8(supports_utf8)
+        self._io.error_output.set_supports_utf8(supports_utf8)
 
-        if "decorated" in options and options["decorated"]:
-            self._io.set_formatter(AnsiFormatter(forced=True))
+        if inputs is not None:
+            self._io.input.set_stream(StringIO(inputs))
 
-        command = Command(self._command.config, self._command.application)
+        if interactive is not None:
+            self._io.interactive(interactive)
 
-        self._status_code = command.run(args, self._io)
+        if verbosity is not None:
+            self._io.set_verbosity(verbosity)
+
+        if decorated is not None:
+            self._io.decorated(decorated)
+
+        self._status_code = self._command.run(self._io)
 
         return self._status_code

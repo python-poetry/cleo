@@ -1,0 +1,48 @@
+import pytest
+
+from cleo.commands.command import Command
+from cleo.exceptions import CommandNotFoundException
+from cleo.loaders.factory_command_loader import FactoryCommandLoader
+
+
+def command(name: str) -> Command:
+    command_ = Command()
+    command_.name = name
+
+    return command_
+
+
+def test_has():
+    loader = FactoryCommandLoader(
+        {"foo": lambda: command("foo"), "bar": lambda: command("bar")}
+    )
+
+    assert loader.has("foo")
+    assert loader.has("bar")
+    assert not loader.has("baz")
+
+
+def test_get():
+    loader = FactoryCommandLoader(
+        {"foo": lambda: command("foo"), "bar": lambda: command("bar")}
+    )
+
+    assert isinstance(loader.get("foo"), Command)
+    assert isinstance(loader.get("bar"), Command)
+
+
+def test_get_invalid_command_raises_error():
+    loader = FactoryCommandLoader(
+        {"foo": lambda: command("foo"), "bar": lambda: command("bar")}
+    )
+
+    with pytest.raises(CommandNotFoundException):
+        loader.get("baz")
+
+
+def test_names():
+    loader = FactoryCommandLoader(
+        {"foo": lambda: command("foo"), "bar": lambda: command("bar")}
+    )
+
+    assert loader.names == ["foo", "bar"]

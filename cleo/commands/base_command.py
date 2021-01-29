@@ -1,91 +1,147 @@
+import inspect
+
+from typing import TYPE_CHECKING
 from typing import Optional
 
-from clikit.api.args import Args
-from clikit.api.command import Command as CliKitCommand
-from clikit.api.config.command_config import CommandConfig
-
-from cleo.io import ConsoleIO
+from cleo.exceptions import CleoException
+from cleo.io.inputs.definition import Definition
+from cleo.io.io import IO
 
 
-class CommandError(Exception):
-    pass
+if TYPE_CHECKING:
+    from cleo.application import Application
 
 
 class BaseCommand(object):
 
     name = None
 
-    description = None
+    description = ""
 
-    help = None
-
-    arguments = []
-    options = []
-
-    aliases = []
+    help = ""
 
     enabled = True
     hidden = False
 
-    commands = []
+    usages = []
 
-    def __init__(self):
+    def __init__(self) -> None:
+        self._definition = Definition()
+        self._full_definition = None
         self._application = None
+        self._ignore_validation_errors = False
+        self._synopsis = {}
 
-        self._config = CommandConfig(self.name)
-        self._config.set_description(self.description)
-        self._config.set_help(self.help)
-        for argument in self.arguments:
-            self._config._format_builder.add_argument(argument)
+        self.configure()
 
-        for option in self.options:
-            self._config._format_builder.add_option(option)
-
-        for alias in self.aliases:
-            self._config.add_alias(alias)
-
-        if not self.enabled:
-            self._config.disable()
-
-        if self.hidden:
-            self._config.hide()
-
-        if self.commands:
-            for command in self.commands:
-                self.add_sub_command(command)
-
-        self._config.set_handler(self)
+        for i, usage in enumerate(self.usages):
+            if self.name and usage.find(self.name) != 0:
+                self.usages[i] = "{} {}".format(self.name, usage)
 
     @property
-    def config(self):  # type: () -> CommandConfig
-        return self._config
-
-    @property
-    def application(self):
+    def application(self) -> "Application":
         return self._application
 
-    def handle(
-        self, args, io, command
-    ):  # type: (Args, ConsoleIO, CliKitCommand) -> Optional[int]
-        raise NotImplementedError()
+    @property
+    def definition(self) -> Definition:
+        if self._full_definition is not None:
+            return self._full_definition
 
-    def set_application(self, application):
+        return self._definition
+
+    @property
+    def processed_help(self) -> str:
+        help_text = self.help
+        if not self.help:
+            help_text = self.description
+
+        is_single_command = self._application and self._application.is_single_command()
+
+        if self._application:
+            current_script = self._application.name
+        else:
+            current_script = inspect.stack()[-1][1]
+
+        return help_text.format(
+            command_name=self.name,
+            command_full_name=current_script
+            if is_single_command
+            else current_script + " " + self.name,
+            script_name=current_script,
+        )
+
+    def ignore_validation_errors(self) -> None:
+        self._ignore_validation_errors = True
+
+    def set_application(self, application: Optional["Application"] = None) -> None:
         self._application = application
 
-        for command in self.commands:
-            command.set_application(application)
+        self._full_definition = None
 
-    def add_sub_command(self, command):  # type: (BaseCommand) -> None
-        self._config.add_sub_command_config(command.config)
+    def configure(self) -> None:
+        """
+        Configures the current command.
+        """
+        pass
 
-        command.set_application(self.application)
+    def execute(self, io: IO) -> int:
+        raise NotImplementedError()
 
-    def default(self, default=True):  # type: (bool) -> BaseCommand
-        self._config.default(default)
+    def interact(self, io: IO) -> None:
+        """
+        Interacts with the user.
+        """
+        pass
 
-        return self
+    def initialize(self, io: IO) -> None:
+        pass
 
-    def anonymous(self):  # type: () -> BaseCommand
-        self._config.anonymous()
+    def run(self, io: IO) -> int:
+        self.merge_application_definition()
 
-        return self
+        try:
+            io.input.bind(self.definition)
+        except CleoException:
+            if not self._ignore_validation_errors:
+                raise
+
+        self.initialize(io)
+
+        if io.is_interactive():
+            self.interact(io)
+
+        if io.input.has_argument("command") and io.input.argument("command") is None:
+            io.input.set_argument("command", self.name)
+
+        io.input.validate()
+
+        status_code = self.execute(io)
+
+        if status_code is None:
+            status_code = 0
+
+        return status_code
+
+    def merge_application_definition(self, merge_args: bool = True) -> None:
+        if self._application is None:
+            return
+
+        self._full_definition = Definition()
+        self._full_definition.add_options(self._definition.options)
+        self._full_definition.add_options(self._application.definition.options)
+
+        if merge_args:
+            self._full_definition.set_arguments(self._application.definition.arguments)
+            self._full_definition.add_arguments(self._definition.arguments)
+        else:
+            self._full_definition.set_arguments(self._definition.arguments)
+
+    def synopsis(self, short: bool = False) -> str:
+        key = "short" if short else "long"
+
+        if key not in self._synopsis:
+            self._synopsis[key] = "{} {}".format(
+                self.name, self.definition.synopsis(short)
+            )
+
+        return self._synopsis[key]

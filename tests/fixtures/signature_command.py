@@ -2,13 +2,11 @@ from cleo.commands.command import Command
 
 
 class SignatureCommand(Command):
+    """
+    description
 
-    name = "no:configure"
-    signature = (
-        "signature:command {foo : Foo} {bar? : Bar} {--z|baz : Baz} {--Z|bazz : Bazz}"
-    )
-
-    description = "description"
+    signature:command {foo : Foo} {bar? : Bar} {--z|baz : Baz} {--Z|bazz : Bazz}
+    """
 
     help = "help"
 

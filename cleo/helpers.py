@@ -1,41 +1,41 @@
 from typing import Any
 from typing import Optional
 
-from clikit.api.args.format import Argument
-from clikit.api.args.format import Option
+from cleo.io.inputs.argument import Argument
+from cleo.io.inputs.option import Option
 
 
 def argument(
-    name, description=None, optional=False, multiple=False, default=None
-):  # type: (str, Optional[str], bool, bool, Optional[Any]) -> Argument
-    if optional:
-        flags = Argument.OPTIONAL
-    else:
-        flags = Argument.REQUIRED
-
-    if multiple:
-        flags |= Argument.MULTI_VALUED
-
-    return Argument(name, flags, description, default)
+    name: str,
+    description: Optional[str] = None,
+    optional: bool = False,
+    multiple: bool = False,
+    default: Optional[Any] = None,
+) -> Argument:
+    return Argument(
+        name,
+        required=not optional,
+        is_list=multiple,
+        description=description,
+        default=default,
+    )
 
 
 def option(
-    long_name,
-    short_name=None,
-    description=None,
-    flag=True,
-    value_required=True,
-    multiple=False,
-    default=None,
-):  # type: (str, Optional[str], Optional[str], bool, bool, bool, Optional[Any]) -> Option
-    if flag:
-        flags = Option.NO_VALUE
-    elif value_required:
-        flags = Option.REQUIRED_VALUE
-    else:
-        flags = Option.OPTIONAL_VALUE
-
-    if multiple and not flag:
-        flags |= Option.MULTI_VALUED
-
-    return Option(long_name, short_name, flags, description, default)
+    long_name: str,
+    short_name: Optional[str] = None,
+    description: Optional[str] = None,
+    flag: bool = True,
+    value_required: bool = True,
+    multiple: bool = False,
+    default: Optional[Any] = None,
+) -> Option:
+    return Option(
+        long_name,
+        short_name,
+        flag=flag,
+        requires_value=value_required,
+        is_list=multiple,
+        description=description,
+        default=default,
+    )

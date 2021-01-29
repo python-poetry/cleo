@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import os
+
 import pytest
 
-from cleo import Application
-from cleo import CommandTester
+from cleo.application import Application
+from cleo.testers.command_tester import CommandTester
 
-from .fixtures.hello_command import HelloCommand
 from .fixtures.command_with_colons import CommandWithColons
+from .fixtures.hello_command import HelloCommand
+
 
 app = Application()
 app.add(HelloCommand())
@@ -24,7 +26,7 @@ def test_invalid_shell():
 
 def test_bash(mocker):
     mocker.patch(
-        "clikit.api.args.args.Args.script_name",
+        "cleo.io.inputs.string_input.StringInput.script_name",
         new_callable=mocker.PropertyMock,
         return_value="/path/to/my/script",
     )
@@ -45,7 +47,7 @@ def test_bash(mocker):
 
 def test_zsh(mocker):
     mocker.patch(
-        "clikit.api.args.args.Args.script_name",
+        "cleo.io.inputs.string_input.StringInput.script_name",
         new_callable=mocker.PropertyMock,
         return_value="/path/to/my/script",
     )
@@ -66,7 +68,7 @@ def test_zsh(mocker):
 
 def test_fish(mocker):
     mocker.patch(
-        "clikit.api.args.args.Args.script_name",
+        "cleo.io.inputs.string_input.StringInput.script_name",
         new_callable=mocker.PropertyMock,
         return_value="/path/to/my/script",
     )

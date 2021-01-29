@@ -1,180 +1,203 @@
+import inspect
 import re
 
+from typing import TYPE_CHECKING
+from typing import Any
+from typing import List
 from typing import Optional
+from typing import Union
 
-from clikit.api.args import Args
-from clikit.api.args.format import ArgsFormat
-from clikit.api.formatter import Style
-from clikit.api.io import IO
-from clikit.args import StringArgs
-from clikit.io import NullIO
-from clikit.ui.components import ChoiceQuestion
-from clikit.ui.components import ConfirmationQuestion
-from clikit.ui.components import ProgressIndicator
-from clikit.ui.components import Question
-from clikit.ui.components import Table
-from clikit.ui.style import TableStyle
-
-from cleo.io import ConsoleIO
+from cleo import exceptions
+from cleo.cursor import Cursor
+from cleo.io.inputs.string_input import StringInput
+from cleo.io.io import IO
+from cleo.io.null_io import NullIO
+from cleo.io.outputs.output import Verbosity
 from cleo.parser import Parser
 
 from .base_command import BaseCommand
 
 
+if TYPE_CHECKING:
+    from cleo.ui.progress_bar import ProgressBar
+    from cleo.ui.progress_indicator import ProgressIndicator
+    from cleo.ui.question import Question
+
+
 class Command(BaseCommand):
 
-    signature = None
+    arguments = []
+    options = []
 
-    validation = None
+    aliases = []
 
-    TABLE_STYLES = {
-        "ascii": TableStyle.ascii(),
-        "borderless": TableStyle.borderless(),
-        "solid": TableStyle.solid(),
-        "compact": TableStyle.compact(),
-    }
+    usages = []
+
+    commands = []
 
     def __init__(self):
-        self._args = Args(ArgsFormat())
-        self._io = None
-        self._command = None
-
+        self._io: Optional[IO] = None
         super(Command, self).__init__()
 
-        doc = self.__doc__ or super(self.__class__, self).__doc__
-
-        if doc:
-            self._parse_doc(doc)
-
-        if not self.signature:
-            parent = super(self.__class__, self)
-            if hasattr(parent, "signature"):
-                self.signature = parent.signature
-
-        if self.signature:
-            self._configure_using_fluent_definition()
-
-        self._config.set_handler_method("wrap_handle")
-
     @property
-    def io(self):  # type: () -> ConsoleIO
+    def io(self):  # type: () -> IO
         return self._io
+
+    def configure(self) -> None:
+        if not self.name:
+            doc = self.__doc__
+
+            if not doc:
+                for base in inspect.getmro(self.__class__):
+                    if base.__doc__ is not None:
+                        doc = base.__doc__
+                        break
+
+            if doc:
+                self._parse_doc(doc)
+
+        for argument in self.arguments:
+            self._definition.add_argument(argument)
+
+        for option in self.options:
+            self._definition.add_option(option)
 
     def _parse_doc(self, doc):
         doc = doc.strip().split("\n", 1)
         if len(doc) > 1:
-            self._config.set_description(doc[0].strip())
-            self.signature = re.sub(r"\s{2,}", " ", doc[1].strip())
+            self.description = doc[0].strip()
+            signature = re.sub(r"\s{2,}", " ", doc[1].strip())
+            definition = Parser.parse(signature)
+            self.name = definition["name"]
+
+            for argument in definition["arguments"]:
+                self._definition.add_argument(argument)
+
+            for option in definition["options"]:
+                self._definition.add_option(option)
         else:
-            self._config.set_description(doc[0].strip())
+            self.description = doc[0].strip()
 
-    def _configure_using_fluent_definition(self):
-        """
-        Configure the console command using a fluent definition.
-        """
-        definition = Parser.parse(self.signature)
-
-        self._config.set_name(definition["name"])
-
-        for name, flags, description, default in definition["arguments"]:
-            self._config.add_argument(name, flags, description, default)
-
-        for long_name, short_name, flags, description, default in definition["options"]:
-            self._config.add_option(long_name, short_name, flags, description, default)
-
-    def wrap_handle(
-        self, args, io, command
-    ):  # type: (Args, IO, CliKitCommand) -> Optional[int]
-        self._args = args
+    def execute(self, io: IO) -> int:
         self._io = io
-        self._command = command
 
-        return self.handle()
+        try:
+            return self.handle()
+        except KeyboardInterrupt:
+            return 1
 
-    def handle(self):  # type: () -> Optional[int]
+    def handle(self) -> int:
         """
         Executes the command.
         """
         raise NotImplementedError()
 
-    def call(self, name, args=None):  # type: (str, Optional[str]) -> int
+    def call(self, name: str, args: Optional[str] = None) -> int:
         """
         Call another command.
         """
         if args is None:
             args = ""
 
-        args = StringArgs(args)
-        command = self.application.get_command(name)
+        input = StringInput(args)
+        command = self.application.get(name)
 
-        return command.run(args, self.io)
+        return self.application._run_command(command, self._io.with_input(input))
 
     def call_silent(self, name, args=None):  # type: (str, Optional[str]) -> int
         """
-        Call another command.
+        Call another command silently.
         """
         if args is None:
             args = ""
 
-        args = StringArgs(args)
-        command = self.application.get_command(name)
+        args = StringInput(args)
+        command = self.application.get(name)
 
-        return command.run(args, NullIO())
+        return self.application._run_command(command, NullIO(input))
 
-    def argument(self, key=None):
+    def argument(self, name: str):
         """
         Get the value of a command argument.
         """
-        if key is None:
-            return self._args.arguments()
+        return self._io.input.argument(name)
 
-        return self._args.argument(key)
-
-    def option(self, key=None):
+    def option(self, name: str):
         """
         Get the value of a command option.
         """
-        if key is None:
-            return self._args.options()
+        return self._io.input.option(name)
 
-        return self._args.option(key)
-
-    def confirm(self, question, default=False, true_answer_regex="(?i)^y"):
+    def confirm(
+        self, question: str, default: bool = False, true_answer_regex: str = "(?i)^y"
+    ) -> bool:
         """
         Confirm a question with the user.
         """
-        return self._io.confirm(question, default, true_answer_regex)
+        from cleo.ui.confirmation_question import ConfirmationQuestion
 
-    def ask(self, question, default=None):
+        question = ConfirmationQuestion(
+            question, default=default, true_answer_regex=true_answer_regex
+        )
+
+        return question.ask(self._io)
+
+    def ask(
+        self, question: Union[str, "Question"], default: Optional[Any] = None
+    ) -> Any:
         """
         Prompt the user for input.
         """
-        if isinstance(question, Question):
-            return self._io.ask_question(question)
+        from cleo.ui.question import Question
 
-        return self._io.ask(question, default)
+        if not isinstance(question, Question):
+            question = Question(question, default=default)
 
-    def secret(self, question):
+        return question.ask(self._io)
+
+    def secret(
+        self, question: Union[str, "Question"], default: Optional[Any] = None
+    ) -> Any:
         """
         Prompt the user for input but hide the answer from the console.
         """
-        return self._io.ask_hidden(question)
+        from cleo.ui.question import Question
 
-    def choice(self, question, choices, default=None, attempts=None, multiple=False):
+        if not isinstance(question, Question):
+            question = Question(question)
+
+        question.hide()
+
+        return question.ask(self._io)
+
+    def choice(
+        self,
+        question: str,
+        choices: List[str],
+        default: Optional[Any] = None,
+        attempts: Optional[int] = None,
+        multiple: bool = False,
+    ) -> Any:
         """
         Give the user a single choice from an list of answers.
         """
+        from cleo.ui.choice_question import ChoiceQuestion
+
         question = ChoiceQuestion(question, choices, default)
 
         question.set_max_attempts(attempts)
         question.set_multi_select(multiple)
 
-        return self._io.ask_question(question)
+        return question.ask(self._io)
 
     def create_question(self, question, type=None, **kwargs):
         """
         Returns a Question of specified type.
         """
+        from cleo.ui.choice_question import ChoiceQuestion
+        from cleo.ui.confirmation_question import ConfirmationQuestion
+        from cleo.ui.question import Question
+
         if not type:
             return Question(question, **kwargs)
 
@@ -188,13 +211,12 @@ class Command(BaseCommand):
         """
         Return a Table instance.
         """
-        if style is not None:
-            style = self.TABLE_STYLES[style]
+        from cleo.ui.table import Table
 
-        table = Table(style)
+        table = Table(self._io, style=style)
 
         if header:
-            table.set_header_row(header)
+            table.set_headers([header])
 
         if rows:
             table.set_rows(rows)
@@ -207,7 +229,7 @@ class Command(BaseCommand):
         """
         table = self.table(headers, rows, style)
 
-        table.render(self._io)
+        table.render()
 
     def write(self, text, style=None):
         """
@@ -221,18 +243,28 @@ class Command(BaseCommand):
 
         self._io.write(styled)
 
-    def line(self, text, style=None, verbosity=None):
+    def line(
+        self,
+        text: str,
+        style: Optional[str] = None,
+        verbosity: Verbosity = Verbosity.NORMAL,
+    ):
         """
         Write a string as information output.
         """
         if style:
-            styled = "<%s>%s</>" % (style, text)
+            styled = "<{}>{}</>".format(style, text)
         else:
             styled = text
 
-        self._io.write_line(styled, verbosity)
+        self._io.write_line(styled, verbosity=verbosity)
 
-    def line_error(self, text, style=None, verbosity=None):
+    def line_error(
+        self,
+        text: str,
+        style: Optional[str] = None,
+        verbosity: Verbosity = Verbosity.NORMAL,
+    ):
         """
         Write a string as information output to stderr.
         """
@@ -241,7 +273,7 @@ class Command(BaseCommand):
         else:
             styled = text
 
-        self._io.error_line(styled, verbosity)
+        self._io.write_error_line(styled, verbosity)
 
     def info(self, text):
         """
@@ -270,21 +302,25 @@ class Command(BaseCommand):
         """
         self.line(text, "question")
 
-    def progress_bar(self, max=0):
+    def progress_bar(self, max: int = 0) -> "ProgressBar":
         """
         Creates a new progress bar
-
-        :param max: The maximum number of steps
-        :type max: int
-
-        :rtype: ProgressBar
         """
-        return self._io.progress_bar(max)
+        from cleo.ui.progress_bar import ProgressBar
 
-    def progress_indicator(self, fmt=None, interval=100, values=None):
+        return ProgressBar(self._io, max=max)
+
+    def progress_indicator(
+        self,
+        fmt: Optional[str] = None,
+        interval: int = 100,
+        values: Optional[List[str]] = None,
+    ) -> "ProgressIndicator":
         """
         Creates a new progress indicator.
         """
+        from cleo.ui.progress_indicator import ProgressIndicator
+
         return ProgressIndicator(self.io, fmt, interval, values)
 
     def spin(self, start_message, end_message, fmt=None, interval=100, values=None):
@@ -316,11 +352,11 @@ class Command(BaseCommand):
         self._io.output.formatter.add_style(style)
         self._io.error_output.formatter.add_style(style)
 
-    def overwrite(self, text, size=None):
+    def overwrite(self, text):
         """
         Overwrites the current line.
 
         It will not add a new line so use line('')
         if necessary.
         """
-        self._io.overwrite(text, size=size)
+        self._io.overwrite(text)

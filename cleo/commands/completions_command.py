@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import os
 import hashlib
+import inspect
+import os
 import posixpath
 import re
 import subprocess
 
-from .._compat import encode
 from ..helpers import argument
 from ..helpers import option
-
 from .command import Command
 from .completions.templates import TEMPLATES
 
@@ -123,7 +122,11 @@ script. Consult your shells documentation for how to add such directives.
     def render_bash(self):  # type: () -> str
         template = TEMPLATES["bash"]
 
-        script_path = posixpath.realpath(self._args.script_name)
+        script_name = self._io.input.script_name
+        if not script_name:
+            script_name = inspect.stack()[-1][1]
+
+        script_path = posixpath.realpath(script_name)
         script_name = os.path.basename(script_path)
         aliases = [script_name, script_path]
         aliases += self.option("alias")
@@ -134,30 +137,27 @@ script. Consult your shells documentation for how to add such directives.
         global_options = set()
         options_descriptions = {}
         commands_options = {}
-        for option in self.application.config.options.values():
-            options_descriptions["--" + option.long_name] = self.io.remove_format(
-                option.description
-            )
-            global_options.add("--" + option.long_name)
+        for option in self.application.definition.options:
+            options_descriptions[
+                "--" + option.name
+            ] = self.io.output.formatter.remove_format(option.description)
+            global_options.add("--" + option.name)
 
-        for command in self.application.commands:
-            command_config = command.config
-
-            if not command_config.is_enabled() or command_config.is_hidden():
+        for command in self.application.all().values():
+            if not command.enabled or command.hidden:
                 continue
 
             command_options = []
-            commands.append(command_config.name)
+            commands.append(command.name)
 
-            options = command_config.options
-            for name in sorted(options.keys()):
-                option = options[name]
-                name = "--" + option.long_name
+            options = command.definition.options
+            for option in sorted(options, key=lambda o: o.name):
+                name = "--" + option.name
                 description = option.description
                 command_options.append(name)
                 options_descriptions[name] = description
 
-            commands_options[command_config.name] = command_options
+            commands_options[command.name] = command_options
 
         compdefs = "\n".join(
             [
@@ -199,7 +199,11 @@ script. Consult your shells documentation for how to add such directives.
     def render_zsh(self):
         template = TEMPLATES["zsh"]
 
-        script_path = posixpath.realpath(self._args.script_name)
+        script_name = self._io.input.script_name
+        if not script_name:
+            script_name = inspect.stack()[-1][1]
+
+        script_path = posixpath.realpath(script_name)
         script_name = os.path.basename(script_path)
         aliases = [script_path]
         aliases += self.option("alias")
@@ -211,34 +215,34 @@ script. Consult your shells documentation for how to add such directives.
         options_descriptions = {}
         commands_options_descriptions = {}
         commands_options = {}
-        for option in self.application.config.options.values():
-            options_descriptions["--" + option.long_name] = self.io.remove_format(
-                option.description
-            )
-            global_options.add("--" + option.long_name)
+        for option in self.application.definition.options:
+            options_descriptions[
+                "--" + option.name
+            ] = self.io.output.formatter.remove_format(option.description)
+            global_options.add("--" + option.name)
 
-        for command in self.application.commands:
-            command_config = command.config
-            if not command_config.is_enabled() or command_config.is_hidden():
+        for command in self.application.all().values():
+            if not command.enabled or command.hidden:
                 continue
 
             command_options = []
-            commands_options_descriptions[command_config.name] = {}
-            command_description = self._io.remove_format(command_config.description)
+            commands_options_descriptions[command.name] = {}
+            command_description = self._io.output.formatter.remove_format(
+                command.description
+            )
             commands_descriptions.append(
-                self._zsh_describe(command_config.name, command_description)
+                self._zsh_describe(command.name, command_description)
             )
 
-            options = command_config.options
-            for name in sorted(options.keys()):
-                option = options[name]
-                name = "--" + option.long_name
-                description = self.io.remove_format(option.description)
+            options = command.definition.options
+            for option in sorted(options, key=lambda o: o.name):
+                name = "--" + option.name
+                description = self.io.output.formatter.remove_format(option.description)
                 command_options.append(name)
                 options_descriptions[name] = description
-                commands_options_descriptions[command_config.name][name] = description
+                commands_options_descriptions[command.name][name] = description
 
-            commands_options[command_config.name] = command_options
+            commands_options[command.name] = command_options
 
         compdefs = "\n".join(
             ["compdef {} {}".format(function, alias) for alias in aliases]
@@ -283,7 +287,11 @@ script. Consult your shells documentation for how to add such directives.
     def render_fish(self):
         template = TEMPLATES["fish"]
 
-        script_path = posixpath.realpath(self._args.script_name)
+        script_name = self._io.input.script_name
+        if not script_name:
+            script_name = inspect.stack()[-1][1]
+
+        script_path = posixpath.realpath(script_name)
         script_name = os.path.basename(script_path)
         aliases = [script_name]
         aliases += self.option("alias")
@@ -295,33 +303,33 @@ script. Consult your shells documentation for how to add such directives.
         options_descriptions = {}
         commands_options_descriptions = {}
         commands_options = {}
-        for option in self.application.config.options.values():
-            options_descriptions["--" + option.long_name] = self.io.remove_format(
-                option.description
-            )
-            global_options.add("--" + option.long_name)
+        for option in self.application.definition.options:
+            options_descriptions[
+                "--" + option.name
+            ] = self._io.output.formatter.remove_format(option.description)
+            global_options.add("--" + option.name)
 
-        for command in self.application.commands:
-            command_config = command.config
-            if not command_config.is_enabled() or command_config.is_hidden():
+        for command in self.application.all().values():
+            if not command.enabled or command.hidden:
                 continue
 
             command_options = []
-            commands_options_descriptions[command_config.name] = {}
-            commands_descriptions[command_config.name] = self._io.remove_format(
-                command_config.description
-            )
+            commands_options_descriptions[command.name] = {}
+            commands_descriptions[
+                command.name
+            ] = self._io.output.formatter.remove_format(command.description)
 
-            options = command_config.options
-            for name in sorted(options.keys()):
-                option = options[name]
-                name = "--" + option.long_name
-                description = self._io.remove_format(option.description)
+            options = command.definition.options
+            for option in sorted(options, key=lambda o: o.name):
+                name = "--" + option.name
+                description = self._io.output.formatter.remove_format(
+                    option.description
+                )
                 command_options.append(name)
                 options_descriptions[name] = description
-                commands_options_descriptions[command_config.name][name] = description
+                commands_options_descriptions[command.name][name] = description
 
-            commands_options[command_config.name] = command_options
+            commands_options[command.name] = command_options
 
         opts = []
         for opt in sorted(global_options):
@@ -392,7 +400,7 @@ script. Consult your shells documentation for how to add such directives.
     def _generate_function_name(self, script_name, script_path):
         return "_{}_{}_complete".format(
             self._sanitize_for_function_name(script_name),
-            hashlib.md5(encode(script_path)).hexdigest()[0:16],
+            hashlib.md5(script_path.encode()).hexdigest()[0:16],
         )
 
     def _sanitize_for_function_name(self, name):

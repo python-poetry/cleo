@@ -1,3 +1,4 @@
 [report]
 omit =
   cleo/_compat.py
+  cleo/_utils.py
