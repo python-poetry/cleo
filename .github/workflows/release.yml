@@ -34,63 +34,8 @@ jobs:
         name: project-dist
         path: dist
 
-  MacOS:
-    runs-on: macos-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Get tag
-      id: tag
-      run: |
-        echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.8
-    - name: Install and set up Poetry
-      run: |
-        curl -fsS -o get-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
-        python get-poetry.py --preview -y
-    - name: Build distributions
-      run: |
-        source $HOME/.poetry/env
-        poetry build -vvv
-    - name: Upload distribution artifacts
-      uses: actions/upload-artifact@v1
-      with:
-        name: project-dist
-        path: dist
-
-  Windows:
-    runs-on: windows-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Get tag
-      id: tag
-      shell: bash
-      run: |
-        echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.8
-    - name: Install and setup Poetry
-      run: |
-        Invoke-WebRequest https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py -O get-poetry.py
-        python get-poetry.py --preview -y
-    - name: Build distributions
-      run: |
-        $env:Path += ";$env:Userprofile\.poetry\bin"
-        poetry build -vvv
-    - name: Upload distribution artifact
-      uses: actions/upload-artifact@v1
-      with:
-        name: project-dist
-        path: dist
-
   Release:
-    needs: [Linux, MacOS, Windows]
+    needs: [Linux]
     runs-on: ubuntu-latest
 
     steps:
