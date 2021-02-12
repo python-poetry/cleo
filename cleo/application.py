@@ -388,7 +388,10 @@ class Application:
             # If the command is namespaced we rearrange
             # the input to parse it as a single argument
             if isinstance(io.input, ArgvInput):
-                argv = sys.argv[:]
+                argv = io._input._tokens[:]
+
+                if io.input.script_name is not None:
+                    argv.insert(0, io.input.script_name)
 
                 namespace = name.split(" ")[0]
                 index = None
@@ -401,7 +404,7 @@ class Application:
                 if index is not None:
                     del argv[index + 1 : index + 1 + (len(name.split(" ")) - 1)]
 
-                io.set_input(ArgvInput(argv, definition=io.input._definition))
+                io.set_input(ArgvInput(argv))
 
         exit_code = self._run_command(command, io)
         self._running_command = None
