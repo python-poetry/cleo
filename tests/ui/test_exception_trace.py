@@ -443,3 +443,37 @@ def test_render_falls_back_on_ascii_symbols():
     )
 
     assert expected == io.fetch_output()
+
+
+def test_empty_source_file_do_not_break_highlighter():
+    from cleo.ui.exception_trace import Highlighter
+
+    highlighter = Highlighter()
+    highlighter.highlighted_lines("")
+
+
+def test_doctrings_are_corrrectly_rendered():
+    from cleo.formatters.formatter import Formatter
+    from cleo.ui.exception_trace import Highlighter
+
+    source = '''
+def test():
+    """
+    Doctring
+    """
+    ...
+'''
+
+    formatter = Formatter()
+    highlighter = Highlighter()
+    lines = highlighter.highlighted_lines(source)
+
+    assert [formatter.format(l) for l in lines] == [
+        "",
+        "def test():",
+        '    """',
+        "    Doctring",
+        '    """',
+        "    ...",
+        "",
+    ]
