@@ -104,11 +104,17 @@ class Highlighter:
 
             if token_type == tokenize.ENDMARKER:
                 # End of source
+                if current_type is None:
+                    current_type = self.TOKEN_DEFAULT
+
                 line += "<{}>{}</>".format(self._theme[current_type], buffer)
                 lines.append(line)
                 break
 
             if lineno > current_line:
+                if current_type is None:
+                    current_type = self.TOKEN_DEFAULT
+
                 diff = lineno - current_line
                 if diff > 1:
                     lines += [""] * (diff - 1)
@@ -154,8 +160,9 @@ class Highlighter:
 
             if lineno < end[0]:
                 # The token spans multiple lines
-                lines.append(line)
                 token_lines = token_string.split("\n")
+                line += "<{}>{}</>".format(self._theme[current_type], token_lines[0])
+                lines.append(line)
                 for token_line in token_lines[1:-1]:
                     lines.append(
                         "<{}>{}</>".format(self._theme[current_type], token_line)
