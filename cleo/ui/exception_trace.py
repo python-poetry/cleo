@@ -11,7 +11,7 @@ from typing import List
 from typing import Optional
 from typing import Union
 
-from _pytest._code.code import Frame
+from crashtest.frame import Frame
 from crashtest.frame_collection import FrameCollection
 from crashtest.inspector import Inspector
 from crashtest.solution_providers.solution_provider_repository import (
