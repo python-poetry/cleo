@@ -1,3 +1,5 @@
+import os
+
 from typing import List
 from typing import Optional
 
@@ -14,6 +16,8 @@ class Style:
         self._foreground = foreground or ""
         self._background = background or ""
         self._options = options or []
+        self._href = None
+        self._supports_href = None
 
         self._color = Color(self._foreground, self._background, self._options)
 
@@ -54,6 +58,11 @@ class Style:
     def hidden(self, hidden: bool = True) -> "Style":
         return self.set_option("conceal") if hidden else self.unset_option("conceal")
 
+    def href(self, uri: str) -> "Style":
+        self._href = uri
+
+        return self
+
     def set_option(self, option: str) -> "Style":
         self._options.append(option)
         self._color = Color(self._foreground, self._background, self._options)
@@ -71,4 +80,15 @@ class Style:
         self._color = Color(self._foreground, self._background, self._options)
 
     def apply(self, text: str) -> str:
+        if self._supports_href is None:
+            self._supports_href = os.getenv(
+                "TERMINAL_EMULATOR"
+            ) != "JetBrains-JediTerm" and (
+                "KONSOLE_VERSION" not in os.environ
+                or int(os.environ["KONSOLE_VERSION"]) > 201100
+            )
+
+        if self._href is not None and self._supports_href:
+            text = f"\033]8;;{self._href}\033\\{text}\033]8;;\033\\"
+
         return self._color.apply(text)

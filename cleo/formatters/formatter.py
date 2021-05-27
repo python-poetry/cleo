@@ -162,6 +162,8 @@ class Formatter:
                 style.foreground(match[1])
             elif match[0] == "bg":
                 style.background(match[1])
+            elif match[0] == "href":
+                style.href(match[1])
             else:
                 try:
                     for option in match[1].split(","):
