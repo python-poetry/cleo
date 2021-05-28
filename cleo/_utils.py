@@ -1,7 +1,11 @@
 import math
+import os
 
 from html.parser import HTMLParser
+from typing import Dict
 from typing import List
+from typing import Optional
+from typing import Union
 
 from pylev import levenshtein
 
@@ -102,3 +106,32 @@ def format_time(secs):  # type: (float) -> str
             return fmt[1]
 
         return "{} {}".format(math.ceil(secs / fmt[2]), fmt[1])
+
+
+class FileLinkFormatter:
+
+    _FORMATS: Dict[str, str] = {
+        "atom": "atom://core/open/file?filename={filename}&line={line}",
+        "emacs": "emacs://open?url=file://{filename}&line={line}",
+        "macvim": "mvim://open?url=file://{filename}&line={line}",
+        "pycharm": "pycharm://open?file={filename}&line={line}",
+        "sublime": "subl://open?url=file://{filename}&line={line}",
+        "textmate": "txmt://open?url=file://{filename}&line={line}",
+        "vscode": "vscode://file/{filename}:{line}",
+    }
+
+    def __init__(self, file_link_format: Optional[str] = None) -> None:
+        if not file_link_format:
+            file_link_format = os.getenv("PYTHON_FILE_LINK_FORMAT")
+
+            if file_link_format in self._FORMATS:
+                file_link_format = self._FORMATS[file_link_format]
+
+        self._file_link_format = file_link_format
+
+    def format(self, filename: str, line: int) -> Union[str, bool]:
+        fmt = self._file_link_format
+        if not fmt:
+            return False
+
+        return fmt.format(filename=filename, line=line)

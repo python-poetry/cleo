@@ -18,6 +18,7 @@ from crashtest.solution_providers.solution_provider_repository import (
     SolutionProviderRepository,
 )
 
+from cleo._utils import FileLinkFormatter
 from cleo.formatters.formatter import Formatter
 from cleo.io.io import IO
 from cleo.io.outputs.output import Output
@@ -245,6 +246,7 @@ class ExceptionTrace:
         self._solution_provider_repository = solution_provider_repository
         self._exc_info = sys.exc_info()
         self._ignore = None
+        self._file_link_formatter: FileLinkFormatter = FileLinkFormatter()
 
     def ignore_files_in(self, ignore: str) -> "ExceptionTrace":
         self._ignore = ignore
@@ -392,6 +394,13 @@ class ExceptionTrace:
                             ]
                         ),
                     )
+                    file_link = self._file_link_formatter.format(
+                        frame.filename, frame.lineno
+                    )
+                    if not file_link:
+                        file_link = f"file://{frame.filename}"
+
+                    file_href = f"<href={file_link}>{frame.lineno}</>"
 
                     self._render_line(
                         io,
@@ -399,7 +408,7 @@ class ExceptionTrace:
                             i,
                             max_frame_length,
                             relative_file_path,
-                            frame.lineno,
+                            file_href,
                             frame.function,
                         ),
                         True,
@@ -409,10 +418,7 @@ class ExceptionTrace:
                         if (frame, 2, 2) not in self._FRAME_SNIPPET_CACHE:
                             code_lines = Highlighter(
                                 supports_utf8=io.supports_utf8()
-                            ).code_snippet(
-                                frame.file_content,
-                                frame.lineno,
-                            )
+                            ).code_snippet(frame.file_content, frame.lineno,)
 
                             self._FRAME_SNIPPET_CACHE[(frame, 2, 2)] = code_lines
 
@@ -435,11 +441,7 @@ class ExceptionTrace:
 
                         self._render_line(
                             io,
-                            "{:>{}}    {}".format(
-                                " ",
-                                max_frame_length,
-                                code_line,
-                            ),
+                            "{:>{}}    {}".format(" ", max_frame_length, code_line,),
                         )
 
                     i -= 1

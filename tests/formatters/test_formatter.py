@@ -85,3 +85,16 @@ def test_href_are_supported():
     expected = "\033]8;;pycharm://open/?file=/path/somefile.py&line=12\033\\File URL\033]8;;\033\\"
 
     assert formatter.format(text) == expected
+
+
+def test_href_are_supported():
+    """
+    Href tags are supported and converted to terminal links
+    """
+    text = "<href=pycharm://open/?file=/path/somefile.py&line=12>File URL</>"
+
+    formatter = Formatter(True)
+
+    expected = "\033]8;;pycharm://open/?file=/path/somefile.py&line=12\033\\File URL\033]8;;\033\\"
+
+    assert formatter.format(text) == expected
