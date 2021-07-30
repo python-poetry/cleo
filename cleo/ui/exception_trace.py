@@ -316,7 +316,7 @@ class ExceptionTrace:
             inspector.exception
         )
         symbol = "•"
-        if not io.output.supports_utf8():
+        if not io.supports_utf8():
             symbol = "*"
 
         for solution in solutions:
