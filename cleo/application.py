@@ -2,6 +2,7 @@ import os
 import re
 import sys
 
+from typing import TYPE_CHECKING
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -37,6 +38,12 @@ from .terminal import Terminal
 from .ui.ui import UI
 
 
+if TYPE_CHECKING:
+    from crashtest.solution_providers.solution_provider_repository import (
+        SolutionProviderRepository,
+    )
+
+
 class Application:
     """
     An Application is the container for a collection of commands.
@@ -69,6 +76,10 @@ class Application:
         self._event_dispatcher = None
 
         self._command_loader: Optional[CommandLoader] = None
+
+        self._solution_provider_repository: Optional[
+            "SolutionProviderRepository"
+        ] = None
 
     @property
     def name(self) -> str:
@@ -159,6 +170,11 @@ class Application:
 
     def is_single_command(self) -> bool:
         return self._single_command
+
+    def set_solution_provider_repository(
+        self, solution_provider_repository: "SolutionProviderRepository"
+    ) -> None:
+        self._solution_provider_repository = solution_provider_repository
 
     def add(self, command: Command) -> Optional[Command]:
         self._init()
@@ -473,7 +489,9 @@ class Application:
     def render_error(self, error: Exception, io: IO) -> None:
         from cleo.ui.exception_trace import ExceptionTrace
 
-        trace = ExceptionTrace(error)
+        trace = ExceptionTrace(
+            error, solution_provider_repository=self._solution_provider_repository
+        )
         trace.render(io.error_output, isinstance(error, CleoSimpleException))
 
     def _configure_io(self, io: IO) -> None:

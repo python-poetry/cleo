@@ -22,8 +22,13 @@ jobs:
         python-version: 3.8
     - name: Install and set up Poetry
       run: |
-        curl -fsS -o get-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
-        python get-poetry.py --preview -y
+        curl -fsS -o install-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/install-poetry.py
+        python install-poetry.py --preview -y
+
+    - name: Update PATH
+      shell: bash
+      run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
     - name: Build distributions
       run: |
         source $HOME/.poetry/env
