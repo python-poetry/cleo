@@ -268,7 +268,7 @@ To use this, just specify as many names as you want:
 
 .. code-block:: bash
 
-    $ python application.py demo:greet John Jane
+    $ python application.py greet John Jane
 
 You can access the ``names`` argument as a list:
 
@@ -354,8 +354,8 @@ flag:
 
 .. code-block:: bash
 
-    $ python application.py demo:greet John
-    $ python application.py demo:greet John --iterations=5
+    $ python application.py greet John
+    $ python application.py greet John --iterations=5
 
 The first example will only print once, since ``iterations`` is empty and
 defaults to ``1``. The second example will print five times.
@@ -365,8 +365,8 @@ will work:
 
 .. code-block:: bash
 
-    $ python application.py demo:greet John --iterations=5 --yell
-    $ python application.py demo:greet John --yell --iterations=5
+    $ python application.py greet John --iterations=5 --yell
+    $ python application.py greet John --yell --iterations=5
 
 There are 4 option variants you can use:
 
@@ -413,11 +413,11 @@ console:
         application = Application()
         application.add(GreetCommand())
 
-        command = application.find('demo:greet')
+        command = application.find('greet')
         command_tester = CommandTester(command)
         command_tester.execute()
 
-        assert "..." == tester.io.fetch_output()
+        assert "..." == command_tester.io.fetch_output()
 
 The ``CommandTester.io.fetch_output()`` method returns what would have been displayed
 during a normal call from the console. ``CommandTester.io.fetch_error()`` is also available
@@ -437,11 +437,11 @@ as a string to the ``CommandTester.execute()`` method:
         application = Application()
         application.add(GreetCommand())
 
-        command = application.find('demo:greet')
+        command = application.find('greet')
         command_tester = CommandTester(command)
         command_tester.execute("John")
 
-        assert "John" in tester.io.fetch_output()
+        assert "John" in command_tester.io.fetch_output()
 
 You can also test a whole console application by using the ``ApplicationTester`` class.
 
@@ -459,7 +459,7 @@ Calling a command from another one is straightforward:
 .. code-block:: python
 
     def handle(self):
-        return_code = self.call('demo:greet', "John --yell")
+        return_code = self.call('greet', "John --yell")
 
         # ...
 
