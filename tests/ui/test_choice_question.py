@@ -11,6 +11,7 @@ def test_ask_choice(io):
         "  1  \n"
         "John\n"
         "1\n"
+        "\n"
         "John\n"
         "1\n"
         "0,2\n"
@@ -42,6 +43,8 @@ def test_ask_choice(io):
 
     assert "Batman" == question.ask(io)
     assert 'Input "John" is not a superhero!' in io.fetch_error()
+    # Empty answer and no default is None
+    assert question.ask(io) is None
 
     question = ChoiceQuestion("What is your favorite superhero?", heroes, "1")
     question.set_max_attempts(1)

@@ -19,13 +19,16 @@ class SelectChoiceValidator:
         self._question = question
         self._values = question.choices
 
-    def validate(self, selected: Union[str, int]) -> str:
+    def validate(self, selected: Union[str, int]) -> Optional[str]:
         """
         Validate a choice.
         """
         # Collapse all spaces.
         if isinstance(selected, int):
             selected = str(selected)
+
+        if selected is None:
+            return None
 
         selected_choices = selected.replace(" ", "")
 
