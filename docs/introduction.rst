@@ -408,7 +408,7 @@ console:
         command_tester = CommandTester(command)
         command_tester.execute()
 
-        assert "..." == tester.io.fetch_output()
+        assert "..." == command_tester.io.fetch_output()
 
 The ``CommandTester.io.fetch_output()`` method returns what would have been displayed
 during a normal call from the console. ``CommandTester.io.fetch_error()`` is also available
@@ -432,7 +432,7 @@ as a string to the ``CommandTester.execute()`` method:
         command_tester = CommandTester(command)
         command_tester.execute("John")
 
-        assert "John" in tester.io.fetch_output()
+        assert "John" in command_tester.io.fetch_output()
 
 
 Testing with user inputs
