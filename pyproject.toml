@@ -42,6 +42,46 @@ skip_glob = ["*/setup.py"]
 filter_files = true
 known_first_party = "cleo"
 
+[tool.mypy]
+strict = true
+files = "cleo, tests"
+
+# The following whitelist is used to allow for incremental adoption
+# of Mypy. Modules should be removed from this whitelist as and when
+# their respective type errors have been addressed. No new modules
+# should be added to this whitelist.
+
+[[tool.mypy.overrides]]
+module = [
+    "cleo._utils",
+    "cleo.application",
+    "cleo.descriptors.*",
+    "cleo.color",
+    "cleo.commands.*",
+    "cleo.events.*",
+    "cleo.formatters.*",
+    "cleo.io.*",
+    "cleo.loaders.*",
+    "cleo.parser",
+    "cleo.terminal",
+    "cleo.testers.*",
+    "cleo.ui.*",
+    "tests.commands.*",
+    "tests.conftest",
+    "tests.events.*",
+    "tests.fixtures.*",
+    "tests.formatters.*",
+    "tests.io.*",
+    "tests.loaders.*",
+    "tests.test_application",
+    "tests.test_color",
+    "tests.test_helpers",
+    "tests.test_parser",
+    "tests.testers.*",
+    "tests.ui.*",
+]
+ignore_errors = true
+
 
 [build-system]
 requires = ["poetry-core~=1.0"]
