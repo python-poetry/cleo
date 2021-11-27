@@ -46,7 +46,7 @@ class StreamOutput(Output):
         if self._supports_utf8 is not None:
             return self._supports_utf8
 
-        encoding = getattr(self._stream, "encoding")
+        encoding = self._stream.encoding
         if encoding is None:
             encoding = locale.getpreferredencoding(False)
 
