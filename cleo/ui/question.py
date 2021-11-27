@@ -136,7 +136,7 @@ class Question(object):
 
         i = 0
         ofs = -1
-        matches = [x for x in autocomplete]
+        matches = list(autocomplete)
         num_matches = len(matches)
 
         stty_mode = subprocess.check_output(["stty", "-g"]).decode().rstrip("\n")
@@ -161,7 +161,7 @@ class Question(object):
 
                 if i == 0:
                     ofs = -1
-                    matches = [x for x in autocomplete]
+                    matches = list(autocomplete)
                     num_matches = len(matches)
                 else:
                     num_matches = 0
