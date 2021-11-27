@@ -12,7 +12,7 @@ from cleo.io.io import IO
 from cleo.io.outputs.output import Output
 
 
-class ProgressIndicator(object):
+class ProgressIndicator:
     """
     A process indicator.
     """

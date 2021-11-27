@@ -91,8 +91,8 @@ class StreamOutput(Output):
         if platform.system().lower() == "windows":
             shell_supported = (
                 os.getenv("ANSICON") is not None
-                or "ON" == os.getenv("ConEmuANSI")
-                or "xterm" == os.getenv("TERM")
+                or os.getenv("ConEmuANSI") == "ON"
+                or os.getenv("TERM") == "xterm"
             )
 
             if shell_supported:

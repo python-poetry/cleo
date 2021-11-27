@@ -2,7 +2,7 @@ from typing import List
 from typing import Optional
 
 
-class TokenParser(object):
+class TokenParser:
     """
     Parses tokens from a string passed to StringArgs.
     """

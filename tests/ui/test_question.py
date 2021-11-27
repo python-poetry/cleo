@@ -7,8 +7,8 @@ from cleo.ui.question import Question
 
 
 def has_tty_available():
-    devnull = open(os.devnull, "w")
-    exit_code = subprocess.call(["stty", "2"], stdout=devnull, stderr=devnull)
+    with open(os.devnull, "w") as devnull:
+        exit_code = subprocess.call(["stty", "2"], stdout=devnull, stderr=devnull)
 
     return exit_code == 0
 
@@ -20,12 +20,12 @@ def test_ask(io):
     question = Question("What time is it?", "2PM")
     io.set_user_input("\n8AM\n")
 
-    assert "2PM" == question.ask(io)
+    assert question.ask(io) == "2PM"
 
     io.clear_error()
 
-    assert "8AM" == question.ask(io)
-    assert "What time is it? " == io.fetch_error()
+    assert question.ask(io) == "8AM"
+    assert io.fetch_error() == "What time is it? "
 
 
 @pytest.mark.skipif(
@@ -36,8 +36,8 @@ def test_ask_hidden_response(io):
     question.hide()
     io.set_user_input("8AM\n")
 
-    assert "8AM" == question.ask(io)
-    assert "What time is it? " == io.fetch_error()
+    assert question.ask(io) == "8AM"
+    assert io.fetch_error() == "What time is it? "
 
 
 def test_ask_and_validate(io):
@@ -54,27 +54,27 @@ def test_ask_and_validate(io):
     question.set_max_attempts(2)
 
     io.set_user_input("\nblack\n")
-    assert "white" == question.ask(io)
-    assert "black" == question.ask(io)
+    assert question.ask(io) == "white"
+    assert question.ask(io) == "black"
 
     io.set_user_input("green\nyellow\norange\n")
 
     with pytest.raises(Exception) as e:
         question.ask(io)
 
-    assert error == str(e.value)
+    assert str(e.value) == error
 
 
 def test_no_interaction(io):
     io.interactive(False)
 
     question = Question("Do you have a job?", "not yet")
-    assert "not yet" == question.ask(io)
+    assert question.ask(io) == "not yet"
 
 
 def test_ask_question_with_special_characters(io):
     question = Question("What time is it, Sébastien?", "2PMë")
     io.set_user_input("\n")
 
-    assert "2PMë" == question.ask(io)
-    assert "What time is it, Sébastien? " == io.fetch_error()
+    assert question.ask(io) == "2PMë"
+    assert io.fetch_error() == "What time is it, Sébastien? "

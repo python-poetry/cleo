@@ -28,20 +28,20 @@ def test_ask_choice(io):
     question.set_max_attempts(1)
 
     # First answer is an empty answer, we're supposed to receive the default value
-    assert "Spiderman" == question.ask(io)
+    assert question.ask(io) == "Spiderman"
 
     question = ChoiceQuestion("What is your favorite superhero?", heroes)
     question.set_max_attempts(1)
 
-    assert "Batman" == question.ask(io)
-    assert "Batman" == question.ask(io)
+    assert question.ask(io) == "Batman"
+    assert question.ask(io) == "Batman"
 
     question = ChoiceQuestion("What is your favorite superhero?", heroes)
     question.set_error_message('Input "{}" is not a superhero!')
     question.set_max_attempts(2)
     io.clear_error()
 
-    assert "Batman" == question.ask(io)
+    assert question.ask(io) == "Batman"
     assert 'Input "John" is not a superhero!' in io.fetch_error()
     # Empty answer and no default is None
     assert question.ask(io) is None
@@ -52,27 +52,27 @@ def test_ask_choice(io):
     with pytest.raises(Exception) as e:
         question.ask(io)
 
-    assert 'Value "John" is invalid' == str(e.value)
+    assert str(e.value) == 'Value "John" is invalid'
 
     question = ChoiceQuestion("What is your favorite superhero?", heroes)
     question.set_max_attempts(1)
     question.set_multi_select(True)
 
-    assert ["Batman"] == question.ask(io)
-    assert ["Superman", "Spiderman"] == question.ask(io)
-    assert ["Superman", "Spiderman"] == question.ask(io)
+    assert question.ask(io) == ["Batman"]
+    assert question.ask(io) == ["Superman", "Spiderman"]
+    assert question.ask(io) == ["Superman", "Spiderman"]
 
     question = ChoiceQuestion("What is your favorite superhero?", heroes, "0,1")
     question.set_max_attempts(1)
     question.set_multi_select(True)
 
-    assert ["Superman", "Batman"] == question.ask(io)
+    assert question.ask(io) == ["Superman", "Batman"]
 
     question = ChoiceQuestion("What is your favorite superhero?", heroes, " 0 , 1 ")
     question.set_max_attempts(1)
     question.set_multi_select(True)
 
-    assert ["Superman", "Batman"] == question.ask(io)
+    assert question.ask(io) == ["Superman", "Batman"]
 
     question = ChoiceQuestion("What is your favourite superhero?", heroes)
     question.set_max_attempts(1)
@@ -80,10 +80,10 @@ def test_ask_choice(io):
     with pytest.raises(ValueException) as e:
         question.ask(io)
 
-    assert 'Value "4" is invalid' == str(e.value)
-    assert "Superman" == question.ask(io)
+    assert str(e.value) == 'Value "4" is invalid'
+    assert question.ask(io) == "Superman"
 
     with pytest.raises(ValueException) as e:
         question.ask(io)
 
-    assert 'Value "-2" is invalid' == str(e.value)
+    assert str(e.value) == 'Value "-2" is invalid'

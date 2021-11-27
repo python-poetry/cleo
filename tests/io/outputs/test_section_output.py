@@ -31,7 +31,7 @@ def test_clear_all(output, stream):
 
     stream.seek(0)
 
-    assert "Foo\nBar\n\x1b[2A\x1b[0J" == stream.read()
+    assert stream.read() == "Foo\nBar\n\x1b[2A\x1b[0J"
 
 
 def test_clear_with_number_of_lines(output, stream):
@@ -40,7 +40,7 @@ def test_clear_with_number_of_lines(output, stream):
 
     stream.seek(0)
 
-    assert "Foo\nBar\nBaz\nFooBar\n\x1b[2A\x1b[0J" == stream.read()
+    assert stream.read() == "Foo\nBar\nBaz\nFooBar\n\x1b[2A\x1b[0J"
 
 
 def test_clear_with_number_of_lines_and_multiple_sections(output, output2, stream):
@@ -51,7 +51,7 @@ def test_clear_with_number_of_lines_and_multiple_sections(output, output2, strea
 
     stream.seek(0)
 
-    assert "Foo\nBar\n\x1b[1A\x1b[0J\x1b[1A\x1b[0JBaz\nFoo\n" == stream.read()
+    assert stream.read() == "Foo\nBar\n\x1b[1A\x1b[0J\x1b[1A\x1b[0JBaz\nFoo\n"
 
 
 def test_clear_preserves_empty_lines(output, output2, stream):
@@ -61,7 +61,7 @@ def test_clear_preserves_empty_lines(output, output2, stream):
 
     stream.seek(0)
 
-    assert "\nFoo\n\x1b[1A\x1b[0J\x1b[1A\x1b[0JBar\n\n" == stream.read()
+    assert stream.read() == "\nFoo\n\x1b[1A\x1b[0J\x1b[1A\x1b[0JBar\n\n"
 
 
 def test_overwrite(output, stream):
@@ -70,7 +70,7 @@ def test_overwrite(output, stream):
 
     stream.seek(0)
 
-    assert "Foo\n\x1b[1A\x1b[0JBar\n" == stream.read()
+    assert stream.read() == "Foo\n\x1b[1A\x1b[0JBar\n"
 
 
 def test_overwrite_multiple_lines(output, stream):
@@ -79,11 +79,11 @@ def test_overwrite_multiple_lines(output, stream):
 
     stream.seek(0)
 
-    assert "Foo\nBar\nBaz\n\x1b[3A\x1b[0JBar\n" == stream.read()
+    assert stream.read() == "Foo\nBar\nBaz\n\x1b[3A\x1b[0JBar\n"
 
 
 def test_add_multiple_sections(output, output2, sections):
-    assert 2 == len(sections)
+    assert len(sections) == 2
 
 
 def test_multiple_sections_output(output, output2, stream):
@@ -96,6 +96,6 @@ def test_multiple_sections_output(output, output2, stream):
     stream.seek(0)
 
     assert (
-        "Foo\nBar\n\x1b[2A\x1b[0JBar\n\x1b[1A\x1b[0JBaz\nBar\n\x1b[1A\x1b[0JFoobar\n"
-        == stream.read()
+        stream.read()
+        == "Foo\nBar\n\x1b[2A\x1b[0JBar\n\x1b[1A\x1b[0JBaz\nBar\n\x1b[1A\x1b[0JFoobar\n"
     )

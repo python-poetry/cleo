@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from cleo.application import Application
 
 
-class BaseCommand(object):
+class BaseCommand:
 
     name = None
 

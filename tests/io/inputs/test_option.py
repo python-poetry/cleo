@@ -8,7 +8,7 @@ from cleo.io.inputs.option import Option
 def test_create():
     opt = Option("option")
 
-    assert "option" == opt.name
+    assert opt.name == "option"
     assert opt.shortcut is None
     assert opt.is_flag()
     assert not opt.accepts_value()
@@ -20,7 +20,7 @@ def test_create():
 def test_dashed_name():
     opt = Option("--option")
 
-    assert "option" == opt.name
+    assert opt.name == "option"
 
 
 def test_fail_if_name_is_empty():
@@ -41,19 +41,19 @@ def test_fail_if_wrong_default_value_for_list_option():
 def test_shortcut():
     opt = Option("option", "o")
 
-    assert "o" == opt.shortcut
+    assert opt.shortcut == "o"
 
 
 def test_dashed_shortcut():
     opt = Option("option", "-o")
 
-    assert "o" == opt.shortcut
+    assert opt.shortcut == "o"
 
 
 def test_multiple_shortcuts():
     opt = Option("option", "-o|oo|-ooo")
 
-    assert "o|oo|ooo" == opt.shortcut
+    assert opt.shortcut == "o|oo|ooo"
 
 
 def test_fail_if_shortcut_is_empty():
@@ -98,7 +98,7 @@ def test_required_value_with_default():
     assert opt.accepts_value()
     assert opt.requires_value()
     assert not opt.is_list()
-    assert "Default" == opt.default
+    assert opt.default == "Default"
 
 
 def test_list():

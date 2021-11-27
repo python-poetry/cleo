@@ -9,7 +9,7 @@ from cleo.commands.command import Command
 from cleo.exceptions import CommandNotFoundException
 
 
-class ApplicationDescription(object):
+class ApplicationDescription:
 
     GLOBAL_NAMESPACE = "_global"
 

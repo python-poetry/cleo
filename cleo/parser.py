@@ -9,7 +9,7 @@ from cleo.io.inputs.argument import Argument
 from cleo.io.inputs.option import Option
 
 
-class Parser(object):
+class Parser:
     @classmethod
     def parse(cls, expression: str) -> Dict[str, Any]:
         """

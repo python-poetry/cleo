@@ -181,7 +181,7 @@ def test_display_without_start(ansi_io):
 
     expected = "  0/50 [>---------------------------]   0%"
 
-    assert expected == ansi_io.fetch_error()
+    assert ansi_io.fetch_error() == expected
 
 
 def test_display_with_quiet_verbosity(ansi_io):
@@ -189,7 +189,7 @@ def test_display_with_quiet_verbosity(ansi_io):
     bar = ProgressBar(ansi_io, 50, 0)
     bar.display()
 
-    assert "" == ansi_io.fetch_error()
+    assert ansi_io.fetch_error() == ""
 
 
 def test_finish_without_start(ansi_io):
@@ -198,7 +198,7 @@ def test_finish_without_start(ansi_io):
 
     expected = " 50/50 [============================] 100%"
 
-    assert expected == ansi_io.fetch_error()
+    assert ansi_io.fetch_error() == expected
 
 
 def test_percent(ansi_io):
