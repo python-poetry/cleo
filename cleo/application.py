@@ -104,7 +104,7 @@ class Application:
 
             return f"<b>{self.display_name}</b>"
 
-        return f"<b>Console</b> application"
+        return "<b>Console</b> application"
 
     @property
     def definition(self) -> Definition:

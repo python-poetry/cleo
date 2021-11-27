@@ -7,8 +7,7 @@ import posixpath
 import re
 import subprocess
 
-from ..helpers import argument
-from ..helpers import option
+from .. import helpers
 from .command import Command
 from .completions.templates import TEMPLATES
 
@@ -19,10 +18,12 @@ class CompletionsCommand(Command):
     description = "Generate completion scripts for your shell."
 
     arguments = [
-        argument("shell", "The shell to generate the scripts for.", optional=True)
+        helpers.argument(
+            "shell", "The shell to generate the scripts for.", optional=True
+        )
     ]
     options = [
-        option(
+        helpers.option(
             "alias", None, "Alias for the current command.", flag=False, multiple=True
         )
     ]

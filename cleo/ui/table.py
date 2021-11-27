@@ -1,4 +1,3 @@
-import itertools
 import math
 import re
 
@@ -494,7 +493,7 @@ class Table:
                 )
                 for k, v in unmerged_rows.items():
                     if k in placeholder:
-                        for l, m in unmerged_rows[k].items():
+                        for l, m in unmerged_rows[k].items():  # noqa: E741
                             if l in placeholder[k]:
                                 placeholder[k][l].update(m)
                             else:

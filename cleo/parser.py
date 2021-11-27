@@ -1,7 +1,6 @@
 import os
 import re
 
-from collections import namedtuple
 from typing import Any
 from typing import Dict
 from typing import List
@@ -60,7 +59,6 @@ class Parser(object):
         Parse an argument expression.
         """
         description = ""
-        validator = None
 
         if " : " in token:
             token, description = tuple(token.split(" : ", 2))
@@ -73,7 +71,6 @@ class Parser(object):
         matches = re.match(r"(.*)\((.*?)\)", token)
         if matches:
             token = matches.group(1).strip()
-            validator = matches.group(2).strip()
 
         if token.endswith("?*"):
             return Argument(
@@ -115,7 +112,6 @@ class Parser(object):
         Parse an option expression.
         """
         description = ""
-        validator = None
 
         if " : " in token:
             token, description = tuple(token.split(" : ", 2))
@@ -128,7 +124,6 @@ class Parser(object):
         matches = re.match(r"(.*)\((.*?)\)", token)
         if matches:
             token = matches.group(1).strip()
-            validator = matches.group(2).strip()
 
         shortcut = None
 

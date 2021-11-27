@@ -468,7 +468,7 @@ def test():
     highlighter = Highlighter()
     lines = highlighter.highlighted_lines(source)
 
-    assert [formatter.format(l) for l in lines] == [
+    assert [formatter.format(line) for line in lines] == [
         "",
         "def test():",
         '    """',
