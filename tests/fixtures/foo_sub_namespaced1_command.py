@@ -1,5 +1,4 @@
 from cleo.commands.command import Command
-from cleo.io.io import IO
 
 
 class FooSubNamespaced1Command(Command):

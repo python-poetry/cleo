@@ -7,8 +7,7 @@ from typing import List
 from typing import Optional
 from typing import Union
 
-from cleo import exceptions
-from cleo.cursor import Cursor
+from cleo.formatters.style import Style
 from cleo.io.inputs.string_input import StringInput
 from cleo.io.io import IO
 from cleo.io.null_io import NullIO

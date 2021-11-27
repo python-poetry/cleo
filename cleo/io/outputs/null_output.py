@@ -1,8 +1,6 @@
 from typing import Iterable
 from typing import Union
 
-from cleo.formatters.formatter import Formatter
-
 from .output import Output
 from .output import Type
 from .output import Verbosity

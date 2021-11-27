@@ -1,5 +1,3 @@
-import re
-
 from typing import List
 
 from .argv_input import ArgvInput
