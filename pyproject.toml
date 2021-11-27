@@ -48,7 +48,6 @@ files = "cleo, tests"
 
 [[tool.mypy.overrides]]
 module = [
-    "cleo._utils",
     "cleo.application",
     "cleo.descriptors.application_description",
     "cleo.descriptors.descriptor",

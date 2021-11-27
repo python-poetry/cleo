@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import math
 
+from dataclasses import dataclass
 from html.parser import HTMLParser
-from typing import Any
 
 from pylev import levenshtein
 
@@ -13,22 +13,22 @@ class TagStripper(HTMLParser):
         super().__init__(convert_charrefs=False)
 
         self.reset()
-        self.fed = []
+        self.fed: list[str] = []
 
-    def handle_data(self, d) -> None:
+    def handle_data(self, d: str) -> None:
         self.fed.append(d)
 
-    def handle_entityref(self, name) -> None:
+    def handle_entityref(self, name: str) -> None:
         self.fed.append("&%s;" % name)
 
-    def handle_charref(self, name) -> None:
+    def handle_charref(self, name: str) -> None:
         self.fed.append("&#%s;" % name)
 
     def get_data(self) -> str:
         return "".join(self.fed)
 
 
-def _strip(value) -> str:
+def _strip(value: str) -> str:
     s = TagStripper()
     s.feed(value)
     s.close()
@@ -36,8 +36,7 @@ def _strip(value) -> str:
     return s.get_data()
 
 
-def strip_tags(value: Any) -> str:
-    value = str(value)
+def strip_tags(value: str) -> str:
     while "<" in value and ">" in value:
         new_value = _strip(value)
         if value.count("<") == new_value.count("<"):
@@ -82,25 +81,31 @@ def find_similar_names(name: str, names: list[str]) -> list[str]:
     return suggested_names
 
 
-_TIME_FORMATS = [
-    (0, "< 1 sec"),
-    (2, "1 sec"),
-    (59, "secs", 1),
-    (60, "1 min"),
-    (3600, "mins", 60),
-    (5400, "1 hr"),
-    (86400, "hrs", 3600),
-    (129600, "1 day"),
-    (604800, "days", 86400),
+@dataclass
+class TimeFormat:
+    threshold: int
+    alias: str
+    divisor: int | None = None
+
+    def apply(self, secs: float) -> str:
+        if self.divisor:
+            return f"{math.ceil(secs / self.divisor)} {self.alias}"
+        return self.alias
+
+
+_TIME_FORMATS: list[TimeFormat] = [
+    TimeFormat(0, "< 1 sec"),
+    TimeFormat(2, "1 sec"),
+    TimeFormat(59, "secs", 1),
+    TimeFormat(60, "1 min"),
+    TimeFormat(3600, "mins", 60),
+    TimeFormat(5400, "1 hr"),
+    TimeFormat(86400, "hrs", 3600),
+    TimeFormat(129600, "1 day"),
+    TimeFormat(604800, "days", 86400),
 ]
 
 
 def format_time(secs: float) -> str:
-    for fmt in _TIME_FORMATS:
-        if secs > fmt[0]:
-            continue
-
-        if len(fmt) == 2:
-            return fmt[1]
-
-        return f"{math.ceil(secs / fmt[2])} {fmt[1]}"
+    format = next(fmt for fmt in _TIME_FORMATS if secs < fmt.threshold)
+    return format.apply(secs)
