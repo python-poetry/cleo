@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cleo"
-version = "1.0.0a5"
+version = "1.0.0a6"
 description = "Cleo allows you to create beautiful and testable command-line interfaces."
 authors = [
     "Sébastien Eustace <sebastien@eustace.io>"
