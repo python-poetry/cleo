@@ -223,6 +223,14 @@ class Command(BaseCommand):
 
         return table
 
+    def table_separator(self):
+        """
+        Return a TableSeparator instance.
+        """
+        from cleo.ui.table_separator import TableSeparator
+
+        return TableSeparator()
+
     def render_table(self, headers, rows, style=None):
         """
         Format input to textual table.
