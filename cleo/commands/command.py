@@ -335,22 +335,11 @@ class Command(BaseCommand):
         """
         Adds a new style
         """
-        style = Style(name)
-        if fg is not None:
-            style.fg(fg)
+        from cleo.formatters.style import Style
+        style = Style(fg, bg, options)
 
-        if bg is not None:
-            style.bg(bg)
-
-        if options is not None:
-            if "bold" in options:
-                style.bold()
-
-            if "underline" in options:
-                style.underlined()
-
-        self._io.output.formatter.add_style(style)
-        self._io.error_output.formatter.add_style(style)
+        self._io.output.formatter.set_style(name, style)
+        self._io.error_output.formatter.set_style(name, style)
 
     def overwrite(self, text):
         """
