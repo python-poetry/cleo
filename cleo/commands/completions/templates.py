@@ -54,7 +54,7 @@ ZSH_TEMPLATE = """#compdef %(script_name)s
 
 %(function)s()
 {
-    local state com cur
+    local state com cur opts
 
     cur=${words[${#words[@]}]}
 
