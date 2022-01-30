@@ -175,7 +175,7 @@ script. Consult your shells documentation for how to add such directives.
             options = [self._zsh_describe(opt, None).strip('"') for opt in options]
 
             desc = [
-                "            ({})".format(command),
+                '            ("{}")'.format(command),
                 '            opts="${{opts}} {}"'.format(" ".join(options)),
                 "            ;;",
             ]

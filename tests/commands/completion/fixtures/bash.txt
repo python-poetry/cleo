@@ -25,19 +25,19 @@ _my_function()
 
         case "$com" in
 
-            (command:with:colons)
+            ("command:with:colons")
             opts="${opts} --goodbye"
             ;;
 
-            (hello)
+            ("hello")
             opts="${opts} --dangerous-option --option-without-description"
             ;;
 
-            (help)
+            ("help")
             opts="${opts} "
             ;;
 
-            (list)
+            ("list")
             opts="${opts} "
             ;;
 
