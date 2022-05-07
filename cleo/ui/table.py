@@ -2,6 +2,8 @@ import itertools
 import math
 import re
 
+from copy import deepcopy
+
 from typing import Dict
 from typing import Generator
 from typing import List
@@ -707,6 +709,6 @@ class Table:
             return name
 
         if name in cls._styles:
-            return cls._styles[name]
+            return deepcopy(cls._styles[name])
 
         raise ValueError(f'Table style "{name}" is not defined.')
