@@ -47,7 +47,7 @@ To display a table, use the ``table()`` method, set the headers, set the rows an
             ]
         )
 
-You can add a table separator anywhere in the output by using ``table_seprator()``,
+You can add a table separator anywhere in the output by using ``table_separator()``,
 which returns a ``TableSeparator``, as a row:
 
 .. code-block:: python
