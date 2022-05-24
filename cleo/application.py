@@ -373,9 +373,7 @@ class Application:
         if io.input.has_parameter_option(["--help", "-h"], True):
             if not name:
                 name = "help"
-                stream = io.input.stream
                 io.set_input(ArgvInput(["console", "help", self._default_command]))
-                io.input.set_stream(stream)
             else:
                 self._want_helps = True
 
