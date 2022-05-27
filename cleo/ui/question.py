@@ -64,7 +64,7 @@ class Question(object):
     def set_validator(self, validator: Callable) -> None:
         self._validator = validator
 
-    def ask(self, io: IO) -> str:
+    def ask(self, io: IO) -> Optional[str]:
         """
         Asks the question to the user.
         """
@@ -79,7 +79,7 @@ class Question(object):
 
         return self._validate_attempts(interviewer, io)
 
-    def _do_ask(self, io: IO) -> str:
+    def _do_ask(self, io: IO) -> Optional[str]:
         """
         Asks the question to the user.
         """

@@ -46,8 +46,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"Cleo"
-copyright = u"2014, Sébastien Eustace"
+project = "Cleo"
+copyright = "2014, Sébastien Eustace"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -197,7 +197,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    ("index", "Cleo.tex", u"Cleo Documentation", u"Sébastien Eustace", "manual")
+    ("index", "Cleo.tex", "Cleo Documentation", "Sébastien Eustace", "manual")
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -225,7 +225,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [("index", "cleo", u"Cleo Documentation", [u"Sébastien Eustace"], 1)]
+man_pages = [("index", "cleo", "Cleo Documentation", ["Sébastien Eustace"], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -240,8 +240,8 @@ texinfo_documents = [
     (
         "index",
         "Cleo",
-        u"Cleo Documentation",
-        u"Sébastien Eustace",
+        "Cleo Documentation",
+        "Sébastien Eustace",
         "Cleo",
         "One line description of project.",
         "Miscellaneous",
@@ -268,7 +268,6 @@ if not on_rtd:
 
     def setup(app):
         app.add_stylesheet("theme_overrides.css")
-
 
 else:
     html_context = {

@@ -444,3 +444,30 @@ def test_column_style(io):
 """
 
     assert io.fetch_output() == expected
+
+
+def test_style_for_side_effects(io):
+    headers = ["Type", "Class", "Name"]
+    rows = [
+        ["GSV", "Range", "Bora Horza Gobuchul"],
+        ["GSV", "Plate", "Sleeper Service"],
+        ["GCU", "Ridge", "Grey Area"],
+        ["PS", "Abominator", "Falling Outside the Normal Moral Constraints"],
+    ]
+
+    table1 = Table(io)
+    table1.set_headers(headers)
+    table1.set_rows(rows)
+    table1.style.set_vertical_border_chars("x", "y")
+    table1.render()
+
+    output1 = io.fetch_output()
+
+    table2 = Table(io)
+    table2.set_headers(headers)
+    table2.set_rows(rows)
+    table2.render()
+
+    output2 = io.fetch_output()
+
+    assert output1 != output2
