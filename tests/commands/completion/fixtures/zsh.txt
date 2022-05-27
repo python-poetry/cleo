@@ -2,7 +2,7 @@
 
 _my_function()
 {
-    local state com cur
+    local com coms cur opts state
 
     cur=${words[${#words[@]}]}
 
