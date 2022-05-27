@@ -3,7 +3,6 @@ import math
 import re
 
 from copy import deepcopy
-
 from typing import Dict
 from typing import Generator
 from typing import List
