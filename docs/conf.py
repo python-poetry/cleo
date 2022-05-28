@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Cleo documentation build configuration file, created by
 # sphinx-quickstart on Sun Mar  9 21:01:54 2014.

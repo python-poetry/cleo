@@ -240,8 +240,8 @@ class ProgressBar(Component):
         self._overwrite(self._build_line())
 
     def _overwrite_callback(self, matches: Match) -> str:
-        if hasattr(self, "_formatter_{}".format(matches.group(1))):
-            text = str(getattr(self, "_formatter_{}".format(matches.group(1)))())
+        if hasattr(self, f"_formatter_{matches.group(1)}"):
+            text = str(getattr(self, f"_formatter_{matches.group(1)}")())
         elif matches.group(1) in self._messages:
             text = self._messages[matches.group(1)]
         else:

@@ -96,9 +96,9 @@ class TokenParser:
             if self._current == "\\":
                 string += self._parse_escape_sequence()
             elif self._current == '"':
-                string += '"{}"'.format(self._parse_quoted_string())
+                string += f'"{self._parse_quoted_string()}"'
             elif self._current == "'":
-                string += "'{}'".format(self._parse_quoted_string())
+                string += f"'{self._parse_quoted_string()}'"
             else:
                 string += self._current
                 self._next()

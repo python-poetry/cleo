@@ -96,7 +96,7 @@ class SectionOutput(StreamOutput):
 
         if lines_to_clear_count > 0:
             # Move cursor up n lines
-            super()._write("\x1b[{}A".format(lines_to_clear_count), new_line=False)
+            super()._write(f"\x1b[{lines_to_clear_count}A", new_line=False)
             # Erase to end of screen
             super()._write("\x1b[0J", new_line=False)
 

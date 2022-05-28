@@ -196,9 +196,7 @@ class Formatter:
             prefix = ""
 
         m = re.match(r"(\n)$", text)
-        text = prefix + re.sub(
-            r"([^\n]{{{width}}})\ *".format(width=width), "\\1\n", text
-        )
+        text = prefix + re.sub(rf"([^\n]{{{width}}})\ *", "\\1\n", text)
         text = text.rstrip("\n") + (m.group(1) if m else "")
 
         if not current_line_length and current and current[-1] != "\n":

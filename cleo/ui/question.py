@@ -116,13 +116,13 @@ class Question:
         """
         message = self._question
 
-        io.write_error("<question>{}</question> ".format(message))
+        io.write_error(f"<question>{message}</question> ")
 
     def _write_error(self, io: IO, error: Exception) -> None:
         """
         Outputs an error message.
         """
-        message = "<error>{}</error>".format(str(error))
+        message = f"<error>{str(error)}</error>"
 
         io.write_error_line(message)
 
@@ -222,7 +222,7 @@ class Question:
                 # Restore cursor position
                 io.write_error("\0338")
 
-        subprocess.call(["stty", "{}".format(stty_mode)])
+        subprocess.call(["stty", f"{stty_mode}"])
 
         return ret
 

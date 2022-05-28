@@ -41,7 +41,7 @@ class NoSuchOptionException(CleoException):
 
 class CommandNotFoundException(CleoSimpleException):
     def __init__(self, name: str, commands: Optional[List[str]] = None) -> None:
-        message = 'The command "{}" does not exist.'.format(name)
+        message = f'The command "{name}" does not exist.'
 
         if commands:
             suggested_names = find_similar_names(name, commands)
@@ -59,7 +59,7 @@ class CommandNotFoundException(CleoSimpleException):
 
 class NamespaceNotFoundException(CleoSimpleException):
     def __init__(self, name: str, namespaces: Optional[List[str]] = None) -> None:
-        message = 'There are no commands in the "{}" namespace.'.format(name)
+        message = f'There are no commands in the "{name}" namespace.'
 
         if namespaces:
             suggested_names = find_similar_names(name, namespaces)

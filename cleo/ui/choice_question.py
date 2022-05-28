@@ -89,7 +89,7 @@ class ChoiceQuestion(Question):
     def __init__(
         self, question: str, choices: List[str], default: Optional[Any] = None
     ) -> None:
-        super(ChoiceQuestion, self).__init__(question, default)
+        super().__init__(question, default)
 
         self._multi_select = False
         self._choices = choices
@@ -123,7 +123,7 @@ class ChoiceQuestion(Question):
         default = self._default
 
         if default is None:
-            message = "<question>{}</question>: ".format(message)
+            message = f"<question>{message}</question>: "
         elif self._multi_select:
             choices = self._choices
             default = default.split(",")

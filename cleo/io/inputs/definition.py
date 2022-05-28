@@ -202,9 +202,9 @@ class Definition:
 
                 shortcut = ""
                 if option.shortcut:
-                    shortcut = "-{}|".format(option.shortcut)
+                    shortcut = f"-{option.shortcut}|"
 
-                elements.append("[{}--{}{}]".format(shortcut, option.name, value))
+                elements.append(f"[{shortcut}--{option.name}{value}]")
 
         if elements and self._arguments:
             elements.append("[--]")

@@ -109,7 +109,7 @@ class Color:
                 color = color[0] * 2 + color[1] * 2 + color[2] * 2
 
             if len(color) != 6:
-                raise ValueException('"{}" is an invalid color'.format(color))
+                raise ValueException(f'"{color}" is an invalid color')
 
             return ("4" if background else "3") + self._convert_hex_color_to_ansi(
                 int(color, 16)
@@ -132,7 +132,7 @@ class Color:
         if os.getenv("COLORTERM") != "truecolor":
             return str(self._degrade_hex_color_to_ansi(r, g, b))
 
-        return "8;2;{};{};{}".format(r, g, b)
+        return f"8;2;{r};{g};{b}"
 
     def _degrade_hex_color_to_ansi(self, r: int, g: int, b: int) -> int:
         if round(self._get_saturation(r, g, b) / 50) == 0:

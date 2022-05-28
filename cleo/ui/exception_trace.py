@@ -107,7 +107,7 @@ class Highlighter:
                 if current_type is None:
                     current_type = self.TOKEN_DEFAULT
 
-                line += "<{}>{}</>".format(self._theme[current_type], buffer)
+                line += f"<{self._theme[current_type]}>{buffer}</>"
                 lines.append(line)
                 break
 
@@ -154,19 +154,17 @@ class Highlighter:
                 buffer += token_info.line[current_col : start[1]]
 
             if current_type != new_type:
-                line += "<{}>{}</>".format(self._theme[current_type], buffer)
+                line += f"<{self._theme[current_type]}>{buffer}</>"
                 buffer = ""
                 current_type = new_type
 
             if lineno < end[0]:
                 # The token spans multiple lines
                 token_lines = token_string.split("\n")
-                line += "<{}>{}</>".format(self._theme[current_type], token_lines[0])
+                line += f"<{self._theme[current_type]}>{token_lines[0]}</>"
                 lines.append(line)
                 for token_line in token_lines[1:-1]:
-                    lines.append(
-                        "<{}>{}</>".format(self._theme[current_type], token_line)
-                    )
+                    lines.append(f"<{self._theme[current_type]}>{token_line}</>")
 
                 current_line = end[0]
                 buffer = token_lines[-1][: end[1]]
@@ -254,7 +252,7 @@ class ExceptionTrace:
     def render(self, io: Union[IO, Output], simple: bool = False) -> None:
         if simple:
             io.write_line("")
-            io.write_line("<error>{}</error>".format(str(self._exception)))
+            io.write_line(f"<error>{str(self._exception)}</error>")
             return
 
         return self._render_exception(io, self._exception)
@@ -276,14 +274,12 @@ class ExceptionTrace:
 
         self._render_trace(io, inspector.frames)
 
-        self._render_line(
-            io, "<error>{}</error>".format(inspector.exception_name), True
-        )
+        self._render_line(io, f"<error>{inspector.exception_name}</error>", True)
         io.write_line("")
         exception_message = (
             Formatter().format(inspector.exception_message).replace("\n", "\n  ")
         )
-        self._render_line(io, "<b>{}</b>".format(exception_message))
+        self._render_line(io, f"<b>{exception_message}</b>")
 
         current_frame = inspector.frames[-1]
         self._render_snippet(io, current_frame)
@@ -332,7 +328,7 @@ class ExceptionTrace:
                     symbol,
                     title.rstrip("."),
                     description,
-                    ",".join("\n    <fg=blue>{}</>".format(link) for link in links),
+                    ",".join(f"\n    <fg=blue>{link}</>" for link in links),
                 ),
                 True,
             )

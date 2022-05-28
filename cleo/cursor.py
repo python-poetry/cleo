@@ -21,32 +21,32 @@ class Cursor:
         self._input = input
 
     def move_up(self, lines: int = 1) -> "Cursor":
-        self._output.write("\x1b[{}A".format(lines))
+        self._output.write(f"\x1b[{lines}A")
 
         return self
 
     def move_down(self, lines: int = 1) -> "Cursor":
-        self._output.write("\x1b[{}B".format(lines))
+        self._output.write(f"\x1b[{lines}B")
 
         return self
 
     def move_right(self, columns: int = 1) -> "Cursor":
-        self._output.write("\x1b[{}C".format(columns))
+        self._output.write(f"\x1b[{columns}C")
 
         return self
 
     def move_left(self, columns: int = 1) -> "Cursor":
-        self._output.write("\x1b[{}D".format(columns))
+        self._output.write(f"\x1b[{columns}D")
 
         return self
 
     def move_to_column(self, column: int) -> "Cursor":
-        self._output.write("\x1b[{}G".format(column))
+        self._output.write(f"\x1b[{column}G")
 
         return self
 
     def move_to_position(self, column: int, row: int) -> "Cursor":
-        self._output.write("\x1b[{};{}H".format(row + 1, column))
+        self._output.write(f"\x1b[{row + 1};{column}H")
 
         return self
 
