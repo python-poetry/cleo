@@ -93,4 +93,4 @@ class Option:
         self._default = default
 
     def __repr__(self) -> str:
-        return "Option({})".format(self._name)
+        return f"Option({self._name})"

@@ -13,7 +13,7 @@ class BufferedIO(IO):
         decorated: bool = False,
         supports_utf8: bool = True,
     ) -> None:
-        super(BufferedIO, self).__init__(
+        super().__init__(
             input,
             BufferedOutput(decorated=decorated, supports_utf8=supports_utf8),
             BufferedOutput(decorated=decorated, supports_utf8=supports_utf8),

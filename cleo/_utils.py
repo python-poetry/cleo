@@ -101,4 +101,4 @@ def format_time(secs):  # type: (float) -> str
         if len(fmt) == 2:
             return fmt[1]
 
-        return "{} {}".format(math.ceil(secs / fmt[2]), fmt[1])
+        return f"{math.ceil(secs / fmt[2])} {fmt[1]}"

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import re
 
 import pytest
@@ -225,7 +224,7 @@ def test_render_can_ignore_given_files():
 
     trace = ExceptionTrace(e.value)
     helpers_file = os.path.join(os.path.dirname(__file__), "helpers.py")
-    trace.ignore_files_in("^{}$".format(re.escape(helpers_file)))
+    trace.ignore_files_in(f"^{re.escape(helpers_file)}$")
 
     trace.render(io)
 
@@ -277,7 +276,7 @@ def test_render_shows_ignored_files_if_in_debug_mode():
 
     trace = ExceptionTrace(e.value)
     helpers_file = os.path.join(os.path.dirname(__file__), "helpers.py")
-    trace.ignore_files_in("^{}$".format(re.escape(helpers_file)))
+    trace.ignore_files_in(f"^{re.escape(helpers_file)}$")
 
     trace.render(io)
 

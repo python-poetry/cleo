@@ -66,8 +66,8 @@ class TextDescriptor(Descriptor):
         )
 
         synopsis = "{}{}".format(
-            "-{}, ".format(option.shortcut) if option.shortcut else "    ",
-            "--{}{}".format(option.name, value),
+            f"-{option.shortcut}, " if option.shortcut else "    ",
+            f"--{option.name}{value}",
         )
 
         spacing_width = total_width - len(synopsis)
@@ -163,7 +163,7 @@ class TextDescriptor(Descriptor):
 
         help_text = application.help
         if help_text:
-            self._write("{}\n\n".format(help_text))
+            self._write(f"{help_text}\n\n")
 
         self._write("<b>Usage:</b>\n")
         self._write("  command [options] [arguments]\n\n")

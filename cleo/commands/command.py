@@ -36,7 +36,7 @@ class Command(BaseCommand):
 
     def __init__(self):
         self._io: Optional[IO] = None
-        super(Command, self).__init__()
+        super().__init__()
 
     @property
     def io(self):  # type: () -> IO
@@ -244,7 +244,7 @@ class Command(BaseCommand):
         Useful if you want to use overwrite().
         """
         if style:
-            styled = "<%s>%s</>" % (style, text)
+            styled = f"<{style}>{text}</>"
         else:
             styled = text
 
@@ -260,7 +260,7 @@ class Command(BaseCommand):
         Write a string as information output.
         """
         if style:
-            styled = "<{}>{}</>".format(style, text)
+            styled = f"<{style}>{text}</>"
         else:
             styled = text
 
@@ -276,7 +276,7 @@ class Command(BaseCommand):
         Write a string as information output to stderr.
         """
         if style:
-            styled = "<%s>%s</>" % (style, text)
+            styled = f"<{style}>{text}</>"
         else:
             styled = text
 

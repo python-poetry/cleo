@@ -253,7 +253,7 @@ class ArgvInput(Input):
                     command_name, token
                 )
             else:
-                message = 'No arguments expected, got "{}"'.format(token)
+                message = f'No arguments expected, got "{token}"'
 
             raise RuntimeException(message)
 

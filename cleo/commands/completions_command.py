@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import hashlib
 import inspect
 import os
@@ -118,7 +116,7 @@ script. Consult your shells documentation for how to add such directives.
         return 0
 
     def render(self, shell):  # type: (str) -> str
-        return getattr(self, "render_{}".format(shell))()
+        return getattr(self, f"render_{shell}")()
 
     def render_bash(self):  # type: () -> str
         template = TEMPLATES["bash"]
@@ -161,10 +159,7 @@ script. Consult your shells documentation for how to add such directives.
             commands_options[command.name] = command_options
 
         compdefs = "\n".join(
-            [
-                "complete -o default -F {} {}".format(function, alias)
-                for alias in aliases
-            ]
+            [f"complete -o default -F {function} {alias}" for alias in aliases]
         )
 
         commands = sorted(commands)
@@ -176,7 +171,7 @@ script. Consult your shells documentation for how to add such directives.
             options = [self._zsh_describe(opt, None).strip('"') for opt in options]
 
             desc = [
-                "            ({})".format(command),
+                f"            ({command})",
                 '            opts="${{opts}} {}"'.format(" ".join(options)),
                 "            ;;",
             ]
@@ -245,9 +240,7 @@ script. Consult your shells documentation for how to add such directives.
 
             commands_options[command.name] = command_options
 
-        compdefs = "\n".join(
-            ["compdef {} {}".format(function, alias) for alias in aliases]
-        )
+        compdefs = "\n".join([f"compdef {function} {alias}" for alias in aliases])
 
         commands = sorted(commands_options.keys())
         command_list = []
@@ -260,7 +253,7 @@ script. Consult your shells documentation for how to add such directives.
             ]
 
             desc = [
-                "            ({})".format(command),
+                f"            ({command})",
                 "            opts+=({})".format(" ".join(options)),
                 "            ;;",
             ]
@@ -359,7 +352,7 @@ script. Consult your shells documentation for how to add such directives.
                 )
             )
 
-            cmds_opts += ["# {}".format(cmd)]
+            cmds_opts += [f"# {cmd}"]
             options = set(commands_options[cmd]).difference(global_options)
             options = sorted(options)
 

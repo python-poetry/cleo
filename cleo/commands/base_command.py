@@ -36,7 +36,7 @@ class BaseCommand:
 
         for i, usage in enumerate(self.usages):
             if self.name and usage.find(self.name) != 0:
-                self.usages[i] = "{} {}".format(self.name, usage)
+                self.usages[i] = f"{self.name} {usage}"
 
     @property
     def application(self) -> "Application":

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 BASH_TEMPLATE = """%(function)s()
 {
     local cur script coms opts com
