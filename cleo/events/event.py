@@ -1,4 +1,4 @@
-class Event(object):
+class Event:
     """
     Event
     """

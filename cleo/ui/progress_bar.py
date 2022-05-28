@@ -280,10 +280,8 @@ class ProgressBar(Component):
         # try to use the _nomax variant if available
         if not self._max and fmt + "_nomax" in self.formats:
             self._format = self.formats[fmt + "_nomax"]
-        elif fmt in self.formats:
-            self._format = self.formats[fmt]
         else:
-            self._format = fmt
+            self._format = self.formats.get(fmt, fmt)
 
         self._format_line_count = self._format.count("\n")
 

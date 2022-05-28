@@ -43,24 +43,24 @@ def test_set_application():
     command = Command()
     command.set_application(application)
 
-    assert application == command.application
+    assert command.application == application
 
 
 def test_with_signature():
     command = SignatureCommand()
 
-    assert "signature:command" == command.name
-    assert "description" == command.description
-    assert "help" == command.help
-    assert 2 == len(command.definition.arguments)
-    assert 2 == len(command.definition.options)
+    assert command.name == "signature:command"
+    assert command.description == "description"
+    assert command.help == "help"
+    assert len(command.definition.arguments) == 2
+    assert len(command.definition.options) == 2
 
 
 def test_signature_inheritance():
     command = ChildCommand()
 
-    assert "parent" == command.name
-    assert "Parent Command." == command.description
+    assert command.name == "parent"
+    assert command.description == "Parent Command."
 
 
 def test_overwrite():
@@ -70,7 +70,7 @@ def test_overwrite():
     tester.execute("overwrite", decorated=True)
 
     expected = "Processing...\x1b[1G\x1b[2KDone!"
-    assert expected == tester.io.fetch_output()
+    assert tester.io.fetch_output() == expected
 
 
 def test_explicit_multiple_argument():
@@ -79,4 +79,4 @@ def test_explicit_multiple_argument():
     tester = CommandTester(command)
     tester.execute("1 2 3")
 
-    assert "1,2,3\n" == tester.io.fetch_output()
+    assert tester.io.fetch_output() == "1,2,3\n"

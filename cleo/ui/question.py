@@ -10,7 +10,7 @@ from cleo.formatters.style import Style
 from cleo.io.io import IO
 
 
-class Question(object):
+class Question:
     """
     A question that will be asked in a Console.
     """
@@ -183,7 +183,7 @@ class Question(object):
                     ofs += -1 if c[2] == "A" else 1
                     ofs = (num_matches + ofs) % num_matches
             elif ord(c) < 32:
-                if c == "\t" or c == "\n":
+                if c in ["\t", "\n"]:
                     if num_matches > 0 and ofs != -1:
                         ret = matches[ofs]
                         # Echo out remaining chars for current match
@@ -265,11 +265,10 @@ class Question(object):
         return ret.strip()
 
     def _has_stty_available(self) -> bool:
-        devnull = open(os.devnull, "w")
-
-        try:
-            exit_code = subprocess.call(["stty"], stdout=devnull, stderr=devnull)
-        except Exception:
-            exit_code = 2
+        with open(os.devnull, "w") as devnull:
+            try:
+                exit_code = subprocess.call(["stty"], stdout=devnull, stderr=devnull)
+            except Exception:
+                exit_code = 2
 
         return exit_code == 0

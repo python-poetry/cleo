@@ -8,7 +8,7 @@ from cleo.io.inputs.string_input import StringInput
 from cleo.io.outputs.output import Verbosity
 
 
-class CommandTester(object):
+class CommandTester:
     """
     Eases the testing of console commands.
     """

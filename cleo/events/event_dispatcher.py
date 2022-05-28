@@ -7,7 +7,7 @@ from typing import Union
 from .event import Event
 
 
-class EventDispatcher(object):
+class EventDispatcher:
     def __init__(self) -> None:
         self._listeners = {}
         self._sorted = {}
@@ -59,11 +59,7 @@ class EventDispatcher(object):
 
             return len(self._listeners[event_name]) > 0
 
-        for event_listeners in self._listeners.values():
-            if event_listeners:
-                return True
-
-        return False
+        return any(self._listeners.values())
 
     def add_listener(
         self, event_name: str, listener: Callable, priority: int = 0

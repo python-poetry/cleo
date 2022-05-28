@@ -46,9 +46,9 @@ def test_add_listener(dispatcher, listener):
     assert dispatcher.has_listeners()
     assert dispatcher.has_listeners(PRE_FOO)
     assert dispatcher.has_listeners(POST_FOO)
-    assert 1 == len(dispatcher.get_listeners(PRE_FOO))
-    assert 1 == len(dispatcher.get_listeners(POST_FOO))
-    assert 2 == len(dispatcher.get_listeners())
+    assert len(dispatcher.get_listeners(PRE_FOO)) == 1
+    assert len(dispatcher.get_listeners(POST_FOO)) == 1
+    assert len(dispatcher.get_listeners()) == 2
 
 
 def test_get_listeners_sorts_by_priority(dispatcher):
@@ -86,7 +86,7 @@ def test_get_all_listeners_sorts_by_priority(dispatcher):
         POST_FOO: [listener6.pre_foo, listener5.pre_foo, listener4.pre_foo],
     }
 
-    assert expected == dispatcher.get_listeners()
+    assert dispatcher.get_listeners() == expected
 
 
 def test_get_listener_priority(dispatcher):
@@ -96,8 +96,8 @@ def test_get_listener_priority(dispatcher):
     dispatcher.add_listener(PRE_FOO, listener1.pre_foo, -10)
     dispatcher.add_listener(PRE_FOO, listener2.pre_foo)
 
-    assert -10 == dispatcher.get_listener_priority(PRE_FOO, listener1.pre_foo)
-    assert 0 == dispatcher.get_listener_priority(PRE_FOO, listener2.pre_foo)
+    assert dispatcher.get_listener_priority(PRE_FOO, listener1.pre_foo) == -10
+    assert dispatcher.get_listener_priority(PRE_FOO, listener2.pre_foo) == 0
     assert dispatcher.get_listener_priority(PRE_BAR, listener2.pre_foo) is None
 
 

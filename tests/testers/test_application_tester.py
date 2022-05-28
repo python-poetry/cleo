@@ -62,13 +62,13 @@ def tester(app):
 
 
 def test_execute(tester: ApplicationTester):
-    assert 0 == tester.execute("foo baz --bar")
-    assert 0 == tester.status_code
-    assert "baz\n--bar activated\n" == tester.io.fetch_output()
+    assert tester.execute("foo baz --bar") == 0
+    assert tester.status_code == 0
+    assert tester.io.fetch_output() == "baz\n--bar activated\n"
 
 
 def test_execute_namespace_command(tester: ApplicationTester):
     tester.application.catch_exceptions(False)
-    assert 0 == tester.execute("foo bar baz --baz")
-    assert 0 == tester.status_code
-    assert "baz\n--baz activated\n" == tester.io.fetch_output()
+    assert tester.execute("foo bar baz --baz") == 0
+    assert tester.status_code == 0
+    assert tester.io.fetch_output() == "baz\n--baz activated\n"

@@ -5,7 +5,7 @@ from cleo.helpers import option
 def test_argument():
     arg = argument("foo", "Foo")
 
-    assert "Foo" == arg.description
+    assert arg.description == "Foo"
     assert arg.is_required()
     assert not arg.is_list()
     assert arg.default is None
@@ -14,7 +14,7 @@ def test_argument():
 
     assert not arg.is_required()
     assert not arg.is_list()
-    assert "bar" == arg.default
+    assert arg.default == "bar"
 
     arg = argument("foo", "Foo", multiple=True)
 
@@ -32,7 +32,7 @@ def test_argument():
 def test_option():
     opt = option("foo", "f", "Foo")
 
-    assert "Foo" == opt.description
+    assert opt.description == "Foo"
     assert not opt.accepts_value()
     assert not opt.requires_value()
     assert not opt.is_list()
@@ -40,7 +40,7 @@ def test_option():
 
     opt = option("foo", "f", "Foo", flag=False)
 
-    assert "Foo" == opt.description
+    assert opt.description == "Foo"
     assert opt.accepts_value()
     assert opt.requires_value()
     assert not opt.is_list()
@@ -48,23 +48,23 @@ def test_option():
 
     opt = option("foo", "f", "Foo", flag=False, value_required=False)
 
-    assert "Foo" == opt.description
+    assert opt.description == "Foo"
     assert opt.accepts_value()
     assert not opt.requires_value()
     assert not opt.is_list()
 
     opt = option("foo", "f", "Foo", flag=False, multiple=True)
 
-    assert "Foo" == opt.description
+    assert opt.description == "Foo"
     assert opt.accepts_value()
     assert opt.requires_value()
     assert opt.is_list()
-    assert [] == opt.default
+    assert opt.default == []
 
     opt = option("foo", "f", "Foo", flag=False, default="bar")
 
-    assert "Foo" == opt.description
+    assert opt.description == "Foo"
     assert opt.accepts_value()
     assert opt.requires_value()
     assert not opt.is_list()
-    assert "bar" == opt.default
+    assert opt.default == "bar"

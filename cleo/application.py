@@ -2,6 +2,7 @@ import os
 import re
 import sys
 
+from contextlib import suppress
 from typing import TYPE_CHECKING
 from typing import Dict
 from typing import List
@@ -365,12 +366,10 @@ class Application:
 
         input_definition.set_options(definition.options)
 
-        try:
+        # Errors must be ignored, full binding/validation happens later when the command is known.
+        with suppress(CleoException):
             # Makes ArgvInput.first_argument() able to distinguish an option from an argument.
             io.input.bind(input_definition)
-        except CleoException:
-            # Errors must be ignored, full binding/validation happens later when the command is known.
-            pass
 
         name = self._get_command_name(io)
         if io.input.has_parameter_option(["--help", "-h"], True):
@@ -400,27 +399,26 @@ class Application:
 
         self._running_command = command
 
-        if " " in name:
+        if " " in name and isinstance(io.input, ArgvInput):
             # If the command is namespaced we rearrange
             # the input to parse it as a single argument
-            if isinstance(io.input, ArgvInput):
-                argv = io._input._tokens[:]
+            argv = io._input._tokens[:]
 
-                if io.input.script_name is not None:
-                    argv.insert(0, io.input.script_name)
+            if io.input.script_name is not None:
+                argv.insert(0, io.input.script_name)
 
-                namespace = name.split(" ")[0]
-                index = None
-                for i, arg in enumerate(argv):
-                    if arg == namespace and i > 0:
-                        argv[i] = name
-                        index = i
-                        break
+            namespace = name.split(" ")[0]
+            index = None
+            for i, arg in enumerate(argv):
+                if arg == namespace and i > 0:
+                    argv[i] = name
+                    index = i
+                    break
 
-                if index is not None:
-                    del argv[index + 1 : index + 1 + (len(name.split(" ")) - 1)]
+            if index is not None:
+                del argv[index + 1 : index + 1 + (len(name.split(" ")) - 1)]
 
-                io.set_input(ArgvInput(argv))
+            io.set_input(ArgvInput(argv))
 
         exit_code = self._run_command(command, io)
         self._running_command = None

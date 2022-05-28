@@ -31,9 +31,9 @@ def tester():
 
 
 def test_execute(tester):
-    assert 0 == tester.execute("bar")
-    assert 0 == tester.status_code
-    assert "bar\n" == tester.io.fetch_output()
+    assert tester.execute("bar") == 0
+    assert tester.status_code == 0
+    assert tester.io.fetch_output() == "bar\n"
 
 
 def test_execute_namespace_command():
@@ -41,6 +41,6 @@ def test_execute_namespace_command():
     app.add(FooBarCommand())
     tester = CommandTester(app.find("foo bar"))
 
-    assert 0 == tester.execute()
-    assert 0 == tester.status_code
-    assert "foo bar called\n" == tester.io.fetch_output()
+    assert tester.execute() == 0
+    assert tester.status_code == 0
+    assert tester.io.fetch_output() == "foo bar called\n"

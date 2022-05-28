@@ -7,7 +7,7 @@ from cleo.io.inputs.string_input import StringInput
 from cleo.io.outputs.output import Verbosity
 
 
-class ApplicationTester(object):
+class ApplicationTester:
     """
     Eases the testing of console applications.
     """
