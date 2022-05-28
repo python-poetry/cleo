@@ -21,7 +21,7 @@ _my_function()
 
     # completing for an option
     if [[ ${cur} == --* ]] ; then
-        opts="--ansi --help --no-ansi --no-interaction --quiet --verbose --version"
+        opts="--ansi --help --no-ansi --no-interaction --quiet --verbose"
 
         case "$com" in
 
@@ -38,7 +38,7 @@ _my_function()
             ;;
 
             (list)
-            opts="${opts} "
+            opts="${opts} --version"
             ;;
 
         esac

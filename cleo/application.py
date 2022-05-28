@@ -344,11 +344,6 @@ class Application:
         return exit_code
 
     def _run(self, io: IO) -> int:
-        if io.input.has_parameter_option(["--version", "-V"], True):
-            io.write_line(self.long_version)
-
-            return 0
-
         definition = self.definition
         input_definition = Definition()
         for argument in definition.arguments:
@@ -562,12 +557,6 @@ class Application:
                         "Increase the verbosity of messages: "
                         "1 for normal output, 2 for more verbose output and 3 for debug."
                     ),
-                ),
-                Option(
-                    "--version",
-                    "-V",
-                    flag=True,
-                    description="Display this application version.",
                 ),
                 Option("--ansi", flag=True, description="Force ANSI output."),
                 Option("--no-ansi", flag=True, description="Disable ANSI output."),

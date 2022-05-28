@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from cleo.commands.command import Command
+from cleo.helpers import option
 from cleo.io.inputs.argument import Argument
 
 
@@ -23,8 +24,16 @@ You can also display the commands for a specific namespace:
     arguments = [
         Argument("namespace", required=False, description="The namespace name")
     ]
+    options = [
+        option("version", "V", "Display this application version.", flag=True),
+    ]
 
     def handle(self) -> int:
+        if self.option("version"):
+            self.io.write_line(self.application.long_version)
+
+            return 0
+
         from cleo.descriptors.text_descriptor import TextDescriptor
 
         TextDescriptor().describe(
