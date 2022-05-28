@@ -5,6 +5,8 @@ import posixpath
 import re
 import subprocess
 
+from typing import Optional
+
 from .. import helpers
 from .command import Command
 from .completions.templates import TEMPLATES
@@ -381,7 +383,7 @@ script. Consult your shells documentation for how to add such directives.
 
         return output
 
-    def get_shell_type(self):
+    def get_shell_type(self) -> str:
         shell = os.getenv("SHELL")
         if not shell:
             raise RuntimeError(
@@ -391,18 +393,18 @@ script. Consult your shells documentation for how to add such directives.
 
         return os.path.basename(shell)
 
-    def _generate_function_name(self, script_name, script_path):
+    def _generate_function_name(self, script_name: str, script_path: str) -> str:
         return "_{}_{}_complete".format(
             self._sanitize_for_function_name(script_name),
             hashlib.md5(script_path.encode()).hexdigest()[0:16],
         )
 
-    def _sanitize_for_function_name(self, name):
+    def _sanitize_for_function_name(self, name: str) -> str:
         name = name.replace("-", "_")
 
         return re.sub("[^A-Za-z0-9_]+", "", name)
 
-    def _zsh_describe(self, value, description=None):
+    def _zsh_describe(self, value: str, description: Optional[str] = None) -> str:
         value = '"' + value.replace(":", "\\:")
         if description:
             description = re.sub(

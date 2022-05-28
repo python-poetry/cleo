@@ -1,6 +1,7 @@
 import math
 
 from html.parser import HTMLParser
+from typing import Any
 from typing import List
 
 from pylev import levenshtein
@@ -34,7 +35,7 @@ def _strip(value) -> str:
     return s.get_data()
 
 
-def strip_tags(value):
+def strip_tags(value: Any) -> str:
     value = str(value)
     while "<" in value and ">" in value:
         new_value = _strip(value)
@@ -46,7 +47,7 @@ def strip_tags(value):
     return value
 
 
-def find_similar_names(name, names):  # type: (str, List[str]) -> List[str]
+def find_similar_names(name: str, names: List[str]) -> List[str]:
     """
     Finds names similar to a given command name.
     """

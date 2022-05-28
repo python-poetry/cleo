@@ -20,7 +20,7 @@ class ConsoleErrorEvent(ConsoleEvent):
         super().__init__(command, io)
 
         self._error = error
-        self._exit_code = None
+        self._exit_code: Optional[int] = None
 
     @property
     def error(self) -> Exception:

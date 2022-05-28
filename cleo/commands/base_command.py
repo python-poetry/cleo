@@ -1,6 +1,8 @@
 import inspect
 
 from typing import TYPE_CHECKING
+from typing import Dict
+from typing import List
 from typing import Optional
 
 from cleo.exceptions import CleoException
@@ -14,7 +16,7 @@ if TYPE_CHECKING:
 
 class BaseCommand:
 
-    name = None
+    name: Optional[str] = None
 
     description = ""
 
@@ -23,14 +25,14 @@ class BaseCommand:
     enabled = True
     hidden = False
 
-    usages = []
+    usages: List[str] = []
 
     def __init__(self) -> None:
         self._definition = Definition()
         self._full_definition = None
         self._application = None
         self._ignore_validation_errors = False
-        self._synopsis = {}
+        self._synopsis: Dict[str, str] = {}
 
         self.configure()
 

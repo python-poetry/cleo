@@ -74,12 +74,12 @@ class Highlighter:
 
         return token_lines
 
-    def highlighted_lines(self, source):
+    def highlighted_lines(self, source: str) -> List[str]:
         source = source.replace("\r\n", "\n").replace("\r", "\n")
 
         return self.split_to_lines(source)
 
-    def split_to_lines(self, source):
+    def split_to_lines(self, source: str) -> List[str]:
         lines = []
         current_line = 1
         current_col = 0
@@ -88,7 +88,7 @@ class Highlighter:
         source_io = io.BytesIO(source.encode())
         formatter = Formatter()
 
-        def readline():
+        def readline() -> bytes:
             return formatter.format(
                 formatter.escape(source_io.readline().decode())
             ).encode()
@@ -286,7 +286,7 @@ class ExceptionTrace:
 
         self._render_solution(io, inspector)
 
-    def _render_snippet(self, io: Union[IO, Output], frame: Frame):
+    def _render_snippet(self, io: Union[IO, Output], frame: Frame) -> None:
         self._render_line(
             io,
             "at <fg=green>{}</>:<b>{}</b> in <fg=cyan>{}</>".format(
@@ -304,7 +304,7 @@ class ExceptionTrace:
         for code_line in code_lines:
             self._render_line(io, code_line, indent=4)
 
-    def _render_solution(self, io: Union[IO, Output], inspector: Inspector):
+    def _render_solution(self, io: Union[IO, Output], inspector: Inspector) -> None:
         if self._solution_provider_repository is None:
             return
 

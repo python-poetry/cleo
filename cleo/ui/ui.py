@@ -1,5 +1,6 @@
 from typing import Dict
 from typing import List
+from typing import Optional
 
 from cleo.exceptions import ValueException
 
@@ -7,7 +8,7 @@ from .component import Component
 
 
 class UI:
-    def __init__(self, components: List[Component] = None) -> None:
+    def __init__(self, components: Optional[List[Component]] = None) -> None:
         self._components: Dict[str, Component] = {}
 
         if components is None:

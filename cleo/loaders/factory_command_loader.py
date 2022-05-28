@@ -8,12 +8,15 @@ from ..exceptions import CommandNotFoundException
 from .command_loader import CommandLoader
 
 
+Factory = Callable[[], Command]
+
+
 class FactoryCommandLoader(CommandLoader):
     """
     A simple command loader using factories to instantiate commands lazily.
     """
 
-    def __init__(self, factories: Dict[str, Callable]) -> None:
+    def __init__(self, factories: Dict[str, Factory]) -> None:
         self._factories = factories
 
     @property

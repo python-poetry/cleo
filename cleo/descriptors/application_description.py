@@ -42,7 +42,7 @@ class ApplicationDescription:
 
         return self._commands.get(name, self._aliases.get(name))
 
-    def _inspect_application(self):
+    def _inspect_application(self) -> None:
         namespace = None
         if self._namespace:
             namespace = self._application.find_namespace(self._namespace)

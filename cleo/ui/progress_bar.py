@@ -84,7 +84,7 @@ class ProgressBar(Component):
         self._last_write_time = 0
         self._cursor = Cursor(self._io)
 
-    def set_message(self, message: str, name: str = "message"):
+    def set_message(self, message: str, name: str = "message") -> None:
         self._messages[name] = message
 
     def get_message(self, name: str = "message") -> str:
@@ -145,12 +145,12 @@ class ProgressBar(Component):
         if self.redraw_freq is not None:
             self.redraw_freq = max(freq, 1)
 
-    def min_seconds_between_redraws(self, freq):  # type:  (float) -> None
+    def min_seconds_between_redraws(self, freq: float) -> None:
         if freq > 0:
             self.redraw_freq = None
             self._min_seconds_between_redraws = freq
 
-    def max_seconds_between_redraws(self, freq):  # type: (float) -> None
+    def max_seconds_between_redraws(self, freq: float) -> None:
         self._max_seconds_between_redraws = freq
 
     def start(self, max: Optional[int] = None) -> None:
