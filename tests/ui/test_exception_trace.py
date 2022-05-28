@@ -1,3 +1,4 @@
+# NOTE: these tests reference line numbers from code in this file, so it's sensitive to refactoring
 import re
 
 import pytest
