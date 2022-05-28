@@ -21,7 +21,7 @@ To display a table, use the ``table()`` method, set the headers, set the rows an
     def handle(self):
         table = self.table()
 
-        table.set_header_row(['ISBN', 'Title', 'Author'])
+        table.set_headers(['ISBN', 'Title', 'Author'])
         table.set_rows([
             ['99921-58-10-7', 'Divine Comedy', 'Dante Alighieri'],
             ['9971-5-0210-0', 'A Tale of Two Cities', 'Charles Dickens'],

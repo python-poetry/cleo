@@ -315,7 +315,7 @@ def test_non_decorated_output(io):
     bar = ProgressBar(io, 200, 0)
     bar.start()
 
-    for i in range(200):
+    for _ in range(200):
         bar.advance()
 
     bar.finish()

@@ -35,7 +35,7 @@ class EventDispatcher:
 
             return self._sorted[event_name]
 
-        for event_name, event_listeners in self._listeners.items():
+        for event_name in self._listeners.keys():
             if event_name not in self._sorted:
                 self._sort_listeners(event_name)
 

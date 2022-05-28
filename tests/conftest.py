@@ -27,11 +27,12 @@ def ansi_io():
 
 @pytest.fixture()
 def environ():
-    current_environ = os.environ.copy()
+    current_environ = dict(os.environ)
 
     yield
 
-    os.environ = current_environ
+    os.environ.clear()
+    os.environ.update(current_environ)
 
 
 @pytest.fixture()
