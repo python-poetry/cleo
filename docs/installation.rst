@@ -3,7 +3,7 @@ Installation
 
 You can install Cleo in various ways:
 
-* Using [Poetry](https://poetry.eustace.io):
+* Using `Poetry <https://poetry.eustace.io>`_ :
 
     .. code-block:: bash
 
@@ -15,4 +15,4 @@ You can install Cleo in various ways:
 
         $ pip install cleo
 
-* Use the official repository (https://github.com/sdispater/cleo)
+* Use the `official repository <https://github.com/sdispater/cleo>`_
