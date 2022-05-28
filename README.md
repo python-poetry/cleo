@@ -1,6 +1,7 @@
 # Cleo
 
-[![Cleo Build status](https://travis-ci.org/sdispater/cleo.png)](https://travis-ci.org/sdispater/cleo)
+[![Tests](https://github.com/python-poetry/cleo/actions/workflows/tests.yml/badge.svg)](https://github.com/python-poetry/cleo/actions/workflows/tests.yml)
+[![PyPI version](https://img.shields.io/pypi/v/cleo)](https://pypi.org/project/cleo/)
 
 Create beautiful and testable command-line interfaces.
 
@@ -9,18 +10,18 @@ Cleo is mostly a higher level wrapper for
 components and utilities comes from it. Refer to its documentation for
 more information.
 
-# Resources
+## Resources
 
 - [Documentation](http://cleo.readthedocs.io)
 - [Issue Tracker](https://github.com/sdispater/cleo/issues)
 
-# Usage
+## Usage
 
 To make a command that greets you from the command line, create
 `greet_command.py` and add the following to it:
 
 ```python
-from cleo import Command
+from cleo.commands.command import Command
 
 
 class GreetCommand(Command):
@@ -33,32 +34,34 @@ class GreetCommand(Command):
     """
 
     def handle(self):
-        name = self.argument('name')
+        name = self.argument("name")
 
         if name:
-            text = 'Hello {}'.format(name)
+            text = f"Hello {name}"
         else:
-            text = 'Hello'
+            text = "Hello"
 
-        if self.option('yell'):
+        if self.option("yell"):
             text = text.upper()
 
         self.line(text)
 ```
 
-You also need to create the file to run at the command line which
+You also need to create the file `application.py` to run at the command line which
 creates an `Application` and adds commands to it:
 
 ```python
 #!/usr/bin/env python
 
 from greet_command import GreetCommand
-from cleo import Application
+
+from cleo.application import Application
+
 
 application = Application()
 application.add(GreetCommand())
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     application.run()
 ```
 
@@ -116,23 +119,23 @@ command:name
 """
 ```
 
-## Coloring the Output
+### Coloring the Output
 
 Whenever you output text, you can surround the text with tags to color
 its output. For example:
 
 ```python
 # green text
-self.line('<info>foo</info>')
+self.line("<info>foo</info>")
 
 # yellow text
-self.line('<comment>foo</comment>')
+self.line("<comment>foo</comment>")
 
 # black text on a cyan background
-self.line('<question>foo</question>')
+self.line("<question>foo</question>")
 
 # white text on a red background
-self.line('<error>foo</error>')
+self.line("<error>foo</error>")
 ```
 
 The closing tag can be replaced by `</>`, which revokes all formatting
@@ -141,8 +144,8 @@ options established by the last opened tag.
 It is possible to define your own styles using the `add_style()` method:
 
 ```python
-self.add_style('fire', fg='red', bg='yellow', options=['bold', 'blink'])
-self.line('<fire>foo</fire>')
+self.add_style("fire", fg="red", bg="yellow", options=["bold", "blink"])
+self.line("<fire>foo</fire>")
 ```
 
 Available foreground and background colors are: `black`, `red`, `green`,
@@ -155,16 +158,16 @@ You can also set these colors and options inside the tag name:
 
 ```python
 # green text
-self.line('<fg=green>foo</>')
+self.line("<fg=green>foo</>")
 
 # black text on a cyan background
-self.line('<fg=black;bg=cyan>foo</>')
+self.line("<fg=black;bg=cyan>foo</>")
 
 # bold text on a yellow background
-self.line('<bg=yellow;options=bold>foo</>')
+self.line("<bg=yellow;options=bold>foo</>")
 ```
 
-## Verbosity Levels
+### Verbosity Levels
 
 Cleo has four verbosity levels. These are defined in the `Output` class:
 
@@ -203,7 +206,7 @@ self.line("", verbosity=clikit.VERBOSITY_VERBOSE)
 
 When the quiet level is used, all output is suppressed.
 
-## Using Arguments
+### Using Arguments
 
 The most interesting part of the commands are the arguments and options
 that you can make available. Arguments are the strings - separated by
@@ -226,9 +229,9 @@ class GreetCommand(Command):
 You now have access to a `last_name` argument in your command:
 
 ```python
-last_name = self.argument('last_name')
+last_name = self.argument("last_name")
 if last_name:
-    text += ' {}'.format(last_name)
+    text += f" {last_name}"
 ```
 
 The command can now be used in either of the following ways:
@@ -262,9 +265,9 @@ $ python application.py greet John Jane
 You can access the `names` argument as a list:
 
 ```python
-names = self.argument('names')
+names = self.argument("names")
 if names:
-    text += ' {}'.format(', '.join(names))
+    text = "Hello " + ", ".join(names)
 ```
 
 There are 3 argument variants you can use:
@@ -296,7 +299,7 @@ argument=default
 
 The argument will then be considered optional.
 
-## Using Options
+### Using Options
 
 Unlike arguments, options are not ordered (meaning you can specify them
 in any order) and are specified with two dashes (e.g. `--yell` - you can
@@ -327,7 +330,7 @@ class GreetCommand(Command):
 Next, use this in the command to print the message multiple times:
 
 ```python
-for _ in range(0, self.option('iterations')):
+for _ in range(0, int(self.option("iterations"))):
     self.line(text)
 ```
 
@@ -373,23 +376,24 @@ class GreetCommand(Command):
     """
 ```
 
-## Testing Commands
+### Testing Commands
 
 Cleo provides several tools to help you test your commands. The most
 useful one is the `CommandTester` class. It uses a special IO class to
 ease testing without a real console:
 
 ```python
-import pytest
+from greet_command import GreetCommand
 
-from cleo import Application
-from cleo import CommandTester
+from cleo.application import Application
+from cleo.testers.command_tester import CommandTester
 
-def test_execute(self):
+
+def test_execute():
     application = Application()
     application.add(GreetCommand())
 
-    command = application.find('greet')
+    command = application.find("greet")
     command_tester = CommandTester(command)
     command_tester.execute()
 
@@ -405,16 +409,17 @@ You can test sending arguments and options to the command by passing
 them as a string to the `CommandTester.execute()` method:
 
 ```python
-import pytest
+from greet_command import GreetCommand
 
-from cleo import Application
-from cleo import CommandTester
+from cleo.application import Application
+from cleo.testers.command_tester import CommandTester
 
-def test_execute(self):
+
+def test_execute():
     application = Application()
     application.add(GreetCommand())
 
-    command = application.find('greet')
+    command = application.find("greet")
     command_tester = CommandTester(command)
     command_tester.execute("John")
 
@@ -424,7 +429,7 @@ def test_execute(self):
 You can also test a whole console application by using the
 `ApplicationTester` class.
 
-## Calling an existing Command
+### Calling an existing Command
 
 If a command depends on another one being run before it, instead of
 asking the user to remember the order of execution, you can call it
@@ -435,15 +440,14 @@ Calling a command from another one is straightforward:
 
 ```python
 def handle(self):
-    return_code = self.call('greet', "John --yell")
-
-    # ...
+    return_code = self.call("greet", "John --yell")
+    return return_code
 ```
 
 If you want to suppress the output of the executed command, you can use
 the `call_silent()` method instead.
 
-## Autocompletion
+### Autocompletion
 
 Cleo supports automatic (tab) completion in `bash`, `zsh` and `fish`.
 
@@ -451,7 +455,7 @@ To activate support for autocompletion, pass a `complete` keyword when
 initializing your application:
 
 ```python
-application = Application('My Application', '0.1', complete=True)
+application = Application("My Application", "0.1", complete=True)
 ```
 
 Now, register completion for your application by running one of the
@@ -459,20 +463,20 @@ following in a terminal, replacing `[program]` with the command you use
 to run your application:
 
 ```bash
-# BASH - Ubuntu / Debian
+# Bash
 [program] completions bash | sudo tee /etc/bash_completion.d/[program].bash-completion
 
-# BASH - Mac OSX (with Homebrew "bash-completion")
+# Bash - macOS/Homebrew (requires `brew install bash-completion`)
 [program] completions bash > $(brew --prefix)/etc/bash_completion.d/[program].bash-completion
 
-# Zsh - Config file
+# Zsh
 mkdir ~/.zfunc
 echo "fpath+=~/.zfunc" >> ~/.zshrc
 [program] completions zsh > ~/.zfunc/_[program]
 
-# Zsh (macOS/Homebrew)
+# Zsh - macOS/Homebrew
 [program] completions zsh > $(brew --prefix)/share/zsh/site-functions/_[program]
 
-# FISH
+# Fish
 [program] completions fish > ~/.config/fish/completions/[program].fish
 ```
