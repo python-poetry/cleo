@@ -73,7 +73,7 @@ def find_similar_names(name, names):  # type: (str, List[str]) -> List[str]
     }
 
     # Display results with shortest distance first
-    for k, v in sorted(distance_by_name.items(), key=lambda i: (i[1][0], i[1][1])):
+    for k, _v in sorted(distance_by_name.items(), key=lambda i: (i[1][0], i[1][1])):
         if k not in suggested_names:
             suggested_names.append(k)
 
