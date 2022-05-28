@@ -24,7 +24,7 @@ jobs:
     strategy:
       matrix:
         os: [Ubuntu, MacOS, Windows]
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
 
     steps:
       - uses: actions/checkout@v3
@@ -43,8 +43,7 @@ jobs:
       - name: Install Poetry
         shell: bash
         run: |
-          curl -fsS -o install-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/install-poetry.py
-          python install-poetry.py --version=1.2.0a2 -y
+          curl -sL https://install.python-poetry.org | python - --preview -y
 
       - name: Update PATH
         if: ${{ matrix.os != 'Windows' }}
