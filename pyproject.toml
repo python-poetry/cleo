@@ -7,7 +7,7 @@ authors = [
 ]
 license = "MIT"
 
-readme = "README.rst"
+readme = "README.md"
 
 homepage = "https://github.com/sdispater/cleo"
 
