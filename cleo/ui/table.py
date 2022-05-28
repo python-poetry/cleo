@@ -488,9 +488,7 @@ class Table:
                     )
 
                 # Create a two dimensional dict (rowspan x colspan)
-                placeholder = dict(
-                    [(k, {}) for k in range(line + 1, line + 1 + nb_lines)]
-                )
+                placeholder = {k: {} for k in range(line + 1, line + 1 + nb_lines)}
                 for k, v in unmerged_rows.items():
                     if k in placeholder:
                         for l, m in unmerged_rows[k].items():  # noqa: E741
@@ -565,7 +563,7 @@ class Table:
         """
         Copies a row.
         """
-        row = [x for x in rows[line]]
+        row = list(rows[line])
 
         for cell_key, cell_value in enumerate(row):
             row[cell_key] = ""

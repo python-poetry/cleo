@@ -249,7 +249,7 @@ script. Consult your shells documentation for how to add such directives.
             ["compdef {} {}".format(function, alias) for alias in aliases]
         )
 
-        commands = sorted(list(commands_options.keys()))
+        commands = sorted(commands_options.keys())
         command_list = []
         for i, command in enumerate(commands):
             options = set(commands_options[command]).difference(global_options)
@@ -344,7 +344,7 @@ script. Consult your shells documentation for how to add such directives.
                 )
             )
 
-        cmds_names = sorted(list(commands_options.keys()))
+        cmds_names = sorted(commands_options.keys())
 
         cmds = []
         cmds_opts = []
