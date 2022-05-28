@@ -141,12 +141,12 @@ class Color:
         return (round(b / 255) << 2) | (round(g / 255) << 1) | round(r / 255)
 
     def _get_saturation(self, r: int, g: int, b: int) -> int:
-        r = r / 255
-        g = g / 255
-        b = b / 255
-        v = max(r, g, b)
+        r_float = r / 255
+        g_float = g / 255
+        b_float = b / 255
+        v = max(r_float, g_float, b_float)
 
-        diff = v - min(r, g, b)
+        diff = v - min(r_float, g_float, b_float)
         if diff == 0:
             return 0
 

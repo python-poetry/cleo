@@ -4,6 +4,7 @@ from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import Sequence
 from typing import Union
 
 from cleo.exceptions import LogicException
@@ -18,7 +19,7 @@ class Definition:
     """
 
     def __init__(
-        self, definition: Optional[List[Union[Argument, Option]]] = None
+        self, definition: Optional[Sequence[Union[Argument, Option]]] = None
     ) -> None:
         self._arguments: Dict[str, Argument] = {}
         self._required_count = 0
@@ -68,7 +69,7 @@ class Definition:
 
         return values
 
-    def set_definition(self, definition: List[Union[Argument, Option]]) -> None:
+    def set_definition(self, definition: Sequence[Union[Argument, Option]]) -> None:
         arguments = []
         options = []
 

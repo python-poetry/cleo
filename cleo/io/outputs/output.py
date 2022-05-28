@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import TYPE_CHECKING
 from typing import Iterable
+from typing import List
 from typing import Optional
 from typing import Union
 
@@ -42,7 +43,7 @@ class Output:
         self._formatter = formatter
         self._formatter.decorated(decorated)
 
-        self._section_outputs = []
+        self._section_outputs: List[SectionOutput] = []
 
     @property
     def formatter(self) -> Formatter:

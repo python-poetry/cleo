@@ -1,3 +1,4 @@
+from typing import List
 from typing import Optional
 
 from cleo.exceptions import ValueException
@@ -11,7 +12,7 @@ class StyleStack:
             empty_style = Style()
 
         self._empty_style = empty_style
-        self._styles = []
+        self._styles: List[Style] = []
 
     @property
     def current(self) -> Style:

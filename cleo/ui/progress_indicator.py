@@ -168,7 +168,7 @@ class ProgressIndicator:
 
         return text
 
-    def _overwrite(self, message):
+    def _overwrite(self, message) -> None:
         """
         Overwrites a previous message to the output.
         """
@@ -197,14 +197,14 @@ class ProgressIndicator:
 
         return self.NORMAL_NO_ANSI
 
-    def _get_current_time_in_milliseconds(self):
+    def _get_current_time_in_milliseconds(self) -> int:
         return round(time.time() * 1000)
 
-    def _formatter_indicator(self):
+    def _formatter_indicator(self) -> str:
         return self.current_value
 
     def _formatter_message(self):
         return self.message
 
-    def _formatter_elapsed(self):
+    def _formatter_elapsed(self) -> str:
         return format_time(time.time() - self._start_time)

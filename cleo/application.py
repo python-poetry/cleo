@@ -60,21 +60,21 @@ class Application:
     def __init__(self, name: str = "console", version: str = "") -> None:
         self._name = name
         self._version = version
-        self._display_name = None
+        self._display_name: Optional[str] = None
         self._terminal = Terminal()
         self._default_command = "list"
         self._single_command = False
         self._commands: Dict[str, Command] = {}
         self._running_command = None
         self._want_helps = False
-        self._definition = None
+        self._definition: Optional[Definition] = None
         self._catch_exceptions = True
         self._auto_exit = True
         self._initialized = False
-        self._ui = None
+        self._ui: Optional[UI] = None
 
         # TODO: signals support
-        self._event_dispatcher = None
+        self._event_dispatcher: Optional[EventDispatcher] = None
 
         self._command_loader: Optional[CommandLoader] = None
 
@@ -185,7 +185,7 @@ class Application:
         if not command.enabled:
             command.set_application()
 
-            return
+            return None
 
         if not command.name:
             raise LogicException(

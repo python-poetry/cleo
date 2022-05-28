@@ -14,13 +14,13 @@ class Formatter:
 
     TAG_REGEX = re.compile(r"(?ix)<(([a-z](?:[^<>]*)) | /([a-z](?:[^<>]*))?)>")
 
-    _inline_styles_cache = {}
+    _inline_styles_cache: Dict[str, Style] = {}
 
     def __init__(
         self, decorated: bool = False, styles: Optional[Dict[str, Style]] = None
     ) -> None:
         self._decorated = decorated
-        self._styles = {}
+        self._styles: Dict[str, Style] = {}
 
         self.set_style("error", Style("red", options=["bold"]))
         self.set_style("info", Style("blue"))

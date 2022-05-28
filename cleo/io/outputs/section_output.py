@@ -24,7 +24,7 @@ class SectionOutput(StreamOutput):
             stream, verbosity=verbosity, decorated=decorated, formatter=formatter
         )
 
-        self._content = []
+        self._content: List[str] = []
         self._lines = 0
         sections.insert(0, self)
         self._sections = sections

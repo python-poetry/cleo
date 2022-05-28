@@ -13,6 +13,7 @@ from cleo.io.io import IO
 from cleo.io.null_io import NullIO
 from cleo.io.outputs.output import Verbosity
 from cleo.parser import Parser
+from cleo.ui.table_separator import TableSeparator
 
 from .base_command import BaseCommand
 
@@ -34,7 +35,7 @@ class Command(BaseCommand):
 
     commands = []
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._io: Optional[IO] = None
         super().__init__()
 
@@ -222,7 +223,7 @@ class Command(BaseCommand):
 
         return table
 
-    def table_separator(self):
+    def table_separator(self) -> "TableSeparator":
         """
         Return a TableSeparator instance.
         """
@@ -230,7 +231,7 @@ class Command(BaseCommand):
 
         return TableSeparator()
 
-    def render_table(self, headers, rows, style=None):
+    def render_table(self, headers, rows, style=None) -> None:
         """
         Format input to textual table.
         """
@@ -238,7 +239,7 @@ class Command(BaseCommand):
 
         table.render()
 
-    def write(self, text, style=None):
+    def write(self, text: str, style: Optional[str] = None) -> None:
         """
         Writes a string without a new line.
         Useful if you want to use overwrite().
@@ -255,7 +256,7 @@ class Command(BaseCommand):
         text: str,
         style: Optional[str] = None,
         verbosity: Verbosity = Verbosity.NORMAL,
-    ):
+    ) -> None:
         """
         Write a string as information output.
         """
@@ -271,7 +272,7 @@ class Command(BaseCommand):
         text: str,
         style: Optional[str] = None,
         verbosity: Verbosity = Verbosity.NORMAL,
-    ):
+    ) -> None:
         """
         Write a string as information output to stderr.
         """
@@ -282,7 +283,7 @@ class Command(BaseCommand):
 
         self._io.write_error_line(styled, verbosity)
 
-    def info(self, text):
+    def info(self, text: str) -> None:
         """
         Write a string as information output.
 
@@ -291,7 +292,7 @@ class Command(BaseCommand):
         """
         self.line(text, "info")
 
-    def comment(self, text):
+    def comment(self, text: str) -> None:
         """
         Write a string as comment output.
 
@@ -300,7 +301,7 @@ class Command(BaseCommand):
         """
         self.line(text, "comment")
 
-    def question(self, text):
+    def question(self, text: str) -> None:
         """
         Write a string as question output.
 
@@ -330,7 +331,14 @@ class Command(BaseCommand):
 
         return ProgressIndicator(self.io, fmt, interval, values)
 
-    def spin(self, start_message, end_message, fmt=None, interval=100, values=None):
+    def spin(
+        self,
+        start_message: str,
+        end_message: str,
+        fmt: Optional[str] = None,
+        interval=100,
+        values: Optional[List[str]] = None,
+    ):
         """
         Automatically spin a progress indicator.
         """
@@ -338,7 +346,13 @@ class Command(BaseCommand):
 
         return spinner.auto(start_message, end_message)
 
-    def add_style(self, name, fg=None, bg=None, options=None):
+    def add_style(
+        self,
+        name: str,
+        fg: Optional[str] = None,
+        bg: Optional[str] = None,
+        options: Optional[List[str]] = None,
+    ) -> None:
         """
         Adds a new style
         """
@@ -359,7 +373,7 @@ class Command(BaseCommand):
         self._io.output.formatter.add_style(style)
         self._io.error_output.formatter.add_style(style)
 
-    def overwrite(self, text):
+    def overwrite(self, text: str) -> None:
         """
         Overwrites the current line.
 

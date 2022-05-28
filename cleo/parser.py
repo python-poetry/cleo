@@ -15,7 +15,7 @@ class Parser:
         """
         Parse the given console command definition into a dict.
         """
-        parsed = {"name": None, "arguments": [], "options": []}
+        parsed: Dict[str, Any] = {"name": None, "arguments": [], "options": []}
 
         if not expression.strip():
             raise ValueError("Console command signature is empty.")

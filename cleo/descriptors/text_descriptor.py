@@ -3,6 +3,7 @@ import re
 
 from typing import Any
 from typing import List
+from typing import Sequence
 from typing import Union
 
 from cleo.application import Application
@@ -263,7 +264,7 @@ class TextDescriptor(Descriptor):
 
         return total_width
 
-    def _get_column_width(self, commands: List[Union[Command, str]]) -> int:
+    def _get_column_width(self, commands: Sequence[Union[Command, str]]) -> int:
         widths = []
 
         for command in commands:
