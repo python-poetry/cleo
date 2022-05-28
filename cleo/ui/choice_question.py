@@ -5,7 +5,7 @@ from typing import List
 from typing import Optional
 from typing import Union
 
-from cleo.exceptions import ValueException
+from cleo.exceptions import ValueError
 from cleo.io.io import IO
 
 from .question import Question
@@ -35,7 +35,7 @@ class SelectChoiceValidator:
         if self._question.supports_multiple_choices():
             # Check for a separated comma values
             if not re.match("^[a-zA-Z0-9_-]+(?:,[a-zA-Z0-9_-]+)*$", selected_choices):
-                raise ValueException(self._question.error_message.format(selected))
+                raise ValueError(self._question.error_message.format(selected))
 
             selected_choices = selected_choices.split(",")
         else:
@@ -50,7 +50,7 @@ class SelectChoiceValidator:
                     results.append(key)
 
             if len(results) > 1:
-                raise ValueException(
+                raise ValueError(
                     "The provided answer is ambiguous. Value should be one of {}.".format(
                         " or ".join(str(r) for r in results)
                     )
@@ -71,7 +71,7 @@ class SelectChoiceValidator:
                     result = False
 
             if result is False:
-                raise ValueException(self._question.error_message.format(value))
+                raise ValueError(self._question.error_message.format(value))
 
             multiselect_choices.append(result)
 

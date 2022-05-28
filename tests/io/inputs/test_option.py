@@ -1,7 +1,7 @@
 import pytest
 
-from cleo.exceptions import LogicException
-from cleo.exceptions import ValueException
+from cleo.exceptions import LogicError
+from cleo.exceptions import ValueError
 from cleo.io.inputs.option import Option
 
 
@@ -24,17 +24,17 @@ def test_dashed_name():
 
 
 def test_fail_if_name_is_empty():
-    with pytest.raises(ValueException):
+    with pytest.raises(ValueError):
         Option("")
 
 
 def test_fail_if_default_value_provided_for_flag():
-    with pytest.raises(LogicException):
+    with pytest.raises(LogicError):
         Option("option", flag=True, default="default")
 
 
 def test_fail_if_wrong_default_value_for_list_option():
-    with pytest.raises(LogicException):
+    with pytest.raises(LogicError):
         Option("option", flag=False, is_list=True, default="default")
 
 
@@ -57,7 +57,7 @@ def test_multiple_shortcuts():
 
 
 def test_fail_if_shortcut_is_empty():
-    with pytest.raises(ValueException):
+    with pytest.raises(ValueError):
         Option("option", "")
 
 

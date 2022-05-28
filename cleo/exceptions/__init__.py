@@ -4,42 +4,42 @@ from typing import Optional
 from cleo._utils import find_similar_names
 
 
-class CleoException(Exception):
+class CleoError(Exception):
 
     exit_code: Optional[int] = None
 
 
-class CleoSimpleException(Exception):
+class CleoSimpleError(Exception):
 
     pass
 
 
-class LogicException(CleoException):
+class LogicError(CleoError):
 
     pass
 
 
-class RuntimeException(CleoException):
+class RuntimeError(CleoError):
 
     pass
 
 
-class ValueException(CleoException):
+class ValueError(CleoError):
 
     pass
 
 
-class MissingArgumentsException(CleoSimpleException):
+class MissingArgumentsError(CleoSimpleError):
 
     pass
 
 
-class NoSuchOptionException(CleoException):
+class NoSuchOptionError(CleoError):
 
     pass
 
 
-class CommandNotFoundException(CleoSimpleException):
+class CommandNotFoundError(CleoSimpleError):
     def __init__(self, name: str, commands: Optional[List[str]] = None) -> None:
         message = 'The command "{}" does not exist.'.format(name)
 
@@ -57,7 +57,7 @@ class CommandNotFoundException(CleoSimpleException):
         super().__init__(message)
 
 
-class NamespaceNotFoundException(CleoSimpleException):
+class NamespaceNotFoundError(CleoSimpleError):
     def __init__(self, name: str, namespaces: Optional[List[str]] = None) -> None:
         message = 'There are no commands in the "{}" namespace.'.format(name)
 

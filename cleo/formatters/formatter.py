@@ -4,7 +4,7 @@ from typing import Dict
 from typing import Optional
 from typing import Tuple
 
-from cleo.exceptions import ValueException
+from cleo.exceptions import ValueError
 
 from .style import Style
 from .style_stack import StyleStack
@@ -74,7 +74,7 @@ class Formatter:
 
     def style(self, name: str) -> Style:
         if not self.has_style(name):
-            raise ValueException(f'Undefined style: "{name}"')
+            raise ValueError(f'Undefined style: "{name}"')
 
         return self._styles[name]
 

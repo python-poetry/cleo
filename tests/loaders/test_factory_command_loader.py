@@ -1,7 +1,7 @@
 import pytest
 
 from cleo.commands.command import Command
-from cleo.exceptions import CommandNotFoundException
+from cleo.exceptions import CommandNotFoundError
 from cleo.loaders.factory_command_loader import FactoryCommandLoader
 
 
@@ -36,7 +36,7 @@ def test_get_invalid_command_raises_error():
         {"foo": lambda: command("foo"), "bar": lambda: command("bar")}
     )
 
-    with pytest.raises(CommandNotFoundException):
+    with pytest.raises(CommandNotFoundError):
         loader.get("baz")
 
 

@@ -8,8 +8,8 @@ from typing import TextIO
 from typing import Union
 
 from cleo._compat import shell_quote
-from cleo.exceptions import MissingArgumentsException
-from cleo.exceptions import ValueException
+from cleo.exceptions import MissingArgumentsError
+from cleo.exceptions import ValueError
 
 from .definition import Definition
 
@@ -112,7 +112,7 @@ class Input:
                 missing_arguments.append(argument.name)
 
         if missing_arguments:
-            raise MissingArgumentsException(
+            raise MissingArgumentsError(
                 'Not enough arguments (missing: "{}")'.format(
                     ", ".join(missing_arguments)
                 )
@@ -120,7 +120,7 @@ class Input:
 
     def argument(self, name: str) -> Any:
         if not self._definition.has_argument(name):
-            raise ValueException(f'The argument "{name}" does not exist')
+            raise ValueError(f'The argument "{name}" does not exist')
 
         if name in self._arguments:
             return self._arguments[name]
@@ -129,7 +129,7 @@ class Input:
 
     def set_argument(self, name: str, value: Any) -> None:
         if not self._definition.has_argument(name):
-            raise ValueException(f'The argument "{name}" does not exist')
+            raise ValueError(f'The argument "{name}" does not exist')
 
         self._arguments[name] = value
 
@@ -138,7 +138,7 @@ class Input:
 
     def option(self, name: str) -> Any:
         if not self._definition.has_option(name):
-            raise ValueException(f'The option "--{name}" does not exist')
+            raise ValueError(f'The option "--{name}" does not exist')
 
         if name in self._options:
             return self._options[name]
@@ -147,7 +147,7 @@ class Input:
 
     def set_option(self, name: str, value: Any) -> None:
         if not self._definition.has_option(name):
-            raise ValueException(f'The option "--{name}" does not exist')
+            raise ValueError(f'The option "--{name}" does not exist')
 
         self._options[name] = value
 

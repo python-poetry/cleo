@@ -6,7 +6,7 @@ from typing import Union
 
 from cleo.application import Application
 from cleo.commands.command import Command
-from cleo.exceptions import CommandNotFoundException
+from cleo.exceptions import CommandNotFoundError
 
 
 class ApplicationDescription(object):
@@ -38,7 +38,7 @@ class ApplicationDescription(object):
 
     def command(self, name: str) -> Command:
         if name not in self._commands and name not in self._aliases:
-            raise CommandNotFoundException(name)
+            raise CommandNotFoundError(name)
 
         return self._commands.get(name, self._aliases.get(name))
 

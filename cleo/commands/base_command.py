@@ -3,7 +3,7 @@ import inspect
 from typing import TYPE_CHECKING
 from typing import Optional
 
-from cleo.exceptions import CleoException
+from cleo.exceptions import CleoError
 from cleo.io.inputs.definition import Definition
 from cleo.io.io import IO
 
@@ -101,7 +101,7 @@ class BaseCommand(object):
 
         try:
             io.input.bind(self.definition)
-        except CleoException:
+        except CleoError:
             if not self._ignore_validation_errors:
                 raise
 

@@ -1,6 +1,6 @@
 from typing import Optional
 
-from cleo.exceptions import ValueException
+from cleo.exceptions import ValueError
 
 from .style import Style
 
@@ -39,4 +39,4 @@ class StyleStack:
 
                 return stacked_style
 
-        raise ValueException("Invalid nested tag found")
+        raise ValueError("Invalid nested tag found")

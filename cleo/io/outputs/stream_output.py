@@ -18,6 +18,10 @@ from .output import Verbosity
 if TYPE_CHECKING:
     from .section_output import SectionOutput
 
+FILE_TYPE_CHAR = 0x0002
+FILE_TYPE_REMOTE = 0x8000
+ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004
+
 
 class StreamOutput(Output):
     def __init__(
@@ -112,10 +116,6 @@ class StreamOutput(Output):
             # Activate colors if possible
             import ctypes
             import ctypes.wintypes
-
-            FILE_TYPE_CHAR = 0x0002
-            FILE_TYPE_REMOTE = 0x8000
-            ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004
 
             kernel32 = ctypes.windll.kernel32
 

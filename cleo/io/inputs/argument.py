@@ -1,7 +1,7 @@
 from typing import Any
 from typing import Optional
 
-from cleo.exceptions import LogicException
+from cleo.exceptions import LogicError
 
 
 class Argument:
@@ -45,15 +45,13 @@ class Argument:
 
     def set_default(self, default: Optional[Any] = None) -> None:
         if self._required and default is not None:
-            raise LogicException("Cannot set a default value for required arguments")
+            raise LogicError("Cannot set a default value for required arguments")
 
         if self._is_list:
             if default is None:
                 default = []
             elif not isinstance(default, list):
-                raise LogicException(
-                    "A default value for a list argument must be a list"
-                )
+                raise LogicError("A default value for a list argument must be a list")
 
         self._default = default
 

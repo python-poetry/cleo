@@ -3,7 +3,7 @@ import os
 from typing import List
 from typing import Optional
 
-from .exceptions import ValueException
+from .exceptions import ValueError
 
 
 class Color:
@@ -109,14 +109,14 @@ class Color:
                 color = color[0] * 2 + color[1] * 2 + color[2] * 2
 
             if len(color) != 6:
-                raise ValueException('"{}" is an invalid color'.format(color))
+                raise ValueError('"{}" is an invalid color'.format(color))
 
             return ("4" if background else "3") + self._convert_hex_color_to_ansi(
                 int(color, 16)
             )
 
         if color not in self.COLORS:
-            raise ValueException(
+            raise ValueError(
                 '"{}" is an invalid color. It must be one of {}'.format(
                     color, ", ".join(self.COLORS.keys())
                 )

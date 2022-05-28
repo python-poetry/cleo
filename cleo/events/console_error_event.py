@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 from typing import Optional
 
-from cleo.exceptions import CleoException
+from cleo.exceptions import CleoError
 from cleo.io.io import IO
 
 from .console_event import ConsoleEvent
@@ -31,7 +31,7 @@ class ConsoleErrorEvent(ConsoleEvent):
         if self._exit_code is not None:
             return self._exit_code
 
-        if isinstance(self._error, CleoException) and self._error.exit_code is not None:
+        if isinstance(self._error, CleoError) and self._error.exit_code is not None:
             return self._error.exit_code
 
         return 1

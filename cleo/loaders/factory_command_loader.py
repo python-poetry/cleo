@@ -4,7 +4,7 @@ from typing import List
 
 from cleo.commands.command import Command
 
-from ..exceptions import CommandNotFoundException
+from ..exceptions import CommandNotFoundError
 from .command_loader import CommandLoader
 
 
@@ -25,7 +25,7 @@ class FactoryCommandLoader(CommandLoader):
 
     def get(self, name: str) -> Command:
         if name not in self._factories:
-            raise CommandNotFoundException(name)
+            raise CommandNotFoundError(name)
 
         factory = self._factories[name]
 

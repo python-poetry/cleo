@@ -115,7 +115,7 @@ class Terminal:
 
     @classmethod
     def _get_terminal_size_linux(cls) -> Optional[Tuple[int, int]]:
-        def ioctl_GWINSZ(fd):
+        def ioctl_GWINSZ(fd):  # noqa: N802
             try:
                 import fcntl
                 import termios

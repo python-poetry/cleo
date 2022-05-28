@@ -5,8 +5,8 @@ from typing import List
 from typing import Optional
 from typing import Union
 
-from cleo.exceptions import NoSuchOptionException
-from cleo.exceptions import RuntimeException
+from cleo.exceptions import NoSuchOptionError
+from cleo.exceptions import RuntimeError
 from cleo.io.inputs.definition import Definition
 
 from .input import Input
@@ -191,7 +191,7 @@ class ArgvInput(Input):
         length = len(name)
         for i in range(length):
             if not self._definition.has_shortcut(name[i]):
-                raise RuntimeException(f'The option "{name[i]}" does not exist')
+                raise RuntimeError(f'The option "{name[i]}" does not exist')
 
             option = self._definition.option_for_shortcut(name[i])
             if option.accepts_value():
@@ -255,11 +255,11 @@ class ArgvInput(Input):
             else:
                 message = 'No arguments expected, got "{}"'.format(token)
 
-            raise RuntimeException(message)
+            raise RuntimeError(message)
 
     def _add_short_option(self, shortcut: str, value: Any) -> None:
         if not self._definition.has_shortcut(shortcut):
-            raise NoSuchOptionException(f'The option "-{shortcut}" does not exist')
+            raise NoSuchOptionError(f'The option "-{shortcut}" does not exist')
 
         self._add_long_option(
             self._definition.option_for_shortcut(shortcut).name, value
@@ -267,12 +267,12 @@ class ArgvInput(Input):
 
     def _add_long_option(self, name: str, value: Any) -> None:
         if not self._definition.has_option(name):
-            raise NoSuchOptionException(f'The option "--{name}" does not exist')
+            raise NoSuchOptionError(f'The option "--{name}" does not exist')
 
         option = self._definition.option(name)
 
         if value is not None and not option.accepts_value():
-            raise RuntimeException(f'The "--{name}" option does not accept a value')
+            raise RuntimeError(f'The "--{name}" option does not accept a value')
 
         if value in ["", None] and option.accepts_value() and self._parsed:
             # If the option accepts a value, either required or optional,
@@ -285,7 +285,7 @@ class ArgvInput(Input):
 
         if value is None:
             if option.requires_value():
-                raise RuntimeException(f'The "--{name}" option requires a value')
+                raise RuntimeError(f'The "--{name}" option requires a value')
 
             if not option.is_list() and option.is_flag():
                 value = True

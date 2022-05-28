@@ -19,11 +19,11 @@ from .events.console_events import ERROR
 from .events.console_events import TERMINATE
 from .events.console_terminate_event import ConsoleTerminateEvent
 from .events.event_dispatcher import EventDispatcher
-from .exceptions import CleoException
-from .exceptions import CleoSimpleException
-from .exceptions import CommandNotFoundException
-from .exceptions import LogicException
-from .exceptions import NamespaceNotFoundException
+from .exceptions import CleoError
+from .exceptions import CleoSimpleError
+from .exceptions import CommandNotFoundError
+from .exceptions import LogicError
+from .exceptions import NamespaceNotFoundError
 from .io.inputs.argument import Argument
 from .io.inputs.argv_input import ArgvInput
 from .io.inputs.definition import Definition
@@ -187,7 +187,7 @@ class Application:
             return
 
         if not command.name:
-            raise LogicException(
+            raise LogicError(
                 'The command "{}" cannot have an empty name'.format(
                     command.__class__.__name__
                 )
@@ -204,11 +204,11 @@ class Application:
         self._init()
 
         if not self.has(name):
-            raise CommandNotFoundException(name)
+            raise CommandNotFoundError(name)
 
         if name not in self._commands:
             # The command was registered in a different name in the command loader
-            raise CommandNotFoundException(name)
+            raise CommandNotFoundError(name)
 
         command = self._commands[name]
 
@@ -264,7 +264,7 @@ class Application:
         all_namespaces = self.get_namespaces()
 
         if namespace not in all_namespaces:
-            raise NamespaceNotFoundException(namespace, all_namespaces)
+            raise NamespaceNotFoundError(namespace, all_namespaces)
 
         return namespace
 
@@ -282,7 +282,7 @@ class Application:
             name for name, command in self._commands.items() if not command.hidden
         ]
 
-        raise CommandNotFoundException(name, all_commands)
+        raise CommandNotFoundError(name, all_commands)
 
     def all(self, namespace: Optional[str] = None) -> Dict[str, Command]:
         self._init()
@@ -368,7 +368,7 @@ class Application:
         try:
             # Makes ArgvInput.first_argument() able to distinguish an option from an argument.
             io.input.bind(input_definition)
-        except CleoException:
+        except CleoError:
             # Errors must be ignored, full binding/validation happens later when the command is known.
             pass
 
@@ -436,7 +436,7 @@ class Application:
         try:
             command.merge_application_definition()
             io.input.bind(command.definition)
-        except CleoException:
+        except CleoError:
             # Ignore invalid option/arguments for now,
             # to allow the listeners to customize the definition
             pass
@@ -492,7 +492,7 @@ class Application:
         trace = ExceptionTrace(
             error, solution_provider_repository=self._solution_provider_repository
         )
-        trace.render(io.error_output, isinstance(error, CleoSimpleException))
+        trace.render(io.error_output, isinstance(error, CleoSimpleError))
 
     def _configure_io(self, io: IO) -> None:
         if io.input.has_parameter_option("--ansi", True):
