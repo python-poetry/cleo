@@ -20,11 +20,11 @@ pylev = "^1.3.0"
 crashtest = "^0.3.1"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.1"
-pytest-mock = "^3.4.0"
-pre-commit = "^2.9.3"
-pytest-cov = "^2.10.1"
-tox = "^3.20.1"
+pytest = "^7.1.2"
+pytest-mock = "^3.7.0"
+pre-commit = "^2.19.0"
+pytest-cov = "^3.0.0"
+tox = "^3.25.0"
 
 [tool.isort]
 profile = "black"
