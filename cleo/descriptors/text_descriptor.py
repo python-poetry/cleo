@@ -164,6 +164,7 @@ class TextDescriptor(Descriptor):
 
         described_namespace = options.get("namespace")
         description = ApplicationDescription(application, namespace=described_namespace)
+        definition = options.pop("definition", application.definition)
 
         help_text = application.help
         if help_text:
@@ -172,7 +173,7 @@ class TextDescriptor(Descriptor):
         self._write("<b>Usage:</b>\n")
         self._write("  command [options] [arguments]\n\n")
 
-        self._describe_definition(Definition(application.definition.options), **options)
+        self._describe_definition(Definition(definition.options), **options)
 
         self._write("\n")
         self._write("\n")

@@ -37,7 +37,10 @@ You can also display the commands for a specific namespace:
         from cleo.descriptors.text_descriptor import TextDescriptor
 
         TextDescriptor().describe(
-            self._io, self.application, namespace=self.argument("namespace")
+            self._io,
+            self.application,
+            namespace=self.argument("namespace"),
+            definition=self.definition,
         )
 
         return 0
