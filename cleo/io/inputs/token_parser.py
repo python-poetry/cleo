@@ -8,10 +8,10 @@ class TokenParser:
     """
 
     def __init__(self) -> None:
-        self._string = ""  # type: str
-        self._cursor = 0  # type: int
-        self._current = None  # type: Optional[str]
-        self._next_ = None  # type: Optional[str]
+        self._string: str = ""
+        self._cursor: int = 0
+        self._current: Optional[str] = None
+        self._next_: Optional[str] = None
 
     def parse(self, string: str) -> List[str]:
         self._string = string

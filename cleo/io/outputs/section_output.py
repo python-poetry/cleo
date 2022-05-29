@@ -55,11 +55,11 @@ class SectionOutput(StreamOutput):
             self._pop_stream_content_until_current_section(lines), new_line=False
         )
 
-    def overwrite(self, message):  # type: (str) -> None
+    def overwrite(self, message: str) -> None:
         self.clear()
         self.write_line(message)
 
-    def add_content(self, content):  # type: (str) -> None
+    def add_content(self, content: str) -> None:
         for line_content in content.split("\n"):
             self._lines += (
                 math.ceil(

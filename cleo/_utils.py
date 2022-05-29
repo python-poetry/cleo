@@ -94,7 +94,7 @@ _TIME_FORMATS = [
 ]
 
 
-def format_time(secs):  # type: (float) -> str
+def format_time(secs: float) -> str:
     for fmt in _TIME_FORMATS:
         if secs > fmt[0]:
             continue

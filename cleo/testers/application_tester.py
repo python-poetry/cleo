@@ -23,11 +23,11 @@ class ApplicationTester:
         return self._application
 
     @property
-    def io(self):  # type: () -> BufferedIO
+    def io(self) -> BufferedIO:
         return self._io
 
     @property
-    def status_code(self):  # type: () -> int
+    def status_code(self) -> int:
         return self._status_code
 
     def execute(
