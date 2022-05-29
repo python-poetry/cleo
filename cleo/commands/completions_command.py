@@ -101,7 +101,7 @@ to add the proper directives, such as `source`ing inside your login \
 script. Consult your shells documentation for how to add such directives.
 """
 
-    def handle(self):  # type: () -> int
+    def handle(self) -> int:
         shell = self.argument("shell")
         if not shell:
             shell = self.get_shell_type()
@@ -117,10 +117,10 @@ script. Consult your shells documentation for how to add such directives.
 
         return 0
 
-    def render(self, shell):  # type: (str) -> str
+    def render(self, shell: str) -> str:
         return getattr(self, f"render_{shell}")()
 
-    def render_bash(self):  # type: () -> str
+    def render_bash(self) -> str:
         template = TEMPLATES["bash"]
 
         script_name = self._io.input.script_name

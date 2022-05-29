@@ -40,7 +40,7 @@ class Command(BaseCommand):
         super().__init__()
 
     @property
-    def io(self):  # type: () -> IO
+    def io(self) -> IO:
         return self._io
 
     def configure(self) -> None:
@@ -104,7 +104,7 @@ class Command(BaseCommand):
 
         return self.application._run_command(command, self._io.with_input(input))
 
-    def call_silent(self, name, args=None):  # type: (str, Optional[str]) -> int
+    def call_silent(self, name: str, args: Optional[str] = None) -> int:
         """
         Call another command silently.
         """
