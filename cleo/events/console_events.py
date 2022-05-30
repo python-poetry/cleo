@@ -1,6 +1,9 @@
 # The COMMAND event allows to attach listeners before any command
 # is executed. It also allows the modification of the command and IO
 # before it's handed to the command.
+from __future__ import annotations
+
+
 COMMAND = "console.command"
 
 # The SIGNAL event allows some actions to be performed after
