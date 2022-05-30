@@ -500,21 +500,32 @@ Autocompletion
 
 Cleo supports automatic (tab) completion in ``bash``, ``zsh`` and ``fish``.
 
-You can register completion for your application by running one of the following in a terminal,
-replacing ``[program]`` with the command you use to run your application:
+To activate support for autocompletion, pass a ``complete`` keyword when
+initializing your application:
+
+.. code-block:: python
+
+    application = Application("My Application", "0.1", complete=True)
+
+Now, register completion for your application by running one of the
+following in a terminal, replacing ``[program]`` with the command you use
+to run your application:
 
 .. code-block:: bash
 
-    # BASH - Ubuntu / Debian
+    # Bash
     [program] completions bash | sudo tee /etc/bash_completion.d/[program].bash-completion
 
-    # BASH - Mac OSX (with Homebrew "bash-completion")
+    # Bash - macOS/Homebrew (requires `brew install bash-completion`)
     [program] completions bash > $(brew --prefix)/etc/bash_completion.d/[program].bash-completion
 
-    # ZSH - Config file
+    # Zsh
     mkdir ~/.zfunc
     echo "fpath+=~/.zfunc" >> ~/.zshrc
-    [program] completions zsh > ~/.zfunc/_test
+    [program] completions zsh > ~/.zfunc/_[program]
 
-    # FISH
+    # Zsh - macOS/Homebrew
+    [program] completions zsh > $(brew --prefix)/share/zsh/site-functions/_[program]
+
+    # Fish
     [program] completions fish > ~/.config/fish/completions/[program].fish
