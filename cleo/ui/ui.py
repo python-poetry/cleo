@@ -1,17 +1,13 @@
 from __future__ import annotations
 
-from typing import Dict
-from typing import List
-from typing import Optional
-
 from cleo.exceptions import ValueException
 
 from .component import Component
 
 
 class UI:
-    def __init__(self, components: Optional[List[Component]] = None) -> None:
-        self._components: Dict[str, Component] = {}
+    def __init__(self, components: list[Component] | None = None) -> None:
+        self._components: dict[str, Component] = {}
 
         if components is None:
             components = []

@@ -5,9 +5,6 @@ import re
 
 from typing import TYPE_CHECKING
 from typing import Any
-from typing import List
-from typing import Optional
-from typing import Union
 
 from cleo.formatters.style import Style
 from cleo.io.inputs.string_input import StringInput
@@ -38,7 +35,7 @@ class Command(BaseCommand):
     commands = []
 
     def __init__(self) -> None:
-        self._io: Optional[IO] = None
+        self._io: IO | None = None
         super().__init__()
 
     @property
@@ -94,7 +91,7 @@ class Command(BaseCommand):
         """
         raise NotImplementedError()
 
-    def call(self, name: str, args: Optional[str] = None) -> int:
+    def call(self, name: str, args: str | None = None) -> int:
         """
         Call another command.
         """
@@ -106,7 +103,7 @@ class Command(BaseCommand):
 
         return self.application._run_command(command, self._io.with_input(input))
 
-    def call_silent(self, name: str, args: Optional[str] = None) -> int:
+    def call_silent(self, name: str, args: str | None = None) -> int:
         """
         Call another command silently.
         """
@@ -144,9 +141,7 @@ class Command(BaseCommand):
 
         return question.ask(self._io)
 
-    def ask(
-        self, question: Union[str, "Question"], default: Optional[Any] = None
-    ) -> Any:
+    def ask(self, question: str | Question, default: Any | None = None) -> Any:
         """
         Prompt the user for input.
         """
@@ -157,9 +152,7 @@ class Command(BaseCommand):
 
         return question.ask(self._io)
 
-    def secret(
-        self, question: Union[str, "Question"], default: Optional[Any] = None
-    ) -> Any:
+    def secret(self, question: str | Question, default: Any | None = None) -> Any:
         """
         Prompt the user for input but hide the answer from the console.
         """
@@ -175,9 +168,9 @@ class Command(BaseCommand):
     def choice(
         self,
         question: str,
-        choices: List[str],
-        default: Optional[Any] = None,
-        attempts: Optional[int] = None,
+        choices: list[str],
+        default: Any | None = None,
+        attempts: int | None = None,
         multiple: bool = False,
     ) -> Any:
         """
@@ -225,7 +218,7 @@ class Command(BaseCommand):
 
         return table
 
-    def table_separator(self) -> "TableSeparator":
+    def table_separator(self) -> TableSeparator:
         """
         Return a TableSeparator instance.
         """
@@ -241,7 +234,7 @@ class Command(BaseCommand):
 
         table.render()
 
-    def write(self, text: str, style: Optional[str] = None) -> None:
+    def write(self, text: str, style: str | None = None) -> None:
         """
         Writes a string without a new line.
         Useful if you want to use overwrite().
@@ -256,7 +249,7 @@ class Command(BaseCommand):
     def line(
         self,
         text: str,
-        style: Optional[str] = None,
+        style: str | None = None,
         verbosity: Verbosity = Verbosity.NORMAL,
     ) -> None:
         """
@@ -272,7 +265,7 @@ class Command(BaseCommand):
     def line_error(
         self,
         text: str,
-        style: Optional[str] = None,
+        style: str | None = None,
         verbosity: Verbosity = Verbosity.NORMAL,
     ) -> None:
         """
@@ -312,7 +305,7 @@ class Command(BaseCommand):
         """
         self.line(text, "question")
 
-    def progress_bar(self, max: int = 0) -> "ProgressBar":
+    def progress_bar(self, max: int = 0) -> ProgressBar:
         """
         Creates a new progress bar
         """
@@ -322,10 +315,10 @@ class Command(BaseCommand):
 
     def progress_indicator(
         self,
-        fmt: Optional[str] = None,
+        fmt: str | None = None,
         interval: int = 100,
-        values: Optional[List[str]] = None,
-    ) -> "ProgressIndicator":
+        values: list[str] | None = None,
+    ) -> ProgressIndicator:
         """
         Creates a new progress indicator.
         """
@@ -337,9 +330,9 @@ class Command(BaseCommand):
         self,
         start_message: str,
         end_message: str,
-        fmt: Optional[str] = None,
+        fmt: str | None = None,
         interval=100,
-        values: Optional[List[str]] = None,
+        values: list[str] | None = None,
     ):
         """
         Automatically spin a progress indicator.
@@ -351,9 +344,9 @@ class Command(BaseCommand):
     def add_style(
         self,
         name: str,
-        fg: Optional[str] = None,
-        bg: Optional[str] = None,
-        options: Optional[List[str]] = None,
+        fg: str | None = None,
+        bg: str | None = None,
+        options: list[str] | None = None,
     ) -> None:
         """
         Adds a new style

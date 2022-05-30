@@ -4,8 +4,6 @@ import os
 import re
 
 from typing import Any
-from typing import Dict
-from typing import List
 
 from cleo.io.inputs.argument import Argument
 from cleo.io.inputs.option import Option
@@ -13,11 +11,11 @@ from cleo.io.inputs.option import Option
 
 class Parser:
     @classmethod
-    def parse(cls, expression: str) -> Dict[str, Any]:
+    def parse(cls, expression: str) -> dict[str, Any]:
         """
         Parse the given console command definition into a dict.
         """
-        parsed: Dict[str, Any] = {"name": None, "arguments": [], "options": []}
+        parsed: dict[str, Any] = {"name": None, "arguments": [], "options": []}
 
         if not expression.strip():
             raise ValueError("Console command signature is empty.")
@@ -40,7 +38,7 @@ class Parser:
         return parsed
 
     @classmethod
-    def _parameters(cls, tokens: List[str]) -> Dict[str, Any]:
+    def _parameters(cls, tokens: list[str]) -> dict[str, Any]:
         """
         Extract all of the parameters from the tokens.
         """

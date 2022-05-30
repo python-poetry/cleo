@@ -8,7 +8,7 @@ from cleo._utils import find_similar_names
 
 class CleoException(Exception):
 
-    exit_code: Optional[int] = None
+    exit_code: int | None = None
 
 
 class CleoSimpleException(Exception):
@@ -42,7 +42,7 @@ class NoSuchOptionException(CleoException):
 
 
 class CommandNotFoundException(CleoSimpleException):
-    def __init__(self, name: str, commands: Optional[List[str]] = None) -> None:
+    def __init__(self, name: str, commands: list[str] | None = None) -> None:
         message = f'The command "{name}" does not exist.'
 
         if commands:
@@ -60,7 +60,7 @@ class CommandNotFoundException(CleoSimpleException):
 
 
 class NamespaceNotFoundException(CleoSimpleException):
-    def __init__(self, name: str, namespaces: Optional[List[str]] = None) -> None:
+    def __init__(self, name: str, namespaces: list[str] | None = None) -> None:
         message = f'There are no commands in the "{name}" namespace.'
 
         if namespaces:

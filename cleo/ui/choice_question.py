@@ -3,9 +3,6 @@ from __future__ import annotations
 import re
 
 from typing import Any
-from typing import List
-from typing import Optional
-from typing import Union
 
 from cleo.exceptions import ValueException
 from cleo.io.io import IO
@@ -21,7 +18,7 @@ class SelectChoiceValidator:
         self._question = question
         self._values = question.choices
 
-    def validate(self, selected: Union[str, int]) -> Optional[str]:
+    def validate(self, selected: str | int) -> str | None:
         """
         Validate a choice.
         """
@@ -89,7 +86,7 @@ class ChoiceQuestion(Question):
     """
 
     def __init__(
-        self, question: str, choices: List[str], default: Optional[Any] = None
+        self, question: str, choices: list[str], default: Any | None = None
     ) -> None:
         super().__init__(question, default)
 
@@ -105,7 +102,7 @@ class ChoiceQuestion(Question):
         return self._error_message
 
     @property
-    def choices(self) -> List[str]:
+    def choices(self) -> list[str]:
         return self._choices
 
     def supports_multiple_choices(self) -> bool:

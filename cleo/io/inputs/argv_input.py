@@ -3,9 +3,6 @@ from __future__ import annotations
 import sys
 
 from typing import Any
-from typing import List
-from typing import Optional
-from typing import Union
 
 from cleo.exceptions import NoSuchOptionException
 from cleo.exceptions import RuntimeException
@@ -20,7 +17,7 @@ class ArgvInput(Input):
     """
 
     def __init__(
-        self, argv: Optional[List[str]] = None, definition: Optional[Definition] = None
+        self, argv: list[str] | None = None, definition: Definition | None = None
     ) -> None:
         if argv is None:
             argv = sys.argv
@@ -39,7 +36,7 @@ class ArgvInput(Input):
         super().__init__(definition=definition)
 
     @property
-    def first_argument(self) -> Optional[str]:
+    def first_argument(self) -> str | None:
         is_option = False
 
         for i, token in enumerate(self._tokens):
@@ -80,11 +77,11 @@ class ArgvInput(Input):
         return
 
     @property
-    def script_name(self) -> Optional[str]:
+    def script_name(self) -> str | None:
         return self._script_name
 
     def has_parameter_option(
-        self, values: Union[str, List[str]], only_params: bool = False
+        self, values: str | list[str], only_params: bool = False
     ) -> bool:
         """
         Returns true if the raw parameters (not parsed) contain a value.
@@ -112,7 +109,7 @@ class ArgvInput(Input):
 
     def parameter_option(
         self,
-        values: Union[str, List[str]],
+        values: str | list[str],
         default: Any = False,
         only_params: bool = False,
     ) -> Any:
@@ -145,7 +142,7 @@ class ArgvInput(Input):
 
         return False
 
-    def _set_tokens(self, tokens: List[str]) -> None:
+    def _set_tokens(self, tokens: list[str]) -> None:
         self._tokens = tokens
 
     def _parse(self) -> None:

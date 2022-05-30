@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 from typing import Iterable
-from typing import Optional
-from typing import Union
 
 from .inputs.input import Input
 from .outputs.output import Output
@@ -29,15 +27,13 @@ class IO:
     def error_output(self) -> Output:
         return self._error_output
 
-    def read(self, length: int, default: Optional[str] = None) -> str:
+    def read(self, length: int, default: str | None = None) -> str:
         """
         Reads the given amount of characters from the input stream.
         """
         return self._input.read(length, default=default)
 
-    def read_line(
-        self, length: Optional[int] = None, default: Optional[str] = None
-    ) -> str:
+    def read_line(self, length: int | None = None, default: str | None = None) -> str:
         """
         Reads a line from the input stream.
         """
@@ -45,7 +41,7 @@ class IO:
 
     def write_line(
         self,
-        messages: Union[str, Iterable[str]],
+        messages: str | Iterable[str],
         verbosity: Verbosity = Verbosity.NORMAL,
         type: OutputType = OutputType.NORMAL,
     ) -> None:
@@ -53,7 +49,7 @@ class IO:
 
     def write(
         self,
-        messages: Union[str, Iterable[str]],
+        messages: str | Iterable[str],
         new_line: bool = False,
         verbosity: Verbosity = Verbosity.NORMAL,
         type: OutputType = OutputType.NORMAL,
@@ -62,7 +58,7 @@ class IO:
 
     def write_error_line(
         self,
-        messages: Union[str, Iterable[str]],
+        messages: str | Iterable[str],
         verbosity: Verbosity = Verbosity.NORMAL,
         type: OutputType = OutputType.NORMAL,
     ) -> None:
@@ -70,7 +66,7 @@ class IO:
 
     def write_error(
         self,
-        messages: Union[str, Iterable[str]],
+        messages: str | Iterable[str],
         new_line: bool = False,
         verbosity: Verbosity = Verbosity.NORMAL,
         type: OutputType = OutputType.NORMAL,
@@ -79,7 +75,7 @@ class IO:
             messages, new_line=new_line, verbosity=verbosity, type=type
         )
 
-    def overwrite(self, messages: Union[str, Iterable[str]]) -> None:
+    def overwrite(self, messages: str | Iterable[str]) -> None:
         from cleo.cursor import Cursor
 
         cursor = Cursor(self._output)
@@ -87,7 +83,7 @@ class IO:
         cursor.clear_line()
         self.write(messages)
 
-    def overwrite_error(self, messages: Union[str, Iterable[str]]) -> None:
+    def overwrite_error(self, messages: str | Iterable[str]) -> None:
         from cleo.cursor import Cursor
 
         cursor = Cursor(self._error_output)
@@ -130,7 +126,7 @@ class IO:
     def set_input(self, input: Input) -> None:
         self._input = input
 
-    def with_input(self, input: Input) -> "IO":
+    def with_input(self, input: Input) -> IO:
         return self.__class__(input, self._output, self._error_output)
 
     def remove_format(self, text: str) -> str:

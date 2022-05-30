@@ -1,20 +1,17 @@
 from __future__ import annotations
 
-from typing import List
-from typing import Optional
-
 from cleo.exceptions import ValueException
 
 from .style import Style
 
 
 class StyleStack:
-    def __init__(self, empty_style: Optional[Style] = None):
+    def __init__(self, empty_style: Style | None = None):
         if empty_style is None:
             empty_style = Style()
 
         self._empty_style = empty_style
-        self._styles: List[Style] = []
+        self._styles: list[Style] = []
 
     @property
     def current(self) -> Style:
@@ -29,7 +26,7 @@ class StyleStack:
     def push(self, style: Style) -> None:
         self._styles.append(style)
 
-    def pop(self, style: Optional[Style] = None) -> Style:
+    def pop(self, style: Style | None = None) -> Style:
         if not self._styles:
             return self._empty_style
 

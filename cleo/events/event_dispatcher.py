@@ -1,10 +1,6 @@
 from __future__ import annotations
 
 from typing import Callable
-from typing import Dict
-from typing import List
-from typing import Optional
-from typing import Union
 
 from .event import Event
 
@@ -14,7 +10,7 @@ class EventDispatcher:
         self._listeners = {}
         self._sorted = {}
 
-    def dispatch(self, event: Event, event_name: Optional[str] = None) -> Event:
+    def dispatch(self, event: Event, event_name: str | None = None) -> Event:
         if event_name is None:
             event_name = event.__class__.__name__
 
@@ -26,8 +22,8 @@ class EventDispatcher:
         return event
 
     def get_listeners(
-        self, event_name: Optional[str] = None
-    ) -> Union[List[Callable], Dict[str, Callable]]:
+        self, event_name: str | None = None
+    ) -> list[Callable] | dict[str, Callable]:
         if event_name is not None:
             if event_name not in self._listeners:
                 return []
@@ -43,9 +39,7 @@ class EventDispatcher:
 
         return self._sorted
 
-    def get_listener_priority(
-        self, event_name: str, listener: Callable
-    ) -> Optional[int]:
+    def get_listener_priority(self, event_name: str, listener: Callable) -> int | None:
         if event_name not in self._listeners:
             return
 
@@ -54,7 +48,7 @@ class EventDispatcher:
                 if v == listener:
                     return priority
 
-    def has_listeners(self, event_name: Optional[str] = None) -> bool:
+    def has_listeners(self, event_name: str | None = None) -> bool:
         if event_name is not None:
             if event_name not in self._listeners:
                 return False
@@ -78,7 +72,7 @@ class EventDispatcher:
             del self._sorted[event_name]
 
     def _do_dispatch(
-        self, listeners: List[Callable], event_name: str, event: Event
+        self, listeners: list[Callable], event_name: str, event: Event
     ) -> None:
         for listener in listeners:
             if event.is_propagation_stopped():

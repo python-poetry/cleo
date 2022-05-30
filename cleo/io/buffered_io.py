@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
 from typing import cast
 
 from .inputs.input import Input
@@ -11,7 +10,7 @@ from .outputs.buffered_output import BufferedOutput
 class BufferedIO(IO):
     def __init__(
         self,
-        input: Optional[Input] = None,
+        input: Input | None = None,
         decorated: bool = False,
         supports_utf8: bool = True,
     ) -> None:

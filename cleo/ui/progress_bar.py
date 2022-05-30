@@ -5,8 +5,6 @@ import re
 import time
 
 from typing import Match
-from typing import Optional
-from typing import Union
 
 from cleo._utils import format_time
 from cleo.cursor import Cursor
@@ -45,7 +43,7 @@ class ProgressBar(Component):
 
     def __init__(
         self,
-        io: Union[IO, Output],
+        io: IO | Output,
         max: int = 0,
         min_seconds_between_redraws: float = 0.1,
     ) -> None:
@@ -104,7 +102,7 @@ class ProgressBar(Component):
     def get_progress_percent(self) -> float:
         return self._percent
 
-    def set_bar_character(self, character: str) -> "ProgressBar":
+    def set_bar_character(self, character: str) -> ProgressBar:
         self.bar_char = character
 
         return self
@@ -118,7 +116,7 @@ class ProgressBar(Component):
 
         return self.bar_char
 
-    def set_bar_width(self, width: int) -> "ProgressBar":
+    def set_bar_width(self, width: int) -> ProgressBar:
         self.bar_width = width
 
         return self
@@ -126,7 +124,7 @@ class ProgressBar(Component):
     def get_empty_bar_character(self) -> str:
         return self.empty_bar_char
 
-    def set_empty_bar_character(self, character: str) -> "ProgressBar":
+    def set_empty_bar_character(self, character: str) -> ProgressBar:
         self.empty_bar_char = character
 
         return self
@@ -134,7 +132,7 @@ class ProgressBar(Component):
     def get_progress_character(self) -> str:
         return self.progress_char
 
-    def set_progress_character(self, character: str) -> "ProgressBar":
+    def set_progress_character(self, character: str) -> ProgressBar:
         self.progress_char = character
 
         return self
@@ -143,7 +141,7 @@ class ProgressBar(Component):
         self._format = None
         self._internal_format = fmt
 
-    def set_redraw_frequency(self, freq: Optional[int]) -> None:
+    def set_redraw_frequency(self, freq: int | None) -> None:
         if self.redraw_freq is not None:
             self.redraw_freq = max(freq, 1)
 
@@ -155,7 +153,7 @@ class ProgressBar(Component):
     def max_seconds_between_redraws(self, freq: float) -> None:
         self._max_seconds_between_redraws = freq
 
-    def start(self, max: Optional[int] = None) -> None:
+    def start(self, max: int | None = None) -> None:
         """
         Start the progress output.
         """

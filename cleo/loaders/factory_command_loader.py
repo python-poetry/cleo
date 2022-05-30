@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 from typing import Callable
-from typing import Dict
-from typing import List
 
 from cleo.commands.command import Command
 
@@ -18,11 +16,11 @@ class FactoryCommandLoader(CommandLoader):
     A simple command loader using factories to instantiate commands lazily.
     """
 
-    def __init__(self, factories: Dict[str, Factory]) -> None:
+    def __init__(self, factories: dict[str, Factory]) -> None:
         self._factories = factories
 
     @property
-    def names(self) -> List[str]:
+    def names(self) -> list[str]:
         return list(self._factories.keys())
 
     def has(self, name: str) -> bool:

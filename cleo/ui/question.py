@@ -6,7 +6,6 @@ import subprocess
 
 from typing import Any
 from typing import Callable
-from typing import Optional
 
 from cleo.formatters.style import Style
 from cleo.io.io import IO
@@ -17,7 +16,7 @@ class Question:
     A question that will be asked in a Console.
     """
 
-    def __init__(self, question: str, default: Optional[Any] = None) -> None:
+    def __init__(self, question: str, default: Any | None = None) -> None:
         self._question = question
         self._default = default
 
@@ -42,7 +41,7 @@ class Question:
         return self._autocomplete_values
 
     @property
-    def max_attempts(self) -> Optional[int]:
+    def max_attempts(self) -> int | None:
         return self._attempts
 
     def is_hidden(self) -> bool:
@@ -66,7 +65,7 @@ class Question:
     def set_validator(self, validator: Callable) -> None:
         self._validator = validator
 
-    def ask(self, io: IO) -> Optional[str]:
+    def ask(self, io: IO) -> str | None:
         """
         Asks the question to the user.
         """
@@ -81,7 +80,7 @@ class Question:
 
         return self._validate_attempts(interviewer, io)
 
-    def _do_ask(self, io: IO) -> Optional[str]:
+    def _do_ask(self, io: IO) -> str | None:
         """
         Asks the question to the user.
         """

@@ -4,9 +4,7 @@ import json
 import re
 
 from typing import Any
-from typing import List
 from typing import Sequence
-from typing import Union
 
 from cleo.application import Application
 from cleo.commands.command import Command
@@ -249,7 +247,7 @@ class TextDescriptor(Descriptor):
 
         return json.dumps(default).replace("\\\\", "\\")
 
-    def _calculate_total_width_for_options(self, options: List[Option]) -> int:
+    def _calculate_total_width_for_options(self, options: list[Option]) -> int:
         total_width = 0
 
         for option in options:
@@ -266,7 +264,7 @@ class TextDescriptor(Descriptor):
 
         return total_width
 
-    def _get_column_width(self, commands: Sequence[Union[Command, str]]) -> int:
+    def _get_column_width(self, commands: Sequence[Command | str]) -> int:
         widths = []
 
         for command in commands:

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import Iterable
-from typing import Union
 
 from .output import Output
 from .output import Type
@@ -39,7 +38,7 @@ class NullOutput(Output):
 
     def write_line(
         self,
-        messages: Union[str, Iterable[str]],
+        messages: str | Iterable[str],
         verbosity: Verbosity = Verbosity.NORMAL,
         type: Type = Type.NORMAL,
     ) -> None:
@@ -47,7 +46,7 @@ class NullOutput(Output):
 
     def write(
         self,
-        messages: Union[str, Iterable[str]],
+        messages: str | Iterable[str],
         new_line: bool = False,
         verbosity: Verbosity = Verbosity.NORMAL,
         type: Type = Type.NORMAL,

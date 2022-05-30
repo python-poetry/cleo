@@ -4,7 +4,6 @@ import os
 import sys
 
 from pathlib import Path
-from typing import Dict
 
 import pytest
 
@@ -201,7 +200,7 @@ def test_find_ambiguous_command_hidden(app: Application):
         app.find("foo b")
 
 
-def test_set_catch_exceptions(app: Application, environ: Dict[str, str]):
+def test_set_catch_exceptions(app: Application, environ: dict[str, str]):
     app.auto_exits(False)
     os.environ["COLUMNS"] = "120"
 

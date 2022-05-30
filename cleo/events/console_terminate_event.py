@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-from typing import Optional
 
 from cleo.io.io import IO
 
@@ -17,7 +16,7 @@ class ConsoleTerminateEvent(ConsoleEvent):
     An event triggered by after the execution of a command.
     """
 
-    def __init__(self, command: Optional["Command"], io: IO, exit_code: int) -> None:
+    def __init__(self, command: Command | None, io: IO, exit_code: int) -> None:
         super().__init__(command, io)
 
         self._exit_code = exit_code

@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-from typing import List
-from typing import Optional
-
 
 class TokenParser:
     """
@@ -12,10 +9,10 @@ class TokenParser:
     def __init__(self) -> None:
         self._string: str = ""
         self._cursor: int = 0
-        self._current: Optional[str] = None
-        self._next_: Optional[str] = None
+        self._current: str | None = None
+        self._next_: str | None = None
 
-    def parse(self, string: str) -> List[str]:
+    def parse(self, string: str) -> list[str]:
         self._string = string
         self._cursor = 0
         self._current = None
@@ -30,7 +27,7 @@ class TokenParser:
 
         return tokens
 
-    def _parse(self) -> List[str]:
+    def _parse(self) -> list[str]:
         tokens = []
 
         while self._is_valid():

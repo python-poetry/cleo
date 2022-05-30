@@ -2,10 +2,6 @@ from __future__ import annotations
 
 import re
 
-from typing import Dict
-from typing import Optional
-from typing import Tuple
-
 from cleo.exceptions import ValueException
 
 from .style import Style
@@ -16,13 +12,13 @@ class Formatter:
 
     TAG_REGEX = re.compile(r"(?ix)<(([a-z](?:[^<>]*)) | /([a-z](?:[^<>]*))?)>")
 
-    _inline_styles_cache: Dict[str, Style] = {}
+    _inline_styles_cache: dict[str, Style] = {}
 
     def __init__(
-        self, decorated: bool = False, styles: Optional[Dict[str, Style]] = None
+        self, decorated: bool = False, styles: dict[str, Style] | None = None
     ) -> None:
         self._decorated = decorated
-        self._styles: Dict[str, Style] = {}
+        self._styles: dict[str, Style] = {}
 
         self.set_style("error", Style("red", options=["bold"]))
         self.set_style("info", Style("blue"))
@@ -146,7 +142,7 @@ class Formatter:
 
         return text
 
-    def _create_style_from_string(self, string: str) -> Optional[Style]:
+    def _create_style_from_string(self, string: str) -> Style | None:
         if string in self._styles:
             return self._styles[string]
 
@@ -177,7 +173,7 @@ class Formatter:
 
     def _apply_current_style(
         self, text: str, current: str, width: int, current_line_length: int
-    ) -> Tuple[str, int]:
+    ) -> tuple[str, int]:
         if not text:
             return "", current_line_length
 

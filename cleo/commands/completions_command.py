@@ -7,8 +7,6 @@ import posixpath
 import re
 import subprocess
 
-from typing import Optional
-
 from .. import helpers
 from .command import Command
 from .completions.templates import TEMPLATES
@@ -406,7 +404,7 @@ script. Consult your shells documentation for how to add such directives.
 
         return re.sub("[^A-Za-z0-9_]+", "", name)
 
-    def _zsh_describe(self, value: str, description: Optional[str] = None) -> str:
+    def _zsh_describe(self, value: str, description: str | None = None) -> str:
         value = '"' + value.replace(":", "\\:")
         if description:
             description = re.sub(

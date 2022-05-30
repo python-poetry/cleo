@@ -3,9 +3,6 @@ from __future__ import annotations
 import inspect
 
 from typing import TYPE_CHECKING
-from typing import Dict
-from typing import List
-from typing import Optional
 
 from cleo.exceptions import CleoException
 from cleo.io.inputs.definition import Definition
@@ -18,7 +15,7 @@ if TYPE_CHECKING:
 
 class BaseCommand:
 
-    name: Optional[str] = None
+    name: str | None = None
 
     description = ""
 
@@ -27,14 +24,14 @@ class BaseCommand:
     enabled = True
     hidden = False
 
-    usages: List[str] = []
+    usages: list[str] = []
 
     def __init__(self) -> None:
         self._definition = Definition()
         self._full_definition = None
         self._application = None
         self._ignore_validation_errors = False
-        self._synopsis: Dict[str, str] = {}
+        self._synopsis: dict[str, str] = {}
 
         self.configure()
 
@@ -43,7 +40,7 @@ class BaseCommand:
                 self.usages[i] = f"{self.name} {usage}"
 
     @property
-    def application(self) -> "Application":
+    def application(self) -> Application:
         return self._application
 
     @property
@@ -77,7 +74,7 @@ class BaseCommand:
     def ignore_validation_errors(self) -> None:
         self._ignore_validation_errors = True
 
-    def set_application(self, application: Optional["Application"] = None) -> None:
+    def set_application(self, application: Application | None = None) -> None:
         self._application = application
 
         self._full_definition = None

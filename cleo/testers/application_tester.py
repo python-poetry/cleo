@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from io import StringIO
-from typing import Optional
 
 from cleo.application import Application
 from cleo.io.buffered_io import BufferedIO
@@ -34,10 +33,10 @@ class ApplicationTester:
 
     def execute(
         self,
-        args: Optional[str] = "",
-        inputs: Optional[str] = None,
-        interactive: Optional[bool] = None,
-        verbosity: Optional[Verbosity] = None,
+        args: str | None = "",
+        inputs: str | None = None,
+        interactive: bool | None = None,
+        verbosity: Verbosity | None = None,
         decorated: bool = False,
         supports_utf8: bool = True,
     ) -> int:

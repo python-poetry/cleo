@@ -3,9 +3,6 @@ from __future__ import annotations
 from enum import Enum
 from typing import TYPE_CHECKING
 from typing import Iterable
-from typing import List
-from typing import Optional
-from typing import Union
 
 from cleo._utils import strip_tags
 from cleo.formatters.formatter import Formatter
@@ -36,7 +33,7 @@ class Output:
         self,
         verbosity: Verbosity = Verbosity.NORMAL,
         decorated: bool = False,
-        formatter: Optional[Formatter] = None,
+        formatter: Formatter | None = None,
     ) -> None:
         self._verbosity: Verbosity = verbosity
         if formatter is None:
@@ -45,7 +42,7 @@ class Output:
         self._formatter = formatter
         self._formatter.decorated(decorated)
 
-        self._section_outputs: List[SectionOutput] = []
+        self._section_outputs: list[SectionOutput] = []
 
     @property
     def formatter(self) -> Formatter:
@@ -87,7 +84,7 @@ class Output:
 
     def write_line(
         self,
-        messages: Union[str, Iterable[str]],
+        messages: str | Iterable[str],
         verbosity: Verbosity = Verbosity.NORMAL,
         type: Type = Type.NORMAL,
     ) -> None:
@@ -95,7 +92,7 @@ class Output:
 
     def write(
         self,
-        messages: Union[str, Iterable[str]],
+        messages: str | Iterable[str],
         new_line: bool = False,
         verbosity: Verbosity = Verbosity.NORMAL,
         type: Type = Type.NORMAL,
@@ -120,7 +117,7 @@ class Output:
     def remove_format(self, text: str) -> str:
         return self.formatter.remove_format(text)
 
-    def section(self) -> "SectionOutput":
+    def section(self) -> SectionOutput:
         raise NotImplementedError()
 
     def _write(self, message: str, new_line: bool = False) -> None:

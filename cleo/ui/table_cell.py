@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from .table_cell_style import TableCellStyle
 
 
@@ -11,8 +9,8 @@ class TableCell(str):
         value: str = "",
         rowspan: int = 1,
         colspan: int = 1,
-        style: Optional[TableCellStyle] = None,
-    ) -> "TableCell":
+        style: TableCellStyle | None = None,
+    ) -> TableCell:
         return super().__new__(cls, value)
 
     def __init__(
@@ -20,7 +18,7 @@ class TableCell(str):
         value: str = "",
         rowspan: int = 1,
         colspan: int = 1,
-        style: Optional[TableCellStyle] = None,
+        style: TableCellStyle | None = None,
     ) -> None:
         self._rowspan = rowspan
         self._colspan = colspan
@@ -35,5 +33,5 @@ class TableCell(str):
         return self._colspan
 
     @property
-    def style(self) -> Optional[TableCellStyle]:
+    def style(self) -> TableCellStyle | None:
         return self._style

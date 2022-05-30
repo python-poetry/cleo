@@ -3,7 +3,6 @@ from __future__ import annotations
 import signal
 
 from typing import TYPE_CHECKING
-from typing import Optional
 
 from cleo.io.io import IO
 
@@ -20,7 +19,7 @@ class ConsoleSignalEvent(ConsoleEvent):
     """
 
     def __init__(
-        self, command: Optional["Command"], io: IO, handling_signal: signal.Signals
+        self, command: Command | None, io: IO, handling_signal: signal.Signals
     ) -> None:
         super().__init__(command, io)
         self._handling_signal = handling_signal

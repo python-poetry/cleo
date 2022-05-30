@@ -4,7 +4,6 @@ import math
 
 from html.parser import HTMLParser
 from typing import Any
-from typing import List
 
 from pylev import levenshtein
 
@@ -49,7 +48,7 @@ def strip_tags(value: Any) -> str:
     return value
 
 
-def find_similar_names(name: str, names: List[str]) -> List[str]:
+def find_similar_names(name: str, names: list[str]) -> list[str]:
     """
     Finds names similar to a given command name.
     """

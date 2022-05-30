@@ -3,11 +3,7 @@ from __future__ import annotations
 import sys
 
 from typing import Any
-from typing import Dict
-from typing import List
-from typing import Optional
 from typing import Sequence
-from typing import Union
 
 from cleo.exceptions import LogicException
 
@@ -20,15 +16,13 @@ class Definition:
     A Definition represents a set of command line arguments and options.
     """
 
-    def __init__(
-        self, definition: Optional[Sequence[Union[Argument, Option]]] = None
-    ) -> None:
-        self._arguments: Dict[str, Argument] = {}
+    def __init__(self, definition: Sequence[Argument | Option] | None = None) -> None:
+        self._arguments: dict[str, Argument] = {}
         self._required_count = 0
         self._has_a_list_argument = False
         self._has_optional = False
-        self._options: Dict[str, Option] = {}
-        self._shortcuts: Dict[str, str] = {}
+        self._options: dict[str, Option] = {}
+        self._shortcuts: dict[str, str] = {}
 
         if definition is None:
             definition = []
@@ -36,7 +30,7 @@ class Definition:
         self.set_definition(definition)
 
     @property
-    def arguments(self) -> List[Argument]:
+    def arguments(self) -> list[Argument]:
         return list(self._arguments.values())
 
     @property
@@ -51,7 +45,7 @@ class Definition:
         return self._required_count
 
     @property
-    def argument_defaults(self) -> Dict[str, Any]:
+    def argument_defaults(self) -> dict[str, Any]:
         values = {}
 
         for argument in self._arguments.values():
@@ -60,18 +54,18 @@ class Definition:
         return values
 
     @property
-    def options(self) -> List[Option]:
+    def options(self) -> list[Option]:
         return list(self._options.values())
 
     @property
-    def option_defaults(self) -> Dict[str, Any]:
+    def option_defaults(self) -> dict[str, Any]:
         values = {}
         for option in self._options.values():
             values[option.name] = option.default
 
         return values
 
-    def set_definition(self, definition: Sequence[Union[Argument, Option]]) -> None:
+    def set_definition(self, definition: Sequence[Argument | Option]) -> None:
         arguments = []
         options = []
 
@@ -84,14 +78,14 @@ class Definition:
         self.set_arguments(arguments)
         self.set_options(options)
 
-    def set_arguments(self, arguments: List[Argument]) -> None:
+    def set_arguments(self, arguments: list[Argument]) -> None:
         self._arguments = {}
         self._required_count = 0
         self._has_a_list_argument = False
         self._has_optional = False
         self.add_arguments(arguments)
 
-    def add_arguments(self, arguments: List[Argument]) -> None:
+    def add_arguments(self, arguments: list[Argument]) -> None:
         for argument in arguments:
             self.add_argument(argument)
 
@@ -117,7 +111,7 @@ class Definition:
 
         self._arguments[argument.name] = argument
 
-    def argument(self, name: Union[str, int]) -> Argument:
+    def argument(self, name: str | int) -> Argument:
         if not self.has_argument(name):
             raise ValueError(f'The "{name}" argument does not exist')
 
@@ -128,7 +122,7 @@ class Definition:
 
         return arguments[name]
 
-    def has_argument(self, name: Union[str, int]) -> bool:
+    def has_argument(self, name: str | int) -> bool:
         if isinstance(name, int):
             arguments = list(self._arguments.values())
         else:
@@ -141,12 +135,12 @@ class Definition:
 
         return True
 
-    def set_options(self, options: List[Option]) -> None:
+    def set_options(self, options: list[Option]) -> None:
         self._options = {}
         self._shortcuts = {}
         self.add_options(options)
 
-    def add_options(self, options: List[Option]) -> None:
+    def add_options(self, options: list[Option]) -> None:
         for option in options:
             self.add_option(option)
 

@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import re
 
-from typing import Union
-
 from cleo.io.io import IO
 
 from .question import Question
@@ -31,7 +29,7 @@ class ConfirmationQuestion(Question):
 
         io.write_error(message)
 
-    def _get_default_normalizer(self, answer: Union[str, bool]) -> bool:
+    def _get_default_normalizer(self, answer: str | bool) -> bool:
         """
         Default answer normalizer.
         """
