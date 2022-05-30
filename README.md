@@ -446,16 +446,7 @@ the `call_silent()` method instead.
 
 Cleo supports automatic (tab) completion in `bash`, `zsh` and `fish`.
 
-To activate support for autocompletion, pass a `complete` keyword when
-initializing your application:
-
-```python
-application = Application("My Application", "0.1", complete=True)
-```
-
-Now, register completion for your application by running one of the
-following in a terminal, replacing `[program]` with the command you use
-to run your application:
+By default, your application will have a `completions` command. To register these completions for your application, run one of the following in a terminal (replacing `[program]` with the command you use to run your application):
 
 ```bash
 # Bash
