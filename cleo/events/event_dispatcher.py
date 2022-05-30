@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from typing import Callable
 
-from cleo.events.event import Event
+
+if TYPE_CHECKING:
+    from cleo.events.event import Event
 
 
 class EventDispatcher:

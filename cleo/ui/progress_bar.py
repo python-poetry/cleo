@@ -4,15 +4,19 @@ import math
 import re
 import time
 
+from typing import TYPE_CHECKING
 from typing import Match
 
 from cleo._utils import format_time
 from cleo.cursor import Cursor
 from cleo.io.io import IO
-from cleo.io.outputs.output import Output
 from cleo.io.outputs.section_output import SectionOutput
 from cleo.terminal import Terminal
 from cleo.ui.component import Component
+
+
+if TYPE_CHECKING:
+    from cleo.io.outputs.output import Output
 
 
 class ProgressBar(Component):

@@ -2,11 +2,15 @@ from __future__ import annotations
 
 import re
 
+from typing import TYPE_CHECKING
 from typing import Any
 
 from cleo.exceptions import ValueException
-from cleo.io.io import IO
 from cleo.ui.question import Question
+
+
+if TYPE_CHECKING:
+    from cleo.io.io import IO
 
 
 class SelectChoiceValidator:

@@ -4,11 +4,11 @@ from typing import TYPE_CHECKING
 
 from cleo.events.console_event import ConsoleEvent
 from cleo.exceptions import CleoException
-from cleo.io.io import IO
 
 
 if TYPE_CHECKING:
     from cleo.commands.command import Command
+    from cleo.io.io import IO
 
 
 class ConsoleErrorEvent(ConsoleEvent):

@@ -9,7 +9,6 @@ from typing import Any
 from cleo.commands.base_command import BaseCommand
 from cleo.formatters.style import Style
 from cleo.io.inputs.string_input import StringInput
-from cleo.io.io import IO
 from cleo.io.null_io import NullIO
 from cleo.io.outputs.output import Verbosity
 from cleo.parser import Parser
@@ -17,6 +16,7 @@ from cleo.ui.table_separator import TableSeparator
 
 
 if TYPE_CHECKING:
+    from cleo.io.io import IO
     from cleo.ui.progress_bar import ProgressBar
     from cleo.ui.progress_indicator import ProgressIndicator
     from cleo.ui.question import Question

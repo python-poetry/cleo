@@ -2,10 +2,14 @@ from __future__ import annotations
 
 import sys
 
+from typing import TYPE_CHECKING
 from typing import TextIO
 
 from cleo.io.io import IO
-from cleo.io.outputs.output import Output
+
+
+if TYPE_CHECKING:
+    from cleo.io.outputs.output import Output
 
 
 class Cursor:

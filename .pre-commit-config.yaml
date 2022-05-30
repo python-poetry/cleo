@@ -26,6 +26,7 @@ repos:
           - flake8-comprehensions
           - flake8-simplify
           - flake8-tidy-imports
+          - flake8-type-checking
 
   - repo: https://github.com/asottile/pyupgrade
     rev: v2.29.1

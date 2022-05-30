@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 from io import StringIO
+from typing import TYPE_CHECKING
 
-from cleo.commands.command import Command
 from cleo.io.buffered_io import BufferedIO
 from cleo.io.inputs.argv_input import ArgvInput
 from cleo.io.inputs.string_input import StringInput
-from cleo.io.outputs.output import Verbosity
+
+
+if TYPE_CHECKING:
+    from cleo.commands.command import Command
+    from cleo.io.outputs.output import Verbosity
 
 
 class CommandTester:

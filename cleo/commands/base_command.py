@@ -6,11 +6,11 @@ from typing import TYPE_CHECKING
 
 from cleo.exceptions import CleoException
 from cleo.io.inputs.definition import Definition
-from cleo.io.io import IO
 
 
 if TYPE_CHECKING:
     from cleo.application import Application
+    from cleo.io.io import IO
 
 
 class BaseCommand:

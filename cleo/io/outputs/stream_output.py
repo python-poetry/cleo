@@ -10,12 +10,12 @@ import sys
 from typing import TYPE_CHECKING
 from typing import TextIO
 
-from cleo.formatters.formatter import Formatter
 from cleo.io.outputs.output import Output
 from cleo.io.outputs.output import Verbosity
 
 
 if TYPE_CHECKING:
+    from cleo.formatters.formatter import Formatter
     from cleo.io.outputs.section_output import SectionOutput
 
 

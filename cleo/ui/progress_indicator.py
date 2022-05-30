@@ -5,10 +5,14 @@ import threading
 import time
 
 from contextlib import contextmanager
+from typing import TYPE_CHECKING
 
 from cleo._utils import format_time
 from cleo.io.io import IO
-from cleo.io.outputs.output import Output
+
+
+if TYPE_CHECKING:
+    from cleo.io.outputs.output import Output
 
 
 class ProgressIndicator:

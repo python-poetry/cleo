@@ -4,18 +4,21 @@ import math
 import re
 
 from copy import deepcopy
+from typing import TYPE_CHECKING
 from typing import Generator
 from typing import List
 from typing import Union
 
 from cleo.formatters.formatter import Formatter
-from cleo.io.io import IO
-from cleo.io.outputs.output import Output
 from cleo.ui.table_cell import TableCell
 from cleo.ui.table_cell_style import TableCellStyle
 from cleo.ui.table_separator import TableSeparator
 from cleo.ui.table_style import TableStyle
 
+
+if TYPE_CHECKING:
+    from cleo.io.io import IO
+    from cleo.io.outputs.output import Output
 
 _Row = List[Union[str, TableCell]]
 _Rows = List[Union[_Row, TableSeparator]]

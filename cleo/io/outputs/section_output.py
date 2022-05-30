@@ -2,12 +2,16 @@ from __future__ import annotations
 
 import math
 
+from typing import TYPE_CHECKING
 from typing import TextIO
 
-from cleo.formatters.formatter import Formatter
 from cleo.io.outputs.output import Verbosity
 from cleo.io.outputs.stream_output import StreamOutput
 from cleo.terminal import Terminal
+
+
+if TYPE_CHECKING:
+    from cleo.formatters.formatter import Formatter
 
 
 class SectionOutput(StreamOutput):

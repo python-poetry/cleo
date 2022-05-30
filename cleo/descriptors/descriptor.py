@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from typing import Any
 
 from cleo.application import Application
@@ -7,8 +8,11 @@ from cleo.commands.command import Command
 from cleo.io.inputs.argument import Argument
 from cleo.io.inputs.definition import Definition
 from cleo.io.inputs.option import Option
-from cleo.io.io import IO
 from cleo.io.outputs.output import Type
+
+
+if TYPE_CHECKING:
+    from cleo.io.io import IO
 
 
 class Descriptor:

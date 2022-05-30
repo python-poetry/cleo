@@ -9,16 +9,22 @@ import re
 import sys
 import tokenize
 
-from crashtest.frame import Frame
+from typing import TYPE_CHECKING
+
 from crashtest.frame_collection import FrameCollection
 from crashtest.inspector import Inspector
-from crashtest.solution_providers.solution_provider_repository import (
-    SolutionProviderRepository,
-)
 
 from cleo.formatters.formatter import Formatter
-from cleo.io.io import IO
-from cleo.io.outputs.output import Output
+
+
+if TYPE_CHECKING:
+    from crashtest.frame import Frame
+    from crashtest.solution_providers.solution_provider_repository import (
+        SolutionProviderRepository,
+    )
+
+    from cleo.io.io import IO
+    from cleo.io.outputs.output import Output
 
 
 class Highlighter:

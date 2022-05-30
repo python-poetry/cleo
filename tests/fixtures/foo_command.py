@@ -1,7 +1,12 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from cleo.commands.command import Command
-from cleo.io.io import IO
+
+
+if TYPE_CHECKING:
+    from cleo.io.io import IO
 
 
 class FooCommand(Command):
