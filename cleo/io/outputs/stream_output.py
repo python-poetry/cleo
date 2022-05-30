@@ -11,13 +11,12 @@ from typing import TYPE_CHECKING
 from typing import TextIO
 
 from cleo.formatters.formatter import Formatter
-
-from .output import Output
-from .output import Verbosity
+from cleo.io.outputs.output import Output
+from cleo.io.outputs.output import Verbosity
 
 
 if TYPE_CHECKING:
-    from .section_output import SectionOutput
+    from cleo.io.outputs.section_output import SectionOutput
 
 
 class StreamOutput(Output):
@@ -64,7 +63,7 @@ class StreamOutput(Output):
         self._stream.flush()
 
     def section(self) -> SectionOutput:
-        from .section_output import SectionOutput
+        from cleo.io.outputs.section_output import SectionOutput
 
         return SectionOutput(
             self._stream,

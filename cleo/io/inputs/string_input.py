@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from .argv_input import ArgvInput
-from .token_parser import TokenParser
+from cleo.io.inputs.argv_input import ArgvInput
+from cleo.io.inputs.token_parser import TokenParser
 
 
 class StringInput(ArgvInput):

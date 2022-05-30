@@ -6,9 +6,8 @@ from typing import Any
 from typing import Sequence
 
 from cleo.exceptions import LogicException
-
-from .argument import Argument
-from .option import Option
+from cleo.io.inputs.argument import Argument
+from cleo.io.inputs.option import Option
 
 
 class Definition:

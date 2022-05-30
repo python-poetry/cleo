@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from cleo.events.event import Event
 from cleo.io.io import IO
-
-from .event import Event
 
 
 if TYPE_CHECKING:

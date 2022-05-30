@@ -7,8 +7,7 @@ from typing import Any
 from cleo.exceptions import NoSuchOptionException
 from cleo.exceptions import RuntimeException
 from cleo.io.inputs.definition import Definition
-
-from .input import Input
+from cleo.io.inputs.input import Input
 
 
 class ArgvInput(Input):

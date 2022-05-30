@@ -7,9 +7,9 @@ import posixpath
 import re
 import subprocess
 
-from .. import helpers
-from .command import Command
-from .completions.templates import TEMPLATES
+from cleo import helpers
+from cleo.commands.command import Command
+from cleo.commands.completions.templates import TEMPLATES
 
 
 class CompletionsCommand(Command):

@@ -3,8 +3,7 @@ from __future__ import annotations
 import re
 
 from cleo.io.io import IO
-
-from .question import Question
+from cleo.ui.question import Question
 
 
 class ConfirmationQuestion(Question):

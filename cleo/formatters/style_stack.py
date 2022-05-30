@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from cleo.exceptions import ValueException
-
-from .style import Style
+from cleo.formatters.style import Style
 
 
 class StyleStack:

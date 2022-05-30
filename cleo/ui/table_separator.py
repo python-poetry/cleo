@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .table_cell import TableCell
+from cleo.ui.table_cell import TableCell
 
 
 class TableSeparator(TableCell):

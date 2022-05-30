@@ -14,12 +14,11 @@ from cleo.exceptions import NamespaceNotFoundException
 from cleo.io.io import IO
 from cleo.io.outputs.stream_output import StreamOutput
 from cleo.testers.application_tester import ApplicationTester
-
-from .fixtures.foo1_command import Foo1Command
-from .fixtures.foo2_command import Foo2Command
-from .fixtures.foo_command import FooCommand
-from .fixtures.foo_sub_namespaced1_command import FooSubNamespaced1Command
-from .fixtures.foo_sub_namespaced2_command import FooSubNamespaced2Command
+from tests.fixtures.foo1_command import Foo1Command
+from tests.fixtures.foo2_command import Foo2Command
+from tests.fixtures.foo_command import FooCommand
+from tests.fixtures.foo_sub_namespaced1_command import FooSubNamespaced1Command
+from tests.fixtures.foo_sub_namespaced2_command import FooSubNamespaced2Command
 
 
 FIXTURES_PATH = Path(__file__).parent.joinpath("fixtures")

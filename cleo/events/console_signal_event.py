@@ -4,9 +4,8 @@ import signal
 
 from typing import TYPE_CHECKING
 
+from cleo.events.console_event import ConsoleEvent
 from cleo.io.io import IO
-
-from .console_event import ConsoleEvent
 
 
 if TYPE_CHECKING:

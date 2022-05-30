@@ -209,7 +209,7 @@ def test_render_debug_better_error_message_recursion_error_with_multiple_duplica
 def test_render_can_ignore_given_files():
     import os
 
-    from .helpers import outer
+    from tests.ui.helpers import outer
 
     io = BufferedIO()
     io.set_verbosity(Verbosity.VERBOSE)
@@ -261,7 +261,7 @@ def test_render_can_ignore_given_files():
 def test_render_shows_ignored_files_if_in_debug_mode():
     import os
 
-    from .helpers import outer
+    from tests.ui.helpers import outer
 
     io = BufferedIO()
     io.set_verbosity(Verbosity.DEBUG)

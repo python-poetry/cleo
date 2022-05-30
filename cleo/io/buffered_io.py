@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import cast
 
-from .inputs.input import Input
-from .io import IO
-from .outputs.buffered_output import BufferedOutput
+from cleo.io.inputs.input import Input
+from cleo.io.io import IO
+from cleo.io.outputs.buffered_output import BufferedOutput
 
 
 class BufferedIO(IO):

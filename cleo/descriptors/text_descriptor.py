@@ -8,12 +8,11 @@ from typing import Sequence
 
 from cleo.application import Application
 from cleo.commands.command import Command
+from cleo.descriptors.descriptor import Descriptor
 from cleo.formatters.formatter import Formatter
 from cleo.io.inputs.argument import Argument
 from cleo.io.inputs.definition import Definition
 from cleo.io.inputs.option import Option
-
-from .descriptor import Descriptor
 
 
 class TextDescriptor(Descriptor):
@@ -157,7 +156,7 @@ class TextDescriptor(Descriptor):
             self._write("\n")
 
     def _describe_application(self, application: Application, **options: Any) -> None:
-        from .application_description import ApplicationDescription
+        from cleo.descriptors.application_description import ApplicationDescription
 
         described_namespace = options.get("namespace")
         description = ApplicationDescription(application, namespace=described_namespace)

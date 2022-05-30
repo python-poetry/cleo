@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 
-from .exceptions import ValueException
+from cleo.exceptions import ValueException
 
 
 class Color:

@@ -3,9 +3,8 @@ from __future__ import annotations
 from typing import Callable
 
 from cleo.commands.command import Command
-
-from ..exceptions import CommandNotFoundException
-from .command_loader import CommandLoader
+from cleo.exceptions import CommandNotFoundException
+from cleo.loaders.command_loader import CommandLoader
 
 
 Factory = Callable[[], Command]

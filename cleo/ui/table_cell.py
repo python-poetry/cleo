@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .table_cell_style import TableCellStyle
+from cleo.ui.table_cell_style import TableCellStyle
 
 
 class TableCell(str):

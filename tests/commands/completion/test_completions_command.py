@@ -6,9 +6,8 @@ import pytest
 
 from cleo.application import Application
 from cleo.testers.command_tester import CommandTester
-
-from .fixtures.command_with_colons import CommandWithColons
-from .fixtures.hello_command import HelloCommand
+from tests.commands.completion.fixtures.command_with_colons import CommandWithColons
+from tests.commands.completion.fixtures.hello_command import HelloCommand
 
 
 app = Application()

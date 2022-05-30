@@ -9,7 +9,7 @@ from cleo.formatters.formatter import Formatter
 
 
 if TYPE_CHECKING:
-    from .section_output import SectionOutput
+    from cleo.io.outputs.section_output import SectionOutput
 
 
 class Verbosity(Enum):
