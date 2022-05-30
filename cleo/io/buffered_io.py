@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from typing import cast
 
-from cleo.io.inputs.input import Input
 from cleo.io.io import IO
 from cleo.io.outputs.buffered_output import BufferedOutput
+
+
+if TYPE_CHECKING:
+    from cleo.io.inputs.input import Input
 
 
 class BufferedIO(IO):

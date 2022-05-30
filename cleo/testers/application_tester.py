@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 from io import StringIO
+from typing import TYPE_CHECKING
 
-from cleo.application import Application
 from cleo.io.buffered_io import BufferedIO
 from cleo.io.inputs.string_input import StringInput
-from cleo.io.outputs.output import Verbosity
+
+
+if TYPE_CHECKING:
+    from cleo.application import Application
+    from cleo.io.outputs.output import Verbosity
 
 
 class ApplicationTester:

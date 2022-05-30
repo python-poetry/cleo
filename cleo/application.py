@@ -8,7 +8,6 @@ from contextlib import suppress
 from typing import TYPE_CHECKING
 from typing import cast
 
-from cleo.commands.command import Command
 from cleo.commands.completions_command import CompletionsCommand
 from cleo.commands.help_command import HelpCommand
 from cleo.commands.list_command import ListCommand
@@ -18,7 +17,6 @@ from cleo.events.console_events import COMMAND
 from cleo.events.console_events import ERROR
 from cleo.events.console_events import TERMINATE
 from cleo.events.console_terminate_event import ConsoleTerminateEvent
-from cleo.events.event_dispatcher import EventDispatcher
 from cleo.exceptions import CleoException
 from cleo.exceptions import CleoSimpleException
 from cleo.exceptions import CommandNotFoundException
@@ -27,13 +25,10 @@ from cleo.exceptions import NamespaceNotFoundException
 from cleo.io.inputs.argument import Argument
 from cleo.io.inputs.argv_input import ArgvInput
 from cleo.io.inputs.definition import Definition
-from cleo.io.inputs.input import Input
 from cleo.io.inputs.option import Option
 from cleo.io.io import IO
-from cleo.io.outputs.output import Output
 from cleo.io.outputs.output import Verbosity
 from cleo.io.outputs.stream_output import StreamOutput
-from cleo.loaders.command_loader import CommandLoader
 from cleo.terminal import Terminal
 from cleo.ui.ui import UI
 
@@ -42,6 +37,12 @@ if TYPE_CHECKING:
     from crashtest.solution_providers.solution_provider_repository import (
         SolutionProviderRepository,
     )
+
+    from cleo.commands.command import Command
+    from cleo.events.event_dispatcher import EventDispatcher
+    from cleo.io.inputs.input import Input
+    from cleo.io.outputs.output import Output
+    from cleo.loaders.command_loader import CommandLoader
 
 
 class Application:

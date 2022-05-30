@@ -2,8 +2,13 @@ from __future__ import annotations
 
 import re
 
-from cleo.io.io import IO
+from typing import TYPE_CHECKING
+
 from cleo.ui.question import Question
+
+
+if TYPE_CHECKING:
+    from cleo.io.io import IO
 
 
 class ConfirmationQuestion(Question):

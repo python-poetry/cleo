@@ -1,6 +1,8 @@
 [flake8]
 max-line-length = 88
 extend-ignore = E501, E203
+enable-extensions = TC, TC1
+type-checking-exempt-modules = typing, typing-extensions
 ban-relative-imports = true
 per-file-ignores =
     __init__.py:F401

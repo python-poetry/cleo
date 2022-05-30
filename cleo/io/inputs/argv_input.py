@@ -2,12 +2,16 @@ from __future__ import annotations
 
 import sys
 
+from typing import TYPE_CHECKING
 from typing import Any
 
 from cleo.exceptions import NoSuchOptionException
 from cleo.exceptions import RuntimeException
-from cleo.io.inputs.definition import Definition
 from cleo.io.inputs.input import Input
+
+
+if TYPE_CHECKING:
+    from cleo.io.inputs.definition import Definition
 
 
 class ArgvInput(Input):

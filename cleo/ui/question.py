@@ -4,11 +4,15 @@ import getpass
 import os
 import subprocess
 
+from typing import TYPE_CHECKING
 from typing import Any
 from typing import Callable
 
 from cleo.formatters.style import Style
-from cleo.io.io import IO
+
+
+if TYPE_CHECKING:
+    from cleo.io.io import IO
 
 
 class Question:

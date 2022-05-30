@@ -1,8 +1,13 @@
 from __future__ import annotations
 
-from cleo.application import Application
-from cleo.commands.command import Command
+from typing import TYPE_CHECKING
+
 from cleo.exceptions import CommandNotFoundException
+
+
+if TYPE_CHECKING:
+    from cleo.application import Application
+    from cleo.commands.command import Command
 
 
 class ApplicationDescription:

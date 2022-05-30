@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-from cleo.commands.command import Command
+from typing import TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    from cleo.commands.command import Command
 
 
 class CommandLoader:

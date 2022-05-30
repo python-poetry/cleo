@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from typing import Iterable
 
-from cleo.io.inputs.input import Input
-from cleo.io.outputs.output import Output
 from cleo.io.outputs.output import Type as OutputType
 from cleo.io.outputs.output import Verbosity
-from cleo.io.outputs.section_output import SectionOutput
+
+
+if TYPE_CHECKING:
+    from cleo.io.inputs.input import Input
+    from cleo.io.outputs.output import Output
+    from cleo.io.outputs.section_output import SectionOutput
 
 
 class IO:
