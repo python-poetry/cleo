@@ -3,11 +3,7 @@ from __future__ import annotations
 import re
 
 from typing import Any
-from typing import Dict
-from typing import List
-from typing import Optional
 from typing import TextIO
-from typing import Union
 
 from cleo._compat import shell_quote
 from cleo.exceptions import MissingArgumentsException
@@ -21,7 +17,7 @@ class Input:
     This class is the base class for concrete Input implementations.
     """
 
-    def __init__(self, definition: Optional[Definition] = None) -> None:
+    def __init__(self, definition: Definition | None = None) -> None:
         self._definition = None
         self._stream = None
         self._options = {}
@@ -35,11 +31,11 @@ class Input:
             self.validate()
 
     @property
-    def arguments(self) -> Dict[str, Any]:
+    def arguments(self) -> dict[str, Any]:
         return {**self._definition.argument_defaults, **self._arguments}
 
     @property
-    def options(self) -> Dict[str, Any]:
+    def options(self) -> dict[str, Any]:
         return {**self._definition.option_defaults, **self._options}
 
     @property
@@ -47,17 +43,17 @@ class Input:
         return self._stream
 
     @property
-    def first_argument(self) -> Optional[str]:
+    def first_argument(self) -> str | None:
         """
         Returns the first argument from the raw parameters (not parsed).
         """
         raise NotImplementedError()
 
     @property
-    def script_name(self) -> Optional[str]:
+    def script_name(self) -> str | None:
         raise NotImplementedError()
 
-    def read(self, length: int, default: Optional[str] = None) -> str:
+    def read(self, length: int, default: str | None = None) -> str:
         """
         Reads the given amount of characters from the input stream.
         """
@@ -66,9 +62,7 @@ class Input:
 
         return self._stream.read(length)
 
-    def read_line(
-        self, length: Optional[int] = None, default: Optional[str] = None
-    ) -> str:
+    def read_line(self, length: int | None = None, default: str | None = None) -> str:
         """
         Reads a line from the input stream.
         """
@@ -166,7 +160,7 @@ class Input:
         self._stream = stream
 
     def has_parameter_option(
-        self, values: Union[str, List[str]], only_params: bool = False
+        self, values: str | list[str], only_params: bool = False
     ) -> bool:
         """
         Returns true if the raw parameters (not parsed) contain a value.
@@ -175,7 +169,7 @@ class Input:
 
     def parameter_option(
         self,
-        values: Union[str, List[str]],
+        values: str | list[str],
         only_params: bool = False,
         default: Any = False,
     ) -> Any:

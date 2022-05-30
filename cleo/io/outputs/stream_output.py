@@ -8,7 +8,6 @@ import platform
 import sys
 
 from typing import TYPE_CHECKING
-from typing import Optional
 from typing import TextIO
 
 from cleo.formatters.formatter import Formatter
@@ -26,8 +25,8 @@ class StreamOutput(Output):
         self,
         stream: TextIO,
         verbosity: Verbosity = Verbosity.NORMAL,
-        decorated: Optional[bool] = None,
-        formatter: Optional[Formatter] = None,
+        decorated: bool | None = None,
+        formatter: Formatter | None = None,
     ) -> None:
         self._stream = stream
         self._supports_utf8 = None
@@ -64,7 +63,7 @@ class StreamOutput(Output):
     def flush(self) -> None:
         self._stream.flush()
 
-    def section(self) -> "SectionOutput":
+    def section(self) -> SectionOutput:
         from .section_output import SectionOutput
 
         return SectionOutput(

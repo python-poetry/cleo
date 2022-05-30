@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import time
 
-from typing import List
-
 import pytest
 
 from cleo.io.outputs.output import Verbosity
@@ -20,7 +18,7 @@ def ansi_bar(ansi_io):
     return ProgressBar(ansi_io, min_seconds_between_redraws=0)
 
 
-def generate_output(expected: List[str]) -> str:
+def generate_output(expected: list[str]) -> str:
     output = ""
     for i, line in enumerate(expected):
         if i:

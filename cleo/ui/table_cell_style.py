@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 
 class TableCellStyle:
     def __init__(
@@ -14,7 +12,7 @@ class TableCellStyle:
         self._cell_format = cell_format
 
     @property
-    def cell_format(self) -> Optional[str]:
+    def cell_format(self) -> str | None:
         return self._cell_format
 
     @property

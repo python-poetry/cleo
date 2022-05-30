@@ -3,7 +3,6 @@ from __future__ import annotations
 import re
 
 from typing import Any
-from typing import Optional
 
 from cleo.exceptions import LogicException
 from cleo.exceptions import ValueException
@@ -17,12 +16,12 @@ class Option:
     def __init__(
         self,
         name: str,
-        shortcut: Optional[str] = None,
+        shortcut: str | None = None,
         flag: bool = True,
         requires_value: bool = True,
         is_list: bool = False,
-        description: Optional[str] = None,
-        default: Optional[Any] = None,
+        description: str | None = None,
+        default: Any | None = None,
     ) -> None:
         if name.startswith("--"):
             name = name[2:]
@@ -56,7 +55,7 @@ class Option:
         return self._name
 
     @property
-    def shortcut(self) -> Optional[str]:
+    def shortcut(self) -> str | None:
         return self._shortcut
 
     @property
@@ -64,7 +63,7 @@ class Option:
         return self._description
 
     @property
-    def default(self) -> Optional[Any]:
+    def default(self) -> Any | None:
         return self._default
 
     def is_flag(self) -> bool:
@@ -79,7 +78,7 @@ class Option:
     def is_list(self) -> bool:
         return self._is_list
 
-    def set_default(self, default: Optional[Any] = None) -> None:
+    def set_default(self, default: Any | None = None) -> None:
         if self._flag and default is not None:
             raise LogicException("A flag option cannot have a default value")
 

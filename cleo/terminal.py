@@ -6,9 +6,6 @@ import shlex
 import struct
 import subprocess
 
-from typing import Optional
-from typing import Tuple
-
 
 class Terminal:
     """
@@ -64,7 +61,7 @@ class Terminal:
         cls._width, cls._height = dimensions
 
     @classmethod
-    def _get_terminal_size_windows(cls) -> Optional[Tuple[int, int]]:
+    def _get_terminal_size_windows(cls) -> tuple[int, int] | None:
         try:
             from ctypes import create_string_buffer
             from ctypes import windll
@@ -96,7 +93,7 @@ class Terminal:
             return
 
     @classmethod
-    def _get_terminal_size_tput(cls) -> Optional[Tuple[int, int]]:
+    def _get_terminal_size_tput(cls) -> tuple[int, int] | None:
         # get terminal width
         # src: http://stackoverflow.com/questions/263890/how-do-i-find-the-width-height-of-a-terminal-window
         try:
@@ -116,7 +113,7 @@ class Terminal:
             pass
 
     @classmethod
-    def _get_terminal_size_linux(cls) -> Optional[Tuple[int, int]]:
+    def _get_terminal_size_linux(cls) -> tuple[int, int] | None:
         def ioctl_GWINSZ(fd):
             try:
                 import fcntl

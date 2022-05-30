@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-from typing import List
-from typing import Optional
-
 
 class TableStyle:
     """
@@ -40,7 +37,7 @@ class TableStyle:
         return self._padding_char
 
     @property
-    def border_chars(self) -> List[str]:
+    def border_chars(self) -> list[str]:
         return [
             self._horizontal_outside_border_char,
             self._vertical_outside_border_char,
@@ -53,7 +50,7 @@ class TableStyle:
         return self._crossing_char
 
     @property
-    def crossing_chars(self) -> List[str]:
+    def crossing_chars(self) -> list[str]:
         return [
             self._crossing_char,
             self._crossing_top_left_char,
@@ -97,7 +94,7 @@ class TableStyle:
     def pad_type(self) -> str:
         return self._pad_type
 
-    def set_padding_char(self, padding_char: str) -> "TableStyle":
+    def set_padding_char(self, padding_char: str) -> TableStyle:
         """
         Sets padding character, used for cell padding.
         """
@@ -109,8 +106,8 @@ class TableStyle:
         return self
 
     def set_horizontal_border_chars(
-        self, outside: str, inside: Optional[str] = None
-    ) -> "TableStyle":
+        self, outside: str, inside: str | None = None
+    ) -> TableStyle:
         """
         Sets horizontal border characters.
 
@@ -129,8 +126,8 @@ class TableStyle:
         return self
 
     def set_vertical_border_chars(
-        self, outside: str, inside: Optional[str] = None
-    ) -> "TableStyle":
+        self, outside: str, inside: str | None = None
+    ) -> TableStyle:
         """
         Sets vertical border characters.
 
@@ -160,10 +157,10 @@ class TableStyle:
         bottom_mid: str,
         bottom_left: str,
         mid_left: str,
-        top_left_bottom: Optional[str] = None,
-        top_mid_bottom: Optional[str] = None,
-        top_right_bottom: Optional[str] = None,
-    ) -> "TableStyle":
+        top_left_bottom: str | None = None,
+        top_mid_bottom: str | None = None,
+        top_right_bottom: str | None = None,
+    ) -> TableStyle:
         """
         Sets crossing characters.
 
@@ -200,7 +197,7 @@ class TableStyle:
 
         return self
 
-    def set_default_crossing_char(self, char: str) -> "TableStyle":
+    def set_default_crossing_char(self, char: str) -> TableStyle:
         """
         Sets default crossing character used for each cross.
         """
@@ -208,7 +205,7 @@ class TableStyle:
             char, char, char, char, char, char, char, char, char
         )
 
-    def set_cell_header_format(self, cell_header_format: str) -> "TableStyle":
+    def set_cell_header_format(self, cell_header_format: str) -> TableStyle:
         """
         Sets the header cell format.
         """
@@ -216,7 +213,7 @@ class TableStyle:
 
         return self
 
-    def set_cell_row_format(self, cell_row_format: str) -> "TableStyle":
+    def set_cell_row_format(self, cell_row_format: str) -> TableStyle:
         """
         Sets the row cell format.
         """
@@ -224,7 +221,7 @@ class TableStyle:
 
         return self
 
-    def set_cell_row_content_format(self, cell_row_content_format: str) -> "TableStyle":
+    def set_cell_row_content_format(self, cell_row_content_format: str) -> TableStyle:
         """
         Sets the row cell content format.
         """
@@ -232,7 +229,7 @@ class TableStyle:
 
         return self
 
-    def set_border_format(self, border_format: str) -> "TableStyle":
+    def set_border_format(self, border_format: str) -> TableStyle:
         """
         Sets the border format.
         """
@@ -240,7 +237,7 @@ class TableStyle:
 
         return self
 
-    def set_header_title_format(self, header_title_format: str) -> "TableStyle":
+    def set_header_title_format(self, header_title_format: str) -> TableStyle:
         """
         Sets the header title format.
         """
@@ -248,7 +245,7 @@ class TableStyle:
 
         return self
 
-    def set_footer_title_format(self, footer_title_format: str) -> "TableStyle":
+    def set_footer_title_format(self, footer_title_format: str) -> TableStyle:
         """
         Sets the footer title format.
         """
@@ -256,7 +253,7 @@ class TableStyle:
 
         return self
 
-    def set_pad_type(self, pad_type: str) -> "TableStyle":
+    def set_pad_type(self, pad_type: str) -> TableStyle:
         """
         Sets the padding type.
         """

@@ -9,10 +9,6 @@ import re
 import sys
 import tokenize
 
-from typing import List
-from typing import Optional
-from typing import Union
-
 from crashtest.frame import Frame
 from crashtest.frame_collection import FrameCollection
 from crashtest.inspector import Inspector
@@ -65,7 +61,7 @@ class Highlighter:
 
     def code_snippet(
         self, source: str, line: int, lines_before: int = 2, lines_after: int = 2
-    ) -> List[str]:
+    ) -> list[str]:
         token_lines = self.highlighted_lines(source)
         token_lines = self.line_numbers(token_lines, line)
 
@@ -76,12 +72,12 @@ class Highlighter:
 
         return token_lines
 
-    def highlighted_lines(self, source: str) -> List[str]:
+    def highlighted_lines(self, source: str) -> list[str]:
         source = source.replace("\r\n", "\n").replace("\r", "\n")
 
         return self.split_to_lines(source)
 
-    def split_to_lines(self, source: str) -> List[str]:
+    def split_to_lines(self, source: str) -> list[str]:
         lines = []
         current_line = 1
         current_col = 0
@@ -179,9 +175,7 @@ class Highlighter:
 
         return lines
 
-    def line_numbers(
-        self, lines: List[str], mark_line: Optional[int] = None
-    ) -> List[str]:
+    def line_numbers(self, lines: list[str], mark_line: int | None = None) -> list[str]:
         max_line_length = max(3, len(str(len(lines))))
 
         snippet_lines = []
@@ -239,19 +233,19 @@ class ExceptionTrace:
     def __init__(
         self,
         exception: Exception,
-        solution_provider_repository: Optional[SolutionProviderRepository] = None,
+        solution_provider_repository: SolutionProviderRepository | None = None,
     ) -> None:
         self._exception = exception
         self._solution_provider_repository = solution_provider_repository
         self._exc_info = sys.exc_info()
         self._ignore = None
 
-    def ignore_files_in(self, ignore: str) -> "ExceptionTrace":
+    def ignore_files_in(self, ignore: str) -> ExceptionTrace:
         self._ignore = ignore
 
         return self
 
-    def render(self, io: Union[IO, Output], simple: bool = False) -> None:
+    def render(self, io: IO | Output, simple: bool = False) -> None:
         if simple:
             io.write_line("")
             io.write_line(f"<error>{str(self._exception)}</error>")
@@ -259,7 +253,7 @@ class ExceptionTrace:
 
         return self._render_exception(io, self._exception)
 
-    def _render_exception(self, io: Union[IO, Output], exception: Exception) -> None:
+    def _render_exception(self, io: IO | Output, exception: Exception) -> None:
         from crashtest.inspector import Inspector
 
         inspector = Inspector(exception)
@@ -288,7 +282,7 @@ class ExceptionTrace:
 
         self._render_solution(io, inspector)
 
-    def _render_snippet(self, io: Union[IO, Output], frame: Frame) -> None:
+    def _render_snippet(self, io: IO | Output, frame: Frame) -> None:
         self._render_line(
             io,
             "at <fg=green>{}</>:<b>{}</b> in <fg=cyan>{}</>".format(
@@ -306,7 +300,7 @@ class ExceptionTrace:
         for code_line in code_lines:
             self._render_line(io, code_line, indent=4)
 
-    def _render_solution(self, io: Union[IO, Output], inspector: Inspector) -> None:
+    def _render_solution(self, io: IO | Output, inspector: Inspector) -> None:
         if self._solution_provider_repository is None:
             return
 
@@ -335,7 +329,7 @@ class ExceptionTrace:
                 True,
             )
 
-    def _render_trace(self, io: Union[IO, Output], frames: FrameCollection) -> None:
+    def _render_trace(self, io: IO | Output, frames: FrameCollection) -> None:
         stack_frames = FrameCollection()
         for frame in frames:
             if (
@@ -443,7 +437,7 @@ class ExceptionTrace:
                     i -= 1
 
     def _render_line(
-        self, io: Union[IO, Output], line: str, new_line: bool = False, indent: int = 2
+        self, io: IO | Output, line: str, new_line: bool = False, indent: int = 2
     ) -> None:
         if new_line:
             io.write_line("")

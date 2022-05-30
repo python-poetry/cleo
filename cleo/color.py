@@ -2,9 +2,6 @@ from __future__ import annotations
 
 import os
 
-from typing import List
-from typing import Optional
-
 from .exceptions import ValueException
 
 
@@ -44,7 +41,7 @@ class Color:
         self,
         foreground: str = "",
         background: str = "",
-        options: Optional[List[str]] = None,
+        options: list[str] | None = None,
     ) -> None:
         self._foreground = self._parse_color(foreground, False)
         self._background = self._parse_color(background, True)

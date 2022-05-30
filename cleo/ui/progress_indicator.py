@@ -5,9 +5,6 @@ import threading
 import time
 
 from contextlib import contextmanager
-from typing import List
-from typing import Optional
-from typing import Union
 
 from cleo._utils import format_time
 from cleo.io.io import IO
@@ -28,10 +25,10 @@ class ProgressIndicator:
 
     def __init__(
         self,
-        io: Union[IO, Output],
-        fmt: Optional[str] = None,
+        io: IO | Output,
+        fmt: str | None = None,
         interval: int = 100,
-        values: Optional[List[str]] = None,
+        values: list[str] | None = None,
     ) -> None:
         if isinstance(io, IO):
             io = io.error_output
@@ -66,10 +63,10 @@ class ProgressIndicator:
         self._last_message_length = 0
 
     @property
-    def message(self) -> Optional[str]:
+    def message(self) -> str | None:
         return self._message
 
-    def set_message(self, message: Optional[str]) -> None:
+    def set_message(self, message: str | None) -> None:
         self._message = message
 
         self._display()

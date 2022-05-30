@@ -4,10 +4,8 @@ import math
 import re
 
 from copy import deepcopy
-from typing import Dict
 from typing import Generator
 from typing import List
-from typing import Optional
 from typing import Union
 
 from cleo.formatters.formatter import Formatter
@@ -34,9 +32,9 @@ class Table:
     BORDER_OUTSIDE: int = 0
     BORDER_INSIDE: int = 1
 
-    _styles: Optional[Dict[str, TableStyle]] = None
+    _styles: dict[str, TableStyle] | None = None
 
-    def __init__(self, io: Union[IO, Output], style: str = None) -> None:
+    def __init__(self, io: IO | Output, style: str = None) -> None:
         self._io = io
 
         if style is None:
@@ -50,17 +48,17 @@ class Table:
         self._rows = []
         self._horizontal = False
 
-        self._effective_column_widths: Dict[int, int] = {}
+        self._effective_column_widths: dict[int, int] = {}
 
         self._number_of_columns = None
 
-        self._column_styles: Dict[int, TableStyle] = {}
-        self._column_widths: Dict[int, int] = {}
-        self._column_max_widths: Dict[int, int] = {}
+        self._column_styles: dict[int, TableStyle] = {}
+        self._column_widths: dict[int, int] = {}
+        self._column_max_widths: dict[int, int] = {}
 
         self._rendered = False
 
-        self._style: Optional[TableStyle] = None
+        self._style: TableStyle | None = None
         self._init_styles()
         self.set_style(style)
 
@@ -68,7 +66,7 @@ class Table:
     def style(self) -> TableStyle:
         return self._style
 
-    def set_style(self, name: str) -> "Table":
+    def set_style(self, name: str) -> Table:
         self._init_styles()
 
         self._style = self._resolve_style(name)
@@ -81,19 +79,17 @@ class Table:
 
         return self._style
 
-    def set_column_style(
-        self, column_index: int, style: Union[str, TableStyle]
-    ) -> "Table":
+    def set_column_style(self, column_index: int, style: str | TableStyle) -> Table:
         self._column_styles[column_index] = self._resolve_style(style)
 
         return self
 
-    def set_column_width(self, column_index: int, width: int) -> "Table":
+    def set_column_width(self, column_index: int, width: int) -> Table:
         self._column_widths[column_index] = width
 
         return self
 
-    def set_column_widths(self, widths: List[int]) -> "Table":
+    def set_column_widths(self, widths: list[int]) -> Table:
         self._column_widths = {}
 
         for i, width in enumerate(widths):
@@ -101,12 +97,12 @@ class Table:
 
         return self
 
-    def set_column_max_width(self, column_index: int, width: int) -> "Table":
+    def set_column_max_width(self, column_index: int, width: int) -> Table:
         self._column_widths[column_index] = width
 
         return self
 
-    def set_headers(self, headers: List[str]) -> "Table":
+    def set_headers(self, headers: list[str]) -> Table:
         if headers and not isinstance(headers[0], list):
             headers = [headers]
 
@@ -114,18 +110,18 @@ class Table:
 
         return self
 
-    def set_rows(self, rows: _Rows) -> "Table":
+    def set_rows(self, rows: _Rows) -> Table:
         self._rows = []
 
         return self.add_rows(rows)
 
-    def add_rows(self, rows: _Rows) -> "Table":
+    def add_rows(self, rows: _Rows) -> Table:
         for row in rows:
             self.add_row(row)
 
         return self
 
-    def add_row(self, row: Union[_Row, TableSeparator]) -> "Table":
+    def add_row(self, row: _Row | TableSeparator) -> Table:
         if isinstance(row, TableSeparator):
             self._rows.append(row)
 
@@ -135,17 +131,17 @@ class Table:
 
         return self
 
-    def set_header_title(self, header_title: str) -> "Table":
+    def set_header_title(self, header_title: str) -> Table:
         self._header_title = header_title
 
         return self
 
-    def set_footer_title(self, footer_title: str) -> "Table":
+    def set_footer_title(self, footer_title: str) -> Table:
         self._footer_title = footer_title
 
         return self
 
-    def horizontal(self, horizontal: bool = True) -> "Table":
+    def horizontal(self, horizontal: bool = True) -> Table:
         self._horizontal = horizontal
 
         return self
@@ -229,8 +225,8 @@ class Table:
     def _render_row_separator(
         self,
         type: int = SEPARATOR_MID,
-        title: Optional[str] = None,
-        title_format: Optional[str] = None,
+        title: str | None = None,
+        title_format: str | None = None,
     ) -> None:
         """
         Renders horizontal header separator.
@@ -315,7 +311,7 @@ class Table:
         )
 
     def _render_row(
-        self, row: List[str], cell_format: str, first_cell_format: Optional[str] = None
+        self, row: list[str], cell_format: str, first_cell_format: str | None = None
     ) -> None:
         """
         Renders table row.
@@ -542,7 +538,7 @@ class Table:
 
         return rows
 
-    def _fill_cells(self, row: _Row) -> List[Union[str, TableCell]]:
+    def _fill_cells(self, row: _Row) -> list[str | TableCell]:
         """
         Fills cells for a row that contains colspan > 1.
         """
@@ -585,7 +581,7 @@ class Table:
 
         return columns
 
-    def _get_row_columns(self, row: _Row) -> List[int]:
+    def _get_row_columns(self, row: _Row) -> list[int]:
         """
         Gets list of columns for the given row.
         """
@@ -702,7 +698,7 @@ class Table:
         }
 
     @classmethod
-    def _resolve_style(cls, name: Union[str, TableStyle]) -> TableStyle:
+    def _resolve_style(cls, name: str | TableStyle) -> TableStyle:
         if isinstance(name, TableStyle):
             return name
 

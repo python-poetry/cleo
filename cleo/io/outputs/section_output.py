@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import math
 
-from typing import List
-from typing import Optional
 from typing import TextIO
 
 from cleo.formatters.formatter import Formatter
@@ -17,16 +15,16 @@ class SectionOutput(StreamOutput):
     def __init__(
         self,
         stream: TextIO,
-        sections: List["SectionOutput"],
+        sections: list[SectionOutput],
         verbosity: Verbosity = Verbosity.NORMAL,
-        decorated: Optional[bool] = None,
-        formatter: Optional[Formatter] = None,
+        decorated: bool | None = None,
+        formatter: Formatter | None = None,
     ) -> None:
         super().__init__(
             stream, verbosity=verbosity, decorated=decorated, formatter=formatter
         )
 
-        self._content: List[str] = []
+        self._content: list[str] = []
         self._lines = 0
         sections.insert(0, self)
         self._sections = sections
@@ -40,7 +38,7 @@ class SectionOutput(StreamOutput):
     def lines(self) -> int:
         return self._lines
 
-    def clear(self, lines: Optional[int] = None) -> None:
+    def clear(self, lines: int | None = None) -> None:
         if not self._content or not self.is_decorated():
             return
 

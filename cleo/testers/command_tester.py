@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from io import StringIO
-from typing import Optional
 
 from cleo.commands.command import Command
 from cleo.io.buffered_io import BufferedIO
@@ -35,11 +34,11 @@ class CommandTester:
 
     def execute(
         self,
-        args: Optional[str] = "",
-        inputs: Optional[str] = None,
-        interactive: Optional[bool] = None,
-        verbosity: Optional[Verbosity] = None,
-        decorated: Optional[bool] = None,
+        args: str | None = "",
+        inputs: str | None = None,
+        interactive: bool | None = None,
+        verbosity: Verbosity | None = None,
+        decorated: bool | None = None,
         supports_utf8: bool = True,
     ) -> int:
         """

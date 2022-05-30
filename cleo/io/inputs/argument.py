@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import Any
-from typing import Optional
 
 from cleo.exceptions import LogicException
 
@@ -16,8 +15,8 @@ class Argument:
         name: str,
         required: bool = True,
         is_list: bool = False,
-        description: Optional[str] = None,
-        default: Optional[Any] = None,
+        description: str | None = None,
+        default: Any | None = None,
     ) -> None:
         self._name = name
         self._required = required
@@ -45,7 +44,7 @@ class Argument:
     def is_list(self) -> bool:
         return self._is_list
 
-    def set_default(self, default: Optional[Any] = None) -> None:
+    def set_default(self, default: Any | None = None) -> None:
         if self._required and default is not None:
             raise LogicException("Cannot set a default value for required arguments")
 

@@ -1,11 +1,5 @@
 from __future__ import annotations
 
-from typing import Dict
-from typing import List
-from typing import Optional
-from typing import Tuple
-from typing import Union
-
 from cleo.application import Application
 from cleo.commands.command import Command
 from cleo.exceptions import CommandNotFoundException
@@ -18,24 +12,24 @@ class ApplicationDescription:
     def __init__(
         self,
         application: Application,
-        namespace: Optional[str] = None,
+        namespace: str | None = None,
         show_hidden: bool = False,
     ) -> None:
         self._application: Application = application
         self._namespace = namespace
         self._show_hidden = show_hidden
-        self._namespaces: Dict[str, Dict[str, Union[str, List[Command]]]] = {}
+        self._namespaces: dict[str, dict[str, str | list[Command]]] = {}
         self._commands = {}
         self._aliases = {}
 
         self._inspect_application()
 
     @property
-    def namespaces(self) -> Dict[str, Dict[str, Union[str, List[Command]]]]:
+    def namespaces(self) -> dict[str, dict[str, str | list[Command]]]:
         return self._namespaces
 
     @property
-    def commands(self) -> Dict[str, Command]:
+    def commands(self) -> dict[str, Command]:
         return self._commands
 
     def command(self, name: str) -> Command:
@@ -68,8 +62,8 @@ class ApplicationDescription:
             self._namespaces[namespace] = {"id": namespace, "commands": names}
 
     def _sort_commands(
-        self, commands: Dict[str, Command]
-    ) -> List[Tuple[str, List[Tuple[str, Command]]]]:
+        self, commands: dict[str, Command]
+    ) -> list[tuple[str, list[tuple[str, Command]]]]:
         """
         Sorts command in alphabetical order
         """

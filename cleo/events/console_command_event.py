@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-from typing import Optional
 
 from cleo.io.io import IO
 
@@ -21,7 +20,7 @@ class ConsoleCommandEvent(ConsoleEvent):
 
     RETURN_CODE_DISABLED: int = 113
 
-    def __init__(self, command: Optional["Command"], io: IO) -> None:
+    def __init__(self, command: Command | None, io: IO) -> None:
         super().__init__(command, io)
 
         self._command_should_run = True

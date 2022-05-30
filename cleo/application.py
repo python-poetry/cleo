@@ -6,9 +6,6 @@ import sys
 
 from contextlib import suppress
 from typing import TYPE_CHECKING
-from typing import Dict
-from typing import List
-from typing import Optional
 from typing import cast
 
 from .commands.command import Command
@@ -62,27 +59,25 @@ class Application:
     def __init__(self, name: str = "console", version: str = "") -> None:
         self._name = name
         self._version = version
-        self._display_name: Optional[str] = None
+        self._display_name: str | None = None
         self._terminal = Terminal()
         self._default_command = "list"
         self._single_command = False
-        self._commands: Dict[str, Command] = {}
+        self._commands: dict[str, Command] = {}
         self._running_command = None
         self._want_helps = False
-        self._definition: Optional[Definition] = None
+        self._definition: Definition | None = None
         self._catch_exceptions = True
         self._auto_exit = True
         self._initialized = False
-        self._ui: Optional[UI] = None
+        self._ui: UI | None = None
 
         # TODO: signals support
-        self._event_dispatcher: Optional[EventDispatcher] = None
+        self._event_dispatcher: EventDispatcher | None = None
 
-        self._command_loader: Optional[CommandLoader] = None
+        self._command_loader: CommandLoader | None = None
 
-        self._solution_provider_repository: Optional[
-            "SolutionProviderRepository"
-        ] = None
+        self._solution_provider_repository: SolutionProviderRepository | None = None
 
     @property
     def name(self) -> str:
@@ -123,7 +118,7 @@ class Application:
         return self._definition
 
     @property
-    def default_commands(self) -> List[Command]:
+    def default_commands(self) -> list[Command]:
         return [HelpCommand(), ListCommand(), CompletionsCommand()]
 
     @property
@@ -138,7 +133,7 @@ class Application:
         return self._ui
 
     @property
-    def event_dispatcher(self) -> Optional[EventDispatcher]:
+    def event_dispatcher(self) -> EventDispatcher | None:
         return self._event_dispatcher
 
     def set_event_dispatcher(self, event_dispatcher: EventDispatcher) -> None:
@@ -175,11 +170,11 @@ class Application:
         return self._single_command
 
     def set_solution_provider_repository(
-        self, solution_provider_repository: "SolutionProviderRepository"
+        self, solution_provider_repository: SolutionProviderRepository
     ) -> None:
         self._solution_provider_repository = solution_provider_repository
 
-    def add(self, command: Command) -> Optional[Command]:
+    def add(self, command: Command) -> Command | None:
         self._init()
 
         command.set_application(self)
@@ -238,7 +233,7 @@ class Application:
             self._command_loader.get(name)
         )
 
-    def get_namespaces(self) -> List[str]:
+    def get_namespaces(self) -> list[str]:
         namespaces = []
         seen = set()
 
@@ -287,7 +282,7 @@ class Application:
 
         raise CommandNotFoundException(name, all_commands)
 
-    def all(self, namespace: Optional[str] = None) -> Dict[str, Command]:
+    def all(self, namespace: str | None = None) -> dict[str, Command]:
         self._init()
 
         if namespace is None:
@@ -320,9 +315,9 @@ class Application:
 
     def run(
         self,
-        input: Optional[Input] = None,
-        output: Optional[Output] = None,
-        error_output: Optional[Output] = None,
+        input: Input | None = None,
+        output: Output | None = None,
+        error_output: Output | None = None,
     ) -> int:
         try:
             io = self.create_io(input, output, error_output)
@@ -470,9 +465,9 @@ class Application:
 
     def create_io(
         self,
-        input: Optional[Input] = None,
-        output: Optional[Output] = None,
-        error_output: Optional[Output] = None,
+        input: Input | None = None,
+        output: Output | None = None,
+        error_output: Output | None = None,
     ) -> IO:
         if input is None:
             input = ArgvInput()
@@ -599,7 +594,7 @@ class Application:
 
         return io.input.first_argument
 
-    def extract_namespace(self, name: str, limit: Optional[int] = None) -> str:
+    def extract_namespace(self, name: str, limit: int | None = None) -> str:
         parts = name.split(" ")[:-1]
 
         if limit is not None:
@@ -612,7 +607,7 @@ class Application:
 
         return UI([ProgressBar()])
 
-    def _extract_all_namespaces(self, name: str) -> List[str]:
+    def _extract_all_namespaces(self, name: str) -> list[str]:
         parts = name.split(" ")[:-1]
         namespaces = []
 

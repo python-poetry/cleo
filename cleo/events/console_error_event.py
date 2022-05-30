@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-from typing import Optional
 
 from cleo.exceptions import CleoException
 from cleo.io.io import IO
@@ -18,11 +17,11 @@ class ConsoleErrorEvent(ConsoleEvent):
     An event triggered when an exception is raised during the execution of a command.
     """
 
-    def __init__(self, command: Optional["Command"], io: IO, error: Exception) -> None:
+    def __init__(self, command: Command | None, io: IO, error: Exception) -> None:
         super().__init__(command, io)
 
         self._error = error
-        self._exit_code: Optional[int] = None
+        self._exit_code: int | None = None
 
     @property
     def error(self) -> Exception:

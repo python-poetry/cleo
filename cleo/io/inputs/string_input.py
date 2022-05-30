@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List
-
 from .argv_input import ArgvInput
 from .token_parser import TokenParser
 
@@ -16,5 +14,5 @@ class StringInput(ArgvInput):
 
         self._set_tokens(self._tokenize(input))
 
-    def _tokenize(self, input: str) -> List[str]:
+    def _tokenize(self, input: str) -> list[str]:
         return TokenParser().parse(input)

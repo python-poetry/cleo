@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from typing import List
-
 from cleo.commands.command import Command
 
 
 class CommandLoader:
     @property
-    def names(self) -> List[str]:
+    def names(self) -> list[str]:
         """
         All registered command names.
         """

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import Any
-from typing import Optional
 
 from cleo.application import Application
 from cleo.commands.command import Command
@@ -14,7 +13,7 @@ from cleo.io.outputs.output import Type
 
 class Descriptor:
     def __init__(self) -> None:
-        self._io: Optional[IO] = None
+        self._io: IO | None = None
 
     def describe(self, io: IO, obj: Any, **options: Any) -> None:
         self._io = io
