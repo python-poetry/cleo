@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from .inputs.input import Input
-from .outputs.output import Output
-from .outputs.output import Type as OutputType
-from .outputs.output import Verbosity
-from .outputs.section_output import SectionOutput
+from cleo.io.inputs.input import Input
+from cleo.io.outputs.output import Output
+from cleo.io.outputs.output import Type as OutputType
+from cleo.io.outputs.output import Verbosity
+from cleo.io.outputs.section_output import SectionOutput
 
 
 class IO:

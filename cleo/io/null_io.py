@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from .inputs.input import Input
-from .inputs.string_input import StringInput
-from .io import IO
-from .outputs.null_output import NullOutput
+from cleo.io.inputs.input import Input
+from cleo.io.inputs.string_input import StringInput
+from cleo.io.io import IO
+from cleo.io.outputs.null_output import NullOutput
 
 
 class NullIO(IO):

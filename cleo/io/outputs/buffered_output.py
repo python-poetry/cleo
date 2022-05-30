@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from io import StringIO
 
-from .output import Output
-from .section_output import SectionOutput
+from cleo.io.outputs.output import Output
+from cleo.io.outputs.section_output import SectionOutput
 
 
 class BufferedOutput(Output):

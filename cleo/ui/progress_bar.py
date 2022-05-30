@@ -12,8 +12,7 @@ from cleo.io.io import IO
 from cleo.io.outputs.output import Output
 from cleo.io.outputs.section_output import SectionOutput
 from cleo.terminal import Terminal
-
-from .component import Component
+from cleo.ui.component import Component
 
 
 class ProgressBar(Component):

@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from .output import Output
-from .output import Type
-from .output import Verbosity
+from cleo.io.outputs.output import Output
+from cleo.io.outputs.output import Type
+from cleo.io.outputs.output import Verbosity
 
 
 class NullOutput(Output):

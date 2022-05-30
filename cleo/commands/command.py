@@ -6,6 +6,7 @@ import re
 from typing import TYPE_CHECKING
 from typing import Any
 
+from cleo.commands.base_command import BaseCommand
 from cleo.formatters.style import Style
 from cleo.io.inputs.string_input import StringInput
 from cleo.io.io import IO
@@ -13,8 +14,6 @@ from cleo.io.null_io import NullIO
 from cleo.io.outputs.output import Verbosity
 from cleo.parser import Parser
 from cleo.ui.table_separator import TableSeparator
-
-from .base_command import BaseCommand
 
 
 if TYPE_CHECKING:

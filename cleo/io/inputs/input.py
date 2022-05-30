@@ -8,8 +8,7 @@ from typing import TextIO
 from cleo._compat import shell_quote
 from cleo.exceptions import MissingArgumentsException
 from cleo.exceptions import ValueException
-
-from .definition import Definition
+from cleo.io.inputs.definition import Definition
 
 
 class Input:

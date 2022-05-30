@@ -5,10 +5,9 @@ import math
 from typing import TextIO
 
 from cleo.formatters.formatter import Formatter
+from cleo.io.outputs.output import Verbosity
+from cleo.io.outputs.stream_output import StreamOutput
 from cleo.terminal import Terminal
-
-from .output import Verbosity
-from .stream_output import StreamOutput
 
 
 class SectionOutput(StreamOutput):

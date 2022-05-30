@@ -6,8 +6,7 @@ from typing import Any
 
 from cleo.exceptions import ValueException
 from cleo.io.io import IO
-
-from .question import Question
+from cleo.ui.question import Question
 
 
 class SelectChoiceValidator:

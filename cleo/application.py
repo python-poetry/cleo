@@ -8,34 +8,34 @@ from contextlib import suppress
 from typing import TYPE_CHECKING
 from typing import cast
 
-from .commands.command import Command
-from .commands.completions_command import CompletionsCommand
-from .commands.help_command import HelpCommand
-from .commands.list_command import ListCommand
-from .events.console_command_event import ConsoleCommandEvent
-from .events.console_error_event import ConsoleErrorEvent
-from .events.console_events import COMMAND
-from .events.console_events import ERROR
-from .events.console_events import TERMINATE
-from .events.console_terminate_event import ConsoleTerminateEvent
-from .events.event_dispatcher import EventDispatcher
-from .exceptions import CleoException
-from .exceptions import CleoSimpleException
-from .exceptions import CommandNotFoundException
-from .exceptions import LogicException
-from .exceptions import NamespaceNotFoundException
-from .io.inputs.argument import Argument
-from .io.inputs.argv_input import ArgvInput
-from .io.inputs.definition import Definition
-from .io.inputs.input import Input
-from .io.inputs.option import Option
-from .io.io import IO
-from .io.outputs.output import Output
-from .io.outputs.output import Verbosity
-from .io.outputs.stream_output import StreamOutput
-from .loaders.command_loader import CommandLoader
-from .terminal import Terminal
-from .ui.ui import UI
+from cleo.commands.command import Command
+from cleo.commands.completions_command import CompletionsCommand
+from cleo.commands.help_command import HelpCommand
+from cleo.commands.list_command import ListCommand
+from cleo.events.console_command_event import ConsoleCommandEvent
+from cleo.events.console_error_event import ConsoleErrorEvent
+from cleo.events.console_events import COMMAND
+from cleo.events.console_events import ERROR
+from cleo.events.console_events import TERMINATE
+from cleo.events.console_terminate_event import ConsoleTerminateEvent
+from cleo.events.event_dispatcher import EventDispatcher
+from cleo.exceptions import CleoException
+from cleo.exceptions import CleoSimpleException
+from cleo.exceptions import CommandNotFoundException
+from cleo.exceptions import LogicException
+from cleo.exceptions import NamespaceNotFoundException
+from cleo.io.inputs.argument import Argument
+from cleo.io.inputs.argv_input import ArgvInput
+from cleo.io.inputs.definition import Definition
+from cleo.io.inputs.input import Input
+from cleo.io.inputs.option import Option
+from cleo.io.io import IO
+from cleo.io.outputs.output import Output
+from cleo.io.outputs.output import Verbosity
+from cleo.io.outputs.stream_output import StreamOutput
+from cleo.loaders.command_loader import CommandLoader
+from cleo.terminal import Terminal
+from cleo.ui.ui import UI
 
 
 if TYPE_CHECKING:
@@ -603,7 +603,7 @@ class Application:
         return " ".join(parts)
 
     def _get_default_ui(self) -> UI:
-        from .ui.progress_bar import ProgressBar
+        from cleo.ui.progress_bar import ProgressBar
 
         return UI([ProgressBar()])
 

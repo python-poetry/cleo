@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from cleo.exceptions import ValueException
-
-from .component import Component
+from cleo.ui.component import Component
 
 
 class UI:

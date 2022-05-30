@@ -3,9 +3,8 @@ from __future__ import annotations
 import re
 
 from cleo.exceptions import ValueException
-
-from .style import Style
-from .style_stack import StyleStack
+from cleo.formatters.style import Style
+from cleo.formatters.style_stack import StyleStack
 
 
 class Formatter:

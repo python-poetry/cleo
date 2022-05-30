@@ -11,11 +11,10 @@ from typing import Union
 from cleo.formatters.formatter import Formatter
 from cleo.io.io import IO
 from cleo.io.outputs.output import Output
-
-from .table_cell import TableCell
-from .table_cell_style import TableCellStyle
-from .table_separator import TableSeparator
-from .table_style import TableStyle
+from cleo.ui.table_cell import TableCell
+from cleo.ui.table_cell_style import TableCellStyle
+from cleo.ui.table_separator import TableSeparator
+from cleo.ui.table_style import TableStyle
 
 
 _Row = List[Union[str, TableCell]]

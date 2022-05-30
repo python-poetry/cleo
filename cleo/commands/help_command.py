@@ -1,8 +1,7 @@
 from __future__ import annotations
 
+from cleo.commands.command import Command
 from cleo.io.inputs.argument import Argument
-
-from .command import Command
 
 
 class HelpCommand(Command):
