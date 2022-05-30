@@ -336,7 +336,7 @@ class Command(BaseCommand):
         """
         Automatically spin a progress indicator.
         """
-        spinner = ProgressIndicator(self.io, fmt, interval, values)
+        spinner = self.progress_indicator(fmt, interval, values)
 
         return spinner.auto(start_message, end_message)
 
