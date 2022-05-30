@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from cleo.application import Application
 from cleo.commands.command import Command
 from cleo.helpers import argument

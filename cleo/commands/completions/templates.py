@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 BASH_TEMPLATE = """%(function)s()
 {
     local cur script coms opts com

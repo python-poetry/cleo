@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import time
 
 from cleo.ui.progress_indicator import ProgressIndicator

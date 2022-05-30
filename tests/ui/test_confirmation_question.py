@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from cleo.ui.confirmation_question import ConfirmationQuestion
 
 

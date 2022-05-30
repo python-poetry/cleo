@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from cleo.io.inputs.argument import Argument
 
 from .command import Command

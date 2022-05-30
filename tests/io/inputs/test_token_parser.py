@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytest
 
 from cleo.io.inputs.token_parser import TokenParser

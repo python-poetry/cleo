@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional
 
 from .table_cell_style import TableCellStyle
