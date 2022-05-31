@@ -16,9 +16,11 @@ from cleo.io.outputs.stream_output import StreamOutput
 from cleo.testers.application_tester import ApplicationTester
 from tests.fixtures.foo1_command import Foo1Command
 from tests.fixtures.foo2_command import Foo2Command
+from tests.fixtures.foo3_command import Foo3Command
 from tests.fixtures.foo_command import FooCommand
 from tests.fixtures.foo_sub_namespaced1_command import FooSubNamespaced1Command
 from tests.fixtures.foo_sub_namespaced2_command import FooSubNamespaced2Command
+from tests.fixtures.foo_sub_namespaced3_command import FooSubNamespaced3Command
 
 
 FIXTURES_PATH = Path(__file__).parent.joinpath("fixtures")
@@ -345,3 +347,27 @@ def test_run_with_help(tester: ApplicationTester):
         tester.io.fetch_output()
         == FIXTURES_PATH.joinpath("application_run5.txt").read_text()
     )
+
+
+def test_run_with_input():
+    app = Application()
+    command = Foo3Command()
+    app.add(command)
+
+    tester = ApplicationTester(app)
+    status_code = tester.execute("foo3", inputs="Hello world!")
+
+    assert status_code == 0
+    assert tester.io.fetch_output() == "Hello world!\n"
+
+
+def test_run_namespaced_with_input():
+    app = Application()
+    command = FooSubNamespaced3Command()
+    app.add(command)
+
+    tester = ApplicationTester(app)
+    status_code = tester.execute("foo bar", inputs="Hello world!")
+
+    assert status_code == 0
+    assert tester.io.fetch_output() == "Hello world!\n"
