@@ -373,7 +373,9 @@ class Application:
         if io.input.has_parameter_option(["--help", "-h"], True):
             if not name:
                 name = "help"
+                stream = io.input.stream
                 io.set_input(ArgvInput(["console", "help", self._default_command]))
+                io.input.set_stream(stream)
             else:
                 self._want_helps = True
 
@@ -416,7 +418,9 @@ class Application:
             if index is not None:
                 del argv[index + 1 : index + 1 + (len(name.split(" ")) - 1)]
 
+            stream = io.input.stream
             io.set_input(ArgvInput(argv))
+            io.input.set_stream(stream)
 
         exit_code = self._run_command(command, io)
         self._running_command = None
