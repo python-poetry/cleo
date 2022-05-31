@@ -358,7 +358,7 @@ def test_run_with_input():
     status_code = tester.execute("foo3", inputs="Hello world!")
 
     assert status_code == 0
-    assert "Hello world!\n" == tester.io.fetch_output()
+    assert tester.io.fetch_output() == "Hello world!\n"
 
 
 def test_run_namespaced_with_input():
@@ -370,4 +370,4 @@ def test_run_namespaced_with_input():
     status_code = tester.execute("foo bar", inputs="Hello world!")
 
     assert status_code == 0
-    assert "Hello world!\n" == tester.io.fetch_output()
+    assert tester.io.fetch_output() == "Hello world!\n"

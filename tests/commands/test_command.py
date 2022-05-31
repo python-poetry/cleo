@@ -44,6 +44,7 @@ class MyNamespacedCommand(Command):
     description = "Command testing"
 
     arguments = [argument("foo", "Bar", multiple=True)]
+
     def handle(self):
         foos = self.argument("foo")
 

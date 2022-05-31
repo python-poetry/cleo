@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from cleo.commands.command import Command
-from cleo.io.io import IO
 
 
 class FooSubNamespaced3Command(Command):
