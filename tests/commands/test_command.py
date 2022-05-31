@@ -39,20 +39,6 @@ class MySecondCommand(Command):
         self.line(",".join(foos))
 
 
-class MyNamespacedCommand(Command):
-    name = "test three"
-    description = "Command testing"
-
-    arguments = [argument("foo", "Bar", multiple=True)]
-
-    def handle(self):
-        foos = self.argument("foo")
-
-        repeat = self.ask("Simon says:")
-        self.line(",".join(foos))
-        self.line(repeat)
-
-
 def test_set_application():
     application = Application()
     command = Command()
