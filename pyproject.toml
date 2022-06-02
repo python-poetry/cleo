@@ -9,7 +9,7 @@ license = "MIT"
 
 readme = "README.md"
 
-homepage = "https://github.com/sdispater/cleo"
+homepage = "https://github.com/python-poetry/cleo"
 
 keywords = ["cli", "commands"]
 
