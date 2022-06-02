@@ -144,9 +144,9 @@ def test_render_debug_better_error_message_recursion_error():
     assert re.match(expected, io.fetch_output()) is not None
 
 
-def test_render_verbose_better_error_message():
+def test_render_very_verbose_better_error_message():
     io = BufferedIO()
-    io.set_verbosity(Verbosity.VERBOSE)
+    io.set_verbosity(Verbosity.VERY_VERBOSE)
 
     try:
         fail()
@@ -158,7 +158,7 @@ def test_render_verbose_better_error_message():
     expected = r"""^
   Stack trace:
 
-  1  {}:152 in test_render_verbose_better_error_message
+  1  {}:152 in test_render_very_verbose_better_error_message
        fail\(\)
 
   Exception
@@ -192,7 +192,7 @@ def first():
 
 def test_render_debug_better_error_message_recursion_error_with_multiple_duplicated_frames():
     io = BufferedIO()
-    io.set_verbosity(Verbosity.VERBOSE)
+    io.set_verbosity(Verbosity.VERY_VERBOSE)
 
     with pytest.raises(RecursionError) as e:
         first()
@@ -212,7 +212,7 @@ def test_render_can_ignore_given_files():
     from tests.ui.helpers import outer
 
     io = BufferedIO()
-    io.set_verbosity(Verbosity.VERBOSE)
+    io.set_verbosity(Verbosity.VERY_VERBOSE)
 
     def call():
         def run():
@@ -477,3 +477,60 @@ def test():
         "    ...",
         "",
     ]
+
+
+def test_simple_render():
+    io = BufferedIO()
+
+    with pytest.raises(Exception) as e:
+        fail()
+
+    trace = ExceptionTrace(e.value)
+
+    trace.render(io, simple=True)
+
+    expected = """
+Failed
+"""
+
+    assert expected == io.fetch_output()
+
+
+def test_simple_render_supports_solutions():
+    from crashtest.contracts.base_solution import BaseSolution
+    from crashtest.contracts.provides_solution import ProvidesSolution
+    from crashtest.solution_providers.solution_provider_repository import (
+        SolutionProviderRepository,
+    )
+
+    class CustomError(ProvidesSolution, Exception):
+        @property
+        def solution(self):
+            solution = BaseSolution("Solution Title.", "Solution Description")
+            solution.documentation_links.append("https://example.com")
+            solution.documentation_links.append("https://example2.com")
+
+            return solution
+
+    io = BufferedIO()
+
+    def call():
+        raise CustomError("Error with solution")
+
+    with pytest.raises(CustomError) as e:
+        call()
+
+    trace = ExceptionTrace(
+        e.value, solution_provider_repository=SolutionProviderRepository()
+    )
+
+    trace.render(io, simple=True)
+
+    expected = """
+Error with solution
+
+  • Solution Title: Solution Description
+    https://example.com,
+    https://example2.com
+"""
+    assert expected == io.fetch_output()

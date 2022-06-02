@@ -255,9 +255,10 @@ class ExceptionTrace:
         if simple:
             io.write_line("")
             io.write_line(f"<error>{str(self._exception)}</error>")
-            return
+        else:
+            self._render_exception(io, self._exception)
 
-        return self._render_exception(io, self._exception)
+        self._render_solution(io, self._exception)
 
     def _render_exception(self, io: IO | Output, exception: Exception) -> None:
         from crashtest.inspector import Inspector
@@ -286,7 +287,6 @@ class ExceptionTrace:
         current_frame = inspector.frames[-1]
         self._render_snippet(io, current_frame)
 
-        self._render_solution(io, inspector)
 
     def _render_snippet(self, io: IO | Output, frame: Frame) -> None:
         self._render_line(
@@ -306,12 +306,12 @@ class ExceptionTrace:
         for code_line in code_lines:
             self._render_line(io, code_line, indent=4)
 
-    def _render_solution(self, io: IO | Output, inspector: Inspector) -> None:
+    def _render_solution(self, io: IO | Output, exception: Exception) -> None:
         if self._solution_provider_repository is None:
             return
 
         solutions = self._solution_provider_repository.get_solutions_for_exception(
-            inspector.exception
+            exception
         )
         symbol = "•"
         if not io.supports_utf8():
@@ -348,7 +348,7 @@ class ExceptionTrace:
             stack_frames.append(frame)
 
         remaining_frames_length = len(stack_frames) - 1
-        if io.is_verbose() and remaining_frames_length:
+        if io.is_very_verbose() and remaining_frames_length:
             self._render_line(io, "<fg=yellow>Stack trace</>:", True)
             max_frame_length = len(str(remaining_frames_length))
             frame_collections = stack_frames.compact()
