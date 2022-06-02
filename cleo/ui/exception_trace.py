@@ -12,7 +12,6 @@ import tokenize
 from typing import TYPE_CHECKING
 
 from crashtest.frame_collection import FrameCollection
-from crashtest.inspector import Inspector
 
 from cleo.formatters.formatter import Formatter
 
@@ -286,7 +285,6 @@ class ExceptionTrace:
 
         current_frame = inspector.frames[-1]
         self._render_snippet(io, current_frame)
-
 
     def _render_snippet(self, io: IO | Output, frame: Frame) -> None:
         self._render_line(
