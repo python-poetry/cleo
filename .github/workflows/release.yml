@@ -17,13 +17,12 @@ jobs:
       run: |
         echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v3
       with:
-        python-version: 3.8
+        python-version: "3.10"
     - name: Install and set up Poetry
       run: |
-        curl -fsS -o install-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/install-poetry.py
-        python install-poetry.py --preview -y
+        curl -sL https://install.python-poetry.org | python - --preview -y
 
     - name: Update PATH
       shell: bash
@@ -57,8 +56,7 @@ jobs:
           path: dist
       - name: Install and set up Poetry
         run: |
-          curl -fsS -o install-poetry.py https://raw.githubusercontent.com/sdispater/poetry/master/install-poetry.py
-          python install-poetry.py --preview -y
+          curl -sL https://install.python-poetry.org | python - --preview -y
 
       - name: Update PATH
         shell: bash
