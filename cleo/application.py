@@ -490,7 +490,8 @@ class Application:
         trace = ExceptionTrace(
             error, solution_provider_repository=self._solution_provider_repository
         )
-        trace.render(io.error_output, isinstance(error, CleoSimpleException))
+        simple = not io.is_verbose() or isinstance(error, CleoSimpleException)
+        trace.render(io.error_output, simple)
 
     def _configure_io(self, io: IO) -> None:
         if io.input.has_parameter_option("--ansi", True):
