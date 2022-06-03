@@ -144,7 +144,10 @@ def test_find_ambiguous_namespace(app: Application):
 
     with pytest.raises(
         NamespaceNotFoundException,
-        match=r'There are no commands in the "f" namespace\.\n\nDid you mean one of these\?\n    foo\n    foo1',
+        match=(
+            r'There are no commands in the "f" namespace\.\n\n'
+            r"Did you mean one of these\?\n    foo\n    foo1"
+        ),
     ):
         app.find_namespace("f")
 
@@ -184,7 +187,9 @@ def test_find_ambiguous_command(app: Application):
 
     with pytest.raises(
         CommandNotFoundException,
-        match=r'The command "foo b" does not exist\.\n\nDid you mean this\?\n    foo bar',
+        match=(
+            r'The command "foo b" does not exist\.\n\nDid you mean this\?\n    foo bar'
+        ),
     ):
         app.find("foo b")
 
