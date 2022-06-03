@@ -15,4 +15,4 @@ You can install Cleo in various ways:
 
         $ pip install cleo
 
-* Use the `official repository <https://github.com/sdispater/cleo>`_
+* Use the `official repository <https://github.com/python-poetry/cleo>`_
