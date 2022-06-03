@@ -19,10 +19,10 @@ class TagStripper(HTMLParser):
         self.fed.append(d)
 
     def handle_entityref(self, name) -> None:
-        self.fed.append("&%s;" % name)
+        self.fed.append(f"&{name};")
 
     def handle_charref(self, name) -> None:
-        self.fed.append("&#%s;" % name)
+        self.fed.append(f"&#{name};")
 
     def get_data(self) -> str:
         return "".join(self.fed)
