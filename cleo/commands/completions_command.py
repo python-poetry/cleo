@@ -33,8 +33,9 @@ class CompletionsCommand(Command):
     hidden = True
 
     help = """
-One can generate a completion script for `<options=bold>{script_name}</>` that is compatible with \
-a given shell. The script is output on `<options=bold>stdout</>` allowing one to re-direct \
+One can generate a completion script for `<options=bold>{script_name}</>`\
+that is compatible with a given shell. The script is output on \
+`<options=bold>stdout</>` allowing one to re-direct \
 the output to the file of their choosing. Where you place the file will \
 depend on which shell, and which operating system you are using. Your \
 particular configuration may also determine where these scripts need \
@@ -49,7 +50,8 @@ Completion files are commonly stored in `<options=bold>/etc/bash_completion.d/</
 
 Run the command:
 
-`<options=bold>{script_name} {command_name} bash > /etc/bash_completion.d/{script_name}.bash-completion</>`
+`<options=bold>{script_name} {command_name} bash >\
+ /etc/bash_completion.d/{script_name}.bash-completion</>`
 
 This installs the completion script. You may have to log out and log \
 back in to your shell session for the changes to take effect.
@@ -61,7 +63,8 @@ Fish completion files are commonly stored in\
 
 Run the command:
 
-`<options=bold>{script_name} {command_name} fish > ~/.config/fish/completions/{script_name}.fish</>`
+`<options=bold>{script_name} {command_name} fish > \
+~/.config/fish/completions/{script_name}.fish</>`
 
 This installs the completion script. You may have to log out and log \
 back in to your shell session for the changes to take effect.
@@ -79,7 +82,8 @@ example we'll create a hidden directory inside our `<options=bold>$HOME</>` dire
 
 `<options=bold>mkdir ~/.zfunc</>`
 
-Then add the following lines to your `<options=bold>.zshrc</>` just before `<options=bold>compinit</>`
+Then add the following lines to your `<options=bold>.zshrc</>` \
+just before `<options=bold>compinit</>`
 
 `<options=bold>fpath+=~/.zfunc</>`
 
@@ -108,9 +112,7 @@ script. Consult your shells documentation for how to add such directives.
 
         if shell not in self.SUPPORTED_SHELLS:
             raise ValueError(
-                "[shell] argument must be one of {}".format(
-                    ", ".join(self.SUPPORTED_SHELLS)
-                )
+                f'[shell] argument must be one of {", ".join(self.SUPPORTED_SHELLS)}'
             )
 
         self.line(self.render(shell))
@@ -174,7 +176,7 @@ script. Consult your shells documentation for how to add such directives.
 
             desc = [
                 f"            ({command})",
-                '            opts="${{opts}} {}"'.format(" ".join(options)),
+                f'            opts="${{opts}} {" ".join(options)}"',
                 "            ;;",
             ]
 
@@ -256,7 +258,7 @@ script. Consult your shells documentation for how to add such directives.
 
             desc = [
                 f"            ({command})",
-                "            opts+=({})".format(" ".join(options)),
+                f'            opts+=({" ".join(options)})',
                 "            ;;",
             ]
 
@@ -329,14 +331,12 @@ script. Consult your shells documentation for how to add such directives.
 
         opts = []
         for opt in sorted(global_options):
+            replaced_options_descriptions = options_descriptions[opt].replace(
+                "'", "\\'"
+            )
             opts.append(
-                "complete -c {} -n '__fish{}_no_subcommand' "
-                "-l {} -d '{}'".format(
-                    script_name,
-                    function,
-                    opt[2:],
-                    options_descriptions[opt].replace("'", "\\'"),
-                )
+                f"complete -c {script_name} -n '__fish{function}_no_subcommand' "
+                f"-l {opt[2:]} -d '{replaced_options_descriptions}'"
             )
 
         cmds_names = sorted(commands_options.keys())
@@ -344,14 +344,12 @@ script. Consult your shells documentation for how to add such directives.
         cmds = []
         cmds_opts = []
         for i, cmd in enumerate(cmds_names):
+            replaced_commands_descriptions = commands_descriptions[cmd].replace(
+                "'", "\\'"
+            )
             cmds.append(
-                "complete -c {} -f -n '__fish{}_no_subcommand' "
-                "-a {} -d '{}'".format(
-                    script_name,
-                    function,
-                    cmd,
-                    commands_descriptions[cmd].replace("'", "\\'"),
-                )
+                f"complete -c {script_name} -f -n '__fish{function}_no_subcommand' "
+                f"-a {cmd} -d '{replaced_commands_descriptions}'"
             )
 
             cmds_opts += [f"# {cmd}"]
@@ -359,14 +357,13 @@ script. Consult your shells documentation for how to add such directives.
             options = sorted(options)
 
             for opt in options:
+                replaced_cmds_opts_descriptions = commands_options_descriptions[cmd][
+                    opt
+                ].replace("'", "\\'")
                 cmds_opts.append(
-                    "complete -c {} -A -n '__fish_seen_subcommand_from {}' "
-                    "-l {} -d '{}'".format(
-                        script_name,
-                        cmd,
-                        opt[2:],
-                        commands_options_descriptions[cmd][opt].replace("'", "\\'"),
-                    )
+                    f"complete -c {script_name} -A "
+                    f"-n '__fish_seen_subcommand_from {cmd}' "
+                    f"-l {opt[2:]} -d '{replaced_cmds_opts_descriptions}'"
                 )
 
             if i < len(cmds_names) - 1:
@@ -394,9 +391,9 @@ script. Consult your shells documentation for how to add such directives.
         return os.path.basename(shell)
 
     def _generate_function_name(self, script_name: str, script_path: str) -> str:
-        return "_{}_{}_complete".format(
-            self._sanitize_for_function_name(script_name),
-            hashlib.md5(script_path.encode()).hexdigest()[0:16],
+        return (
+            f"_{self._sanitize_for_function_name(script_name)}"
+            f"_{hashlib.md5(script_path.encode()).hexdigest()[0:16]}_complete"
         )
 
     def _sanitize_for_function_name(self, name: str) -> str:
@@ -410,7 +407,7 @@ script. Consult your shells documentation for how to add such directives.
             description = re.sub(
                 r'(["\'#&;`|*?~<>^()\[\]{}$\\\x0A\xFF])', r"\\\1", description
             )
-            value += ":{}".format(subprocess.list2cmdline([description]).strip('"'))
+            value += f""":{subprocess.list2cmdline([description]).strip('"')}"""
 
         value += '"'
 
