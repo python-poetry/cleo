@@ -60,14 +60,11 @@ class Style:
         return self
 
     def unset_option(self, option: str) -> Style:
-        try:
+        if option in self._options:
             index = self._options.index(option)
-        except IndexError:
-            return self
-
-        del self._options[index]
-
-        self._color = Color(self._foreground, self._background, self._options)
+            del self._options[index]
+            self._color = Color(self._foreground, self._background, self._options)
+        return self
 
     def apply(self, text: str) -> str:
         return self._color.apply(text)
