@@ -1,5 +1,4 @@
-# NOTE: these tests reference line numbers from code in this file,
-# so it's sensitive to refactoring
+# NOTE: these tests reference line numbers from code in this file, so it's sensitive to refactoring
 import re
 
 import pytest
@@ -23,23 +22,25 @@ def test_render_better_error_message():
 
     trace.render(io)
 
-    expected = f"""\
+    expected = """\
 
   Exception
 
   Failed
 
-  at {trace._get_relative_file_path(__file__)}:19 in test_render_better_error_message
-       16│ def test_render_better_error_message():
-       17│     io = BufferedIO()
-       18│ 
-       19│     try:
-    →  20│         raise Exception("Failed")
-       21│     except Exception as e:
-       22│         trace = ExceptionTrace(e)
-       23│ 
-       24│     trace.render(io)
-"""
+  at {}:19 in test_render_better_error_message
+       15│ def test_render_better_error_message():
+       16│     io = BufferedIO()
+       17│ 
+       18│     try:
+    →  19│         raise Exception("Failed")
+       20│     except Exception as e:
+       21│         trace = ExceptionTrace(e)
+       22│ 
+       23│     trace.render(io)
+""".format(
+        trace._get_relative_file_path(__file__)
+    )
     assert expected == io.fetch_output()
 
 
@@ -54,11 +55,10 @@ def test_render_debug_better_error_message():
 
     trace.render(io)
 
-    expected = rf"""^
+    expected = r"""^
   Stack trace:
 
-  1  {re.escape(trace._get_relative_file_path(__file__))}:52 in \\
-test_render_debug_better_error_message
+  1  {}:52 in test_render_debug_better_error_message
        50\│ 
        51\│     try:
     →  52\│         fail\(\)
@@ -69,7 +69,7 @@ test_render_debug_better_error_message
 
   Failed
 
-  at {re.escape(trace._get_relative_file_path(__file__))}:12 in fail
+  at {}:12 in fail
         8\│ from cleo.ui.exception_trace import ExceptionTrace
         9\│ 
        10\│ 
@@ -79,7 +79,10 @@ test_render_debug_better_error_message
        14\│ 
        15\│ def test_render_better_error_message\(\):
        16\│     io = BufferedIO\(\)
-"""
+""".format(
+        re.escape(trace._get_relative_file_path(__file__)),
+        re.escape(trace._get_relative_file_path(__file__)),
+    )
 
     assert re.match(expected, io.fetch_output()) is not None
 
@@ -99,11 +102,10 @@ def test_render_debug_better_error_message_recursion_error():
 
     trace.render(io)
 
-    expected = rf"""^
+    expected = r"""^
   Stack trace:
 
-  \d+  {re.escape(trace._get_relative_file_path(__file__))}:99 in \\
-test_render_debug_better_error_message_recursion_error
+  \d+  {}:99 in test_render_debug_better_error_message_recursion_error
          97\│ 
          98\│     try:
       →  99\│         recursion_error\(\)
@@ -112,7 +114,7 @@ test_render_debug_better_error_message_recursion_error
 
   ...  Previous frame repeated \d+ times
 
-  \s*\d+  {re.escape(trace._get_relative_file_path(__file__))}:91 in recursion_error
+  \s*\d+  {}:91 in recursion_error
          89\│ 
          90\│ def recursion_error\(\):
       →  91\│     recursion_error\(\)
@@ -123,7 +125,7 @@ test_render_debug_better_error_message_recursion_error
 
   maximum recursion depth exceeded
 
-  at {re.escape(trace._get_relative_file_path(__file__))}:91 in recursion_error
+  at {}:91 in recursion_error
        87\│     assert re.match\(expected, io.fetch_output\(\)\) is not None
        88\│ 
        89\│ 
@@ -133,7 +135,11 @@ test_render_debug_better_error_message_recursion_error
        93\│ 
        94\│ def test_render_debug_better_error_message_recursion_error\(\):
        95\│     io = BufferedIO\(\)
-"""
+""".format(
+        re.escape(trace._get_relative_file_path(__file__)),
+        re.escape(trace._get_relative_file_path(__file__)),
+        re.escape(trace._get_relative_file_path(__file__)),
+    )
 
     assert re.match(expected, io.fetch_output()) is not None
 
@@ -149,18 +155,17 @@ def test_render_very_verbose_better_error_message():
 
     trace.render(io)
 
-    expected = rf"""^
+    expected = r"""^
   Stack trace:
 
-  1  {re.escape(trace._get_relative_file_path(__file__))}:152 in \\
-test_render_very_verbose_better_error_message
+  1  {}:152 in test_render_very_verbose_better_error_message
        fail\(\)
 
   Exception
 
   Failed
 
-  at {re.escape(trace._get_relative_file_path(__file__))}:12 in fail
+  at {}:12 in fail
         8\│ from cleo.ui.exception_trace import ExceptionTrace
         9\│ 
        10\│ 
@@ -170,7 +175,10 @@ test_render_very_verbose_better_error_message
        14\│ 
        15\│ def test_render_better_error_message\(\):
        16\│     io = BufferedIO\(\)
-"""
+""".format(
+        re.escape(trace._get_relative_file_path(__file__)),
+        re.escape(trace._get_relative_file_path(__file__)),
+    )
 
     assert re.match(expected, io.fetch_output()) is not None
 
@@ -182,7 +190,7 @@ def first():
     second()
 
 
-def test_render_debug_better_error_message_recursion_error_with_multiple_duplicated_frames():  # noqa: E501
+def test_render_debug_better_error_message_recursion_error_with_multiple_duplicated_frames():
     io = BufferedIO()
     io.set_verbosity(Verbosity.VERY_VERBOSE)
 
@@ -221,27 +229,31 @@ def test_render_can_ignore_given_files():
 
     trace.render(io)
 
-    expected = f"""
+    expected = """
   Stack trace:
 
-  2  {trace._get_relative_file_path(__file__)}:224 in test_render_can_ignore_given_files
+  2  {}:224 in test_render_can_ignore_given_files
        call()
 
-  1  {trace._get_relative_file_path(__file__)}:221 in call
+  1  {}:221 in call
        run()
 
   Exception
 
   Foo
 
-  at {trace._get_relative_file_path(helpers_file)}:3 in inner
+  at {}:3 in inner
         1│ def outer():
         2│     def inner():
     →   3│         raise Exception("Foo")
         4│ 
         5│     inner()
         6│ 
-"""
+""".format(
+        trace._get_relative_file_path(__file__),
+        trace._get_relative_file_path(__file__),
+        trace._get_relative_file_path(helpers_file),
+    )
 
     assert expected == io.fetch_output()
 
@@ -269,32 +281,31 @@ def test_render_shows_ignored_files_if_in_debug_mode():
 
     trace.render(io)
 
-    expected = f"""
+    expected = """
   Stack trace:
 
-  4  {trace._get_relative_file_path(__file__)}:276 in \
-test_render_shows_ignored_files_if_in_debug_mode
+  4  {}:276 in test_render_shows_ignored_files_if_in_debug_mode
       274│ 
       275│     with pytest.raises(Exception) as e:
     → 276│         call()
       277│ 
       278│     trace = ExceptionTrace(e.value)
 
-  3  {trace._get_relative_file_path(__file__)}:273 in call
+  3  {}:273 in call
       271│             outer()
       272│ 
     → 273│         run()
       274│ 
       275│     with pytest.raises(Exception) as e:
 
-  2  {trace._get_relative_file_path(__file__)}:271 in run
+  2  {}:271 in run
       269│     def call():
       270│         def run():
     → 271│             outer()
       272│ 
       273│         run()
 
-  1  {trace._get_relative_file_path(helpers_file)}:5 in outer
+  1  {}:5 in outer
         3│         raise Exception("Foo")
         4│ 
     →   5│     inner()
@@ -304,14 +315,20 @@ test_render_shows_ignored_files_if_in_debug_mode
 
   Foo
 
-  at {trace._get_relative_file_path(helpers_file)}:3 in inner
+  at {}:3 in inner
         1│ def outer():
         2│     def inner():
     →   3│         raise Exception("Foo")
         4│ 
         5│     inner()
         6│ 
-"""
+""".format(
+        trace._get_relative_file_path(__file__),
+        trace._get_relative_file_path(__file__),
+        trace._get_relative_file_path(__file__),
+        trace._get_relative_file_path(helpers_file),
+        trace._get_relative_file_path(helpers_file),
+    )
 
     assert expected == io.fetch_output()
 
@@ -346,12 +363,12 @@ def test_render_supports_solutions():
 
     trace.render(io)
 
-    expected = f"""
+    expected = """
   CustomError
 
   Error with solution
 
-  at {trace._get_relative_file_path(__file__)}:355 in call
+  at {}:355 in call
       351│ 
       352│     io = BufferedIO()
       353│ 
@@ -365,7 +382,9 @@ def test_render_supports_solutions():
   • Solution Title: Solution Description
     https://example.com,
     https://example2.com
-"""
+""".format(
+        trace._get_relative_file_path(__file__),
+    )
 
     assert expected == io.fetch_output()
 
@@ -400,12 +419,12 @@ def test_render_falls_back_on_ascii_symbols():
 
     trace.render(io)
 
-    expected = f"""
+    expected = """
   CustomError
 
   Error with solution
 
-  at {trace._get_relative_file_path(__file__)}:411 in call
+  at {}:411 in call
       407| 
       408|     io = BufferedIO(supports_utf8=False)
       409| 
@@ -419,7 +438,9 @@ def test_render_falls_back_on_ascii_symbols():
   * Solution Title: Solution Description
     https://example.com,
     https://example2.com
-"""
+""".format(
+        trace._get_relative_file_path(__file__),
+    )
 
     assert expected == io.fetch_output()
 

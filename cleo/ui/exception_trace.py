@@ -367,15 +367,15 @@ class ExceptionTrace:
                 for frame in collection:
                     relative_file_path = self._get_relative_file_path(frame.filename)
                     relative_file_path_parts = relative_file_path.split(os.path.sep)
-                    relative_file_path = f"""
-                        {f"<fg=default;options=dark>{Formatter.escape(os.sep)}</>".join(
+                    relative_file_path = (
+                        f"<fg=default;options=dark>{Formatter.escape(os.sep)}</>".join(
                             relative_file_path_parts[:-1]
                             + [
                                 "<fg=default;options=bold>"
                                 f"{relative_file_path_parts[-1]}</>"
                             ]
-                        )}"""
-
+                        )
+                    )
                     self._render_line(
                         io,
                         f"<fg=yellow>{i:>{max_frame_length}}</>  "

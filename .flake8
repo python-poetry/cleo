@@ -29,3 +29,5 @@ per-file-ignores =
 extend-exclude =
     # External to the project's coding standards:
     docs/*,
+    # this file awaits refactoring
+    tests/ui/test_exception_trace.py
