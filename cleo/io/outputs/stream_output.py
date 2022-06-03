@@ -20,6 +20,10 @@ if TYPE_CHECKING:
 
 
 class StreamOutput(Output):
+    FILE_TYPE_CHAR = 0x0002
+    FILE_TYPE_REMOTE = 0x8000
+    ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004
+
     def __init__(
         self,
         stream: TextIO,
@@ -113,10 +117,6 @@ class StreamOutput(Output):
             import ctypes
             import ctypes.wintypes
 
-            FILE_TYPE_CHAR = 0x0002
-            FILE_TYPE_REMOTE = 0x8000
-            ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004
-
             kernel32 = ctypes.windll.kernel32
 
             fileno = self._stream.fileno()
@@ -131,16 +131,18 @@ class StreamOutput(Output):
             if h is None or h == ctypes.wintypes.HANDLE(-1):
                 return False
 
-            if (kernel32.GetFileType(h) & ~FILE_TYPE_REMOTE) != FILE_TYPE_CHAR:
+            if (
+                kernel32.GetFileType(h) & ~self.FILE_TYPE_REMOTE
+            ) != self.FILE_TYPE_CHAR:
                 return False
 
             mode = ctypes.wintypes.DWORD()
             if not kernel32.GetConsoleMode(h, ctypes.byref(mode)):
                 return False
 
-            if (mode.value & ENABLE_VIRTUAL_TERMINAL_PROCESSING) == 0:
+            if (mode.value & self.ENABLE_VIRTUAL_TERMINAL_PROCESSING) == 0:
                 kernel32.SetConsoleMode(
-                    h, mode.value | ENABLE_VIRTUAL_TERMINAL_PROCESSING
+                    h, mode.value | self.ENABLE_VIRTUAL_TERMINAL_PROCESSING
                 )
                 return True
 
