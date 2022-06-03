@@ -1,10 +1,33 @@
 [flake8]
+min_python_version = 3.7.0
 max-line-length = 88
-extend-ignore = E501, E203
+ban-relative-imports = true
+# flake8-use-fstring: https://github.com/MichaelKim0407/flake8-use-fstring#--percent-greedy-and---format-greedy
+format-greedy = 1
+inline-quotes = double
 enable-extensions = TC, TC1
 type-checking-exempt-modules = typing, typing-extensions
-ban-relative-imports = true
+eradicate-whitelist-extend = ^-.*;
+extend-ignore =
+    # E203: Whitespace before ':' (pycqa/pycodestyle#373)
+    E203,
+    # SIM106: Handle error-cases first
+    SIM106,
+    # ANN101: Missing type annotation for self in method
+    ANN101,
+    # ANN102: Missing type annotation for cls in classmethod
+    ANN102,
 per-file-ignores =
+    # F401: Module imported by unused (non-implicit modules)
     __init__.py:F401
+    # W291: Trailing whitespace
     tests/ui/test_exception_trace.py:W291
     tests/ui/test_table.py:W291
+    # ANN201: Missing return type annotation for public function
+    tests/test_*:ANN201
+    tests/**/test_*:ANN201
+extend-exclude =
+    docs/*,
+    # External to the project's coding standards:
+    #tests/fixtures/*,
+    #tests/**/fixtures/*,
