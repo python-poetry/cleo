@@ -187,9 +187,7 @@ class Application:
 
         if not command.name:
             raise LogicException(
-                'The command "{}" cannot have an empty name'.format(
-                    command.__class__.__name__
-                )
+                f'The command "{command.__class__.__name__}" cannot have an empty name'
             )
 
         self._commands[command.name] = command
