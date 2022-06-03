@@ -27,7 +27,5 @@ per-file-ignores =
     tests/test_*:ANN201
     tests/**/test_*:ANN201
 extend-exclude =
-    docs/*,
     # External to the project's coding standards:
-    #tests/fixtures/*,
-    #tests/**/fixtures/*,
+    docs/*,
