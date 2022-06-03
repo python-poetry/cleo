@@ -53,8 +53,3 @@ repos:
     hooks:
       - id: pycln
         args: [--all]
-
-  - repo: https://github.com/pre-commit/pre-commit
-    rev: v2.19.0
-    hooks:
-      - id: validate_manifest
