@@ -122,9 +122,8 @@ class Highlighter:
                 if diff > 1:
                     lines += [""] * (diff - 1)
 
-                line += "<{}>{}</>".format(
-                    self._theme[current_type], buffer.rstrip("\n")
-                )
+                stripped_buffer = buffer.rstrip("\n")
+                line += f"<{self._theme[current_type]}>{stripped_buffer}</>"
 
                 # New line
                 lines.append(line)
@@ -184,24 +183,26 @@ class Highlighter:
         max_line_length = max(3, len(str(len(lines))))
 
         snippet_lines = []
-        marker = "<{}>{}</> ".format(self._theme[self.LINE_MARKER], self._ui["arrow"])
+        marker = f'<{self._theme[self.LINE_MARKER]}>{self._ui["arrow"]}</> '
         no_marker = "  "
         for i, line in enumerate(lines):
+            snippet = ""
             if mark_line is not None:
                 if mark_line == i + 1:
                     snippet = marker
                 else:
                     snippet = no_marker
 
-            line_number = "{:>{}}".format(i + 1, max_line_length)
-            snippet += "<{}>{}</><{}>{}</> {}".format(
+            line_number = f"{i + 1:>{max_line_length}}"
+            styling = (
                 "fg=default;options=bold"
                 if mark_line == i + 1
-                else self._theme[self.LINE_NUMBER],
-                line_number,
-                self._theme[self.LINE_NUMBER],
-                self._ui["delimiter"],
-                line,
+                else self._theme[self.LINE_NUMBER]
+            )
+            snippet += (
+                f"<{styling}>"
+                f"{line_number}</><{self._theme[self.LINE_NUMBER]}>"
+                f'{self._ui["delimiter"]}</> {line}'
             )
             snippet_lines.append(snippet)
 
@@ -289,11 +290,8 @@ class ExceptionTrace:
     def _render_snippet(self, io: IO | Output, frame: Frame) -> None:
         self._render_line(
             io,
-            "at <fg=green>{}</>:<b>{}</b> in <fg=cyan>{}</>".format(
-                self._get_relative_file_path(frame.filename),
-                frame.lineno,
-                frame.function,
-            ),
+            f"at <fg=green>{self._get_relative_file_path(frame.filename)}</>"
+            f":<b>{frame.lineno}</b> in <fg=cyan>{ frame.function}</>",
             True,
         )
 
@@ -322,14 +320,12 @@ class ExceptionTrace:
 
             description = description.replace("\n", "\n    ").strip(" ")
 
+            joined_links = ",".join(f"\n    <fg=blue>{link}</>" for link in links)
             self._render_line(
                 io,
-                "<fg=blue;options=bold>{} </><fg=default;options=bold>{}</>: {}{}".format(
-                    symbol,
-                    title.rstrip("."),
-                    description,
-                    ",".join(f"\n    <fg=blue>{link}</>" for link in links),
-                ),
+                f"<fg=blue;options=bold>{symbol} </>"
+                f'<fg=default;options=bold>{title.rstrip(".")}</>:'
+                f" {description}{joined_links}",
                 True,
             )
 
@@ -354,20 +350,15 @@ class ExceptionTrace:
             for collection in frame_collections:
                 if collection.is_repeated():
                     if len(collection) > 1:
-                        frames_message = "<fg=yellow>{}</> frames".format(
-                            len(collection)
-                        )
+                        frames_message = f"<fg=yellow>{len(collection)}</> frames"
                     else:
                         frames_message = "frame"
 
                     self._render_line(
                         io,
-                        "<fg=blue>{:>{}}</>  Previous {} repeated <fg=blue>{}</> times".format(
-                            "...",
-                            max_frame_length,
-                            frames_message,
-                            collection.repetitions + 1,
-                        ),
+                        f'<fg=blue>{"...":>{max_frame_length}}</>  '
+                        f"Previous {frames_message} repeated "
+                        f"<fg=blue>{collection.repetitions + 1}</> times",
                         True,
                     )
 
@@ -376,28 +367,20 @@ class ExceptionTrace:
                 for frame in collection:
                     relative_file_path = self._get_relative_file_path(frame.filename)
                     relative_file_path_parts = relative_file_path.split(os.path.sep)
-                    relative_file_path = "{}".format(
-                        "<fg=default;options=dark>{}</>".format(
-                            Formatter.escape(os.sep)
-                        ).join(
+                    relative_file_path = f"""
+                        {f"<fg=default;options=dark>{Formatter.escape(os.sep)}</>".join(
                             relative_file_path_parts[:-1]
                             + [
-                                "<fg=default;options=bold>{}</>".format(
-                                    relative_file_path_parts[-1]
-                                )
+                                "<fg=default;options=bold>"
+                                f"{relative_file_path_parts[-1]}</>"
                             ]
-                        ),
-                    )
+                        )}"""
 
                     self._render_line(
                         io,
-                        "<fg=yellow>{:>{}}</>  {}<fg=default;options=dark>:</><b>{}</b> in <fg=cyan>{}</>".format(
-                            i,
-                            max_frame_length,
-                            relative_file_path,
-                            frame.lineno,
-                            frame.function,
-                        ),
+                        f"<fg=yellow>{i:>{max_frame_length}}</>  "
+                        f"{relative_file_path}<fg=default;options=dark>:</>"
+                        f"<b>{frame.lineno}</b> in <fg=cyan>{frame.function}</>",
                         True,
                     )
 
@@ -417,7 +400,7 @@ class ExceptionTrace:
                         for code_line in code_lines:
                             self._render_line(
                                 io,
-                                "{:>{}}{}".format(" ", max_frame_length, code_line),
+                                f'{" ":>{max_frame_length}}{code_line}',
                                 indent=3,
                             )
                     else:
@@ -430,12 +413,7 @@ class ExceptionTrace:
                             code_line = frame.line.strip()
 
                         self._render_line(
-                            io,
-                            "{:>{}}    {}".format(
-                                " ",
-                                max_frame_length,
-                                code_line,
-                            ),
+                            io, f'{" ":>{max_frame_length}}    {code_line}'
                         )
 
                     i -= 1
@@ -446,7 +424,7 @@ class ExceptionTrace:
         if new_line:
             io.write_line("")
 
-        io.write_line("{}{}".format(indent * " ", line))
+        io.write_line(f'{indent * " "}{line}')
 
     def _get_relative_file_path(self, filepath: str) -> str:
         cwd = os.getcwd()
