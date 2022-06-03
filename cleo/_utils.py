@@ -107,5 +107,5 @@ _TIME_FORMATS: list[TimeFormat] = [
 
 
 def format_time(secs: float) -> str:
-    format = next(fmt for fmt in _TIME_FORMATS if secs < fmt.threshold)
+    format = next(fmt for fmt in _TIME_FORMATS if secs <= fmt.threshold)
     return format.apply(secs)

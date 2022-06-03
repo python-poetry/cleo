@@ -92,6 +92,7 @@ module = [
     "tests.test_parser",
     "tests.testers.*",
     "tests.ui.*",
+    "tests.test_utils",
 ]
 ignore_errors = true
 
