@@ -40,6 +40,7 @@ known_first_party = "cleo"
 [tool.mypy]
 strict = true
 files = "cleo, tests"
+show_error_codes = true
 
 # The following whitelist is used to allow for incremental adoption
 # of Mypy. Modules should be removed from this whitelist as and when
@@ -92,7 +93,6 @@ module = [
     "tests.test_parser",
     "tests.testers.*",
     "tests.ui.*",
-    "tests.test_utils",
 ]
 ignore_errors = true
 
