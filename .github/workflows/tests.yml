@@ -25,6 +25,9 @@ jobs:
       matrix:
         os: [Ubuntu, MacOS, Windows]
         python-version: ["3.7", "3.8", "3.9", "3.10", "3.11-dev"]
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - uses: actions/checkout@v3
@@ -36,27 +39,22 @@ jobs:
 
       - name: Get full python version
         id: full-python-version
-        shell: bash
         run: |
           echo ::set-output name=version::$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))")
 
       - name: Install Poetry
-        shell: bash
         run: |
           curl -sL https://install.python-poetry.org | python - --preview -y
 
       - name: Update PATH
         if: ${{ matrix.os != 'Windows' }}
-        shell: bash
         run: echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Update Path for Windows
         if: ${{ matrix.os == 'Windows' }}
-        shell: bash
         run: echo "$APPDATA\Python\Scripts" >> $GITHUB_PATH
 
       - name: Setup Poetry
-        shell: bash
         run: |
           poetry config virtualenvs.in-project true
 
@@ -69,16 +67,13 @@ jobs:
 
       - name: Ensure cache is healthy
         if: steps.cache.outputs.cache-hit == 'true'
-        shell: bash
         run: timeout 10s poetry run pip --version || rm -rf .venv
 
       - name: Install dependencies
-        shell: bash
         run: |
           poetry install
 
       - name: Run tests
-        shell: bash
         run: |
           poetry run pytest -q tests
           poetry install
