@@ -1,4 +1,5 @@
-# NOTE: these tests reference line numbers from code in this file, so it's sensitive to refactoring
+# NOTE: these tests reference line numbers from code in this file,
+# so it's sensitive to refactoring
 from __future__ import annotations
 
 import re
@@ -50,11 +51,12 @@ def test_render_debug_better_error_message():
 
     trace.render(io)
 
-    lineno = 47
+    lineno = 48
     expected = f"""
   Stack trace:
 
-  1  {trace._get_relative_file_path(__file__)}:{lineno} in test_render_debug_better_error_message
+  1  {trace._get_relative_file_path(__file__)}:{lineno} in \
+test_render_debug_better_error_message
        {lineno - 2}│ 
        {lineno - 1}│     try:
     →  {lineno + 0}│         simple.simple_exception()
@@ -83,7 +85,7 @@ def test_render_debug_better_error_message_recursion_error():
     except RecursionError as e:
         trace = ExceptionTrace(e)
 
-    lineno = 82
+    lineno = 84
     trace.render(io)
 
     expected = rf"""^
@@ -111,7 +113,7 @@ def test_render_debug_better_error_message_recursion_error():
         1\│ def recursion_error\(\) -> None:
     →   2\│     recursion_error\(\)
         3\│ 
-"""
+"""  # noqa: E501
 
     assert re.match(expected, io.fetch_output()) is not None
 
@@ -130,7 +132,8 @@ def test_render_very_verbose_better_error_message():
     expected = f"""
   Stack trace:
 
-  1  {trace._get_relative_file_path(__file__)}:124 in test_render_very_verbose_better_error_message
+  1  {trace._get_relative_file_path(__file__)}:126 in \
+test_render_very_verbose_better_error_message
        simple.simple_exception()
 
   Exception
@@ -146,7 +149,7 @@ def test_render_very_verbose_better_error_message():
     assert expected == io.fetch_output()
 
 
-def test_render_debug_better_error_message_recursion_error_with_multiple_duplicated_frames():
+def test_render_debug_better_error_message_recursion_error_with_multiple_duplicated_frames():  # noqa: E501
     def first():
         def second():
             first()
@@ -179,11 +182,12 @@ def test_render_can_ignore_given_files():
     trace.ignore_files_in(f"^{re.escape(nested1.__file__)}$")
     trace.render(io)
 
-    lineno = 176
+    lineno = 179
     expected = f"""
   Stack trace:
 
-  2  {trace._get_relative_file_path(__file__)}:{lineno} in test_render_can_ignore_given_files
+  2  {trace._get_relative_file_path(__file__)}:{lineno} in \
+test_render_can_ignore_given_files
        nested2.call()
 
   1  {trace._get_relative_file_path(nested2.__file__)}:8 in call
@@ -216,11 +220,12 @@ def test_render_shows_ignored_files_if_in_debug_mode():
     trace.ignore_files_in(f"^{re.escape(nested1.__file__)}$")
 
     trace.render(io)
-    lineno = 213
+    lineno = 217
     expected = f"""
   Stack trace:
 
-  4  {trace._get_relative_file_path(__file__)}:{lineno} in test_render_shows_ignored_files_if_in_debug_mode
+  4  {trace._get_relative_file_path(__file__)}:{lineno} in \
+test_render_shows_ignored_files_if_in_debug_mode
       {lineno - 2}│ 
       {lineno - 1}│     with pytest.raises(Exception) as e:
     → {lineno + 0}│         nested2.call()
