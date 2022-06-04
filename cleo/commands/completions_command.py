@@ -391,10 +391,9 @@ script. Consult your shells documentation for how to add such directives.
         return os.path.basename(shell)
 
     def _generate_function_name(self, script_name: str, script_path: str) -> str:
-        return (
-            f"_{self._sanitize_for_function_name(script_name)}"
-            f"_{hashlib.md5(script_path.encode()).hexdigest()[0:16]}_complete"
-        )
+        sanitized_name = self._sanitize_for_function_name(script_name)
+        md5_hash = hashlib.md5(script_path.encode()).hexdigest()[0:16]
+        return f"_{sanitized_name}_{md5_hash}_complete"
 
     def _sanitize_for_function_name(self, name: str) -> str:
         name = name.replace("-", "_")

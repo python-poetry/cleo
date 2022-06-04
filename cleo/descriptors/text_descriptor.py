@@ -68,10 +68,8 @@ class TextDescriptor(Descriptor):
             "total_width", self._calculate_total_width_for_options([option])
         )
 
-        synopsis = (
-            f'{f"-{option.shortcut}, " if option.shortcut else "    "}'
-            f"--{option.name}{value}"
-        )
+        option_shortcut = f"-{option.shortcut}, " if option.shortcut else "    "
+        synopsis = f"{option_shortcut}--{option.name}{value}"
 
         spacing_width = total_width - len(synopsis)
         sub_option_description = re.sub(
