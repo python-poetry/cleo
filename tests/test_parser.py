@@ -34,7 +34,8 @@ def test_basic_parameter_parsing():
     assert results["options"][0].is_list()
 
     results = Parser.parse(
-        "command:name {argument?* : The argument description.}    {--option=* : The option description.}"
+        "command:name {argument?* : The argument description.}"
+        "    {--option=* : The option description.}"
     )
 
     assert results["name"] == "command:name"

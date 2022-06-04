@@ -141,8 +141,6 @@ class BaseCommand:
         key = "short" if short else "long"
 
         if key not in self._synopsis:
-            self._synopsis[key] = "{} {}".format(
-                self.name, self.definition.synopsis(short)
-            )
+            self._synopsis[key] = f"{self.name} {self.definition.synopsis(short)}"
 
         return self._synopsis[key]

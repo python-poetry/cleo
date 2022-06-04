@@ -146,7 +146,8 @@ class Question:
 
         stty_mode = subprocess.check_output(["stty", "-g"]).decode().rstrip("\n")
 
-        # Disable icanon (so we can read each keypress) and echo (we'll do echoing here instead)
+        # Disable icanon (so we can read each keypress) and
+        # echo (we'll do echoing here instead)
         subprocess.check_output(["stty", "-icanon", "-echo"])
 
         # Add highlighted text style
@@ -211,7 +212,8 @@ class Question:
                 ofs = 0
 
                 for value in autocomplete:
-                    # If typed characters match the beginning chunk of value (e.g. [AcmeDe]moBundle)
+                    # If typed characters match the beginning
+                    # chunk of value (e.g. [AcmeDe]moBundle)
                     if value.startswith(ret) and i != len(value):
                         num_matches += 1
                         matches[num_matches - 1] = value

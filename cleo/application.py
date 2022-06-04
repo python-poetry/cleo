@@ -187,9 +187,7 @@ class Application:
 
         if not command.name:
             raise LogicException(
-                'The command "{}" cannot have an empty name'.format(
-                    command.__class__.__name__
-                )
+                f'The command "{command.__class__.__name__}" cannot have an empty name'
             )
 
         self._commands[command.name] = command
@@ -364,9 +362,11 @@ class Application:
 
         input_definition.set_options(definition.options)
 
-        # Errors must be ignored, full binding/validation happens later when the command is known.
+        # Errors must be ignored, full binding/validation
+        # happens later when the command is known.
         with suppress(CleoException):
-            # Makes ArgvInput.first_argument() able to distinguish an option from an argument.
+            # Makes ArgvInput.first_argument() able to
+            # distinguish an option from an argument.
             io.input.bind(input_definition)
 
         name = self._get_command_name(io)
@@ -548,7 +548,8 @@ class Application:
                     flag=True,
                     description=(
                         "Display help for the given command. "
-                        f"When no command is given display help for the <info>{self._default_command}</info> command."
+                        "When no command is given display help for "
+                        f"the <info>{self._default_command}</info> command."
                     ),
                 ),
                 Option(
@@ -560,7 +561,8 @@ class Application:
                     flag=True,
                     description=(
                         "Increase the verbosity of messages: "
-                        "1 for normal output, 2 for more verbose output and 3 for debug."
+                        "1 for normal output, 2 for more verbose "
+                        "output and 3 for debug."
                     ),
                 ),
                 Option(

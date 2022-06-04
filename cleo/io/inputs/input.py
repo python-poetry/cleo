@@ -108,9 +108,7 @@ class Input:
 
         if missing_arguments:
             raise MissingArgumentsException(
-                'Not enough arguments (missing: "{}")'.format(
-                    ", ".join(missing_arguments)
-                )
+                f'Not enough arguments (missing: "{", ".join(missing_arguments)}")'
             )
 
     def argument(self, name: str) -> Any:

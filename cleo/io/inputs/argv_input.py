@@ -242,17 +242,19 @@ class ArgvInput(Input):
                 del all[0]
 
             if all:
+                all_names = '" "'.join([a.name for a in all])
                 if command_name:
-                    message = 'Too many arguments to "{}" command, expected arguments "{}"'.format(
-                        command_name, '" "'.join([a.name for a in all])
+
+                    message = (
+                        f'Too many arguments to "{command_name}" command, '
+                        f'expected arguments "{all_names}"'
                     )
                 else:
-                    message = 'Too many arguments, expected arguments "{}"'.format(
-                        '" "'.join([a.name for a in all])
-                    )
+                    message = f'Too many arguments, expected arguments "{all_names}"'
             elif command_name:
-                message = 'No arguments expected for "{}" command, got "{}"'.format(
-                    command_name, token
+                message = (
+                    f'No arguments expected for "{command_name}" command, '
+                    f'got "{token}"'
                 )
             else:
                 message = f'No arguments expected, got "{token}"'

@@ -49,7 +49,8 @@ class ProgressIndicator:
 
         if len(values) < 2:
             raise ValueError(
-                "The progress indicator must have at least 2 indicator value characters."
+                "The progress indicator must have at "
+                "least 2 indicator value characters."
             )
 
         self._interval = interval

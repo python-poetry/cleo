@@ -95,7 +95,7 @@ class Terminal:
     @classmethod
     def _get_terminal_size_tput(cls) -> tuple[int, int] | None:
         # get terminal width
-        # src: http://stackoverflow.com/questions/263890/how-do-i-find-the-width-height-of-a-terminal-window
+        # src: http://stackoverflow.com/questions/263890/how-do-i-find-the-width-height-of-a-terminal-window  # noqa: E501
         try:
             cols = int(
                 subprocess.check_output(
@@ -114,7 +114,7 @@ class Terminal:
 
     @classmethod
     def _get_terminal_size_linux(cls) -> tuple[int, int] | None:
-        def ioctl_GWINSZ(fd):
+        def ioctl_GWINSZ(fd):  # noqa: N802
             try:
                 import fcntl
                 import termios
