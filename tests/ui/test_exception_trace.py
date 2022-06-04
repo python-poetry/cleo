@@ -1,4 +1,6 @@
 # NOTE: these tests reference line numbers from code in this file, so it's sensitive to refactoring
+from __future__ import annotations
+
 import re
 
 import pytest
@@ -6,41 +8,34 @@ import pytest
 from cleo.io.buffered_io import BufferedIO
 from cleo.io.outputs.output import Verbosity
 from cleo.ui.exception_trace import ExceptionTrace
-
-
-def fail():
-    raise Exception("Failed")
+from tests.fixtures.exceptions import nested1
+from tests.fixtures.exceptions import nested2
+from tests.fixtures.exceptions import recursion
+from tests.fixtures.exceptions import simple
+from tests.fixtures.exceptions import solution
 
 
 def test_render_better_error_message():
     io = BufferedIO()
 
     try:
-        raise Exception("Failed")
+        simple.simple_exception()
     except Exception as e:
         trace = ExceptionTrace(e)
 
     trace.render(io)
 
-    expected = """\
+    expected = f"""\
 
   Exception
 
   Failed
 
-  at {}:19 in test_render_better_error_message
-       15│ def test_render_better_error_message():
-       16│     io = BufferedIO()
-       17│ 
-       18│     try:
-    →  19│         raise Exception("Failed")
-       20│     except Exception as e:
-       21│         trace = ExceptionTrace(e)
-       22│ 
-       23│     trace.render(io)
-""".format(
-        trace._get_relative_file_path(__file__)
-    )
+  at {trace._get_relative_file_path(simple.__file__)}:2 in simple_exception
+        1│ def simple_exception() -> None:
+    →   2│     raise Exception("Failed")
+        3│ 
+"""
     assert expected == io.fetch_output()
 
 
@@ -49,46 +44,34 @@ def test_render_debug_better_error_message():
     io.set_verbosity(Verbosity.DEBUG)
 
     try:
-        fail()
+        simple.simple_exception()
     except Exception as e:  # Exception
         trace = ExceptionTrace(e)
 
     trace.render(io)
 
-    expected = r"""^
+    lineno = 47
+    expected = f"""
   Stack trace:
 
-  1  {}:52 in test_render_debug_better_error_message
-       50\│ 
-       51\│     try:
-    →  52\│         fail\(\)
-       53\│     except Exception as e:  # Exception
-       54\│         trace = ExceptionTrace\(e\)
+  1  {trace._get_relative_file_path(__file__)}:{lineno} in test_render_debug_better_error_message
+       {lineno - 2}│ 
+       {lineno - 1}│     try:
+    →  {lineno + 0}│         simple.simple_exception()
+       {lineno + 1}│     except Exception as e:  # Exception
+       {lineno + 2}│         trace = ExceptionTrace(e)
 
   Exception
 
   Failed
 
-  at {}:12 in fail
-        8\│ from cleo.ui.exception_trace import ExceptionTrace
-        9\│ 
-       10\│ 
-       11\│ def fail\(\):
-    →  12\│     raise Exception\("Failed"\)
-       13\│ 
-       14\│ 
-       15\│ def test_render_better_error_message\(\):
-       16\│     io = BufferedIO\(\)
-""".format(
-        re.escape(trace._get_relative_file_path(__file__)),
-        re.escape(trace._get_relative_file_path(__file__)),
-    )
+  at {trace._get_relative_file_path(simple.__file__)}:2 in simple_exception
+        1│ def simple_exception() -> None:
+    →   2│     raise Exception("Failed")
+        3│ 
+"""
 
-    assert re.match(expected, io.fetch_output()) is not None
-
-
-def recursion_error():
-    recursion_error()
+    assert io.fetch_output() == expected
 
 
 def test_render_debug_better_error_message_recursion_error():
@@ -96,50 +79,39 @@ def test_render_debug_better_error_message_recursion_error():
     io.set_verbosity(Verbosity.DEBUG)
 
     try:
-        recursion_error()
+        recursion.recursion_error()
     except RecursionError as e:
         trace = ExceptionTrace(e)
 
+    lineno = 82
     trace.render(io)
 
-    expected = r"""^
+    expected = rf"""^
   Stack trace:
 
-  \d+  {}:99 in test_render_debug_better_error_message_recursion_error
-         97\│ 
-         98\│     try:
-      →  99\│         recursion_error\(\)
-        100\│     except RecursionError as e:
-        101\│         trace = ExceptionTrace\(e\)
+  \d+  {re.escape(trace._get_relative_file_path(__file__))}:{lineno} in test_render_debug_better_error_message_recursion_error
+         {lineno - 2}\│ 
+         {lineno - 1}\│     try:
+      →  {lineno + 0}\│         recursion.recursion_error\(\)
+         {lineno + 1}\│     except RecursionError as e:
+         {lineno + 2}\│         trace = ExceptionTrace\(e\)
 
   ...  Previous frame repeated \d+ times
 
-  \s*\d+  {}:91 in recursion_error
-         89\│ 
-         90\│ def recursion_error\(\):
-      →  91\│     recursion_error\(\)
-         92\│ 
-         93\│ 
+  \s*\d+  {re.escape(trace._get_relative_file_path(recursion.__file__))}:2 in recursion_error
+          1\│ def recursion_error\(\) -> None:
+      →   2\│     recursion_error\(\)
+          3\│ 
 
   RecursionError
 
   maximum recursion depth exceeded
 
-  at {}:91 in recursion_error
-       87\│     assert re.match\(expected, io.fetch_output\(\)\) is not None
-       88\│ 
-       89\│ 
-       90\│ def recursion_error\(\):
-    →  91\│     recursion_error\(\)
-       92\│ 
-       93\│ 
-       94\│ def test_render_debug_better_error_message_recursion_error\(\):
-       95\│     io = BufferedIO\(\)
-""".format(
-        re.escape(trace._get_relative_file_path(__file__)),
-        re.escape(trace._get_relative_file_path(__file__)),
-        re.escape(trace._get_relative_file_path(__file__)),
-    )
+  at {re.escape(trace._get_relative_file_path(recursion.__file__))}:2 in recursion_error
+        1\│ def recursion_error\(\) -> None:
+    →   2\│     recursion_error\(\)
+        3\│ 
+"""
 
     assert re.match(expected, io.fetch_output()) is not None
 
@@ -149,48 +121,38 @@ def test_render_very_verbose_better_error_message():
     io.set_verbosity(Verbosity.VERY_VERBOSE)
 
     try:
-        fail()
+        simple.simple_exception()
     except Exception as e:  # Exception
         trace = ExceptionTrace(e)
 
     trace.render(io)
 
-    expected = r"""^
+    expected = f"""
   Stack trace:
 
-  1  {}:152 in test_render_very_verbose_better_error_message
-       fail\(\)
+  1  {trace._get_relative_file_path(__file__)}:124 in test_render_very_verbose_better_error_message
+       simple.simple_exception()
 
   Exception
 
   Failed
 
-  at {}:12 in fail
-        8\│ from cleo.ui.exception_trace import ExceptionTrace
-        9\│ 
-       10\│ 
-       11\│ def fail\(\):
-    →  12\│     raise Exception\("Failed"\)
-       13\│ 
-       14\│ 
-       15\│ def test_render_better_error_message\(\):
-       16\│     io = BufferedIO\(\)
-""".format(
-        re.escape(trace._get_relative_file_path(__file__)),
-        re.escape(trace._get_relative_file_path(__file__)),
-    )
+  at {trace._get_relative_file_path(simple.__file__)}:2 in simple_exception
+        1│ def simple_exception() -> None:
+    →   2│     raise Exception("Failed")
+        3│ 
+"""
 
-    assert re.match(expected, io.fetch_output()) is not None
-
-
-def first():
-    def second():
-        first()
-
-    second()
+    assert expected == io.fetch_output()
 
 
 def test_render_debug_better_error_message_recursion_error_with_multiple_duplicated_frames():
+    def first():
+        def second():
+            first()
+
+        second()
+
     io = BufferedIO()
     io.set_verbosity(Verbosity.VERY_VERBOSE)
 
@@ -207,105 +169,78 @@ def test_render_debug_better_error_message_recursion_error_with_multiple_duplica
 
 
 def test_render_can_ignore_given_files():
-    import os
-
-    from tests.ui.helpers import outer
-
     io = BufferedIO()
     io.set_verbosity(Verbosity.VERY_VERBOSE)
 
-    def call():
-        def run():
-            outer()
-
-        run()
-
     with pytest.raises(Exception) as e:
-        call()
+        nested2.call()
 
     trace = ExceptionTrace(e.value)
-    helpers_file = os.path.join(os.path.dirname(__file__), "helpers.py")
-    trace.ignore_files_in(f"^{re.escape(helpers_file)}$")
-
+    trace.ignore_files_in(f"^{re.escape(nested1.__file__)}$")
     trace.render(io)
 
-    expected = """
+    lineno = 176
+    expected = f"""
   Stack trace:
 
-  2  {}:224 in test_render_can_ignore_given_files
-       call()
+  2  {trace._get_relative_file_path(__file__)}:{lineno} in test_render_can_ignore_given_files
+       nested2.call()
 
-  1  {}:221 in call
+  1  {trace._get_relative_file_path(nested2.__file__)}:8 in call
        run()
 
   Exception
 
   Foo
 
-  at {}:3 in inner
-        1│ def outer():
-        2│     def inner():
+  at {trace._get_relative_file_path(nested1.__file__)}:3 in inner
+        1│ def outer() -> None:
+        2│     def inner() -> None:
     →   3│         raise Exception("Foo")
         4│ 
         5│     inner()
         6│ 
-""".format(
-        trace._get_relative_file_path(__file__),
-        trace._get_relative_file_path(__file__),
-        trace._get_relative_file_path(helpers_file),
-    )
+"""
 
-    assert expected == io.fetch_output()
+    assert io.fetch_output() == expected
 
 
 def test_render_shows_ignored_files_if_in_debug_mode():
-    import os
-
-    from tests.ui.helpers import outer
-
     io = BufferedIO()
     io.set_verbosity(Verbosity.DEBUG)
 
-    def call():
-        def run():
-            outer()
-
-        run()
-
     with pytest.raises(Exception) as e:
-        call()
+        nested2.call()
 
     trace = ExceptionTrace(e.value)
-    helpers_file = os.path.join(os.path.dirname(__file__), "helpers.py")
-    trace.ignore_files_in(f"^{re.escape(helpers_file)}$")
+    trace.ignore_files_in(f"^{re.escape(nested1.__file__)}$")
 
     trace.render(io)
-
-    expected = """
+    lineno = 213
+    expected = f"""
   Stack trace:
 
-  4  {}:276 in test_render_shows_ignored_files_if_in_debug_mode
-      274│ 
-      275│     with pytest.raises(Exception) as e:
-    → 276│         call()
-      277│ 
-      278│     trace = ExceptionTrace(e.value)
+  4  {trace._get_relative_file_path(__file__)}:{lineno} in test_render_shows_ignored_files_if_in_debug_mode
+      {lineno - 2}│ 
+      {lineno - 1}│     with pytest.raises(Exception) as e:
+    → {lineno + 0}│         nested2.call()
+      {lineno + 1}│ 
+      {lineno + 2}│     trace = ExceptionTrace(e.value)
 
-  3  {}:273 in call
-      271│             outer()
-      272│ 
-    → 273│         run()
-      274│ 
-      275│     with pytest.raises(Exception) as e:
+  3  {trace._get_relative_file_path(nested2.__file__)}:8 in call
+        6│         outer()
+        7│ 
+    →   8│     run()
+        9│ 
 
-  2  {}:271 in run
-      269│     def call():
-      270│         def run():
-    → 271│             outer()
-      272│ 
-      273│         run()
+  2  {trace._get_relative_file_path(nested2.__file__)}:6 in run
+        4│ def call() -> None:
+        5│     def run() -> None:
+    →   6│         outer()
+        7│ 
+        8│     run()
 
-  1  {}:5 in outer
+  1  {trace._get_relative_file_path(nested1.__file__)}:5 in outer
         3│         raise Exception("Foo")
         4│ 
     →   5│     inner()
@@ -315,47 +250,27 @@ def test_render_shows_ignored_files_if_in_debug_mode():
 
   Foo
 
-  at {}:3 in inner
-        1│ def outer():
-        2│     def inner():
+  at {trace._get_relative_file_path(nested1.__file__)}:3 in inner
+        1│ def outer() -> None:
+        2│     def inner() -> None:
     →   3│         raise Exception("Foo")
         4│ 
         5│     inner()
         6│ 
-""".format(
-        trace._get_relative_file_path(__file__),
-        trace._get_relative_file_path(__file__),
-        trace._get_relative_file_path(__file__),
-        trace._get_relative_file_path(helpers_file),
-        trace._get_relative_file_path(helpers_file),
-    )
+"""
 
-    assert expected == io.fetch_output()
+    assert io.fetch_output() == expected
 
 
 def test_render_supports_solutions():
-    from crashtest.contracts.base_solution import BaseSolution
-    from crashtest.contracts.provides_solution import ProvidesSolution
     from crashtest.solution_providers.solution_provider_repository import (
         SolutionProviderRepository,
     )
 
-    class CustomError(ProvidesSolution, Exception):
-        @property
-        def solution(self):
-            solution = BaseSolution("Solution Title.", "Solution Description")
-            solution.documentation_links.append("https://example.com")
-            solution.documentation_links.append("https://example2.com")
-
-            return solution
-
     io = BufferedIO()
 
-    def call():
-        raise CustomError("Error with solution")
-
-    with pytest.raises(CustomError) as e:
-        call()
+    with pytest.raises(solution.CustomError) as e:
+        solution.call()
 
     trace = ExceptionTrace(
         e.value, solution_provider_repository=SolutionProviderRepository()
@@ -363,55 +278,36 @@ def test_render_supports_solutions():
 
     trace.render(io)
 
-    expected = """
+    expected = f"""
   CustomError
 
   Error with solution
 
-  at {}:355 in call
-      351│ 
-      352│     io = BufferedIO()
-      353│ 
-      354│     def call():
-    → 355│         raise CustomError("Error with solution")
-      356│ 
-      357│     with pytest.raises(CustomError) as e:
-      358│         call()
-      359│ 
+  at {trace._get_relative_file_path(solution.__file__)}:16 in call
+       12│         return solution
+       13│ 
+       14│ 
+       15│ def call() -> None:
+    →  16│     raise CustomError("Error with solution")
+       17│ 
 
   • Solution Title: Solution Description
     https://example.com,
     https://example2.com
-""".format(
-        trace._get_relative_file_path(__file__),
-    )
+"""
 
-    assert expected == io.fetch_output()
+    assert io.fetch_output() == expected
 
 
 def test_render_falls_back_on_ascii_symbols():
-    from crashtest.contracts.base_solution import BaseSolution
-    from crashtest.contracts.provides_solution import ProvidesSolution
     from crashtest.solution_providers.solution_provider_repository import (
         SolutionProviderRepository,
     )
 
-    class CustomError(ProvidesSolution, Exception):
-        @property
-        def solution(self):
-            solution = BaseSolution("Solution Title.", "Solution Description")
-            solution.documentation_links.append("https://example.com")
-            solution.documentation_links.append("https://example2.com")
-
-            return solution
-
     io = BufferedIO(supports_utf8=False)
 
-    def call():
-        raise CustomError("Error with solution")
-
-    with pytest.raises(CustomError) as e:
-        call()
+    with pytest.raises(solution.CustomError) as e:
+        solution.call()
 
     trace = ExceptionTrace(
         e.value, solution_provider_repository=SolutionProviderRepository()
@@ -419,30 +315,25 @@ def test_render_falls_back_on_ascii_symbols():
 
     trace.render(io)
 
-    expected = """
+    expected = f"""
   CustomError
 
   Error with solution
 
-  at {}:411 in call
-      407| 
-      408|     io = BufferedIO(supports_utf8=False)
-      409| 
-      410|     def call():
-    > 411|         raise CustomError("Error with solution")
-      412| 
-      413|     with pytest.raises(CustomError) as e:
-      414|         call()
-      415| 
+  at {trace._get_relative_file_path(solution.__file__)}:16 in call
+       12|         return solution
+       13| 
+       14| 
+       15| def call() -> None:
+    >  16|     raise CustomError("Error with solution")
+       17| 
 
   * Solution Title: Solution Description
     https://example.com,
     https://example2.com
-""".format(
-        trace._get_relative_file_path(__file__),
-    )
+"""
 
-    assert expected == io.fetch_output()
+    assert io.fetch_output() == expected
 
 
 def test_empty_source_file_do_not_break_highlighter():
@@ -468,22 +359,14 @@ def test():
     highlighter = Highlighter()
     lines = highlighter.highlighted_lines(source)
 
-    assert [formatter.format(line) for line in lines] == [
-        "",
-        "def test():",
-        '    """',
-        "    Doctring",
-        '    """',
-        "    ...",
-        "",
-    ]
+    assert [formatter.format(line) for line in lines] == [*source.splitlines(), ""]
 
 
 def test_simple_render():
     io = BufferedIO()
 
     with pytest.raises(Exception) as e:
-        fail()
+        simple.simple_exception()
 
     trace = ExceptionTrace(e.value)
 
@@ -493,32 +376,18 @@ def test_simple_render():
 Failed
 """
 
-    assert expected == io.fetch_output()
+    assert io.fetch_output() == expected
 
 
 def test_simple_render_supports_solutions():
-    from crashtest.contracts.base_solution import BaseSolution
-    from crashtest.contracts.provides_solution import ProvidesSolution
     from crashtest.solution_providers.solution_provider_repository import (
         SolutionProviderRepository,
     )
 
-    class CustomError(ProvidesSolution, Exception):
-        @property
-        def solution(self):
-            solution = BaseSolution("Solution Title.", "Solution Description")
-            solution.documentation_links.append("https://example.com")
-            solution.documentation_links.append("https://example2.com")
-
-            return solution
-
     io = BufferedIO()
 
-    def call():
-        raise CustomError("Error with solution")
-
-    with pytest.raises(CustomError) as e:
-        call()
+    with pytest.raises(solution.CustomError) as e:
+        solution.call()
 
     trace = ExceptionTrace(
         e.value, solution_provider_repository=SolutionProviderRepository()
@@ -533,4 +402,4 @@ Error with solution
     https://example.com,
     https://example2.com
 """
-    assert expected == io.fetch_output()
+    assert io.fetch_output() == expected
