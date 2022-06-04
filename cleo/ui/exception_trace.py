@@ -291,7 +291,7 @@ class ExceptionTrace:
         self._render_line(
             io,
             f"at <fg=green>{self._get_relative_file_path(frame.filename)}</>"
-            f":<b>{frame.lineno}</b> in <fg=cyan>{ frame.function}</>",
+            f":<b>{frame.lineno}</b> in <fg=cyan>{frame.function}</>",
             True,
         )
 

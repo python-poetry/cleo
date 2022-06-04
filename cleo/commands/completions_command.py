@@ -33,7 +33,7 @@ class CompletionsCommand(Command):
     hidden = True
 
     help = """
-One can generate a completion script for `<options=bold>{script_name}</>`\
+One can generate a completion script for `<options=bold>{script_name}</>` \
 that is compatible with a given shell. The script is output on \
 `<options=bold>stdout</>` allowing one to re-direct \
 the output to the file of their choosing. Where you place the file will \
@@ -407,7 +407,7 @@ script. Consult your shells documentation for how to add such directives.
             description = re.sub(
                 r'(["\'#&;`|*?~<>^()\[\]{}$\\\x0A\xFF])', r"\\\1", description
             )
-            value += f""":{subprocess.list2cmdline([description]).strip('"')}"""
+            value += ":" + subprocess.list2cmdline([description]).strip('"')
 
         value += '"'
 

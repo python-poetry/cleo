@@ -194,10 +194,8 @@ class Definition:
             for option in self._options.values():
                 value = ""
                 if option.accepts_value():
-                    value = (
-                        f' {"[" if not option.requires_value() else ""}'
-                        f"{option.name.upper()}"
-                        f'{"]" if not option.requires_value() else ""}'
+                    formatted = option.name.upper() if option.requires_value() else f"[{option.name.upper()}]" 
+                    value = f" {formatted}
                     )
 
                 shortcut = ""

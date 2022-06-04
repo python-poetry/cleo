@@ -70,7 +70,7 @@ class TextDescriptor(Descriptor):
 
         synopsis = (
             f'{f"-{option.shortcut}, " if option.shortcut else "    "}'
-            f'{f"--{option.name}{value}"}'
+            f"--{option.name}{value}"
         )
 
         spacing_width = total_width - len(synopsis)
