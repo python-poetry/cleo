@@ -24,8 +24,8 @@ class ApplicationDescription:
         self._namespace = namespace
         self._show_hidden = show_hidden
         self._namespaces: dict[str, dict[str, str | list[Command]]] = {}
-        self._commands = {}
-        self._aliases = {}
+        self._commands: dict[str, Command] = {}
+        self._aliases: dict[str, str] = {}
 
         self._inspect_application()
 

@@ -65,7 +65,7 @@ class Application:
         self._default_command = "list"
         self._single_command = False
         self._commands: dict[str, Command] = {}
-        self._running_command = None
+        self._running_command: Command | None = None
         self._want_helps = False
         self._definition: Definition | None = None
         self._catch_exceptions = True
@@ -228,8 +228,8 @@ class Application:
         if not self._command_loader:
             return False
 
-        return self._command_loader.has(name) and self.add(
-            self._command_loader.get(name)
+        return bool(
+            self._command_loader.has(name) and self.add(self._command_loader.get(name))
         )
 
     def get_namespaces(self) -> list[str]:
@@ -439,32 +439,32 @@ class Application:
             # to allow the listeners to customize the definition
             pass
 
-        event = ConsoleCommandEvent(command, io)
+        command_event = ConsoleCommandEvent(command, io)
         error = None
 
         try:
-            self._event_dispatcher.dispatch(event, COMMAND)
+            self._event_dispatcher.dispatch(command_event, COMMAND)
 
-            if event.command_should_run():
+            if command_event.command_should_run():
                 exit_code = command.run(io)
             else:
                 exit_code = ConsoleCommandEvent.RETURN_CODE_DISABLED
         except Exception as e:
-            event = ConsoleErrorEvent(command, io, e)
-            self._event_dispatcher.dispatch(event, ERROR)
-            error = event.error
-            exit_code = event.exit_code
+            error_event = ConsoleErrorEvent(command, io, e)
+            self._event_dispatcher.dispatch(error_event, ERROR)
+            error = error_event.error
+            exit_code = error_event.exit_code
 
             if exit_code == 0:
                 error = None
 
-        event = ConsoleTerminateEvent(command, io, exit_code)
-        self._event_dispatcher.dispatch(event, TERMINATE)
+        terminate_event = ConsoleTerminateEvent(command, io, exit_code)
+        self._event_dispatcher.dispatch(terminate_event, TERMINATE)
 
         if error is not None:
             raise error
 
-        return event.exit_code
+        return terminate_event.exit_code
 
     def create_io(
         self,
@@ -587,7 +587,7 @@ class Application:
             return self._default_command
 
         if "command" in io.input.arguments and io.input.argument("command"):
-            candidates = []
+            candidates: list[str] = []
             for command_part in io.input.argument("command"):
                 if candidates:
                     candidates.append(candidates[-1] + " " + command_part)
@@ -615,7 +615,7 @@ class Application:
 
     def _extract_all_namespaces(self, name: str) -> list[str]:
         parts = name.split(" ")[:-1]
-        namespaces = []
+        namespaces: list[str] = []
 
         for part in parts:
             if namespaces:
