@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-from typing import List
-from typing import Optional
-
 from cleo._utils import find_similar_names
 
 
