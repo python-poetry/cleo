@@ -20,6 +20,10 @@ from cleo.commands.command import Command
 
 
 class GreetCommand(Command):
+
+    # specify command name *require
+    name = "great"
+
     """
     Greets someone
 
