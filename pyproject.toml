@@ -95,6 +95,12 @@ module = [
 ]
 ignore_errors = true
 
+[tool.coverage.report]
+omit = [
+  "cleo/_compat.py",
+  "cleo/_utils.py"
+]
+
 
 [build-system]
 requires = ["poetry-core~=1.0"]
