@@ -159,10 +159,10 @@ Cleo has four verbosity levels. These are defined in the ``Output`` class:
 Mode                                     Meaning                            Console option
 =======================================  ================================== ======================
 ``NA``                                   Do not output any messages         ``-q`` or ``--quiet``
-``clikit.VERBOSITY_NORMAL``              The default verbosity level        (none)
-``clikit.VERBOSITY_VERBOSE``             Increased verbosity of messages    ``-v``
-``clikit.VERBOSITY_VERY_VERBOSE``        Informative non essential messages ``-vv``
-``clikit.VERBOSITY_DEBUG``               Debug messages                     ``-vvv``
+``Verbosity.NORMAL``                     The default verbosity level        (none)
+``Verbosity.VERBOSE``                    Increased verbosity of messages    ``-v``
+``Verbosity.VERY_VERBOSE``               Informative non essential messages ``-vv``
+``Verbosity.DEBUG``                      Debug messages                     ``-vvv``
 =======================================  ================================== ======================
 
 It is possible to print a message in a command for only a specific verbosity
@@ -170,7 +170,7 @@ level. For example:
 
 .. code-block:: python
 
-    if clikit.VERBOSITY_VERBOSE <= self.io.verbosity:
+    if Verbosity.VERBOSE <= self.io.verbosity:
         self.line(...)
 
 There are also more semantic methods you can use to test for each of the
@@ -188,7 +188,7 @@ You can also pass the verbosity flag directly to `line()`.
 
 .. code-block:: python
 
-    self.line("", verbosity=clikit.VERBOSITY_VERBOSE)
+    self.line("", verbosity=Verbosity.VERBOSE)
 
 When the quiet level is used, all output is suppressed.
 
@@ -263,9 +263,9 @@ There are 3 argument variants you can use:
 ================================ ==================================== ===============================================================================================================
 Mode                             Notation                             Value
 ================================ ==================================== ===============================================================================================================
-``clikit.ARGUMENT_REQUIRED``     none (just write the argument name)  The argument is required
-``clikit.ARGUMENT_OPTIONAL``     ``argument?``                        The argument is optional and therefore can be omitted
-``clikit.ARGUMENT_MULTI_VALUED`` ``argument*``                        The argument can contain an indefinite number of arguments and must be used at the end of the argument list
+``Required``                     none (just write the argument name)  The argument is required
+``Optional``                     ``argument?``                        The argument is optional and therefore can be omitted
+``List``                         ``argument*``                        The argument can contain an indefinite number of arguments and must be used at the end of the argument list
 ================================ ==================================== ===============================================================================================================
 
 You can combine them like this:
@@ -353,10 +353,10 @@ There are 4 option variants you can use:
 ================================  =================================== ======================================================================================
 Option                            Notation                            Value
 ================================  =================================== ======================================================================================
-``clikit.OPTION_MULTI_VALUED``    ``--option=*``                      This option accepts multiple values (e.g. ``--dir=/foo --dir=/bar``)
-``clikit.OPTION_NO_VALUE``        ``--option``                        Do not accept input for this option (e.g. ``--yell``)
-``clikit.OPTION_REQUIRED_VALUE``  ``--option=``                       This value is required (e.g. ``--iterations=5``), the option itself is still optional
-``clikit.OPTION_OPTIONAL_VALUE``  ``--option=?``                      This option may or may not have a value (e.g. ``--yell`` or ``--yell=loud``)
+``List``                          ``--option=*``                      This option accepts multiple values (e.g. ``--dir=/foo --dir=/bar``)
+``Flag``                          ``--option``                        Do not accept input for this option (e.g. ``--yell``)
+``Requires value``                ``--option=``                       This value is required (e.g. ``--iterations=5``), the option itself is still optional
+``Optional value``                ``--option=?``                      This option may or may not have a value (e.g. ``--yell`` or ``--yell=loud``)
 ================================  =================================== ======================================================================================
 
 You can combine them like this:
