@@ -127,11 +127,11 @@ class Parser:
 
         shortcut = None
 
-        matches = re.split(r"\s*\|\s*", token, 2)
+        matches_list = re.split(r"\s*\|\s*", token, 2)
 
-        if len(matches) > 1:
-            shortcut = matches[0].lstrip("-")
-            token = matches[1]
+        if len(matches_list) > 1:
+            shortcut = matches_list[0].lstrip("-")
+            token = matches_list[1]
         else:
             token = token.lstrip("-")
 
