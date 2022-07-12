@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-import signal
-
 from typing import TYPE_CHECKING
 
 from cleo.events.console_event import ConsoleEvent
 
 
 if TYPE_CHECKING:
+    import signal
+
     from cleo.commands.command import Command
     from cleo.io.io import IO
 

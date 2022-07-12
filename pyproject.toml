@@ -21,10 +21,10 @@ crashtest = "^0.3.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
-pytest-mock = "^3.7.0"
-pre-commit = "^2.19.0"
+pytest-mock = "^3.8.2"
+pre-commit = "^2.20.0"
 pytest-cov = "^3.0.0"
-tox = "^3.25.0"
+tox = "^3.25.1"
 
 [tool.isort]
 profile = "black"
