@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import re
+import shutil
 import sys
 
 from contextlib import suppress
@@ -29,7 +30,6 @@ from cleo.io.inputs.option import Option
 from cleo.io.io import IO
 from cleo.io.outputs.output import Verbosity
 from cleo.io.outputs.stream_output import StreamOutput
-from cleo.terminal import Terminal
 from cleo.ui.ui import UI
 
 
@@ -61,7 +61,7 @@ class Application:
         self._name = name
         self._version = version
         self._display_name: str | None = None
-        self._terminal = Terminal()
+        self._terminal = shutil.get_terminal_size()
         self._default_command = "list"
         self._single_command = False
         self._commands: dict[str, Command] = {}
