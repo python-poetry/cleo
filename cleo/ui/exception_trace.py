@@ -252,9 +252,11 @@ class ExceptionTrace:
         return self
 
     def render(self, io: IO | Output, simple: bool = False) -> None:
-        if simple:
+        # If simple rendering wouldn't show anything useful, abandon it.
+        simple_string = str(self._exception) if simple else ""
+        if simple_string:
             io.write_line("")
-            io.write_line(f"<error>{str(self._exception)}</error>")
+            io.write_line(f"<error>{simple_string}</error>")
         else:
             self._render_exception(io, self._exception)
 

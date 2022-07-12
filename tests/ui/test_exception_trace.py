@@ -408,3 +408,34 @@ Error with solution
     https://example2.com
 """
     assert io.fetch_output() == expected
+
+
+def test_simple_render_aborts_if_no_message():
+    io = BufferedIO()
+
+    with pytest.raises(Exception) as e:
+        raise AssertionError
+
+    trace = ExceptionTrace(e.value)
+
+    trace.render(io, simple=True)
+    lineno = 417
+
+    expected = f"""
+  AssertionError
+
+  
+
+  at {trace._get_relative_file_path(__file__)}:{lineno} in \
+test_simple_render_aborts_if_no_message
+      {lineno - 4}│ def test_simple_render_aborts_if_no_message():
+      {lineno - 3}│     io = BufferedIO()
+      {lineno - 2}│ 
+      {lineno - 1}│     with pytest.raises(Exception) as e:
+    → {lineno + 0}│         raise AssertionError
+      {lineno + 1}│ 
+      {lineno + 2}│     trace = ExceptionTrace(e.value)
+      {lineno + 3}│ 
+      {lineno + 4}│     trace.render(io, simple=True)
+"""  # noqa: W293
+    assert expected == io.fetch_output()
