@@ -80,7 +80,6 @@ module = [
     "cleo.io.inputs.input",
     "cleo.io.inputs.token_parser",
     "cleo.io.outputs.stream_output",
-    "cleo.terminal",
     "cleo.testers.application_tester",
     "cleo.testers.command_tester",
     "cleo.ui.choice_question",
