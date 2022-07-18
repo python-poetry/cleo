@@ -62,7 +62,7 @@ class Application:
         self._version = version
         self._display_name: str | None = None
         self._terminal = shutil.get_terminal_size()
-        self._default_command = "list"
+        self._default_command = "help"
         self._single_command = False
         self._commands: dict[str, Command] = {}
         self._running_command = None
