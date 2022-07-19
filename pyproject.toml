@@ -29,8 +29,8 @@ classifiers = [
 # Requirements
 [tool.poetry.dependencies]
 python = "^3.7"
-pylev = "^1.3.0"
 crashtest = "^0.3.1"
+rapidfuzz = "^2.2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
@@ -101,6 +101,7 @@ module = [
     "tests.test_color",
     "tests.test_helpers",
     "tests.test_parser",
+    "tests.test_utils",
     "tests.testers.*",
     "tests.ui.*",
 ]
