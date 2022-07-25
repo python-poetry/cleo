@@ -1,18 +1,24 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import pytest
 
 from cleo.events.event import Event
 from cleo.events.event_dispatcher import EventDispatcher
 
 
+if TYPE_CHECKING:
+    from typing import Any
+
+
 @pytest.fixture()
-def dispatcher():
+def dispatcher() -> EventDispatcher:
     return EventDispatcher()
 
 
 @pytest.fixture()
-def listener():
+def listener() -> EventListener:
     return EventListener()
 
 
@@ -23,25 +29,25 @@ POST_BAR = "post.bar"
 
 
 class EventListener:
-    def __init__(self):
+    def __init__(self) -> None:
         self.pre_foo_invoked = False
         self.post_foo_invoked = False
 
-    def pre_foo(self, *_):
+    def pre_foo(self, *_: Any) -> None:
         self.pre_foo_invoked = True
 
-    def post_foo(self, e, *_):
+    def post_foo(self, e: Event, *_: Any) -> None:
         self.post_foo_invoked = True
         e.stop_propagation()
 
 
-def test_initial_state(dispatcher):
+def test_initial_state(dispatcher: EventDispatcher) -> None:
     assert {} == dispatcher.get_listeners()
     assert not dispatcher.has_listeners(PRE_FOO)
     assert not dispatcher.has_listeners(POST_FOO)
 
 
-def test_add_listener(dispatcher, listener):
+def test_add_listener(dispatcher: EventDispatcher, listener: EventListener) -> None:
     dispatcher.add_listener(PRE_FOO, listener.pre_foo)
     dispatcher.add_listener(POST_FOO, listener.post_foo)
 
@@ -53,7 +59,7 @@ def test_add_listener(dispatcher, listener):
     assert len(dispatcher.get_listeners()) == 2
 
 
-def test_get_listeners_sorts_by_priority(dispatcher):
+def test_get_listeners_sorts_by_priority(dispatcher: EventDispatcher) -> None:
     listener1 = EventListener()
     listener2 = EventListener()
     listener3 = EventListener()
@@ -67,7 +73,7 @@ def test_get_listeners_sorts_by_priority(dispatcher):
     assert expected == dispatcher.get_listeners(PRE_FOO)
 
 
-def test_get_all_listeners_sorts_by_priority(dispatcher):
+def test_get_all_listeners_sorts_by_priority(dispatcher: EventDispatcher) -> None:
     listener1 = EventListener()
     listener2 = EventListener()
     listener3 = EventListener()
@@ -91,7 +97,7 @@ def test_get_all_listeners_sorts_by_priority(dispatcher):
     assert dispatcher.get_listeners() == expected
 
 
-def test_get_listener_priority(dispatcher):
+def test_get_listener_priority(dispatcher: EventDispatcher) -> None:
     listener1 = EventListener()
     listener2 = EventListener()
 
@@ -103,7 +109,7 @@ def test_get_listener_priority(dispatcher):
     assert dispatcher.get_listener_priority(PRE_BAR, listener2.pre_foo) is None
 
 
-def test_dispatch(dispatcher, listener):
+def test_dispatch(dispatcher: EventDispatcher, listener: EventListener) -> None:
     dispatcher.add_listener(PRE_FOO, listener.pre_foo)
     dispatcher.add_listener(POST_FOO, listener.post_foo)
     dispatcher.dispatch(Event(), PRE_FOO)
@@ -111,7 +117,9 @@ def test_dispatch(dispatcher, listener):
     assert not listener.post_foo_invoked
 
 
-def test_stop_event_propagation(dispatcher, listener):
+def test_stop_event_propagation(
+    dispatcher: EventDispatcher, listener: EventListener
+) -> None:
     other_listener = EventListener()
 
     dispatcher.add_listener(POST_FOO, listener.post_foo, 10)
