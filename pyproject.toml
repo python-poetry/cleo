@@ -91,7 +91,6 @@ module = [
     "cleo.ui.table",
     "cleo.ui.table_cell_style",
     "tests.commands.*",
-    "tests.conftest",
     "tests.events.*",
     "tests.fixtures.*",
     "tests.formatters.*",
