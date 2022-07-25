@@ -89,7 +89,6 @@ module = [
     "cleo.ui.progress_indicator",
     "cleo.ui.question",
     "cleo.ui.table",
-    "cleo.ui.table_cell_style",
     "tests.commands.*",
     "tests.conftest",
     "tests.events.*",
