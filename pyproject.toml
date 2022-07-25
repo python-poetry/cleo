@@ -101,7 +101,6 @@ module = [
     "tests.test_color",
     "tests.test_helpers",
     "tests.test_parser",
-    "tests.test_utils",
     "tests.testers.*",
     "tests.ui.*",
 ]

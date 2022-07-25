@@ -15,6 +15,6 @@ from cleo._utils import find_similar_names
         ("foo", ["foo1", "foo2", "foo bar1", "foo bar2"]),
     ],
 )
-def test_find_similar_names(name: str, expected: list[str]):
+def test_find_similar_names(name: str, expected: list[str]) -> None:
     names = ["help", "foo1", "foo2", "bar1", "bar2", "foo bar1", "foo bar2"]
     assert find_similar_names(name, names) == expected
