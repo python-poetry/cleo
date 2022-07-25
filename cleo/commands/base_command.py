@@ -40,8 +40,7 @@ class BaseCommand:
                 self.usages[i] = f"{self.name} {usage}"
 
     @property
-    def application(self) -> Application:
-        assert self._application is not None
+    def application(self) -> Application | None:
         return self._application
 
     @property
