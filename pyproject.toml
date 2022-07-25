@@ -90,29 +90,46 @@ module = [
     "cleo.ui.question",
     "cleo.ui.table",
     "cleo.ui.table_cell_style",
-    "tests.commands.*",
+    "tests.commands.test_command",
+    "tests.commands.completion.test_completions_command",
     "tests.conftest",
-    "tests.events.*",
-    "tests.fixtures.*",
-    "tests.formatters.*",
-    "tests.io.*",
-    "tests.loaders.*",
+    "tests.events.test_event",
+    "tests.events.test_event_dispatcher",
+    "tests.fixtures.foo_command",
+    "tests.fixtures.signature_command",
+    "tests.fixtures.exceptions.solution",
+    "tests.formatters.test_formatter",
+    "tests.io.inputs.test_option",
+    "tests.io.inputs.test_token_parser",
+    "tests.io.inputs.test_argument",
+    "tests.io.inputs.test_argv_input",
+    "tests.io.outputs.test_section_output",
+    "tests.loaders.test_factory_command_loader",
     "tests.test_application",
     "tests.test_color",
     "tests.test_helpers",
     "tests.test_parser",
     "tests.test_utils",
-    "tests.testers.*",
-    "tests.ui.*",
+    "tests.testers.test_command_tester",
+    "tests.testers.test_application_tester",
+    "tests.ui.test_progress_bar",
+    "tests.ui.test_exception_trace",
+    "tests.ui.test_choice_question",
+    "tests.ui.test_confirmation_question",
+    "tests.ui.test_table",
+    "tests.ui.test_question",
+    "tests.ui.test_progress_indicator",
 ]
 ignore_errors = true
 
 [tool.coverage.report]
 omit = [
   "cleo/_compat.py",
-  "cleo/_utils.py"
 ]
-
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:"
+]
 
 [build-system]
 requires = ["poetry-core~=1.0"]
