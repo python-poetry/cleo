@@ -21,6 +21,7 @@ class FooCommand(Command):
         io.write_line("interact called")
 
     def handle(self) -> int:
+        assert self._io is not None
         self._io.write_line("called")
 
         return 0

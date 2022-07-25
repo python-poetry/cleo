@@ -93,7 +93,6 @@ module = [
     "tests.commands.*",
     "tests.conftest",
     "tests.events.*",
-    "tests.fixtures.*",
     "tests.formatters.*",
     "tests.io.*",
     "tests.loaders.*",
