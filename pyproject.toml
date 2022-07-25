@@ -66,7 +66,6 @@ module = [
     "cleo.descriptors.application_description",
     "cleo.descriptors.descriptor",
     "cleo.descriptors.text_descriptor",
-    #"cleo.commands.base_command",
     "cleo.commands.command",
     "cleo.commands.completions_command",
     "cleo.commands.help_command",
