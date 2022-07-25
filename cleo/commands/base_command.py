@@ -28,8 +28,8 @@ class BaseCommand:
 
     def __init__(self) -> None:
         self._definition = Definition()
-        self._full_definition = None
-        self._application = None
+        self._full_definition: Definition | None = None
+        self._application: Application | None = None
         self._ignore_validation_errors = False
         self._synopsis: dict[str, str] = {}
 
@@ -41,6 +41,7 @@ class BaseCommand:
 
     @property
     def application(self) -> Application:
+        assert self._application is not None
         return self._application
 
     @property
@@ -67,7 +68,7 @@ class BaseCommand:
             command_name=self.name,
             command_full_name=current_script
             if is_single_command
-            else current_script + " " + self.name,
+            else f"{current_script} {self.name}",
             script_name=current_script,
         )
 
