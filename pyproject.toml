@@ -96,7 +96,6 @@ module = [
     "tests.io.*",
     "tests.loaders.*",
     "tests.test_application",
-    "tests.test_parser",
     "tests.testers.*",
     "tests.ui.*",
 ]
