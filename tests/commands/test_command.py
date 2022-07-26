@@ -16,12 +16,13 @@ class MyCommand(Command):
         {action : The action to execute.}
     """
 
-    def handle(self):
+    def handle(self) -> int:
         action = self.argument("action")
 
         getattr(self, "_" + action)()
+        return 0
 
-    def _overwrite(self):
+    def _overwrite(self) -> None:
         self.write("Processing...")
         self.overwrite("Done!")
 
@@ -33,13 +34,14 @@ class MySecondCommand(Command):
 
     arguments = [argument("foo", "Bar", multiple=True)]
 
-    def handle(self):
+    def handle(self) -> int:
         foos = self.argument("foo")
 
         self.line(",".join(foos))
+        return 0
 
 
-def test_set_application():
+def test_set_application() -> None:
     application = Application()
     command = Command()
     command.set_application(application)
@@ -47,7 +49,7 @@ def test_set_application():
     assert command.application == application
 
 
-def test_with_signature():
+def test_with_signature() -> None:
     command = SignatureCommand()
 
     assert command.name == "signature:command"
@@ -57,14 +59,14 @@ def test_with_signature():
     assert len(command.definition.options) == 2
 
 
-def test_signature_inheritance():
+def test_signature_inheritance() -> None:
     command = ChildCommand()
 
     assert command.name == "parent"
     assert command.description == "Parent Command."
 
 
-def test_overwrite():
+def test_overwrite() -> None:
     command = MyCommand()
 
     tester = CommandTester(command)
@@ -74,7 +76,7 @@ def test_overwrite():
     assert tester.io.fetch_output() == expected
 
 
-def test_explicit_multiple_argument():
+def test_explicit_multiple_argument() -> None:
     command = MySecondCommand()
 
     tester = CommandTester(command)
