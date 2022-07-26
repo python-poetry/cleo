@@ -29,12 +29,12 @@ class ArgvInput(Input):
 
         # Strip the application name
         try:
-            self._script_name = argv.pop(0)
+            self._script_name: str | None = argv.pop(0)
         except IndexError:
             self._script_name = None
 
         self._tokens = argv
-        self._parsed = []
+        self._parsed: list[str] = []
 
         super().__init__(definition=definition)
 
@@ -77,7 +77,7 @@ class ArgvInput(Input):
 
             return token
 
-        return
+        return None
 
     @property
     def script_name(self) -> str | None:
