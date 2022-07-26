@@ -36,6 +36,8 @@ repos:
     hooks:
       - id: mypy
         pass_filenames: false
+        additional_dependencies:
+          - pytest>=7.1.2
 
   - repo: https://github.com/pycqa/flake8
     rev: 4.0.1
