@@ -98,7 +98,6 @@ module = [
     "tests.io.*",
     "tests.loaders.*",
     "tests.test_application",
-    "tests.test_color",
     "tests.test_helpers",
     "tests.test_parser",
     "tests.testers.*",
