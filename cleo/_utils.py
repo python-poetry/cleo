@@ -3,7 +3,6 @@ from __future__ import annotations
 import math
 
 from html.parser import HTMLParser
-from typing import Any
 
 from rapidfuzz.distance import Levenshtein
 
@@ -13,22 +12,22 @@ class TagStripper(HTMLParser):
         super().__init__(convert_charrefs=False)
 
         self.reset()
-        self.fed = []
+        self.fed: list[str] = []
 
-    def handle_data(self, d) -> None:
+    def handle_data(self, d: str) -> None:
         self.fed.append(d)
 
-    def handle_entityref(self, name) -> None:
+    def handle_entityref(self, name: str) -> None:
         self.fed.append(f"&{name};")
 
-    def handle_charref(self, name) -> None:
+    def handle_charref(self, name: str) -> None:
         self.fed.append(f"&#{name};")
 
     def get_data(self) -> str:
         return "".join(self.fed)
 
 
-def _strip(value) -> str:
+def _strip(value: str) -> str:
     s = TagStripper()
     s.feed(value)
     s.close()
@@ -36,8 +35,7 @@ def _strip(value) -> str:
     return s.get_data()
 
 
-def strip_tags(value: Any) -> str:
-    value = str(value)
+def strip_tags(value: str) -> str:
     while "<" in value and ">" in value:
         new_value = _strip(value)
         if value.count("<") == new_value.count("<"):
@@ -53,7 +51,7 @@ def find_similar_names(name: str, names: list[str]) -> list[str]:
     Finds names similar to a given command name.
     """
     threshold = 1e3
-    distance_by_name = {}
+    distance_by_name: dict[str, tuple[int, float]] = {}
 
     for actual_name in names:
         # Get Levenshtein distance between the input and each command name
@@ -74,10 +72,10 @@ def find_similar_names(name: str, names: list[str]) -> list[str]:
     }
 
     # Display results with shortest distance first
-    return sorted(distance_by_name, key=distance_by_name.get)
+    return sorted(distance_by_name, key=distance_by_name.get)  # type: ignore[arg-type]
 
 
-_TIME_FORMATS = [
+_TIME_FORMATS: list[tuple[int, str] | tuple[int, str, int]] = [
     (0, "< 1 sec"),
     (2, "1 sec"),
     (59, "secs", 1),
@@ -90,7 +88,7 @@ _TIME_FORMATS = [
 ]
 
 
-def format_time(secs: float) -> str:
+def format_time(secs: float) -> str:  # type: ignore[return]
     for fmt in _TIME_FORMATS:
         if secs > fmt[0]:
             continue
@@ -98,4 +96,4 @@ def format_time(secs: float) -> str:
         if len(fmt) == 2:
             return fmt[1]
 
-        return f"{math.ceil(secs / fmt[2])} {fmt[1]}"
+        return f"{math.ceil(secs / fmt[2])} {fmt[1]}"  # type: ignore
