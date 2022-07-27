@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from cleo.io.buffered_io import BufferedIO
 from cleo.io.inputs.string_input import StringInput
+from cleo.io.outputs.buffered_output import BufferedOutput
 
 
 if TYPE_CHECKING:
@@ -37,7 +38,7 @@ class ApplicationTester:
 
     def execute(
         self,
-        args: str | None = "",
+        args: str = "",
         inputs: str | None = None,
         interactive: bool | None = None,
         verbosity: Verbosity | None = None,
@@ -52,6 +53,8 @@ class ApplicationTester:
         input = StringInput(args)
         self._io.set_input(input)
         self._io.decorated(decorated)
+        assert isinstance(self._io.output, BufferedOutput)
+        assert isinstance(self._io.error_output, BufferedOutput)
         self._io.output.set_supports_utf8(supports_utf8)
         self._io.error_output.set_supports_utf8(supports_utf8)
 
