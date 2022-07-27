@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
+from enum import IntEnum
 from typing import TYPE_CHECKING
 from typing import Iterable
 
@@ -12,7 +13,7 @@ if TYPE_CHECKING:
     from cleo.io.outputs.section_output import SectionOutput
 
 
-class Verbosity(Enum):
+class Verbosity(IntEnum):
 
     QUIET: int = 16
     NORMAL: int = 32
