@@ -81,7 +81,6 @@ module = [
     "cleo.ui.progress_indicator",
     "cleo.ui.question",
     "cleo.ui.table",
-    "tests.events.test_event_dispatcher",
     "tests.io.inputs.test_argument",
     "tests.io.inputs.test_argv_input",
     "tests.io.inputs.test_option",
