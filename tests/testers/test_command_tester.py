@@ -15,30 +15,32 @@ class FooCommand(Command):
         {foo : Foo argument}
     """
 
-    def handle(self):
+    def handle(self) -> int:
         self.line(self.argument("foo"))
+        return 0
 
 
 class FooBarCommand(Command):
 
     name = "foo bar"
 
-    def handle(self):
+    def handle(self) -> int:
         self.line("foo bar called")
+        return 0
 
 
 @pytest.fixture()
-def tester():
+def tester() -> CommandTester:
     return CommandTester(FooCommand())
 
 
-def test_execute(tester):
+def test_execute(tester: CommandTester) -> None:
     assert tester.execute("bar") == 0
     assert tester.status_code == 0
     assert tester.io.fetch_output() == "bar\n"
 
 
-def test_execute_namespace_command():
+def test_execute_namespace_command() -> None:
     app = Application()
     app.add(FooBarCommand())
     tester = CommandTester(app.find("foo bar"))
