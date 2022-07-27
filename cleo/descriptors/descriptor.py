@@ -16,9 +16,6 @@ if TYPE_CHECKING:
 
 
 class Descriptor:
-    def __init__(self) -> None:
-        self._io: IO | None = None
-
     def describe(self, io: IO, obj: Any, **options: Any) -> None:
         self._io = io
 

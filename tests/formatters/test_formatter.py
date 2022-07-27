@@ -77,7 +77,7 @@ from cleo.formatters.formatter import Formatter
         ),
     ],
 )
-def test_format_and_wrap(text, width, expected):
+def test_format_and_wrap(text: str, width: int, expected: str) -> None:
     formatter = Formatter(True)
 
     assert formatter.format_and_wrap(text, width) == expected
@@ -97,7 +97,7 @@ def test_format_and_wrap(text, width, expected):
         ("pre <error>foo bar baz</error> post", 5, "pre f\noo ba\nr baz\npost"),
     ],
 )
-def test_format_and_wrap_undecorated(text, width, expected):
+def test_format_and_wrap_undecorated(text: str, width: int, expected: str) -> None:
     formatter = Formatter(False)
 
     assert formatter.format_and_wrap(text, width) == expected

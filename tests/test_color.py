@@ -15,7 +15,9 @@ from cleo.color import Color
         ("red", "yellow", ["underline"], "\033[31;43;4m \033[39;49;24m"),
     ],
 )
-def test_ansi_colors(foreground, background, options, expected):
+def test_ansi_colors(
+    foreground: str, background: str, options: list[str], expected: str
+) -> None:
     color = Color(foreground, background, options)
 
     assert color.apply(" ") == expected
@@ -31,7 +33,9 @@ def test_ansi_colors(foreground, background, options, expected):
         ("#ffffff", "#000000", [], "\033[38;2;255;255;255;48;2;0;0;0m \033[39;49m"),
     ],
 )
-def test_true_color_support(foreground, background, options, expected):
+def test_true_color_support(
+    foreground: str, background: str, options: list[str], expected: str
+) -> None:
     color = Color(foreground, background, options)
 
     assert color.apply(" ") == expected
@@ -44,7 +48,13 @@ def test_true_color_support(foreground, background, options, expected):
         ("#c0392b", "#f1c40f", [], "\033[31;43m \033[39;49m"),
     ],
 )
-def test_degrade_true_colors(foreground, background, options, expected, environ):
+def test_degrade_true_colors(
+    foreground: str,
+    background: str,
+    options: list[str],
+    expected: str,
+    environ: dict[str, str],
+) -> None:
     os.environ["COLORTERM"] = ""
 
     color = Color(foreground, background, options)

@@ -16,7 +16,7 @@ class ConsoleErrorEvent(ConsoleEvent):
     An event triggered when an exception is raised during the execution of a command.
     """
 
-    def __init__(self, command: Command | None, io: IO, error: Exception) -> None:
+    def __init__(self, command: Command, io: IO, error: Exception) -> None:
         super().__init__(command, io)
 
         self._error = error

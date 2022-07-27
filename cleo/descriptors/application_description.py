@@ -24,8 +24,8 @@ class ApplicationDescription:
         self._namespace = namespace
         self._show_hidden = show_hidden
         self._namespaces: dict[str, dict[str, str | list[Command]]] = {}
-        self._commands = {}
-        self._aliases = {}
+        self._commands: dict[str, Command] = {}
+        self._aliases: dict[str, Command] = {}
 
         self._inspect_application()
 
@@ -38,10 +38,11 @@ class ApplicationDescription:
         return self._commands
 
     def command(self, name: str) -> Command:
-        if name not in self._commands and name not in self._aliases:
-            raise CommandNotFoundException(name)
-
-        return self._commands.get(name, self._aliases.get(name))
+        if name in self._commands:
+            return self._commands[name]
+        if name in self._aliases:
+            return self._aliases[name]
+        raise CommandNotFoundException(name)
 
     def _inspect_application(self) -> None:
         namespace = None

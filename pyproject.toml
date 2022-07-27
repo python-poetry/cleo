@@ -64,14 +64,11 @@ module = [
     "cleo._utils",
     "cleo.application",
     "cleo.descriptors.application_description",
-    "cleo.descriptors.descriptor",
     "cleo.descriptors.text_descriptor",
-    "cleo.commands.base_command",
     "cleo.commands.command",
     "cleo.commands.completions_command",
     "cleo.commands.help_command",
     "cleo.commands.list_command",
-    "cleo.events.console_event",
     "cleo.events.event_dispatcher",
     "cleo.io.buffered_io",
     "cleo.io.inputs.argument",
@@ -89,29 +86,31 @@ module = [
     "cleo.ui.progress_indicator",
     "cleo.ui.question",
     "cleo.ui.table",
-    "cleo.ui.table_cell_style",
-    "tests.commands.*",
-    "tests.conftest",
-    "tests.fixtures.*",
-    "tests.formatters.*",
-    "tests.io.*",
-    "tests.loaders.*",
-    "tests.test_application",
-    "tests.test_color",
-    "tests.test_helpers",
-    "tests.test_parser",
-    "tests.test_utils",
-    "tests.testers.*",
-    "tests.ui.*",
+    "tests.events.test_event_dispatcher",
+    "tests.io.inputs.test_argument",
+    "tests.io.inputs.test_argv_input",
+    "tests.io.inputs.test_option",
+    "tests.io.inputs.test_token_parser",
+    "tests.testers.test_application_tester",
+    "tests.testers.test_command_tester",
+    "tests.ui.test_choice_question",
+    "tests.ui.test_confirmation_question",
+    "tests.ui.test_exception_trace",
+    "tests.ui.test_progress_bar",
+    "tests.ui.test_progress_indicator",
+    "tests.ui.test_question",
+    "tests.ui.test_table",
 ]
 ignore_errors = true
 
 [tool.coverage.report]
 omit = [
   "cleo/_compat.py",
-  "cleo/_utils.py"
 ]
-
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:"
+]
 
 [build-system]
 requires = ["poetry-core~=1.0"]
