@@ -94,7 +94,6 @@ module = [
     "tests.io.inputs.test_option",
     "tests.io.inputs.test_token_parser",
     "tests.io.outputs.test_section_output",
-    "tests.loaders.test_factory_command_loader",
     "tests.testers.test_application_tester",
     "tests.testers.test_command_tester",
     "tests.ui.test_choice_question",
