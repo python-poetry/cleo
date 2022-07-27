@@ -14,7 +14,7 @@ def command(name: str) -> Command:
     return command_
 
 
-def test_has():
+def test_has() -> None:
     loader = FactoryCommandLoader(
         {"foo": lambda: command("foo"), "bar": lambda: command("bar")}
     )
@@ -24,7 +24,7 @@ def test_has():
     assert not loader.has("baz")
 
 
-def test_get():
+def test_get() -> None:
     loader = FactoryCommandLoader(
         {"foo": lambda: command("foo"), "bar": lambda: command("bar")}
     )
@@ -33,7 +33,7 @@ def test_get():
     assert isinstance(loader.get("bar"), Command)
 
 
-def test_get_invalid_command_raises_error():
+def test_get_invalid_command_raises_error() -> None:
     loader = FactoryCommandLoader(
         {"foo": lambda: command("foo"), "bar": lambda: command("bar")}
     )
@@ -42,7 +42,7 @@ def test_get_invalid_command_raises_error():
         loader.get("baz")
 
 
-def test_names():
+def test_names() -> None:
     loader = FactoryCommandLoader(
         {"foo": lambda: command("foo"), "bar": lambda: command("bar")}
     )
