@@ -36,7 +36,7 @@ class Table:
 
     _styles: dict[str, TableStyle] | None = None
 
-    def __init__(self, io: IO | Output, style: str = None) -> None:
+    def __init__(self, io: IO | Output, style: str | None = None) -> None:
         self._io = io
 
         if style is None:

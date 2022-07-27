@@ -53,6 +53,7 @@ known_first_party = "cleo"
 [tool.mypy]
 strict = true
 files = "cleo, tests"
+show_error_codes = true
 
 # The following whitelist is used to allow for incremental adoption
 # of Mypy. Modules should be removed from this whitelist as and when
@@ -65,11 +66,7 @@ module = [
     "cleo.application",
     "cleo.descriptors.application_description",
     "cleo.descriptors.text_descriptor",
-    "cleo.commands.command",
     "cleo.commands.completions_command",
-    "cleo.commands.help_command",
-    "cleo.commands.list_command",
-    "cleo.events.event_dispatcher",
     "cleo.io.buffered_io",
     "cleo.io.inputs.argument",
     "cleo.io.inputs.argv_input",
@@ -77,8 +74,6 @@ module = [
     "cleo.io.inputs.input",
     "cleo.io.inputs.token_parser",
     "cleo.io.outputs.stream_output",
-    "cleo.testers.application_tester",
-    "cleo.testers.command_tester",
     "cleo.ui.choice_question",
     "cleo.ui.confirmation_question",
     "cleo.ui.exception_trace",
