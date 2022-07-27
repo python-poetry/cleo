@@ -51,9 +51,7 @@ class Highlighter:
     }
 
     KEYWORDS = set(keyword.kwlist)
-    BUILTINS = set(
-        __builtins__.keys() if type(__builtins__) is dict else dir(__builtins__)
-    )
+    BUILTINS = set(dir(__builtins__))
 
     UI = {
         False: {"arrow": ">", "delimiter": "|"},
@@ -222,9 +220,7 @@ class ExceptionTrace:
     }
 
     AST_ELEMENTS = {
-        "builtins": __builtins__.keys()
-        if type(__builtins__) is dict
-        else dir(__builtins__),
+        "builtins": dir(__builtins__),
         "keywords": [
             getattr(ast, cls)
             for cls in dir(ast)
@@ -234,7 +230,7 @@ class ExceptionTrace:
         ],
     }
 
-    _FRAME_SNIPPET_CACHE = {}
+    _FRAME_SNIPPET_CACHE: dict[tuple[Frame, int, int], list[str]] = {}
 
     def __init__(
         self,
@@ -244,7 +240,7 @@ class ExceptionTrace:
         self._exception = exception
         self._solution_provider_repository = solution_provider_repository
         self._exc_info = sys.exc_info()
-        self._ignore = None
+        self._ignore: str | None = None
 
     def ignore_files_in(self, ignore: str) -> ExceptionTrace:
         self._ignore = ignore
