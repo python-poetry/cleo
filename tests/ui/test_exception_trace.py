@@ -428,7 +428,7 @@ def test_simple_render_aborts_if_no_message() -> None:
 
   at {trace._get_relative_file_path(__file__)}:{lineno} in \
 test_simple_render_aborts_if_no_message
-      {lineno - 4}│ def test_simple_render_aborts_if_no_message():
+      {lineno - 4}│ def test_simple_render_aborts_if_no_message() -> None:
       {lineno - 3}│     io = BufferedIO()
       {lineno - 2}│ 
       {lineno - 1}│     with pytest.raises(Exception) as e:
