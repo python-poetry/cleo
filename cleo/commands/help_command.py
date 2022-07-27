@@ -41,6 +41,7 @@ To display the list of available commands, please use the <info>list</info> comm
         from cleo.descriptors.text_descriptor import TextDescriptor
 
         if self._command is None:
+            assert self._application is not None
             self._command = self._application.find(self.argument("command_name"))
 
         self.line("")

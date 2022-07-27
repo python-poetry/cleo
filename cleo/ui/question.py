@@ -24,7 +24,7 @@ class Question:
         self._question = question
         self._default = default
 
-        self._attempts = None
+        self._attempts: int | None = None
         self._hidden = False
         self._hidden_fallback = True
         self._autocomplete_values = None
@@ -63,7 +63,7 @@ class Question:
 
         self._autocomplete_values = autocomplete_values
 
-    def set_max_attempts(self, attempts: int):
+    def set_max_attempts(self, attempts: int | None):
         self._attempts = attempts
 
     def set_validator(self, validator: Callable) -> None:
