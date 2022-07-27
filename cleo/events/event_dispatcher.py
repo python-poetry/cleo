@@ -2,22 +2,25 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from typing import Callable
+from typing import cast
 
 
 if TYPE_CHECKING:
     from cleo.events.event import Event
 
+    Listener = Callable[[Event, str, "EventDispatcher"], None]
+
 
 class EventDispatcher:
     def __init__(self) -> None:
-        self._listeners = {}
-        self._sorted = {}
+        self._listeners: dict[str, dict[int, list[Listener]]] = {}
+        self._sorted: dict[str, list[Listener]] = {}
 
     def dispatch(self, event: Event, event_name: str | None = None) -> Event:
         if event_name is None:
             event_name = event.__class__.__name__
 
-        listeners = self.get_listeners(event_name)
+        listeners = cast("list[Listener]", self.get_listeners(event_name))
 
         if listeners:
             self._do_dispatch(listeners, event_name, event)
@@ -26,7 +29,7 @@ class EventDispatcher:
 
     def get_listeners(
         self, event_name: str | None = None
-    ) -> list[Callable] | dict[str, Callable]:
+    ) -> list[Listener] | dict[str, list[Listener]]:
         if event_name is not None:
             if event_name not in self._listeners:
                 return []
@@ -42,14 +45,16 @@ class EventDispatcher:
 
         return self._sorted
 
-    def get_listener_priority(self, event_name: str, listener: Callable) -> int | None:
+    def get_listener_priority(self, event_name: str, listener: Listener) -> int | None:
         if event_name not in self._listeners:
-            return
+            return None
 
         for priority, listeners in self._listeners[event_name].items():
             for v in listeners:
                 if v == listener:
                     return priority
+
+        return None
 
     def has_listeners(self, event_name: str | None = None) -> bool:
         if event_name is not None:
@@ -61,7 +66,7 @@ class EventDispatcher:
         return any(self._listeners.values())
 
     def add_listener(
-        self, event_name: str, listener: Callable, priority: int = 0
+        self, event_name: str, listener: Listener, priority: int = 0
     ) -> None:
         if event_name not in self._listeners:
             self._listeners[event_name] = {}
@@ -75,7 +80,7 @@ class EventDispatcher:
             del self._sorted[event_name]
 
     def _do_dispatch(
-        self, listeners: list[Callable], event_name: str, event: Event
+        self, listeners: list[Listener], event_name: str, event: Event
     ) -> None:
         for listener in listeners:
             if event.is_propagation_stopped():

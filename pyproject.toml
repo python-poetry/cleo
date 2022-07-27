@@ -67,7 +67,6 @@ module = [
     "cleo.descriptors.application_description",
     "cleo.descriptors.text_descriptor",
     "cleo.commands.completions_command",
-    "cleo.events.event_dispatcher",
     "cleo.io.buffered_io",
     "cleo.io.inputs.argument",
     "cleo.io.inputs.argv_input",

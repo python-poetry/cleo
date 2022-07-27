@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from typing import Any
 
 from cleo.exceptions import CommandNotFoundException
 
@@ -69,11 +70,11 @@ class ApplicationDescription:
 
     def _sort_commands(
         self, commands: dict[str, Command]
-    ) -> list[tuple[str, list[tuple[str, Command]]]]:
+    ) -> list[tuple[str, list[tuple[str, Any]]]]:
         """
         Sorts command in alphabetical order
         """
-        namespaced_commands = {}
+        namespaced_commands: dict[str, dict[str, Command]] = {}
         for name, command in commands.items():
             key = self._application.extract_namespace(name, 1)
             if not key:
@@ -89,6 +90,4 @@ class ApplicationDescription:
                 commands.items(), key=lambda x: x[0]
             )
 
-        namespaced_commands = sorted(namespaced_commands.items(), key=lambda x: x[0])
-
-        return namespaced_commands
+        return sorted(namespaced_commands.items(), key=lambda x: x[0])
