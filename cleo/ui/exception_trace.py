@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ast
+import builtins
 import inspect
 import io
 import keyword
@@ -51,7 +52,7 @@ class Highlighter:
     }
 
     KEYWORDS = set(keyword.kwlist)
-    BUILTINS = set(dir(__builtins__))
+    BUILTINS = set(dir(builtins))
 
     UI = {
         False: {"arrow": ">", "delimiter": "|"},
@@ -220,7 +221,7 @@ class ExceptionTrace:
     }
 
     AST_ELEMENTS = {
-        "builtins": dir(__builtins__),
+        "builtins": dir(builtins),
         "keywords": [
             getattr(ast, cls)
             for cls in dir(ast)
