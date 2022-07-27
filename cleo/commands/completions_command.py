@@ -196,7 +196,7 @@ script. Consult your shells documentation for how to add such directives.
 
         return output
 
-    def render_zsh(self):
+    def render_zsh(self) -> str:
         template = TEMPLATES["zsh"]
 
         script_name = self._io.input.script_name
@@ -282,7 +282,7 @@ script. Consult your shells documentation for how to add such directives.
 
         return output
 
-    def render_fish(self):
+    def render_fish(self) -> str:
         template = TEMPLATES["fish"]
 
         script_name = self._io.input.script_name
