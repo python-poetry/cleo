@@ -60,11 +60,9 @@ class Argument:
 
     def __repr__(self) -> str:
         return (
-            "Argument({}, required={}, is_list={}, description={}, default={})".format(
-                repr(self._name),
-                self._required,
-                self._is_list,
-                repr(self._description),
-                repr(self._default),
-            )
+            f"Argument({repr(self._name)}, "
+            f"required={self._required}, "
+            f"is_list={self._is_list}, "
+            f"description={repr(self._description)}, "
+            f"default={repr(self._default)})"
         )

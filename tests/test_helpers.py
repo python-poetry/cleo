@@ -4,7 +4,7 @@ from cleo.helpers import argument
 from cleo.helpers import option
 
 
-def test_argument():
+def test_argument() -> None:
     arg = argument("foo", "Foo")
 
     assert arg.description == "Foo"
@@ -31,7 +31,7 @@ def test_argument():
     assert ["bar"] == arg.default
 
 
-def test_option():
+def test_option() -> None:
     opt = option("foo", "f", "Foo")
 
     assert opt.description == "Foo"

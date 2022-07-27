@@ -27,18 +27,18 @@ FIXTURES_PATH = Path(__file__).parent.joinpath("fixtures")
 
 
 @pytest.fixture()
-def app():
+def app() -> Application:
     return Application()
 
 
 @pytest.fixture()
-def tester(app: Application):
+def tester(app: Application) -> ApplicationTester:
     app.catch_exceptions(False)
 
     return ApplicationTester(app)
 
 
-def test_name_version_getters():
+def test_name_version_getters() -> None:
     app = Application("foo", "bar")
 
     assert app.name == "foo"
@@ -46,7 +46,7 @@ def test_name_version_getters():
     assert app.version == "bar"
 
 
-def test_name_version_setter():
+def test_name_version_setter() -> None:
     app = Application("foo", "bar")
 
     app.set_name("bar")
@@ -61,17 +61,17 @@ def test_name_version_setter():
     assert app.display_name == "Baz"
 
 
-def test_long_version():
+def test_long_version() -> None:
     app = Application("foo", "bar")
 
     assert app.long_version == "<b>Foo</b> (version <c1>bar</c1>)"
 
 
-def test_help(app: Application):
+def test_help(app: Application) -> None:
     assert app.help == FIXTURES_PATH.joinpath("application_help.txt").read_text()
 
 
-def test_all(app: Application):
+def test_all(app: Application) -> None:
     commands = app.all()
 
     assert isinstance(commands["help"], Command)
@@ -81,7 +81,7 @@ def test_all(app: Application):
     assert len(app.all("foo")) == 1
 
 
-def test_add(app: Application):
+def test_add(app: Application) -> None:
     foo = FooCommand()
     app.add(foo)
     commands = app.all()
@@ -96,7 +96,7 @@ def test_add(app: Application):
     assert [commands["foo bar"], commands["foo bar1"]] == [foo, foo1]
 
 
-def test_has_get(app: Application):
+def test_has_get(app: Application) -> None:
     assert app.has("list")
     assert not app.has("afoobar")
 
@@ -109,7 +109,7 @@ def test_has_get(app: Application):
     assert app.get("afoobar") == foo
 
 
-def test_silent_help(app: Application):
+def test_silent_help(app: Application) -> None:
     app.catch_exceptions(False)
 
     tester = ApplicationTester(app)
@@ -118,38 +118,41 @@ def test_silent_help(app: Application):
     assert tester.io.fetch_output() == ""
 
 
-def test_get_namespaces(app: Application):
+def test_get_namespaces(app: Application) -> None:
     app.add(FooCommand())
     app.add(Foo1Command())
 
     assert app.get_namespaces() == ["foo"]
 
 
-def test_find_namespace(app: Application):
+def test_find_namespace(app: Application) -> None:
     app.add(FooCommand())
 
     assert app.find_namespace("foo") == "foo"
 
 
-def test_find_namespace_with_sub_namespaces(app: Application):
+def test_find_namespace_with_sub_namespaces(app: Application) -> None:
     app.add(FooSubNamespaced1Command())
     app.add(FooSubNamespaced2Command())
 
     assert app.find_namespace("foo") == "foo"
 
 
-def test_find_ambiguous_namespace(app: Application):
+def test_find_ambiguous_namespace(app: Application) -> None:
     app.add(FooCommand())
     app.add(Foo2Command())
 
     with pytest.raises(
         NamespaceNotFoundException,
-        match=r'There are no commands in the "f" namespace\.\n\nDid you mean one of these\?\n    foo\n    foo1',
+        match=(
+            r'There are no commands in the "f" namespace\.\n\n'
+            r"Did you mean one of these\?\n    foo\n    foo1"
+        ),
     ):
         app.find_namespace("f")
 
 
-def test_find_invalid_namespace(app: Application):
+def test_find_invalid_namespace(app: Application) -> None:
     app.add(FooCommand())
     app.add(Foo2Command())
 
@@ -160,7 +163,7 @@ def test_find_invalid_namespace(app: Application):
         app.find_namespace("bar")
 
 
-def test_find_unique_name_but_namespace_name(app: Application):
+def test_find_unique_name_but_namespace_name(app: Application) -> None:
     app.add(FooCommand())
     app.add(Foo1Command())
     app.add(Foo2Command())
@@ -172,24 +175,26 @@ def test_find_unique_name_but_namespace_name(app: Application):
         app.find("foo1")
 
 
-def test_find(app: Application):
+def test_find(app: Application) -> None:
     app.add(FooCommand())
 
     assert isinstance(app.find("foo bar"), FooCommand)
     assert isinstance(app.find("afoobar"), FooCommand)
 
 
-def test_find_ambiguous_command(app: Application):
+def test_find_ambiguous_command(app: Application) -> None:
     app.add(FooCommand())
 
     with pytest.raises(
         CommandNotFoundException,
-        match=r'The command "foo b" does not exist\.\n\nDid you mean this\?\n    foo bar',
+        match=(
+            r'The command "foo b" does not exist\.\n\nDid you mean this\?\n    foo bar'
+        ),
     ):
         app.find("foo b")
 
 
-def test_find_ambiguous_command_hidden(app: Application):
+def test_find_ambiguous_command_hidden(app: Application) -> None:
     foo = FooCommand()
     foo.hidden = True
     app.add(foo)
@@ -201,7 +206,7 @@ def test_find_ambiguous_command_hidden(app: Application):
         app.find("foo b")
 
 
-def test_set_catch_exceptions(app: Application, environ: dict[str, str]):
+def test_set_catch_exceptions(app: Application, environ: dict[str, str]) -> None:
     app.auto_exits(False)
     os.environ["COLUMNS"] = "120"
 
@@ -224,7 +229,7 @@ def test_set_catch_exceptions(app: Application, environ: dict[str, str]):
         tester.execute("foo", decorated=False)
 
 
-def test_auto_exit(app: Application):
+def test_auto_exit(app: Application) -> None:
     app.auto_exits(False)
     assert not app.is_auto_exit_enabled()
 
@@ -232,7 +237,7 @@ def test_auto_exit(app: Application):
     assert app.is_auto_exit_enabled()
 
 
-def test_run(app: Application, argv):
+def test_run(app: Application, argv: list[str]) -> None:
     app.catch_exceptions(False)
     app.auto_exits(False)
     command = Foo1Command()
@@ -248,7 +253,7 @@ def test_run(app: Application, argv):
     assert command.io.error_output.stream == sys.stderr
 
 
-def test_run_runs_the_list_command_without_arguments(tester: ApplicationTester):
+def test_run_runs_the_list_command_without_arguments(tester: ApplicationTester) -> None:
     tester.execute("", decorated=False)
 
     assert (
@@ -257,7 +262,7 @@ def test_run_runs_the_list_command_without_arguments(tester: ApplicationTester):
     )
 
 
-def test_run_runs_help_command_if_required(tester: ApplicationTester):
+def test_run_runs_help_command_if_required(tester: ApplicationTester) -> None:
     tester.execute("--help", decorated=False)
 
     assert (
@@ -273,7 +278,7 @@ def test_run_runs_help_command_if_required(tester: ApplicationTester):
     )
 
 
-def test_run_runs_help_command_with_command(tester: ApplicationTester):
+def test_run_runs_help_command_with_command(tester: ApplicationTester) -> None:
     tester.execute("--help list", decorated=False)
 
     assert (
@@ -289,7 +294,7 @@ def test_run_runs_help_command_with_command(tester: ApplicationTester):
     )
 
 
-def test_run_removes_all_output_if_quiet(tester: ApplicationTester):
+def test_run_removes_all_output_if_quiet(tester: ApplicationTester) -> None:
     tester.execute("list --quiet")
 
     assert tester.io.fetch_output() == ""
@@ -299,7 +304,7 @@ def test_run_removes_all_output_if_quiet(tester: ApplicationTester):
     assert tester.io.fetch_output() == ""
 
 
-def test_run_with_verbosity(tester: ApplicationTester):
+def test_run_with_verbosity(tester: ApplicationTester) -> None:
     tester.execute("list --verbose")
 
     assert tester.io.is_verbose()
@@ -317,7 +322,7 @@ def test_run_with_verbosity(tester: ApplicationTester):
     assert tester.io.is_debug()
 
 
-def test_run_with_version(tester: ApplicationTester):
+def test_run_with_version(tester: ApplicationTester) -> None:
     tester.execute("--version")
 
     assert (
@@ -333,7 +338,7 @@ def test_run_with_version(tester: ApplicationTester):
     )
 
 
-def test_run_with_help(tester: ApplicationTester):
+def test_run_with_help(tester: ApplicationTester) -> None:
     tester.execute("help --help")
 
     assert (
@@ -349,7 +354,7 @@ def test_run_with_help(tester: ApplicationTester):
     )
 
 
-def test_run_with_input():
+def test_run_with_input() -> None:
     app = Application()
     command = Foo3Command()
     app.add(command)
@@ -361,7 +366,7 @@ def test_run_with_input():
     assert tester.io.fetch_output() == "Hello world!\n"
 
 
-def test_run_namespaced_with_input():
+def test_run_namespaced_with_input() -> None:
     app = Application()
     command = FooSubNamespaced3Command()
     app.add(command)

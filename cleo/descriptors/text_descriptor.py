@@ -24,8 +24,9 @@ class TextDescriptor(Descriptor):
         if argument.default is not None and (
             not isinstance(argument.default, list) or argument.default
         ):
-            default = "<comment> [default: {}]</comment>".format(
-                self._format_default_value(argument.default)
+            default = (
+                f"<comment> [default: {self._format_default_value(argument.default)}]"
+                "</comment>"
             )
         else:
             default = ""
@@ -33,17 +34,14 @@ class TextDescriptor(Descriptor):
         total_width = options.get("total_width", len(argument.name))
 
         spacing_width = total_width - len(argument.name)
+        sub_argument_description = re.sub(
+            r"\s*[\r\n]\s*",
+            "\n" + " " * (total_width + 4),
+            argument.description,
+        )
         self._write(
-            "  <c1>{}</c1>  {}{}{}".format(
-                argument.name,
-                " " * spacing_width,
-                re.sub(
-                    r"\s*[\r\n]\s*",
-                    "\n" + " " * (total_width + 4),
-                    argument.description,
-                ),
-                default,
-            )
+            f'  <c1>{argument.name}</c1>  {" " * spacing_width}'
+            f"{sub_argument_description}{default}"
         )
 
     def _describe_option(self, option: Option, **options: Any) -> None:
@@ -52,8 +50,9 @@ class TextDescriptor(Descriptor):
             and option.default is not None
             and (not isinstance(option.default, list) or option.default)
         ):
-            default = "<comment> [default: {}]</comment>".format(
-                self._format_default_value(option.default)
+            default = (
+                "<comment> [default: "
+                f"{self._format_default_value(option.default)}]</comment>"
             )
         else:
             default = ""
@@ -69,27 +68,23 @@ class TextDescriptor(Descriptor):
             "total_width", self._calculate_total_width_for_options([option])
         )
 
-        synopsis = "{}{}".format(
-            f"-{option.shortcut}, " if option.shortcut else "    ",
-            f"--{option.name}{value}",
-        )
+        option_shortcut = f"-{option.shortcut}, " if option.shortcut else "    "
+        synopsis = f"{option_shortcut}--{option.name}{value}"
 
         spacing_width = total_width - len(synopsis)
-
+        sub_option_description = re.sub(
+            r"\s*[\r\n]\s*",
+            "\n" + " " * (total_width + 4),
+            option.description,
+        )
+        are_multiple_values_allowed = (
+            "<comment> (multiple values allowed)</comment>" if option.is_list() else ""
+        )
         self._write(
-            "  <c1>{}</c1>  {}{}{}{}".format(
-                synopsis,
-                " " * spacing_width,
-                re.sub(
-                    r"\s*[\r\n]\s*",
-                    "\n" + " " * (total_width + 4),
-                    option.description,
-                ),
-                default,
-                "<comment> (multiple values allowed)</comment>"
-                if option.is_list()
-                else "",
-            )
+            f"  <c1>{synopsis}</c1>  "
+            f'{" " * spacing_width}{sub_option_description}'
+            f"{default}"
+            f"{are_multiple_values_allowed}"
         )
 
     def _describe_definition(self, definition: Definition, **options: Any) -> None:
@@ -193,9 +188,7 @@ class TextDescriptor(Descriptor):
         width = self._get_column_width(all_commands)
         if described_namespace:
             self._write(
-                '<b>Available commands for the "{}" namespace:</b>'.format(
-                    described_namespace
-                )
+                f'<b>Available commands for the "{described_namespace}" namespace:</b>'
             )
         else:
             self._write("<b>Available commands:</b>")
@@ -211,7 +204,7 @@ class TextDescriptor(Descriptor):
                 and namespace["id"] != ApplicationDescription.GLOBAL_NAMESPACE
             ):
                 self._write("\n")
-                self._write(" <comment>{}</comment>".format(namespace["id"]))
+                self._write(f' <comment>{namespace["id"]}</comment>')
 
             for name in namespace["commands"]:
                 self._write("\n")
@@ -223,9 +216,8 @@ class TextDescriptor(Descriptor):
                     else ""
                 )
                 self._write(
-                    "  <c1>{}</c1>{}{}".format(
-                        name, " " * spacing_width, command_aliases + command.description
-                    )
+                    f'  <c1>{name}</c1>{" " * spacing_width}'
+                    f"{command_aliases + command.description}"
                 )
 
             self._write("\n")
@@ -288,6 +280,6 @@ class TextDescriptor(Descriptor):
         aliases = command.aliases
 
         if aliases:
-            text = "[" + "|".join(aliases) + "] "
+            text = f'[{ "|".join(aliases) }] '
 
         return text

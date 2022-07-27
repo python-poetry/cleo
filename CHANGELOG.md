@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.0.0] - UNRELEASED
+
+- Replaced `Terminal` class with `shutil.get_terminal_size()` from standard library 
+[#175](https://github.com/python-poetry/cleo/pull/175).
+
+
 ## [0.8.1] - 2020-04-17
 
 ### Changed
@@ -221,30 +227,30 @@ This is a major release with some API changes.
 
 - Values are now properly cast by validators
 - Fixing "flag" not being set properly
-- Progress bar now behaves properly (Fixes [#37](https://github.com/sdispater/cleo/issues/37))
-- The `-n|--no-interaction` option behaves properly (Fixes [#38](https://github.com/sdispater/cleo/issues/39) and [#39](https://github.com/sdispater/cleo/issues/39))
+- Progress bar now behaves properly (Fixes [#37](https://github.com/python-poetry/cleo/issues/37))
+- The `-n|--no-interaction` option behaves properly (Fixes [#38](https://github.com/python-poetry/cleo/issues/39) and [#39](https://github.com/python-poetry/cleo/issues/39))
 
 
 
-[Unreleased]: https://github.com/sdispater/cleo/compare/0.8.1...master
-[0.8.1]: https://github.com/sdispater/cleo/releases/tag/0.8.1
-[0.8.0]: https://github.com/sdispater/cleo/releases/tag/0.8.0
-[0.7.6]: https://github.com/sdispater/cleo/releases/tag/0.7.6
-[0.7.5]: https://github.com/sdispater/cleo/releases/tag/0.7.5
-[0.7.4]: https://github.com/sdispater/cleo/releases/tag/0.7.4
-[0.7.3]: https://github.com/sdispater/cleo/releases/tag/0.7.3
-[0.7.2]: https://github.com/sdispater/cleo/releases/tag/0.7.2
-[0.7.1]: https://github.com/sdispater/cleo/releases/tag/0.7.1
-[0.7.0]: https://github.com/sdispater/cleo/releases/tag/0.7.0
-[0.6.8]: https://github.com/sdispater/cleo/releases/tag/0.6.8
-[0.6.7]: https://github.com/sdispater/cleo/releases/tag/0.6.7
-[0.6.6]: https://github.com/sdispater/cleo/releases/tag/0.6.6
-[0.6.5]: https://github.com/sdispater/cleo/releases/tag/0.6.5
-[0.6.4]: https://github.com/sdispater/cleo/releases/tag/0.6.4
-[0.6.3]: https://github.com/sdispater/cleo/releases/tag/0.6.3
-[0.6.2]: https://github.com/sdispater/cleo/releases/tag/0.6.2
-[0.6.1]: https://github.com/sdispater/cleo/releases/tag/0.6.1
-[0.6.0]: https://github.com/sdispater/cleo/releases/tag/0.6.0
-[0.5.0]: https://github.com/sdispater/cleo/releases/tag/0.5.0
-[0.4.1]: https://github.com/sdispater/cleo/releases/tag/0.4.1
-[0.4]: https://github.com/sdispater/cleo/releases/tag/0.4
+[unreleased]: https://github.com/python-poetry/cleo/compare/0.8.1...master
+[0.8.1]: https://github.com/python-poetry/cleo/releases/tag/0.8.1
+[0.8.0]: https://github.com/python-poetry/cleo/releases/tag/0.8.0
+[0.7.6]: https://github.com/python-poetry/cleo/releases/tag/0.7.6
+[0.7.5]: https://github.com/python-poetry/cleo/releases/tag/0.7.5
+[0.7.4]: https://github.com/python-poetry/cleo/releases/tag/0.7.4
+[0.7.3]: https://github.com/python-poetry/cleo/releases/tag/0.7.3
+[0.7.2]: https://github.com/python-poetry/cleo/releases/tag/0.7.2
+[0.7.1]: https://github.com/python-poetry/cleo/releases/tag/0.7.1
+[0.7.0]: https://github.com/python-poetry/cleo/releases/tag/0.7.0
+[0.6.8]: https://github.com/python-poetry/cleo/releases/tag/0.6.8
+[0.6.7]: https://github.com/python-poetry/cleo/releases/tag/0.6.7
+[0.6.6]: https://github.com/python-poetry/cleo/releases/tag/0.6.6
+[0.6.5]: https://github.com/python-poetry/cleo/releases/tag/0.6.5
+[0.6.4]: https://github.com/python-poetry/cleo/releases/tag/0.6.4
+[0.6.3]: https://github.com/python-poetry/cleo/releases/tag/0.6.3
+[0.6.2]: https://github.com/python-poetry/cleo/releases/tag/0.6.2
+[0.6.1]: https://github.com/python-poetry/cleo/releases/tag/0.6.1
+[0.6.0]: https://github.com/python-poetry/cleo/releases/tag/0.6.0
+[0.5.0]: https://github.com/python-poetry/cleo/releases/tag/0.5.0
+[0.4.1]: https://github.com/python-poetry/cleo/releases/tag/0.4.1
+[0.4]: https://github.com/python-poetry/cleo/releases/tag/0.4

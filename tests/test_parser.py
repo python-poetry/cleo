@@ -3,7 +3,7 @@ from __future__ import annotations
 from cleo.parser import Parser
 
 
-def test_basic_parameter_parsing():
+def test_basic_parameter_parsing() -> None:
     results = Parser.parse("command:name")
 
     assert results["name"] == "command:name"
@@ -34,7 +34,8 @@ def test_basic_parameter_parsing():
     assert results["options"][0].is_list()
 
     results = Parser.parse(
-        "command:name {argument?* : The argument description.}    {--option=* : The option description.}"
+        "command:name {argument?* : The argument description.}"
+        "    {--option=* : The option description.}"
     )
 
     assert results["name"] == "command:name"
@@ -62,7 +63,7 @@ def test_basic_parameter_parsing():
     assert results["options"][0].is_list()
 
 
-def test_shortcut_name_parsing():
+def test_shortcut_name_parsing() -> None:
     results = Parser.parse("command:name {--o|option}")
 
     assert results["name"] == "command:name"

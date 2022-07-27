@@ -8,7 +8,7 @@ Create beautiful and testable command-line interfaces.
 ## Resources
 
 - [Documentation](http://cleo.readthedocs.io)
-- [Issue Tracker](https://github.com/sdispater/cleo/issues)
+- [Issue Tracker](https://github.com/python-poetry/cleo/issues)
 
 ## Usage
 

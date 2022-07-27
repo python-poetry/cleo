@@ -12,5 +12,6 @@ class SignatureCommand(Command):
 
     help = "help"
 
-    def handle(self):
+    def handle(self) -> int:
         self.line("handle called")
+        return 0

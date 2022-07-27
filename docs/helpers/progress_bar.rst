@@ -78,22 +78,22 @@ on the current level of verbosity of the ``IO`` instance:
 
 .. code-block:: text
 
-    # clikit.VERBOSITY_NORMAL (CLI with no verbosity flag)
+    # Verbosity.NORMAL (CLI with no verbosity flag)
      0/3 [>---------------------------]   0%
      1/3 [=========>------------------]  33%
      3/3 [============================] 100%
 
-    # clikit.VERBOSITY_VERBOSE (-v)
+    # Verbosity.VERBOSE (-v)
      0/3 [>---------------------------]   0%  1 sec
      1/3 [=========>------------------]  33%  1 sec
      3/3 [============================] 100%  1 sec
 
-    # clikit.VERBOSITY_VERY_VERBOSE (-vv)
+    # Verbosity.VERY_VERBOSE (-vv)
      0/3 [>---------------------------]   0%  1 sec
      1/3 [=========>------------------]  33%  1 sec
      3/3 [============================] 100%  1 sec
 
-    # clikit.VERBOSITY_DEBUG (-vvv)
+    # Verbosity.DEBUG (-vvv)
      0/3 [>---------------------------]   0%  1 sec/1 sec  1.0 MB
      1/3 [=========>------------------]  33%  1 sec/1 sec  1.0 MB
      3/3 [============================] 100%  1 sec/1 sec  1.0 MB

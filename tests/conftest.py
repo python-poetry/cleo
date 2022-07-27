@@ -4,6 +4,7 @@ import os
 import sys
 
 from io import StringIO
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -11,8 +12,12 @@ from cleo.io.buffered_io import BufferedIO
 from cleo.io.inputs.string_input import StringInput
 
 
+if TYPE_CHECKING:
+    from typing import Iterator
+
+
 @pytest.fixture()
-def io():
+def io() -> BufferedIO:
     input_ = StringInput("")
     input_.set_stream(StringIO())
 
@@ -20,7 +25,7 @@ def io():
 
 
 @pytest.fixture()
-def ansi_io():
+def ansi_io() -> BufferedIO:
     input_ = StringInput("")
     input_.set_stream(StringIO())
 
@@ -28,7 +33,7 @@ def ansi_io():
 
 
 @pytest.fixture()
-def environ():
+def environ() -> Iterator[None]:
     current_environ = dict(os.environ)
 
     yield
@@ -38,7 +43,7 @@ def environ():
 
 
 @pytest.fixture()
-def argv():
+def argv() -> Iterator[None]:
     current_argv = sys.argv
 
     yield

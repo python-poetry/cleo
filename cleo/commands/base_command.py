@@ -28,8 +28,8 @@ class BaseCommand:
 
     def __init__(self) -> None:
         self._definition = Definition()
-        self._full_definition = None
-        self._application = None
+        self._full_definition: Definition | None = None
+        self._application: Application | None = None
         self._ignore_validation_errors = False
         self._synopsis: dict[str, str] = {}
 
@@ -40,7 +40,7 @@ class BaseCommand:
                 self.usages[i] = f"{self.name} {usage}"
 
     @property
-    def application(self) -> Application:
+    def application(self) -> Application | None:
         return self._application
 
     @property
@@ -67,7 +67,7 @@ class BaseCommand:
             command_name=self.name,
             command_full_name=current_script
             if is_single_command
-            else current_script + " " + self.name,
+            else f"{current_script} {self.name}",
             script_name=current_script,
         )
 
@@ -141,8 +141,6 @@ class BaseCommand:
         key = "short" if short else "long"
 
         if key not in self._synopsis:
-            self._synopsis[key] = "{} {}".format(
-                self.name, self.definition.synopsis(short)
-            )
+            self._synopsis[key] = f"{self.name} {self.definition.synopsis(short)}"
 
         return self._synopsis[key]

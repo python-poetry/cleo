@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import re
+import shutil
 import sys
 
 from contextlib import suppress
@@ -29,7 +30,6 @@ from cleo.io.inputs.option import Option
 from cleo.io.io import IO
 from cleo.io.outputs.output import Verbosity
 from cleo.io.outputs.stream_output import StreamOutput
-from cleo.terminal import Terminal
 from cleo.ui.ui import UI
 
 
@@ -61,11 +61,11 @@ class Application:
         self._name = name
         self._version = version
         self._display_name: str | None = None
-        self._terminal = Terminal()
+        self._terminal = shutil.get_terminal_size()
         self._default_command = "list"
         self._single_command = False
         self._commands: dict[str, Command] = {}
-        self._running_command = None
+        self._running_command: Command | None = None
         self._want_helps = False
         self._definition: Definition | None = None
         self._catch_exceptions = True
@@ -187,9 +187,7 @@ class Application:
 
         if not command.name:
             raise LogicException(
-                'The command "{}" cannot have an empty name'.format(
-                    command.__class__.__name__
-                )
+                f'The command "{command.__class__.__name__}" cannot have an empty name'
             )
 
         self._commands[command.name] = command
@@ -230,8 +228,8 @@ class Application:
         if not self._command_loader:
             return False
 
-        return self._command_loader.has(name) and self.add(
-            self._command_loader.get(name)
+        return bool(
+            self._command_loader.has(name) and self.add(self._command_loader.get(name))
         )
 
     def get_namespaces(self) -> list[str]:
@@ -364,9 +362,11 @@ class Application:
 
         input_definition.set_options(definition.options)
 
-        # Errors must be ignored, full binding/validation happens later when the command is known.
+        # Errors must be ignored, full binding/validation
+        # happens later when the command is known.
         with suppress(CleoException):
-            # Makes ArgvInput.first_argument() able to distinguish an option from an argument.
+            # Makes ArgvInput.first_argument() able to
+            # distinguish an option from an argument.
             io.input.bind(input_definition)
 
         name = self._get_command_name(io)
@@ -439,32 +439,32 @@ class Application:
             # to allow the listeners to customize the definition
             pass
 
-        event = ConsoleCommandEvent(command, io)
+        command_event = ConsoleCommandEvent(command, io)
         error = None
 
         try:
-            self._event_dispatcher.dispatch(event, COMMAND)
+            self._event_dispatcher.dispatch(command_event, COMMAND)
 
-            if event.command_should_run():
+            if command_event.command_should_run():
                 exit_code = command.run(io)
             else:
                 exit_code = ConsoleCommandEvent.RETURN_CODE_DISABLED
         except Exception as e:
-            event = ConsoleErrorEvent(command, io, e)
-            self._event_dispatcher.dispatch(event, ERROR)
-            error = event.error
-            exit_code = event.exit_code
+            error_event = ConsoleErrorEvent(command, io, e)
+            self._event_dispatcher.dispatch(error_event, ERROR)
+            error = error_event.error
+            exit_code = error_event.exit_code
 
             if exit_code == 0:
                 error = None
 
-        event = ConsoleTerminateEvent(command, io, exit_code)
-        self._event_dispatcher.dispatch(event, TERMINATE)
+        terminate_event = ConsoleTerminateEvent(command, io, exit_code)
+        self._event_dispatcher.dispatch(terminate_event, TERMINATE)
 
         if error is not None:
             raise error
 
-        return event.exit_code
+        return terminate_event.exit_code
 
     def create_io(
         self,
@@ -548,7 +548,8 @@ class Application:
                     flag=True,
                     description=(
                         "Display help for the given command. "
-                        f"When no command is given display help for the <info>{self._default_command}</info> command."
+                        "When no command is given display help for "
+                        f"the <info>{self._default_command}</info> command."
                     ),
                 ),
                 Option(
@@ -560,7 +561,8 @@ class Application:
                     flag=True,
                     description=(
                         "Increase the verbosity of messages: "
-                        "1 for normal output, 2 for more verbose output and 3 for debug."
+                        "1 for normal output, 2 for more verbose "
+                        "output and 3 for debug."
                     ),
                 ),
                 Option(
@@ -585,7 +587,7 @@ class Application:
             return self._default_command
 
         if "command" in io.input.arguments and io.input.argument("command"):
-            candidates = []
+            candidates: list[str] = []
             for command_part in io.input.argument("command"):
                 if candidates:
                     candidates.append(candidates[-1] + " " + command_part)
@@ -613,7 +615,7 @@ class Application:
 
     def _extract_all_namespaces(self, name: str) -> list[str]:
         parts = name.split(" ")[:-1]
-        namespaces = []
+        namespaces: list[str] = []
 
         for part in parts:
             if namespaces:

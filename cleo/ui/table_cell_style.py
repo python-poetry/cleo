@@ -1,9 +1,23 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+from typing import Union
+
+
+if TYPE_CHECKING:
+    from typing import Literal
+
+    _Align = Union[Literal["left"], Literal["right"]]
+
 
 class TableCellStyle:
     def __init__(
-        self, fg="default", bg="default", options=None, align="left", cell_format=None
+        self,
+        fg: str = "default",
+        bg: str = "default",
+        options: list[str] | None = None,
+        align: _Align = "left",
+        cell_format: str | None = None,
     ) -> None:
         self._fg = fg
         self._bg = bg
@@ -20,7 +34,7 @@ class TableCellStyle:
         tag = "<fg={};bg={}"
 
         if self._options:
-            tag += ";options={}".format(",".join(self._options))
+            tag += f';options={",".join(self._options)}'
 
         tag += ">"
 

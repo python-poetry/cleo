@@ -53,9 +53,8 @@ class SelectChoiceValidator:
 
             if len(results) > 1:
                 raise ValueException(
-                    "The provided answer is ambiguous. Value should be one of {}.".format(
-                        " or ".join(str(r) for r in results)
-                    )
+                    "The provided answer is ambiguous. "
+                    f'Value should be one of {" or ".join(str(r) for r in results)}.'
                 )
 
             try:
@@ -133,13 +132,15 @@ class ChoiceQuestion(Question):
             for i, value in enumerate(default):
                 default[i] = choices[int(value.strip())]
 
-            message = "<question>{}</question> [<comment>{}</comment>]:".format(
-                message, ", ".join(default)
+            message = (
+                f"<question>{message}</question> "
+                f'[<comment>{", ".join(default)}</comment>]:'
             )
         else:
             choices = self._choices
-            message = "<question>{}</question> [<comment>{}</comment>]:".format(
-                message, choices[int(default)]
+            message = (
+                f"<question>{message}</question> "
+                f"[<comment>{choices[int(default)]}</comment>]:"
             )
 
         if len(self._choices) > 1:
@@ -149,7 +150,7 @@ class ChoiceQuestion(Question):
 
         messages = [message]
         for key, value in enumerate(self._choices):
-            messages.append(" [<comment>{:{}}</>] {}".format(key, width, value))
+            messages.append(f" [<comment>{key: {width}}</>] {value}")
 
         io.write_error_line("\n".join(messages))
 

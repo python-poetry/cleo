@@ -5,7 +5,7 @@ import math
 from dataclasses import dataclass
 from html.parser import HTMLParser
 
-from pylev import levenshtein
+from rapidfuzz.distance import Levenshtein
 
 
 class TagStripper(HTMLParser):
@@ -19,10 +19,11 @@ class TagStripper(HTMLParser):
         self.fed.append(d)
 
     def handle_entityref(self, name: str) -> None:
-        self.fed.append("&%s;" % name)
+        self.fed.append(f"&{name};")
 
     def handle_charref(self, name: str) -> None:
-        self.fed.append("&#%s;" % name)
+        self.fed.append(f"&#{name};")
+
 
     def get_data(self) -> str:
         return "".join(self.fed)
@@ -53,11 +54,10 @@ def find_similar_names(name: str, names: list[str]) -> list[str]:
     """
     threshold = 1e3
     distance_by_name = {}
-    suggested_names = []
 
     for actual_name in names:
         # Get Levenshtein distance between the input and each command name
-        distance = levenshtein(name, actual_name)
+        distance = Levenshtein.distance(name, actual_name)
 
         is_similar = distance <= len(name) / 3
         is_sub_string = actual_name.find(name) != -1
@@ -74,11 +74,7 @@ def find_similar_names(name: str, names: list[str]) -> list[str]:
     }
 
     # Display results with shortest distance first
-    for k, _v in sorted(distance_by_name.items(), key=lambda i: (i[1][0], i[1][1])):
-        if k not in suggested_names:
-            suggested_names.append(k)
-
-    return suggested_names
+    return sorted(distance_by_name, key=distance_by_name.get)
 
 
 @dataclass
