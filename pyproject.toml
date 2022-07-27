@@ -69,7 +69,6 @@ module = [
     "cleo.commands.completions_command",
     "cleo.commands.help_command",
     "cleo.commands.list_command",
-    "cleo.events.event_dispatcher",
     "cleo.io.buffered_io",
     "cleo.io.inputs.argument",
     "cleo.io.inputs.argv_input",
