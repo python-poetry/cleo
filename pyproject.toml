@@ -64,8 +64,6 @@ show_error_codes = true
 module = [
     "cleo._utils",
     "cleo.application",
-    "cleo.descriptors.application_description",
-    "cleo.descriptors.text_descriptor",
     "cleo.commands.completions_command",
     "cleo.io.buffered_io",
     "cleo.io.inputs.argument",

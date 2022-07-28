@@ -223,6 +223,7 @@ class TextDescriptor(Descriptor):
             self._write("\n")
 
     def _format_default_value(self, default: Any) -> str:
+        new_default: Any
         if isinstance(default, str):
             default = Formatter.escape(default)
         elif isinstance(default, list):
@@ -264,6 +265,7 @@ class TextDescriptor(Descriptor):
 
         for command in commands:
             if isinstance(command, Command):
+                assert command.name is not None
                 widths.append(len(command.name))
                 for alias in command.aliases:
                     widths.append(len(alias))
