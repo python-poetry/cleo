@@ -75,7 +75,6 @@ module = [
     "cleo.ui.question",
     "cleo.ui.table",
     "tests.io.inputs.test_argv_input",
-    "tests.io.inputs.test_option",
     "tests.io.inputs.test_token_parser",
     "tests.ui.test_choice_question",
     "tests.ui.test_confirmation_question",
