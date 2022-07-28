@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from typing import cast
 
+from cleo.io.inputs.string_input import StringInput
 from cleo.io.io import IO
 from cleo.io.outputs.buffered_output import BufferedOutput
 
@@ -19,11 +20,10 @@ class BufferedIO(IO):
         supports_utf8: bool = True,
     ) -> None:
         super().__init__(
-            input,
+            input or StringInput(""),
             BufferedOutput(decorated=decorated, supports_utf8=supports_utf8),
             BufferedOutput(decorated=decorated, supports_utf8=supports_utf8),
         )
-
         self._output = cast(BufferedOutput, self._output)
         self._error_output = cast(BufferedOutput, self._error_output)
 
