@@ -32,7 +32,7 @@ class StreamOutput(Output):
         formatter: Formatter | None = None,
     ) -> None:
         self._stream = stream
-        self._supports_utf8 = None
+        self._supports_utf8: bool | None = None
 
         if decorated is None:
             decorated = self._has_color_support()
@@ -107,7 +107,7 @@ class StreamOutput(Output):
             # Checking for Windows version
             # If we have a compatible version
             # activate color support
-            windows_version = sys.getwindowsversion()
+            windows_version = sys.getwindowsversion()  # type: ignore[attr-defined]
             major, build = windows_version[0], windows_version[2]
             if (major, build) < (10, 14393):
                 return False
@@ -116,7 +116,7 @@ class StreamOutput(Output):
             import ctypes
             import ctypes.wintypes
 
-            kernel32 = ctypes.windll.kernel32
+            kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
 
             fileno = self._stream.fileno()
 

@@ -21,8 +21,8 @@ class Argument:
         self._name = name
         self._required = required
         self._is_list = is_list
-        self._description = description
-        self._default = None
+        self._description = description or ""
+        self._default: str | list[str] | None = None
 
         self.set_default(default)
 
@@ -31,7 +31,7 @@ class Argument:
         return self._name
 
     @property
-    def default(self) -> str:
+    def default(self) -> str | list[str] | None:
         return self._default
 
     @property
