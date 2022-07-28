@@ -9,10 +9,14 @@ from typing import Any
 from typing import Callable
 
 from cleo.formatters.style import Style
+from cleo.io.outputs.stream_output import StreamOutput
 
 
 if TYPE_CHECKING:
     from cleo.io.io import IO
+
+Validator = Callable[[str], Any]
+Normalizer = Callable[[str], Any]
 
 
 class Question:
@@ -20,28 +24,28 @@ class Question:
     A question that will be asked in a Console.
     """
 
-    def __init__(self, question: str, default: Any | None = None) -> None:
+    def __init__(self, question: str, default: Any = None) -> None:
         self._question = question
         self._default = default
 
         self._attempts: int | None = None
         self._hidden = False
         self._hidden_fallback = True
-        self._autocomplete_values = None
-        self._validator = None
-        self._normalizer = None
-        self._error_message = None
+        self._autocomplete_values: list[str] = []
+        self._validator: Validator = lambda s: s
+        self._normalizer: Normalizer = lambda s: s
+        self._error_message = 'Value "{}" is invalid'
 
     @property
     def question(self) -> str:
         return self._question
 
     @property
-    def default(self) -> str:
+    def default(self) -> Any:
         return self._default
 
     @property
-    def autocomplete_values(self):
+    def autocomplete_values(self) -> list[str]:
         return self._autocomplete_values
 
     @property
@@ -57,43 +61,34 @@ class Question:
 
         self._hidden = hidden
 
-    def set_autocomplete_values(self, autocomplete_values) -> None:
+    def set_autocomplete_values(self, autocomplete_values: list[str]) -> None:
         if self.is_hidden():
             raise RuntimeError("A hidden question cannot use the autocompleter.")
 
         self._autocomplete_values = autocomplete_values
 
-    def set_max_attempts(self, attempts: int | None):
+    def set_max_attempts(self, attempts: int | None) -> None:
         self._attempts = attempts
 
-    def set_validator(self, validator: Callable) -> None:
+    def set_validator(self, validator: Validator) -> None:
         self._validator = validator
 
-    def ask(self, io: IO) -> str | None:
+    def ask(self, io: IO) -> Any:
         """
         Asks the question to the user.
         """
         if not io.is_interactive():
             return self.default
+        return self._validate_attempts(lambda: self._do_ask(io), io)
 
-        if not self._validator:
-            return self._do_ask(io)
-
-        def interviewer():
-            return self._do_ask(io)
-
-        return self._validate_attempts(interviewer, io)
-
-    def _do_ask(self, io: IO) -> str | None:
+    def _do_ask(self, io: IO) -> Any:
         """
         Asks the question to the user.
         """
         self._write_prompt(io)
 
-        autocomplete = self._autocomplete_values
-
-        if autocomplete is None or not self._has_stty_available():
-            ret = False
+        if not self._autocomplete_values or not self._has_stty_available():
+            ret: str | None = None
 
             if self.is_hidden():
                 try:
@@ -110,26 +105,19 @@ class Question:
         if len(ret) <= 0:
             ret = self._default
 
-        if self._normalizer:
-            return self._normalizer(ret)
-
-        return ret
+        return self._normalizer(ret)  # type: ignore[arg-type]
 
     def _write_prompt(self, io: IO) -> None:
         """
         Outputs the question prompt.
         """
-        message = self._question
-
-        io.write_error(f"<question>{message}</question> ")
+        io.write_error(f"<question>{self._question}</question> ")
 
     def _write_error(self, io: IO, error: Exception) -> None:
         """
         Outputs an error message.
         """
-        message = f"<error>{str(error)}</error>"
-
-        io.write_error_line(message)
+        io.write_error_line(f"<error>{str(error)}</error>")
 
     def _autocomplete(self, io: IO) -> str:
         """
@@ -237,9 +225,12 @@ class Question:
         """
         Gets a hidden response from user.
         """
-        return getpass.getpass("", stream=io.error_output.stream)
+        stream = None
+        if isinstance(io.error_output, StreamOutput):
+            stream = io.error_output.stream
+        return getpass.getpass("", stream=stream)
 
-    def _validate_attempts(self, interviewer: Callable, io: IO) -> str:
+    def _validate_attempts(self, interviewer: Callable[[], Any], io: IO) -> Any:
         """
         Validates an attempt.
         """
@@ -258,6 +249,7 @@ class Question:
             if attempts is not None:
                 attempts -= 1
 
+        assert error
         raise error
 
     def _read_from_input(self, io: IO) -> str:

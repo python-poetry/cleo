@@ -164,7 +164,7 @@ class Command(BaseCommand):
         from cleo.ui.question import Question
 
         if not isinstance(question, Question):
-            question = Question(question)
+            question = Question(question, default=default)
 
         question.hide()
 
