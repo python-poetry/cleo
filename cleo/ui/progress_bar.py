@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 import re
+import shutil
 import time
 
 from typing import TYPE_CHECKING
@@ -11,7 +12,6 @@ from cleo._utils import format_time
 from cleo.cursor import Cursor
 from cleo.io.io import IO
 from cleo.io.outputs.section_output import SectionOutput
-from cleo.terminal import Terminal
 from cleo.ui.component import Component
 
 
@@ -31,7 +31,7 @@ class ProgressBar(Component):
     bar_char = None
     empty_bar_char = "-"
     progress_char = ">"
-    redraw_freq = 1
+    redraw_freq: int | None = 1
 
     formats = {
         "normal": " %current%/%max% [%bar%] %percent:3s%%",
@@ -57,19 +57,19 @@ class ProgressBar(Component):
             io = io.error_output
 
         self._io = io
-        self._terminal = Terminal()
+        self._terminal = shutil.get_terminal_size()
         self._max = 0
-        self._step_width = None
+        self._step_width: int = 1
         self._set_max_steps(max)
         self._step = 0
         self._percent = 0.0
-        self._format = None
-        self._internal_format = None
+        self._format: str | None = None
+        self._internal_format: str | None = None
         self._format_line_count = 0
-        self._previous_message = None
+        self._previous_message: str | None = None
         self._should_overwrite = True
-        self._min_seconds_between_redraws = 0
-        self._max_seconds_between_redraws = 1
+        self._min_seconds_between_redraws = 0.0
+        self._max_seconds_between_redraws = 1.0
         self._write_count = 0
 
         if min_seconds_between_redraws > 0:
@@ -83,10 +83,10 @@ class ProgressBar(Component):
             # Set a reasonable redraw frequency so output isn't flooded
             self.redraw_freq = None
 
-        self._messages = {}
+        self._messages: dict[str, str] = {}
 
         self._start_time = time.time()
-        self._last_write_time = 0
+        self._last_write_time = 0.0
         self._cursor = Cursor(self._io)
 
     def set_message(self, message: str, name: str = "message") -> None:
@@ -146,7 +146,7 @@ class ProgressBar(Component):
         self._format = None
         self._internal_format = fmt
 
-    def set_redraw_frequency(self, freq: int | None) -> None:
+    def set_redraw_frequency(self, freq: int) -> None:
         if self.redraw_freq is not None:
             self.redraw_freq = max(freq, 1)
 
@@ -244,7 +244,7 @@ class ProgressBar(Component):
 
         self._overwrite(self._build_line())
 
-    def _overwrite_callback(self, matches: Match) -> str:
+    def _overwrite_callback(self, matches: Match[str]) -> str:
         if hasattr(self, f"_formatter_{matches.group(1)}"):
             text = str(getattr(self, f"_formatter_{matches.group(1)}")())
         elif matches.group(1) in self._messages:
@@ -287,7 +287,7 @@ class ProgressBar(Component):
             self._format = self.formats[fmt + "_nomax"]
         else:
             self._format = self.formats.get(fmt, fmt)
-
+        assert self._format is not None
         self._format_line_count = self._format.count("\n")
 
     def _set_max_steps(self, mx: int) -> None:
@@ -317,7 +317,7 @@ class ProgressBar(Component):
                         int(
                             math.floor(
                                 len(self._io.remove_format(message))
-                                / self._terminal.width
+                                / self._terminal.columns
                             )
                         )
                         + self._format_line_count
@@ -432,7 +432,7 @@ class ProgressBar(Component):
 
     def _build_line(self) -> str:
         regex = re.compile(r"(?i)%([a-z\-_]+)(?::([^%]+))?%")
-
+        assert self._format is not None
         line = regex.sub(self._overwrite_callback, self._format)
 
         # gets string length for each sub line with multiline format
@@ -443,7 +443,7 @@ class ProgressBar(Component):
 
         lines_width = max(lines_length)
 
-        terminal_width = self._terminal.width
+        terminal_width = self._terminal.columns
 
         if lines_width <= terminal_width:
             return line

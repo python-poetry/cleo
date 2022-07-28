@@ -5,6 +5,8 @@ import re
 
 from typing import TYPE_CHECKING
 from typing import Any
+from typing import ContextManager
+from typing import cast
 
 from cleo.commands.base_command import BaseCommand
 from cleo.formatters.style import Style
@@ -16,25 +18,28 @@ from cleo.ui.table_separator import TableSeparator
 
 
 if TYPE_CHECKING:
+    from typing import Literal
+
+    from cleo.io.inputs.argument import Argument
+    from cleo.io.inputs.option import Option
     from cleo.io.io import IO
     from cleo.ui.progress_bar import ProgressBar
     from cleo.ui.progress_indicator import ProgressIndicator
     from cleo.ui.question import Question
+    from cleo.ui.table import Table
+    from cleo.ui.table import _Rows
 
 
 class Command(BaseCommand):
 
-    arguments = []
-    options = []
-
-    aliases = []
-
-    usages = []
-
-    commands = []
+    arguments: list[Argument] = []
+    options: list[Option] = []
+    aliases: list[str] = []
+    usages: list[str] = []
+    commands: list[BaseCommand] = []
 
     def __init__(self) -> None:
-        self._io: IO | None = None
+        self._io: IO = None  # type: ignore[assignment]
         super().__init__()
 
     @property
@@ -60,11 +65,11 @@ class Command(BaseCommand):
         for option in self.options:
             self._definition.add_option(option)
 
-    def _parse_doc(self, doc):
-        doc = doc.strip().split("\n", 1)
-        if len(doc) > 1:
-            self.description = doc[0].strip()
-            signature = re.sub(r"\s{2,}", " ", doc[1].strip())
+    def _parse_doc(self, doc: str) -> None:
+        lines = doc.strip().split("\n", 1)
+        if len(lines) > 1:
+            self.description = lines[0].strip()
+            signature = re.sub(r"\s{2,}", " ", lines[1].strip())
             definition = Parser.parse(signature)
             self.name = definition["name"]
 
@@ -74,7 +79,7 @@ class Command(BaseCommand):
             for option in definition["options"]:
                 self._definition.add_option(option)
         else:
-            self.description = doc[0].strip()
+            self.description = lines[0].strip()
 
     def execute(self, io: IO) -> int:
         self._io = io
@@ -98,6 +103,7 @@ class Command(BaseCommand):
             args = ""
 
         input = StringInput(args)
+        assert self.application is not None
         command = self.application.get(name)
 
         return self.application._run_command(command, self._io.with_input(input))
@@ -109,18 +115,19 @@ class Command(BaseCommand):
         if args is None:
             args = ""
 
-        args = StringInput(args)
+        input = StringInput(args)
+        assert self.application is not None
         command = self.application.get(name)
 
         return self.application._run_command(command, NullIO(input))
 
-    def argument(self, name: str):
+    def argument(self, name: str) -> Any:
         """
         Get the value of a command argument.
         """
         return self._io.input.argument(name)
 
-    def option(self, name: str):
+    def option(self, name: str) -> Any:
         """
         Get the value of a command option.
         """
@@ -134,11 +141,10 @@ class Command(BaseCommand):
         """
         from cleo.ui.confirmation_question import ConfirmationQuestion
 
-        question = ConfirmationQuestion(
+        confirmation = ConfirmationQuestion(
             question, default=default, true_answer_regex=true_answer_regex
         )
-
-        return question.ask(self._io)
+        return cast(bool, confirmation.ask(self._io))
 
     def ask(self, question: str | Question, default: Any | None = None) -> Any:
         """
@@ -177,14 +183,19 @@ class Command(BaseCommand):
         """
         from cleo.ui.choice_question import ChoiceQuestion
 
-        question = ChoiceQuestion(question, choices, default)
+        choice = ChoiceQuestion(question, choices, default)
 
-        question.set_max_attempts(attempts)
-        question.set_multi_select(multiple)
+        choice.set_max_attempts(attempts)
+        choice.set_multi_select(multiple)
 
-        return question.ask(self._io)
+        return choice.ask(self._io)
 
-    def create_question(self, question, type=None, **kwargs):
+    def create_question(
+        self,
+        question: str,
+        type: Literal["choice"] | Literal["confirmation"] | None = None,
+        **kwargs: Any,
+    ) -> Question:
         """
         Returns a Question of specified type.
         """
@@ -201,7 +212,12 @@ class Command(BaseCommand):
         if type == "confirmation":
             return ConfirmationQuestion(question, **kwargs)
 
-    def table(self, header=None, rows=None, style=None):
+    def table(
+        self,
+        header: str | None = None,
+        rows: _Rows | None = None,
+        style: str | None = None,
+    ) -> Table:
         """
         Return a Table instance.
         """
@@ -225,7 +241,7 @@ class Command(BaseCommand):
 
         return TableSeparator()
 
-    def render_table(self, headers, rows, style=None) -> None:
+    def render_table(self, headers: str, rows: _Rows, style: str | None = None) -> None:
         """
         Format input to textual table.
         """
@@ -330,9 +346,9 @@ class Command(BaseCommand):
         start_message: str,
         end_message: str,
         fmt: str | None = None,
-        interval=100,
+        interval: int = 100,
         values: list[str] | None = None,
-    ):
+    ) -> ContextManager[ProgressIndicator]:
         """
         Automatically spin a progress indicator.
         """
@@ -350,22 +366,9 @@ class Command(BaseCommand):
         """
         Adds a new style
         """
-        style = Style(name)
-        if fg is not None:
-            style.fg(fg)
-
-        if bg is not None:
-            style.bg(bg)
-
-        if options is not None:
-            if "bold" in options:
-                style.bold()
-
-            if "underline" in options:
-                style.underlined()
-
-        self._io.output.formatter.add_style(style)
-        self._io.error_output.formatter.add_style(style)
+        style = Style(fg, bg, options)
+        self._io.output.formatter.set_style(name, style)
+        self._io.error_output.formatter.set_style(name, style)
 
     def overwrite(self, text: str) -> None:
         """

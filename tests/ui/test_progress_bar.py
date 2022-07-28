@@ -2,19 +2,25 @@ from __future__ import annotations
 
 import time
 
+from typing import TYPE_CHECKING
+
 import pytest
 
 from cleo.io.outputs.output import Verbosity
 from cleo.ui.progress_bar import ProgressBar
 
 
+if TYPE_CHECKING:
+    from cleo.io.buffered_io import BufferedIO
+
+
 @pytest.fixture()
-def bar(io):
+def bar(io: BufferedIO) -> ProgressBar:
     return ProgressBar(io, min_seconds_between_redraws=0)
 
 
 @pytest.fixture()
-def ansi_bar(ansi_io):
+def ansi_bar(ansi_io: BufferedIO) -> ProgressBar:
     return ProgressBar(ansi_io, min_seconds_between_redraws=0)
 
 
@@ -34,7 +40,7 @@ def generate_output(expected: list[str]) -> str:
     return output
 
 
-def test_multiple_start(ansi_bar, ansi_io):
+def test_multiple_start(ansi_bar: ProgressBar, ansi_io: BufferedIO) -> None:
     ansi_bar.start()
     ansi_bar.advance()
     ansi_bar.start()
@@ -50,7 +56,7 @@ def test_multiple_start(ansi_bar, ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_advance(ansi_bar, ansi_io):
+def test_advance(ansi_bar: ProgressBar, ansi_io: BufferedIO) -> None:
     ansi_bar.start()
     ansi_bar.advance()
 
@@ -64,7 +70,7 @@ def test_advance(ansi_bar, ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_advance_with_step(ansi_bar, ansi_io):
+def test_advance_with_step(ansi_bar: ProgressBar, ansi_io: BufferedIO) -> None:
     ansi_bar.start()
     ansi_bar.advance(5)
 
@@ -78,7 +84,7 @@ def test_advance_with_step(ansi_bar, ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_advance_multiple_times(ansi_bar, ansi_io):
+def test_advance_multiple_times(ansi_bar: ProgressBar, ansi_io: BufferedIO) -> None:
     ansi_bar.start()
     ansi_bar.advance(3)
     ansi_bar.advance(2)
@@ -94,7 +100,7 @@ def test_advance_multiple_times(ansi_bar, ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_advance_over_max(ansi_io):
+def test_advance_over_max(ansi_io: BufferedIO) -> None:
     bar = ProgressBar(ansi_io, 10)
     bar.set_progress(9)
     bar.advance()
@@ -111,7 +117,7 @@ def test_advance_over_max(ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_format(ansi_io):
+def test_format(ansi_io: BufferedIO) -> None:
     output = [
         "  0/10 [>---------------------------]   0%",
         " 10/10 [============================] 100%",
@@ -158,7 +164,7 @@ def test_format(ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_customizations(ansi_io):
+def test_customizations(ansi_io: BufferedIO) -> None:
     bar = ProgressBar(ansi_io, 10, 0)
     bar.set_bar_width(10)
     bar.set_bar_character("_")
@@ -175,7 +181,7 @@ def test_customizations(ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_display_without_start(ansi_io):
+def test_display_without_start(ansi_io: BufferedIO) -> None:
     bar = ProgressBar(ansi_io, 50, 0)
     bar.display()
 
@@ -184,7 +190,7 @@ def test_display_without_start(ansi_io):
     assert ansi_io.fetch_error() == expected
 
 
-def test_display_with_quiet_verbosity(ansi_io):
+def test_display_with_quiet_verbosity(ansi_io: BufferedIO) -> None:
     ansi_io.set_verbosity(Verbosity.QUIET)
     bar = ProgressBar(ansi_io, 50, 0)
     bar.display()
@@ -192,7 +198,7 @@ def test_display_with_quiet_verbosity(ansi_io):
     assert ansi_io.fetch_error() == ""
 
 
-def test_finish_without_start(ansi_io):
+def test_finish_without_start(ansi_io: BufferedIO) -> None:
     bar = ProgressBar(ansi_io, 50, 0)
     bar.finish()
 
@@ -201,7 +207,7 @@ def test_finish_without_start(ansi_io):
     assert ansi_io.fetch_error() == expected
 
 
-def test_percent(ansi_io):
+def test_percent(ansi_io: BufferedIO) -> None:
     bar = ProgressBar(ansi_io, 50, 0)
     bar.start()
     bar.display()
@@ -219,7 +225,7 @@ def test_percent(ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_overwrite_with_shorter_line(ansi_io):
+def test_overwrite_with_shorter_line(ansi_io: BufferedIO) -> None:
     bar = ProgressBar(ansi_io, 50, 0)
     bar.set_format(" %current%/%max% [%bar%] %percent:3s%%")
     bar.start()
@@ -241,7 +247,7 @@ def test_overwrite_with_shorter_line(ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_set_current_progress(ansi_io):
+def test_set_current_progress(ansi_io: BufferedIO) -> None:
     bar = ProgressBar(ansi_io, 50, 0)
     bar.start()
     bar.display()
@@ -261,7 +267,7 @@ def test_set_current_progress(ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_multibyte_support(ansi_bar, ansi_io):
+def test_multibyte_support(ansi_bar: ProgressBar, ansi_io: BufferedIO) -> None:
     ansi_bar.start()
     ansi_bar.set_bar_character("■")
     ansi_bar.advance(3)
@@ -276,7 +282,7 @@ def test_multibyte_support(ansi_bar, ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_clear(ansi_io):
+def test_clear(ansi_io: BufferedIO) -> None:
     bar = ProgressBar(ansi_io, 50, 0)
     bar.start()
     bar.set_progress(25)
@@ -293,7 +299,7 @@ def test_clear(ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_percent_not_hundred_before_complete(ansi_io):
+def test_percent_not_hundred_before_complete(ansi_io: BufferedIO) -> None:
     bar = ProgressBar(ansi_io, 200, 0)
     bar.start()
     bar.display()
@@ -311,7 +317,7 @@ def test_percent_not_hundred_before_complete(ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_non_decorated_output(io):
+def test_non_decorated_output(io: BufferedIO) -> None:
     bar = ProgressBar(io, 200, 0)
     bar.start()
 
@@ -339,7 +345,7 @@ def test_non_decorated_output(io):
     assert expected == io.fetch_error()
 
 
-def test_multiline_format(ansi_io):
+def test_multiline_format(ansi_io: BufferedIO) -> None:
     bar = ProgressBar(ansi_io, 3, 0)
     bar.set_format("%bar%\nfoobar")
 
@@ -360,7 +366,7 @@ def test_multiline_format(ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_regress(ansi_bar, ansi_io):
+def test_regress(ansi_bar: ProgressBar, ansi_io: BufferedIO) -> None:
     ansi_bar.start()
     ansi_bar.advance()
     ansi_bar.advance()
@@ -378,7 +384,7 @@ def test_regress(ansi_bar, ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_regress_with_steps(ansi_bar, ansi_io):
+def test_regress_with_steps(ansi_bar: ProgressBar, ansi_io: BufferedIO) -> None:
     ansi_bar.start()
     ansi_bar.advance(4)
     ansi_bar.advance(4)
@@ -396,7 +402,7 @@ def test_regress_with_steps(ansi_bar, ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_regress_multiple_times(ansi_bar, ansi_io):
+def test_regress_multiple_times(ansi_bar: ProgressBar, ansi_io: BufferedIO) -> None:
     ansi_bar.start()
     ansi_bar.advance(3)
     ansi_bar.advance(3)
@@ -416,7 +422,7 @@ def test_regress_multiple_times(ansi_bar, ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_regress_below_min(ansi_io):
+def test_regress_below_min(ansi_io: BufferedIO) -> None:
     bar = ProgressBar(ansi_io, 10, 0)
     bar.set_progress(1)
     bar.advance(-1)
@@ -432,7 +438,7 @@ def test_regress_below_min(ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_overwrite_with_section_output(ansi_io):
+def test_overwrite_with_section_output(ansi_io: BufferedIO) -> None:
     bar = ProgressBar(ansi_io.section(), 50, 0)
     bar.start()
     bar.display()
@@ -450,7 +456,9 @@ def test_overwrite_with_section_output(ansi_io):
     assert expected == ansi_io.fetch_output()
 
 
-def test_overwrite_multiple_progress_bars_with_section_outputs(ansi_io):
+def test_overwrite_multiple_progress_bars_with_section_outputs(
+    ansi_io: BufferedIO,
+) -> None:
     output1 = ansi_io.section()
     output2 = ansi_io.section()
 
@@ -477,7 +485,9 @@ def test_overwrite_multiple_progress_bars_with_section_outputs(ansi_io):
     assert expected == ansi_io.fetch_output()
 
 
-def test_min_and_max_seconds_between_redraws(ansi_bar, ansi_io):
+def test_min_and_max_seconds_between_redraws(
+    ansi_bar: ProgressBar, ansi_io: BufferedIO
+) -> None:
     ansi_bar.min_seconds_between_redraws(0.5)
     ansi_bar.max_seconds_between_redraws(2 - 1)
 

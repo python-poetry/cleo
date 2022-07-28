@@ -19,7 +19,7 @@ class ConsoleCommandEvent(ConsoleEvent):
 
     RETURN_CODE_DISABLED: int = 113
 
-    def __init__(self, command: Command | None, io: IO) -> None:
+    def __init__(self, command: Command, io: IO) -> None:
         super().__init__(command, io)
 
         self._command_should_run = True

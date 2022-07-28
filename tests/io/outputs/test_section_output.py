@@ -8,26 +8,26 @@ from cleo.io.outputs.section_output import SectionOutput
 
 
 @pytest.fixture()
-def stream():
+def stream() -> StringIO:
     return StringIO()
 
 
 @pytest.fixture()
-def sections():
+def sections() -> list[SectionOutput]:
     return []
 
 
 @pytest.fixture()
-def output(stream, sections):
+def output(stream: StringIO, sections: list[SectionOutput]) -> SectionOutput:
     return SectionOutput(stream, sections, decorated=True)
 
 
 @pytest.fixture()
-def output2(stream, sections):
+def output2(stream: StringIO, sections: list[SectionOutput]) -> SectionOutput:
     return SectionOutput(stream, sections, decorated=True)
 
 
-def test_clear_all(output, stream):
+def test_clear_all(output: SectionOutput, stream: StringIO) -> None:
     output.write_line("Foo\nBar")
     output.clear()
 
@@ -36,7 +36,7 @@ def test_clear_all(output, stream):
     assert stream.read() == "Foo\nBar\n\x1b[2A\x1b[0J"
 
 
-def test_clear_with_number_of_lines(output, stream):
+def test_clear_with_number_of_lines(output: SectionOutput, stream: StringIO) -> None:
     output.write_line("Foo\nBar\nBaz\nFooBar")
     output.clear(2)
 
@@ -45,7 +45,9 @@ def test_clear_with_number_of_lines(output, stream):
     assert stream.read() == "Foo\nBar\nBaz\nFooBar\n\x1b[2A\x1b[0J"
 
 
-def test_clear_with_number_of_lines_and_multiple_sections(output, output2, stream):
+def test_clear_with_number_of_lines_and_multiple_sections(
+    output: SectionOutput, output2: SectionOutput, stream: StringIO
+) -> None:
     output2.write_line("Foo")
     output2.write_line("Bar")
     output2.clear(1)
@@ -56,7 +58,9 @@ def test_clear_with_number_of_lines_and_multiple_sections(output, output2, strea
     assert stream.read() == "Foo\nBar\n\x1b[1A\x1b[0J\x1b[1A\x1b[0JBaz\nFoo\n"
 
 
-def test_clear_preserves_empty_lines(output, output2, stream):
+def test_clear_preserves_empty_lines(
+    output: SectionOutput, output2: SectionOutput, stream: StringIO
+) -> None:
     output2.write_line("\nFoo")
     output2.clear(1)
     output.write_line("Bar")
@@ -66,7 +70,7 @@ def test_clear_preserves_empty_lines(output, output2, stream):
     assert stream.read() == "\nFoo\n\x1b[1A\x1b[0J\x1b[1A\x1b[0JBar\n\n"
 
 
-def test_overwrite(output, stream):
+def test_overwrite(output: SectionOutput, stream: StringIO) -> None:
     output.write_line("Foo")
     output.overwrite("Bar")
 
@@ -75,7 +79,7 @@ def test_overwrite(output, stream):
     assert stream.read() == "Foo\n\x1b[1A\x1b[0JBar\n"
 
 
-def test_overwrite_multiple_lines(output, stream):
+def test_overwrite_multiple_lines(output: SectionOutput, stream: StringIO) -> None:
     output.write_line("Foo\nBar\nBaz")
     output.overwrite("Bar")
 
@@ -84,11 +88,15 @@ def test_overwrite_multiple_lines(output, stream):
     assert stream.read() == "Foo\nBar\nBaz\n\x1b[3A\x1b[0JBar\n"
 
 
-def test_add_multiple_sections(output, output2, sections):
+def test_add_multiple_sections(
+    output: SectionOutput, output2: SectionOutput, sections: list[SectionOutput]
+) -> None:
     assert len(sections) == 2
 
 
-def test_multiple_sections_output(output, output2, stream):
+def test_multiple_sections_output(
+    output: SectionOutput, output2: SectionOutput, stream: StringIO
+) -> None:
     output.write_line("Foo")
     output2.write_line("Bar")
 

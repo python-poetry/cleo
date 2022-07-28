@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.0.0] - UNRELEASED
+
+- Replaced `Terminal` class with `shutil.get_terminal_size()` from standard library 
+[#175](https://github.com/python-poetry/cleo/pull/175).
+
+
 ## [0.8.1] - 2020-04-17
 
 ### Changed

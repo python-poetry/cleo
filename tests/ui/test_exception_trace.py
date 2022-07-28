@@ -16,7 +16,7 @@ from tests.fixtures.exceptions import simple
 from tests.fixtures.exceptions import solution
 
 
-def test_render_better_error_message():
+def test_render_better_error_message() -> None:
     io = BufferedIO()
 
     try:
@@ -40,7 +40,7 @@ def test_render_better_error_message():
     assert expected == io.fetch_output()
 
 
-def test_render_debug_better_error_message():
+def test_render_debug_better_error_message() -> None:
     io = BufferedIO()
     io.set_verbosity(Verbosity.DEBUG)
 
@@ -76,7 +76,7 @@ test_render_debug_better_error_message
     assert io.fetch_output() == expected
 
 
-def test_render_debug_better_error_message_recursion_error():
+def test_render_debug_better_error_message_recursion_error() -> None:
     io = BufferedIO()
     io.set_verbosity(Verbosity.DEBUG)
 
@@ -118,7 +118,7 @@ def test_render_debug_better_error_message_recursion_error():
     assert re.match(expected, io.fetch_output()) is not None
 
 
-def test_render_very_verbose_better_error_message():
+def test_render_very_verbose_better_error_message() -> None:
     io = BufferedIO()
     io.set_verbosity(Verbosity.VERY_VERBOSE)
 
@@ -149,9 +149,9 @@ test_render_very_verbose_better_error_message
     assert expected == io.fetch_output()
 
 
-def test_render_debug_better_error_message_recursion_error_with_multiple_duplicated_frames():  # noqa: E501
-    def first():
-        def second():
+def test_render_debug_better_error_message_recursion_error_with_multiple_duplicated_frames() -> None:  # noqa: E501
+    def first() -> None:
+        def second() -> None:
             first()
 
         second()
@@ -171,7 +171,7 @@ def test_render_debug_better_error_message_recursion_error_with_multiple_duplica
     assert re.search(expected, io.fetch_output()) is not None
 
 
-def test_render_can_ignore_given_files():
+def test_render_can_ignore_given_files() -> None:
     io = BufferedIO()
     io.set_verbosity(Verbosity.VERY_VERBOSE)
 
@@ -209,7 +209,7 @@ test_render_can_ignore_given_files
     assert io.fetch_output() == expected
 
 
-def test_render_shows_ignored_files_if_in_debug_mode():
+def test_render_shows_ignored_files_if_in_debug_mode() -> None:
     io = BufferedIO()
     io.set_verbosity(Verbosity.DEBUG)
 
@@ -267,7 +267,7 @@ test_render_shows_ignored_files_if_in_debug_mode
     assert io.fetch_output() == expected
 
 
-def test_render_supports_solutions():
+def test_render_supports_solutions() -> None:
     from crashtest.solution_providers.solution_provider_repository import (
         SolutionProviderRepository,
     )
@@ -288,13 +288,13 @@ def test_render_supports_solutions():
 
   Error with solution
 
-  at {trace._get_relative_file_path(solution.__file__)}:16 in call
-       12│         return solution
-       13│ 
+  at {trace._get_relative_file_path(solution.__file__)}:17 in call
+       13│         return solution
        14│ 
-       15│ def call() -> None:
-    →  16│     raise CustomError("Error with solution")
-       17│ 
+       15│ 
+       16│ def call() -> None:
+    →  17│     raise CustomError("Error with solution")
+       18│ 
 
   • Solution Title: Solution Description
     https://example.com,
@@ -304,7 +304,7 @@ def test_render_supports_solutions():
     assert io.fetch_output() == expected
 
 
-def test_render_falls_back_on_ascii_symbols():
+def test_render_falls_back_on_ascii_symbols() -> None:
     from crashtest.solution_providers.solution_provider_repository import (
         SolutionProviderRepository,
     )
@@ -325,13 +325,13 @@ def test_render_falls_back_on_ascii_symbols():
 
   Error with solution
 
-  at {trace._get_relative_file_path(solution.__file__)}:16 in call
-       12|         return solution
-       13| 
+  at {trace._get_relative_file_path(solution.__file__)}:17 in call
+       13|         return solution
        14| 
-       15| def call() -> None:
-    >  16|     raise CustomError("Error with solution")
-       17| 
+       15| 
+       16| def call() -> None:
+    >  17|     raise CustomError("Error with solution")
+       18| 
 
   * Solution Title: Solution Description
     https://example.com,
@@ -341,14 +341,14 @@ def test_render_falls_back_on_ascii_symbols():
     assert io.fetch_output() == expected
 
 
-def test_empty_source_file_do_not_break_highlighter():
+def test_empty_source_file_do_not_break_highlighter() -> None:
     from cleo.ui.exception_trace import Highlighter
 
     highlighter = Highlighter()
     highlighter.highlighted_lines("")
 
 
-def test_doctrings_are_corrrectly_rendered():
+def test_doctrings_are_corrrectly_rendered() -> None:
     from cleo.formatters.formatter import Formatter
     from cleo.ui.exception_trace import Highlighter
 
@@ -367,7 +367,7 @@ def test():
     assert [formatter.format(line) for line in lines] == [*source.splitlines(), ""]
 
 
-def test_simple_render():
+def test_simple_render() -> None:
     io = BufferedIO()
 
     with pytest.raises(Exception) as e:
@@ -384,7 +384,7 @@ Failed
     assert io.fetch_output() == expected
 
 
-def test_simple_render_supports_solutions():
+def test_simple_render_supports_solutions() -> None:
     from crashtest.solution_providers.solution_provider_repository import (
         SolutionProviderRepository,
     )
@@ -408,3 +408,34 @@ Error with solution
     https://example2.com
 """
     assert io.fetch_output() == expected
+
+
+def test_simple_render_aborts_if_no_message() -> None:
+    io = BufferedIO()
+
+    with pytest.raises(Exception) as e:
+        raise AssertionError
+
+    trace = ExceptionTrace(e.value)
+
+    trace.render(io, simple=True)
+    lineno = 417
+
+    expected = f"""
+  AssertionError
+
+  
+
+  at {trace._get_relative_file_path(__file__)}:{lineno} in \
+test_simple_render_aborts_if_no_message
+      {lineno - 4}│ def test_simple_render_aborts_if_no_message() -> None:
+      {lineno - 3}│     io = BufferedIO()
+      {lineno - 2}│ 
+      {lineno - 1}│     with pytest.raises(Exception) as e:
+    → {lineno + 0}│         raise AssertionError
+      {lineno + 1}│ 
+      {lineno + 2}│     trace = ExceptionTrace(e.value)
+      {lineno + 3}│ 
+      {lineno + 4}│     trace.render(io, simple=True)
+"""  # noqa: W293
+    assert expected == io.fetch_output()

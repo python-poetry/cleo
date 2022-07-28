@@ -2,10 +2,16 @@ from __future__ import annotations
 
 import time
 
+from typing import TYPE_CHECKING
+
 from cleo.ui.progress_indicator import ProgressIndicator
 
 
-def test_default_indicator(ansi_io):
+if TYPE_CHECKING:
+    from cleo.io.buffered_io import BufferedIO
+
+
+def test_default_indicator(ansi_io: BufferedIO) -> None:
     bar = ProgressIndicator(ansi_io)
     bar.start("Starting...")
     time.sleep(0.101)
@@ -62,7 +68,7 @@ def test_default_indicator(ansi_io):
     assert expected == ansi_io.fetch_error()
 
 
-def test_explicit_format(ansi_io):
+def test_explicit_format(ansi_io: BufferedIO) -> None:
     bar = ProgressIndicator(ansi_io, ProgressIndicator.NORMAL)
     bar.start("Starting...")
     time.sleep(0.101)

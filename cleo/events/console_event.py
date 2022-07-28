@@ -15,7 +15,7 @@ class ConsoleEvent(Event):
     An event that gives access to the IO of a command.
     """
 
-    def __init__(self, command: Command | None, io: IO) -> None:
+    def __init__(self, command: Command, io: IO) -> None:
         super().__init__()
 
         self._command = command
