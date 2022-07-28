@@ -120,19 +120,19 @@ class Definition:
 
         if isinstance(name, int):
             arguments = list(self._arguments.values())
-        else:
-            arguments = self._arguments
+            return arguments[name]
 
-        return arguments[name]
+        return self._arguments[name]
 
     def has_argument(self, name: str | int) -> bool:
+        arguments: dict[str, Argument] | list[Argument]
         if isinstance(name, int):
             arguments = list(self._arguments.values())
         else:
             arguments = self._arguments
 
         try:
-            arguments[name]
+            arguments[name]  # type: ignore[index]
         except (KeyError, IndexError):
             return False
 
@@ -153,7 +153,10 @@ class Definition:
 
         if option.shortcut:
             for shortcut in option.shortcut.split("|"):
-                if shortcut in self._shortcuts and option != self._shortcuts[shortcut]:
+                if (
+                    shortcut in self._shortcuts
+                    and option.name != self._shortcuts[shortcut]
+                ):
                     raise LogicException(
                         f'An option with shortcut "{shortcut}" already exists'
                     )
