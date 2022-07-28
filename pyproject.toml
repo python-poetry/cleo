@@ -71,7 +71,6 @@ module = [
     "cleo.io.inputs.definition",
     "cleo.io.inputs.input",
     "cleo.io.inputs.token_parser",
-    "cleo.io.outputs.stream_output",
     "cleo.ui.choice_question",
     "cleo.ui.confirmation_question",
     "cleo.ui.question",
