@@ -77,7 +77,6 @@ module = [
     "cleo.ui.choice_question",
     "cleo.ui.confirmation_question",
     "cleo.ui.progress_bar",
-    "cleo.ui.progress_indicator",
     "cleo.ui.question",
     "cleo.ui.table",
     "tests.io.inputs.test_argument",
@@ -87,7 +86,6 @@ module = [
     "tests.ui.test_choice_question",
     "tests.ui.test_confirmation_question",
     "tests.ui.test_progress_bar",
-    "tests.ui.test_progress_indicator",
     "tests.ui.test_question",
     "tests.ui.test_table",
 ]
