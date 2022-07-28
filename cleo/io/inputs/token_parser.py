@@ -30,26 +30,23 @@ class TokenParser:
     def _parse(self) -> list[str]:
         tokens = []
 
-        while self._is_valid():
+        while self._current is not None:
             if self._current.isspace():
                 # Skip spaces
                 self._next()
 
                 continue
 
-            if self._is_valid():
+            if self._current is not None:
                 tokens.append(self._parse_token())
 
         return tokens
-
-    def _is_valid(self) -> bool:
-        return self._current is not None
 
     def _next(self) -> None:
         """
         Advances the cursor to the next position.
         """
-        if not self._is_valid():
+        if self._current is None:
             return
 
         self._cursor += 1
@@ -63,7 +60,7 @@ class TokenParser:
     def _parse_token(self) -> str:
         token = ""
 
-        while self._is_valid():
+        while self._current is not None:
             if self._current.isspace():
                 self._next()
 
@@ -85,7 +82,7 @@ class TokenParser:
 
         # Skip first delimiter
         self._next()
-        while self._is_valid():
+        while self._current is not None:
             if self._current == delimiter:
                 # Skip last delimiter
                 self._next()
@@ -108,6 +105,7 @@ class TokenParser:
         if self._next_ in ['"', "'"]:
             sequence = self._next_
         else:
+            assert self._next_ is not None
             sequence = "\\" + self._next_
 
         self._next()
