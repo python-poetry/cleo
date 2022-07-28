@@ -33,7 +33,7 @@ jobs:
         poetry build -vvv
   
     - name: Upload distribution artifacts
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v3
       with:
         name: project-dist
         path: dist
