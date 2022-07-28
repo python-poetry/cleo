@@ -31,7 +31,7 @@ class TokenParser:
         tokens = []
 
         while self._is_valid():
-            if self._current.isspace():
+            if self._current is not None and self._current.isspace():
                 # Skip spaces
                 self._next()
 
@@ -64,7 +64,7 @@ class TokenParser:
         token = ""
 
         while self._is_valid():
-            if self._current.isspace():
+            if self._current is not None and self._current.isspace():
                 self._next()
 
                 break
@@ -73,7 +73,7 @@ class TokenParser:
                 token += self._parse_escape_sequence()
             elif self._current in ["'", '"']:
                 token += self._parse_quoted_string()
-            else:
+            elif self._current is not None:
                 token += self._current
                 self._next()
 
@@ -98,7 +98,7 @@ class TokenParser:
                 string += f'"{self._parse_quoted_string()}"'
             elif self._current == "'":
                 string += f"'{self._parse_quoted_string()}'"
-            else:
+            elif self._current is not None:
                 string += self._current
                 self._next()
 
@@ -108,6 +108,7 @@ class TokenParser:
         if self._next_ in ['"', "'"]:
             sequence = self._next_
         else:
+            assert self._next_ is not None
             sequence = "\\" + self._next_
 
         self._next()

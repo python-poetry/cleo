@@ -40,5 +40,5 @@ from cleo.io.inputs.token_parser import TokenParser
         ("\\' \\\"", ["'", '"']),
     ],
 )
-def test_create(string, tokens):
+def test_create(string: str, tokens: list[str]) -> None:
     assert TokenParser().parse(string) == tokens
