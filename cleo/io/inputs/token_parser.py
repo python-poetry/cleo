@@ -30,26 +30,23 @@ class TokenParser:
     def _parse(self) -> list[str]:
         tokens = []
 
-        while self._is_valid():
-            if self._current is not None and self._current.isspace():
+        while self._current is not None:
+            if self._current.isspace():
                 # Skip spaces
                 self._next()
 
                 continue
 
-            if self._is_valid():
+            if self._current is not None:
                 tokens.append(self._parse_token())
 
         return tokens
-
-    def _is_valid(self) -> bool:
-        return self._current is not None
 
     def _next(self) -> None:
         """
         Advances the cursor to the next position.
         """
-        if not self._is_valid():
+        if self._current is None:
             return
 
         self._cursor += 1
@@ -63,8 +60,8 @@ class TokenParser:
     def _parse_token(self) -> str:
         token = ""
 
-        while self._is_valid():
-            if self._current is not None and self._current.isspace():
+        while self._current is not None:
+            if self._current.isspace():
                 self._next()
 
                 break
@@ -73,7 +70,7 @@ class TokenParser:
                 token += self._parse_escape_sequence()
             elif self._current in ["'", '"']:
                 token += self._parse_quoted_string()
-            elif self._current is not None:
+            else:
                 token += self._current
                 self._next()
 
@@ -85,7 +82,7 @@ class TokenParser:
 
         # Skip first delimiter
         self._next()
-        while self._is_valid():
+        while self._current is not None:
             if self._current == delimiter:
                 # Skip last delimiter
                 self._next()
@@ -98,7 +95,7 @@ class TokenParser:
                 string += f'"{self._parse_quoted_string()}"'
             elif self._current == "'":
                 string += f"'{self._parse_quoted_string()}'"
-            elif self._current is not None:
+            else:
                 string += self._current
                 self._next()
 
