@@ -12,6 +12,9 @@ from cleo.io.io import IO
 
 
 if TYPE_CHECKING:
+    from typing import Iterator
+    from typing import Match
+
     from cleo.io.outputs.output import Output
 
 
@@ -56,15 +59,15 @@ class ProgressIndicator:
         self._interval = interval
         self._values = values
 
-        self._message = None
-        self._update_time = None
+        self._message: str | None = None
+        self._update_time: int | None = None
         self._started = False
         self._current = 0
 
-        self._auto_running = None
-        self._auto_thread = None
+        self._auto_running: threading.Event | None = None
+        self._auto_thread: threading.Thread | None = None
 
-        self._start_time = None
+        self._start_time: float | None = None
         self._last_message_length = 0
 
     @property
@@ -97,11 +100,11 @@ class ProgressIndicator:
             raise RuntimeError("Progress indicator has not yet been started.")
 
         if not self._io.is_decorated():
-            return
+            return None
 
         current_time = self._get_current_time_in_milliseconds()
-        if current_time < self._update_time:
-            return
+        if self._update_time is not None and current_time < self._update_time:
+            return None
 
         self._update_time = current_time + self._interval
         self._current += 1
@@ -112,7 +115,7 @@ class ProgressIndicator:
         if not self._started:
             raise RuntimeError("Progress indicator has not yet been started.")
 
-        if self._auto_thread is not None:
+        if self._auto_thread is not None and self._auto_running is not None:
             self._auto_running.set()
             self._auto_thread.join()
 
@@ -126,7 +129,7 @@ class ProgressIndicator:
         self._started = False
 
     @contextmanager
-    def auto(self, start_message: str, end_message: str):
+    def auto(self, start_message: str, end_message: str) -> Iterator[ProgressIndicator]:
         """
         Auto progress.
         """
@@ -149,7 +152,7 @@ class ProgressIndicator:
         self.finish(end_message, reset_indicator=True)
 
     def _spin(self) -> None:
-        while not self._auto_running.is_set():
+        while self._auto_running is not None and not self._auto_running.is_set():
             self.advance()
 
             time.sleep(0.1)
@@ -164,7 +167,7 @@ class ProgressIndicator:
             )
         )
 
-    def _overwrite_callback(self, matches):
+    def _overwrite_callback(self, matches: Match[str]) -> str:
         if hasattr(self, f"_formatter_{matches.group(1)}"):
             text = str(getattr(self, f"_formatter_{matches.group(1)}")())
         else:
@@ -172,7 +175,7 @@ class ProgressIndicator:
 
         return text
 
-    def _overwrite(self, message) -> None:
+    def _overwrite(self, message: str) -> None:
         """
         Overwrites a previous message to the output.
         """
@@ -182,7 +185,7 @@ class ProgressIndicator:
         else:
             self._io.write_line(message)
 
-    def _determine_best_format(self):
+    def _determine_best_format(self) -> str:
         decorated = self._io.is_decorated()
 
         if self._io.is_very_verbose():
@@ -207,8 +210,9 @@ class ProgressIndicator:
     def _formatter_indicator(self) -> str:
         return self.current_value
 
-    def _formatter_message(self):
+    def _formatter_message(self) -> str | None:
         return self.message
 
     def _formatter_elapsed(self) -> str:
+        assert self._start_time is not None
         return format_time(time.time() - self._start_time)

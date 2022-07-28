@@ -64,8 +64,6 @@ show_error_codes = true
 module = [
     "cleo._utils",
     "cleo.application",
-    "cleo.descriptors.application_description",
-    "cleo.descriptors.text_descriptor",
     "cleo.commands.completions_command",
     "cleo.io.buffered_io",
     "cleo.io.inputs.argument",
@@ -76,7 +74,6 @@ module = [
     "cleo.io.outputs.stream_output",
     "cleo.ui.choice_question",
     "cleo.ui.confirmation_question",
-    "cleo.ui.progress_indicator",
     "cleo.ui.question",
     "cleo.ui.table",
     "tests.io.inputs.test_argument",
@@ -85,7 +82,6 @@ module = [
     "tests.io.inputs.test_token_parser",
     "tests.ui.test_choice_question",
     "tests.ui.test_confirmation_question",
-    "tests.ui.test_progress_indicator",
     "tests.ui.test_question",
     "tests.ui.test_table",
 ]
