@@ -31,7 +31,7 @@ class StreamOutput(Output):
         formatter: Formatter | None = None,
     ) -> None:
         self._stream = stream
-        self._supports_utf8: bool | None = None
+        self._supports_utf8: bool = True
 
         if decorated is None:
             decorated = self._has_color_support()
