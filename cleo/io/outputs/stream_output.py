@@ -4,7 +4,6 @@ import codecs
 import io
 import locale
 import os
-import platform
 import sys
 
 from typing import TYPE_CHECKING
@@ -91,7 +90,7 @@ class StreamOutput(Output):
         if os.getenv("TERM_PROGRAM") == "Hyper":
             return True
 
-        if platform.system().lower() == "windows":
+        if sys.platform == "win32":
             shell_supported = (
                 os.getenv("ANSICON") is not None
                 or os.getenv("ConEmuANSI") == "ON"
@@ -107,7 +106,7 @@ class StreamOutput(Output):
             # Checking for Windows version
             # If we have a compatible version
             # activate color support
-            windows_version = sys.getwindowsversion()  # type: ignore[attr-defined]
+            windows_version = sys.getwindowsversion()
             major, build = windows_version[0], windows_version[2]
             if (major, build) < (10, 14393):
                 return False
@@ -116,7 +115,7 @@ class StreamOutput(Output):
             import ctypes
             import ctypes.wintypes
 
-            kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
+            kernel32 = ctypes.windll.kernel32
 
             fileno = self._stream.fileno()
 
