@@ -120,16 +120,16 @@ Whenever you output text, you can surround the text with tags to color
 its output. For example:
 
 ```python
-# green text
+# blue text
 self.line("<info>foo</info>")
 
-# yellow text
+# green text
 self.line("<comment>foo</comment>")
 
-# black text on a cyan background
+# cyan text
 self.line("<question>foo</question>")
 
-# white text on a red background
+# bold red text
 self.line("<error>foo</error>")
 ```
 
