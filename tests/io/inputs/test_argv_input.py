@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import sys
 
+from typing import TYPE_CHECKING
+
 import pytest
 
 from cleo.io.inputs.argument import Argument
@@ -10,8 +12,12 @@ from cleo.io.inputs.definition import Definition
 from cleo.io.inputs.option import Option
 
 
+if TYPE_CHECKING:
+    from typing import Iterator
+
+
 @pytest.fixture()
-def argv():
+def argv() -> Iterator[None]:
     original = sys.argv[:]
 
     yield
@@ -19,7 +25,7 @@ def argv():
     sys.argv = original
 
 
-def test_it_uses_argv_by_default(argv):
+def test_it_uses_argv_by_default(argv: Iterator[None]) -> None:
     sys.argv = ["cli.py", "foo"]
 
     i = ArgvInput()
@@ -27,7 +33,7 @@ def test_it_uses_argv_by_default(argv):
     assert ["foo"] == i._tokens
 
 
-def test_parse_arguments():
+def test_parse_arguments() -> None:
     i = ArgvInput(["cli.py", "foo"])
     i.bind(Definition([Argument("name")]))
 
@@ -136,7 +142,11 @@ def test_parse_arguments():
         ),
     ],
 )
-def test_parse_options(args, options, expected_options):
+def test_parse_options(
+    args: list[str],
+    options: list[Option],
+    expected_options: dict[str, str | bool | None],
+) -> None:
     i = ArgvInput(args)
     i.bind(Definition(options))
 

@@ -31,13 +31,13 @@ class IO:
     def error_output(self) -> Output:
         return self._error_output
 
-    def read(self, length: int, default: str | None = None) -> str:
+    def read(self, length: int, default: str = "") -> str:
         """
         Reads the given amount of characters from the input stream.
         """
         return self._input.read(length, default=default)
 
-    def read_line(self, length: int | None = None, default: str | None = None) -> str:
+    def read_line(self, length: int = -1, default: str = "") -> str:
         """
         Reads a line from the input stream.
         """
