@@ -120,265 +120,147 @@ script. Consult your shells documentation for how to add such directives.
         return 0
 
     def render(self, shell: str) -> str:
-        return getattr(self, f"render_{shell}")()
+        return getattr(self, f"render_{shell}")()  # type: ignore[no-any-return]
+
+    def _get_script_name_and_path(self) -> tuple[str, str]:
+        # TODO: add support for generating via `python -m cli`
+        script_name = self._io.input.script_name
+        if not script_name:
+            script_name = inspect.stack()[-1][1]
+        script_path = posixpath.realpath(script_name)
+        script_name = os.path.basename(script_path)
+
+        return script_name, script_path
 
     def render_bash(self) -> str:
-        template = TEMPLATES["bash"]
-
-        script_name = self._io.input.script_name
-        if not script_name:
-            script_name = inspect.stack()[-1][1]
-
-        script_path = posixpath.realpath(script_name)
-        script_name = os.path.basename(script_path)
-        aliases = [script_name, script_path]
-        aliases += self.option("alias")
-
+        script_name, script_path = self._get_script_name_and_path()
+        aliases = [script_name, script_path, *self.option("alias")]
         function = self._generate_function_name(script_name, script_path)
 
-        commands = []
-        global_options = set()
-        options_descriptions = {}
-        commands_options = {}
-        for option in self.application.definition.options:
-            options_descriptions[
-                "--" + option.name
-            ] = self.io.output.formatter.remove_format(option.description)
-            global_options.add("--" + option.name)
+        # Global options
+        assert self.application
+        opts = [
+            f"--{opt.name}"
+            for opt in sorted(self.application.definition.options, key=lambda o: o.name)
+        ]
 
-        for command in self.application.all().values():
-            if not command.enabled or command.hidden:
-                continue
-
-            command_options = []
-            commands.append(command.name)
-
-            options = command.definition.options
-            for option in sorted(options, key=lambda o: o.name):
-                name = "--" + option.name
-                description = option.description
-                command_options.append(name)
-                options_descriptions[name] = description
-
-            commands_options[command.name] = command_options
-
-        compdefs = "\n".join(
-            [f"complete -o default -F {function} {alias}" for alias in aliases]
-        )
-
-        commands = sorted(commands)
-
-        command_list = []
-        for i, command in enumerate(commands):
-            options = set(commands_options[command]).difference(global_options)
-            options = sorted(options)
-            options = [self._zsh_describe(opt, None).strip('"') for opt in options]
-
-            desc = [
-                f"            ({command})",
-                f'            opts="${{opts}} {" ".join(options)}"',
-                "            ;;",
-            ]
-
-            if i < len(commands) - 1:
-                desc.append("")
-
-            command_list.append("\n".join(desc))
-
-        output = template % {
-            "script_name": script_name,
-            "function": function,
-            "opts": " ".join(sorted(global_options)),
-            "coms": " ".join(commands),
-            "command_list": "\n".join(command_list),
-            "compdefs": compdefs,
-        }
-
-        return output
-
-    def render_zsh(self) -> str:
-        template = TEMPLATES["zsh"]
-
-        script_name = self._io.input.script_name
-        if not script_name:
-            script_name = inspect.stack()[-1][1]
-
-        script_path = posixpath.realpath(script_name)
-        script_name = os.path.basename(script_path)
-        aliases = [script_path]
-        aliases += self.option("alias")
-
-        function = self._generate_function_name(script_name, script_path)
-
-        global_options = set()
-        commands_descriptions = []
-        options_descriptions = {}
-        commands_options_descriptions = {}
-        commands_options = {}
-        for option in self.application.definition.options:
-            options_descriptions[
-                "--" + option.name
-            ] = self.io.output.formatter.remove_format(option.description)
-            global_options.add("--" + option.name)
-
-        for command in self.application.all().values():
-            if not command.enabled or command.hidden:
-                continue
-
-            command_options = []
-            commands_options_descriptions[command.name] = {}
-            command_description = self._io.output.formatter.remove_format(
-                command.description
-            )
-            commands_descriptions.append(
-                self._zsh_describe(command.name, command_description)
-            )
-
-            options = command.definition.options
-            for option in sorted(options, key=lambda o: o.name):
-                name = "--" + option.name
-                description = self.io.output.formatter.remove_format(option.description)
-                command_options.append(name)
-                options_descriptions[name] = description
-                commands_options_descriptions[command.name][name] = description
-
-            commands_options[command.name] = command_options
-
-        compdefs = "\n".join([f"compdef {function} {alias}" for alias in aliases])
-
-        commands = sorted(commands_options.keys())
-        command_list = []
-        for i, command in enumerate(commands):
-            options = set(commands_options[command]).difference(global_options)
-            options = sorted(options)
-            options = [
-                self._zsh_describe(opt, commands_options_descriptions[command][opt])
-                for opt in options
-            ]
-
-            desc = [
-                f"            ({command})",
-                f'            opts+=({" ".join(options)})',
-                "            ;;",
-            ]
-
-            if i < len(commands) - 1:
-                desc.append("")
-
-            command_list.append("\n".join(desc))
-
-        opts = []
-        for opt in global_options:
-            opts.append(self._zsh_describe(opt, options_descriptions[opt]))
-
-        output = template % {
-            "script_name": script_name,
-            "function": function,
-            "opts": " ".join(sorted(opts)),
-            "coms": " ".join(sorted(commands_descriptions)),
-            "command_list": "\n".join(command_list),
-            "compdefs": compdefs,
-        }
-
-        return output
-
-    def render_fish(self) -> str:
-        template = TEMPLATES["fish"]
-
-        script_name = self._io.input.script_name
-        if not script_name:
-            script_name = inspect.stack()[-1][1]
-
-        script_path = posixpath.realpath(script_name)
-        script_name = os.path.basename(script_path)
-        aliases = [script_name]
-        aliases += self.option("alias")
-
-        function = self._generate_function_name(script_name, script_path)
-
-        global_options = set()
-        commands_descriptions = {}
-        options_descriptions = {}
-        commands_options_descriptions = {}
-        commands_options = {}
-        for option in self.application.definition.options:
-            options_descriptions[
-                "--" + option.name
-            ] = self._io.output.formatter.remove_format(option.description)
-            global_options.add("--" + option.name)
-
-        for command in self.application.all().values():
-            if not command.enabled or command.hidden:
-                continue
-
-            command_options = []
-            commands_options_descriptions[command.name] = {}
-            commands_descriptions[
-                command.name
-            ] = self._io.output.formatter.remove_format(command.description)
-
-            options = command.definition.options
-            for option in sorted(options, key=lambda o: o.name):
-                name = "--" + option.name
-                description = self._io.output.formatter.remove_format(
-                    option.description
-                )
-                command_options.append(name)
-                options_descriptions[name] = description
-                commands_options_descriptions[command.name][name] = description
-
-            commands_options[command.name] = command_options
-
-        opts = []
-        for opt in sorted(global_options):
-            replaced_options_descriptions = options_descriptions[opt].replace(
-                "'", "\\'"
-            )
-            opts.append(
-                f"complete -c {script_name} -n '__fish{function}_no_subcommand' "
-                f"-l {opt[2:]} -d '{replaced_options_descriptions}'"
-            )
-
-        cmds_names = sorted(commands_options.keys())
-
+        # Commands + options
         cmds = []
         cmds_opts = []
-        for i, cmd in enumerate(cmds_names):
-            replaced_commands_descriptions = commands_descriptions[cmd].replace(
-                "'", "\\'"
+        for cmd in sorted(self.application.all().values(), key=lambda c: c.name or ""):
+            if cmd.hidden or not cmd.enabled or not cmd.name:
+                continue
+            cmds.append(cmd.name)
+            options = " ".join(
+                f"--{opt.name}".replace(":", "\\:")
+                for opt in sorted(cmd.definition.options, key=lambda o: o.name)
             )
-            cmds.append(
-                f"complete -c {script_name} -f -n '__fish{function}_no_subcommand' "
-                f"-a {cmd} -d '{replaced_commands_descriptions}'"
-            )
+            cmds_opts += [
+                f"            ({cmd.name})",
+                f'            opts="${{opts}} {options}"',
+                "            ;;",
+                "",  # newline
+            ]
 
-            cmds_opts += [f"# {cmd}"]
-            options = set(commands_options[cmd]).difference(global_options)
-            options = sorted(options)
-
-            for opt in options:
-                replaced_cmds_opts_descriptions = commands_options_descriptions[cmd][
-                    opt
-                ].replace("'", "\\'")
-                cmds_opts.append(
-                    f"complete -c {script_name} -A "
-                    f"-n '__fish_seen_subcommand_from {cmd}' "
-                    f"-l {opt[2:]} -d '{replaced_cmds_opts_descriptions}'"
-                )
-
-            if i < len(cmds_names) - 1:
-                cmds_opts.append("")
-
-        output = template % {
+        return TEMPLATES["bash"] % {
             "script_name": script_name,
             "function": function,
-            "cmds_names": " ".join(cmds_names),
-            "opts": "\n".join(opts),
-            "cmds": "\n".join(cmds),
-            "cmds_opts": "\n".join(cmds_opts),
+            "opts": " ".join(opts),
+            "cmds": " ".join(cmds),
+            "cmds_opts": "\n".join(cmds_opts[:-1]),  # trim trailing newline
+            "compdefs": "\n".join(
+                f"complete -o default -F {function} {alias}" for alias in aliases
+            ),
         }
 
-        return output
+    def render_zsh(self) -> str:
+        script_name, script_path = self._get_script_name_and_path()
+        aliases = [script_path, *self.option("alias")]
+        function = self._generate_function_name(script_name, script_path)
+
+        def sanitize(s: str) -> str:
+            return self._io.output.formatter.remove_format(s)
+
+        # Global options
+        assert self.application
+        opts = [
+            self._zsh_describe(f"--{opt.name}", sanitize(opt.description))
+            for opt in sorted(self.application.definition.options, key=lambda o: o.name)
+        ]
+
+        # Commands + options
+        cmds = []
+        cmds_opts = []
+        for cmd in sorted(self.application.all().values(), key=lambda c: c.name or ""):
+            if cmd.hidden or not cmd.enabled or not cmd.name:
+                continue
+            cmds.append(self._zsh_describe(cmd.name, sanitize(cmd.description)))
+            options = " ".join(
+                self._zsh_describe(f"--{opt.name}", sanitize(opt.description))
+                for opt in sorted(cmd.definition.options, key=lambda o: o.name)
+            )
+            cmds_opts += [
+                f"            ({cmd.name})",
+                f"            opts+=({options})",
+                "            ;;",
+                "",  # newline
+            ]
+
+        return TEMPLATES["zsh"] % {
+            "script_name": script_name,
+            "function": function,
+            "opts": " ".join(opts),
+            "cmds": " ".join(cmds),
+            "cmds_opts": "\n".join(cmds_opts[:-1]),  # trim trailing newline
+            "compdefs": "\n".join(f"compdef {function} {alias}" for alias in aliases),
+        }
+
+    def render_fish(self) -> str:
+        script_name, script_path = self._get_script_name_and_path()
+        function = self._generate_function_name(script_name, script_path)
+
+        def sanitize(s: str) -> str:
+            return self._io.output.formatter.remove_format(s).replace("'", "\\'")
+
+        # Global options
+        assert self.application
+        opts = [
+            f"complete -c {script_name} -n '__fish{function}_no_subcommand' "
+            f"-l {opt.name} -d '{sanitize(opt.description)}'"
+            for opt in sorted(self.application.definition.options, key=lambda o: o.name)
+        ]
+
+        # Commands + options
+        cmds = []
+        cmds_opts = []
+        cmds_names = []
+        for cmd in sorted(self.application.all().values(), key=lambda c: c.name or ""):
+            if cmd.hidden or not cmd.enabled or not cmd.name:
+                continue
+            cmds.append(
+                f"complete -c {script_name} -f -n '__fish{function}_no_subcommand' "
+                f"-a {cmd.name} -d '{sanitize(cmd.description)}'"
+            )
+            cmds_opts += [
+                f"# {cmd.name}",
+                *[
+                    f"complete -c {script_name} -A "
+                    f"-n '__fish_seen_subcommand_from {cmd.name}' "
+                    f"-l {opt.name} -d '{sanitize(opt.description)}'"
+                    for opt in sorted(cmd.definition.options, key=lambda o: o.name)
+                ],
+                "",  # newline
+            ]
+            cmds_names.append(cmd.name)
+
+        return TEMPLATES["fish"] % {
+            "script_name": script_name,
+            "function": function,
+            "opts": "\n".join(opts),
+            "cmds": "\n".join(cmds),
+            "cmds_opts": "\n".join(cmds_opts[:-1]),  # trim trailing newline
+            "cmds_names": " ".join(cmds_names),
+        }
 
     def get_shell_type(self) -> str:
         shell = os.getenv("SHELL")

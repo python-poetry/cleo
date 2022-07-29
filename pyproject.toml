@@ -64,7 +64,6 @@ show_error_codes = true
 module = [
     "cleo._utils",
     "cleo.application",
-    "cleo.commands.completions_command",
     "cleo.io.buffered_io",
     "cleo.ui.choice_question",
     "cleo.ui.confirmation_question",
