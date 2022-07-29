@@ -122,6 +122,15 @@ output. For example:
     # bold red text
     self.line("<error>foo</error>")
 
+    # cyan text
+    self.line("<c1>foo</c1>")
+
+    # bold text
+    self.line("<c2>foo</c2>")
+
+    # bold text
+    self.line("<b>foo</b>")
+
 The closing tag can be replaced by ``</>``, which revokes all formatting options established by the last opened tag.
 
 It is possible to define your own styles using the ``add_style()`` method:
