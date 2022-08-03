@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 
-BASH_TEMPLATE = """%(function)s()
+BASH_TEMPLATE = """\
+%(function)s()
 {
     local cur script coms opts com
     COMPREPLY=()
@@ -28,7 +29,7 @@ BASH_TEMPLATE = """%(function)s()
 
         case "$com" in
 
-%(command_list)s
+%(cmds_opts)s
 
         esac
 
@@ -40,7 +41,7 @@ BASH_TEMPLATE = """%(function)s()
 
     # completing for a command
     if [[ $cur == $com ]]; then
-        coms="%(coms)s"
+        coms="%(cmds)s"
 
         COMPREPLY=($(compgen -W "${coms}" -- ${cur}))
         __ltrim_colon_completions "$cur"
@@ -51,7 +52,8 @@ BASH_TEMPLATE = """%(function)s()
 
 %(compdefs)s"""
 
-ZSH_TEMPLATE = """#compdef %(script_name)s
+ZSH_TEMPLATE = """\
+#compdef %(script_name)s
 
 %(function)s()
 {
@@ -74,7 +76,7 @@ ZSH_TEMPLATE = """#compdef %(script_name)s
         opts+=(%(opts)s)
     elif [[ $cur == $com ]]; then
         state="command"
-        coms+=(%(coms)s)
+        coms+=(%(cmds)s)
     fi
 
     case $state in
@@ -84,7 +86,7 @@ ZSH_TEMPLATE = """#compdef %(script_name)s
         (option)
             case "$com" in
 
-%(command_list)s
+%(cmds_opts)s
 
             esac
 
@@ -99,7 +101,8 @@ ZSH_TEMPLATE = """#compdef %(script_name)s
 %(function)s "$@"
 %(compdefs)s"""
 
-FISH_TEMPLATE = """function __fish%(function)s_no_subcommand
+FISH_TEMPLATE = """\
+function __fish%(function)s_no_subcommand
     for i in (commandline -opc)
         if contains -- $i %(cmds_names)s
             return 1
