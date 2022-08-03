@@ -120,13 +120,19 @@ script. Consult your shells documentation for how to add such directives.
         return 0
 
     def render(self, shell: str) -> str:
-        return getattr(self, f"render_{shell}")()  # type: ignore[no-any-return]
+        if shell == "bash":
+            return self.render_bash()
+        if shell == "zsh":
+            return self.render_zsh()
+        if shell == "fish":
+            return self.render_fish()
+
+        raise RuntimeError(f"Unrecognized shell: {shell}")
 
     def _get_script_name_and_path(self) -> tuple[str, str]:
-        # TODO: add support for generating via `python -m cli`
-        script_name = self._io.input.script_name
-        if not script_name:
-            script_name = inspect.stack()[-1][1]
+        # FIXME: when generating completions via `python -m script completions`,
+        # we incorrectly infer `script_name` as `__main__.py`
+        script_name = self._io.input.script_name or inspect.stack()[-1][1]
         script_path = posixpath.realpath(script_name)
         script_name = os.path.basename(script_path)
 
