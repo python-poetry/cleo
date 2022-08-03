@@ -57,7 +57,9 @@ ZSH_TEMPLATE = """\
 
 %(function)s()
 {
-    local com coms cur opts state
+    local state com cur
+    local -a opts
+    local -a coms
 
     cur=${words[${#words[@]}]}
 
@@ -71,10 +73,10 @@ ZSH_TEMPLATE = """\
 
     if [[ ${cur} == --* ]]; then
         state="option"
-        opts=(%(opts)s)
+        opts+=(%(opts)s)
     elif [[ $cur == $com ]]; then
         state="command"
-        coms=(%(cmds)s)
+        coms+=(%(cmds)s)
     fi
 
     case $state in
