@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import defaultdict
 from typing import TYPE_CHECKING
 
 from cleo.exceptions import CommandNotFoundException
@@ -23,14 +24,14 @@ class ApplicationDescription:
         self._application: Application = application
         self._namespace = namespace
         self._show_hidden = show_hidden
-        self._namespaces: dict[str, dict[str, str | list[Command]]] = {}
+        self._namespaces: dict[str, dict[str, str | list[str]]] = {}
         self._commands: dict[str, Command] = {}
         self._aliases: dict[str, Command] = {}
 
         self._inspect_application()
 
     @property
-    def namespaces(self) -> dict[str, dict[str, str | list[Command]]]:
+    def namespaces(self) -> dict[str, dict[str, str | list[str]]]:
         return self._namespaces
 
     @property
@@ -73,22 +74,15 @@ class ApplicationDescription:
         """
         Sorts command in alphabetical order
         """
-        namespaced_commands = {}
+        namespaced_commands: dict[str, dict[str, Command]] = defaultdict(dict)
         for name, command in commands.items():
-            key = self._application.extract_namespace(name, 1)
-            if not key:
-                key = "_global"
+            key = self._application.extract_namespace(name, 1) or "_global"
+            namespaced_commands[key][name] = command
 
-            if key in namespaced_commands:
-                namespaced_commands[key][name] = command
-            else:
-                namespaced_commands[key] = {name: command}
-
+        namespaced_commands_lst: dict[str, list[tuple[str, Command]]] = {}
         for namespace, commands in namespaced_commands.items():
-            namespaced_commands[namespace] = sorted(
+            namespaced_commands_lst[namespace] = sorted(
                 commands.items(), key=lambda x: x[0]
             )
 
-        namespaced_commands = sorted(namespaced_commands.items(), key=lambda x: x[0])
-
-        return namespaced_commands
+        return sorted(namespaced_commands_lst.items(), key=lambda x: x[0])

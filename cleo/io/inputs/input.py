@@ -17,10 +17,10 @@ class Input:
     """
 
     def __init__(self, definition: Definition | None = None) -> None:
-        self._definition = None
-        self._stream = None
-        self._options = {}
-        self._arguments = {}
+        self._definition: Definition
+        self._stream: TextIO = None  # type: ignore[assignment]
+        self._options: dict[str, Any] = {}
+        self._arguments: dict[str, Any] = {}
         self._interactive = True
 
         if definition is None:
@@ -52,7 +52,7 @@ class Input:
     def script_name(self) -> str | None:
         raise NotImplementedError()
 
-    def read(self, length: int, default: str | None = None) -> str:
+    def read(self, length: int, default: str = "") -> str:
         """
         Reads the given amount of characters from the input stream.
         """
@@ -61,7 +61,7 @@ class Input:
 
         return self._stream.read(length)
 
-    def read_line(self, length: int | None = None, default: str | None = None) -> str:
+    def read_line(self, length: int = -1, default: str = "") -> str:
         """
         Reads a line from the input stream.
         """
@@ -80,7 +80,7 @@ class Input:
         """
         Returns whether the input is closed.
         """
-        return self._stream.is_closed()
+        return self._stream.closed
 
     def is_interactive(self) -> bool:
         return self._interactive
@@ -148,7 +148,7 @@ class Input:
         return self._definition.has_option(name)
 
     def escape_token(self, token: str) -> str:
-        if re.match(r"^[\w-]+$"):
+        if re.match(r"^[\w-]+$", token):
             return token
 
         return shell_quote(token)
@@ -167,8 +167,8 @@ class Input:
     def parameter_option(
         self,
         values: str | list[str],
-        only_params: bool = False,
         default: Any = False,
+        only_params: bool = False,
     ) -> Any:
         """
         Returns the value of a raw option (not parsed).

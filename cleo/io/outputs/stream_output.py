@@ -4,7 +4,6 @@ import codecs
 import io
 import locale
 import os
-import platform
 import sys
 
 from typing import TYPE_CHECKING
@@ -32,7 +31,7 @@ class StreamOutput(Output):
         formatter: Formatter | None = None,
     ) -> None:
         self._stream = stream
-        self._supports_utf8 = None
+        self._supports_utf8: bool | None = None
 
         if decorated is None:
             decorated = self._has_color_support()
@@ -91,7 +90,7 @@ class StreamOutput(Output):
         if os.getenv("TERM_PROGRAM") == "Hyper":
             return True
 
-        if platform.system().lower() == "windows":
+        if sys.platform == "win32":
             shell_supported = (
                 os.getenv("ANSICON") is not None
                 or os.getenv("ConEmuANSI") == "ON"

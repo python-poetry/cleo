@@ -237,7 +237,7 @@ class Application:
         seen = set()
 
         for command in self.all().values():
-            if command.hidden:
+            if command.hidden or not command.name:
                 continue
 
             for namespace in self._extract_all_namespaces(command.name):
@@ -400,7 +400,7 @@ class Application:
         if " " in name and isinstance(io.input, ArgvInput):
             # If the command is namespaced we rearrange
             # the input to parse it as a single argument
-            argv = io._input._tokens[:]
+            argv = io.input._tokens[:]
 
             if io.input.script_name is not None:
                 argv.insert(0, io.input.script_name)
@@ -582,7 +582,7 @@ class Application:
             ]
         )
 
-    def _get_command_name(self, io: IO) -> str:
+    def _get_command_name(self, io: IO) -> str | None:
         if self._single_command:
             return self._default_command
 
@@ -611,7 +611,8 @@ class Application:
     def _get_default_ui(self) -> UI:
         from cleo.ui.progress_bar import ProgressBar
 
-        return UI([ProgressBar()])
+        io = self.create_io()
+        return UI([ProgressBar(io)])
 
     def _extract_all_namespaces(self, name: str) -> list[str]:
         parts = name.split(" ")[:-1]

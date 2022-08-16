@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from cleo.io.buffered_io import BufferedIO
 from cleo.io.inputs.argv_input import ArgvInput
 from cleo.io.inputs.string_input import StringInput
+from cleo.io.outputs.buffered_output import BufferedOutput
 
 
 if TYPE_CHECKING:
@@ -21,8 +22,8 @@ class CommandTester:
     def __init__(self, command: Command) -> None:
         self._command = command
         self._io = BufferedIO()
-        self._inputs = []
-        self._status_code = None
+        self._inputs: list[str] = []
+        self._status_code: int | None = None
 
     @property
     def command(self) -> Command:
@@ -33,12 +34,12 @@ class CommandTester:
         return self._io
 
     @property
-    def status_code(self) -> int:
+    def status_code(self) -> int | None:
         return self._status_code
 
     def execute(
         self,
-        args: str | None = "",
+        args: str = "",
         inputs: str | None = None,
         interactive: bool | None = None,
         verbosity: Verbosity | None = None,
@@ -50,8 +51,12 @@ class CommandTester:
         """
         application = self._command.application
 
-        input = StringInput(args)
-        if application is not None and application.definition.has_argument("command"):
+        input: StringInput | ArgvInput = StringInput(args)
+        if (
+            application is not None
+            and application.definition.has_argument("command")
+            and self._command.name is not None
+        ):
             name = self._command.name
             if " " in name:
                 # If the command is namespaced we rearrange
@@ -63,6 +68,8 @@ class CommandTester:
                 input = StringInput(name + " " + args)
 
         self._io.set_input(input)
+        assert isinstance(self._io.output, BufferedOutput)
+        assert isinstance(self._io.error_output, BufferedOutput)
         self._io.output.set_supports_utf8(supports_utf8)
         self._io.error_output.set_supports_utf8(supports_utf8)
 
