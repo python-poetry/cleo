@@ -63,7 +63,6 @@ show_error_codes = true
 [[tool.mypy.overrides]]
 module = [
     "cleo._utils",
-    "cleo.commands.completions_command",
     "cleo.ui.choice_question",
     "cleo.ui.confirmation_question",
     "cleo.ui.question",

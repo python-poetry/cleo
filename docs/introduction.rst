@@ -110,17 +110,26 @@ output. For example:
 
 .. code-block:: python
 
+    # blue text
+    self.line("<info>foo</info>")
+
     # green text
-    self.line('<info>foo</info>')
+    self.line("<comment>foo</comment>")
 
-    # yellow text
-    self.line('<comment>foo</comment>')
+    # cyan text
+    self.line("<question>foo</question>")
 
-    # black text on a cyan background
-    self.line('<question>foo</question>')
+    # bold red text
+    self.line("<error>foo</error>")
 
-    # white text on a red background
-    self.line('<error>foo</error>')
+    # cyan text
+    self.line("<c1>foo</c1>")
+
+    # bold text
+    self.line("<c2>foo</c2>")
+
+    # bold text
+    self.line("<b>foo</b>")
 
 The closing tag can be replaced by ``</>``, which revokes all formatting options established by the last opened tag.
 
