@@ -64,14 +64,7 @@ show_error_codes = true
 module = [
     "cleo._utils",
     "cleo.io.buffered_io",
-    "cleo.ui.choice_question",
-    "cleo.ui.confirmation_question",
-    "cleo.ui.question",
     "cleo.ui.table",
-    "tests.ui.test_choice_question",
-    "tests.ui.test_confirmation_question",
-    "tests.ui.test_question",
-    "tests.ui.test_table",
 ]
 ignore_errors = true
 

@@ -1,26 +1,34 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
+import pytest
+
 from cleo.ui.confirmation_question import ConfirmationQuestion
 
 
-def test_ask(io):
-    data = [
-        ("", True),
+if TYPE_CHECKING:
+    from cleo.io.buffered_io import BufferedIO
+
+
+@pytest.mark.parametrize(
+    ("input", "expected", "default"),
+    [
+        ("", True, True),
         ("", False, False),
-        ("y", True),
-        ("yes", True),
-        ("n", False),
-        ("no", False),
-    ]
+        ("y", True, True),
+        ("yes", True, True),
+        ("n", False, True),
+        ("no", False, True),
+    ],
+)
+def test_ask(io: BufferedIO, input: str, expected: bool, default: bool) -> None:
+    io.set_user_input(f"{input}\n")
+    question = ConfirmationQuestion("Do you like French fries?", default)
+    assert question.ask(io) == expected
 
-    for d in data:
-        io.set_user_input(d[0] + "\n")
-        default = d[2] if len(d) > 2 else True
-        question = ConfirmationQuestion("Do you like French fries?", default)
-        assert d[1] == question.ask(io)
 
-
-def test_ask_with_custom_answer(io):
+def test_ask_with_custom_answer(io: BufferedIO) -> None:
     io.set_user_input("j\ny\n")
 
     question = ConfirmationQuestion("Do you like French fries?", False, "(?i)^(j|y)")

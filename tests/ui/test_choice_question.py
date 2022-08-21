@@ -1,12 +1,18 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import pytest
 
 from cleo.exceptions import ValueException
 from cleo.ui.choice_question import ChoiceQuestion
 
 
-def test_ask_choice(io):
+if TYPE_CHECKING:
+    from cleo.io.buffered_io import BufferedIO
+
+
+def test_ask_choice(io: BufferedIO) -> None:
     io.set_user_input(
         "\n"
         "1\n"

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import pytest
 
 from cleo.ui.table import Table
@@ -7,6 +9,10 @@ from cleo.ui.table_cell import TableCell
 from cleo.ui.table_separator import TableSeparator
 from cleo.ui.table_style import TableStyle
 
+
+if TYPE_CHECKING:
+    from cleo.io.buffered_io import BufferedIO
+    from cleo.ui.table import _Rows
 
 books = [
     ["99921-58-10-7", "Divine Comedy", "Dante Alighieri"],
@@ -410,7 +416,9 @@ books = [
         ),
     ],
 )
-def test_render(io, headers, rows, style, expected):
+def test_render(
+    io: BufferedIO, headers: list[str], rows: _Rows, style: str, expected: str
+) -> None:
     table = Table(io, style=style)
     table.set_headers(headers)
     table.set_rows(rows)
@@ -420,7 +428,7 @@ def test_render(io, headers, rows, style, expected):
     assert io.fetch_output() == expected
 
 
-def test_column_style(io):
+def test_column_style(io: BufferedIO) -> None:
     table = Table(io)
     table.set_headers(["ISBN", "Title", "Author", "Price"])
     table.set_rows(
@@ -448,9 +456,9 @@ def test_column_style(io):
     assert io.fetch_output() == expected
 
 
-def test_style_for_side_effects(io):
+def test_style_for_side_effects(io: BufferedIO) -> None:
     headers = ["Type", "Class", "Name"]
-    rows = [
+    rows: _Rows = [
         ["GSV", "Range", "Bora Horza Gobuchul"],
         ["GSV", "Plate", "Sleeper Service"],
         ["GCU", "Ridge", "Grey Area"],

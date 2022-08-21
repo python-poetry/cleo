@@ -22,19 +22,17 @@ class ConfirmationQuestion(Question):
         super().__init__(question, default)
 
         self._true_answer_regex = true_answer_regex
-        self._normalizer = self._get_default_normalizer
+        self._normalizer = self._default_normalizer
 
     def _write_prompt(self, io: IO) -> None:
-        message = self._question
-
         message = (
-            f"<question>{message} (yes/no)</> "
+            f"<question>{self._question} (yes/no)</> "
             f'[<comment>{"yes" if self._default else "no"}</>] '
         )
 
         io.write_error(message)
 
-    def _get_default_normalizer(self, answer: str | bool) -> bool:
+    def _default_normalizer(self, answer: str) -> bool:
         """
         Default answer normalizer.
         """
@@ -43,6 +41,6 @@ class ConfirmationQuestion(Question):
 
         answer_is_true = re.match(self._true_answer_regex, answer) is not None
         if self.default is False:
-            return answer and answer_is_true
+            return (answer and answer_is_true) or False
 
         return not answer or answer_is_true
