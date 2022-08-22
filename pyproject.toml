@@ -29,7 +29,7 @@ classifiers = [
 # Requirements
 [tool.poetry.dependencies]
 python = "^3.7"
-crashtest = "^0.3.1"
+crashtest = "^0.4.0"
 rapidfuzz = "^2.2.0"
 
 [tool.poetry.dev-dependencies]
@@ -63,14 +63,8 @@ show_error_codes = true
 [[tool.mypy.overrides]]
 module = [
     "cleo._utils",
-    "cleo.ui.choice_question",
-    "cleo.ui.confirmation_question",
-    "cleo.ui.question",
+    "cleo.io.buffered_io",
     "cleo.ui.table",
-    "tests.ui.test_choice_question",
-    "tests.ui.test_confirmation_question",
-    "tests.ui.test_question",
-    "tests.ui.test_table",
 ]
 ignore_errors = true
 

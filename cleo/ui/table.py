@@ -42,12 +42,12 @@ class Table:
         if style is None:
             style = "default"
 
-        self._header_title = None
-        self._footer_title = None
+        self._header_title: str | None = None
+        self._footer_title: str | None = None
 
-        self._headers = []
+        self._headers: list[str] = []
 
-        self._rows = []
+        self._rows: _Rows = []
         self._horizontal = False
 
         self._effective_column_widths: dict[int, int] = {}
@@ -470,7 +470,7 @@ class Table:
         """
         Fill rows that contains rowspan > 1.
         """
-        unmerged_rows = {}
+        unmerged_rows: dict[int, _Row] = {}
 
         for column, cell in enumerate(rows[line]):
             if isinstance(cell, TableCell) and cell.rowspan > 1:
@@ -659,7 +659,7 @@ class Table:
 
         return cell_width
 
-    def _cleanup(self):
+    def _cleanup(self) -> None:
         self._column_widths = {}
         self._number_of_columns = None
 
