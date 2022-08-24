@@ -36,10 +36,7 @@ class Output:
         formatter: Formatter | None = None,
     ) -> None:
         self._verbosity: Verbosity = verbosity
-        if formatter is None:
-            formatter = Formatter()
-
-        self._formatter = formatter
+        self._formatter = formatter or Formatter()
         self._formatter.decorated(decorated)
 
         self._section_outputs: list[SectionOutput] = []

@@ -63,7 +63,6 @@ show_error_codes = true
 [[tool.mypy.overrides]]
 module = [
     "cleo._utils",
-    "cleo.io.buffered_io",
     "cleo.ui.table",
 ]
 ignore_errors = true
@@ -74,7 +73,8 @@ omit = [
 ]
 exclude_lines = [
     "pragma: no cover",
-    "if TYPE_CHECKING:"
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError"
 ]
 
 [build-system]

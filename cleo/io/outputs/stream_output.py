@@ -31,36 +31,33 @@ class StreamOutput(Output):
         formatter: Formatter | None = None,
     ) -> None:
         self._stream = stream
-        self._supports_utf8: bool | None = None
-
-        if decorated is None:
-            decorated = self._has_color_support()
-
-        super().__init__(verbosity=verbosity, decorated=decorated, formatter=formatter)
+        self._supports_utf8 = self._get_utf8_support_info()
+        super().__init__(
+            verbosity=verbosity,
+            decorated=decorated or self._has_color_support(),
+            formatter=formatter,
+        )
 
     @property
     def stream(self) -> TextIO:
         return self._stream
 
+    @property
     def supports_utf8(self) -> bool:
+        return self._supports_utf8
+
+    def _get_utf8_support_info(self) -> bool:
         """
         Returns whether the stream supports the UTF-8 encoding.
         """
-        if self._supports_utf8 is not None:
-            return self._supports_utf8
-
-        encoding = self._stream.encoding
-        if encoding is None:
-            encoding = locale.getpreferredencoding(False)
+        encoding = self._stream.encoding or locale.getpreferredencoding(False)
 
         try:
             encoding = codecs.lookup(encoding).name
         except Exception:
             encoding = "utf-8"
 
-        self._supports_utf8 = encoding == "utf-8"
-
-        return self._supports_utf8
+        return encoding == "utf-8"
 
     def flush(self) -> None:
         self._stream.flush()
