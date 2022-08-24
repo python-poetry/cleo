@@ -31,8 +31,7 @@ class StreamOutput(Output):
         formatter: Formatter | None = None,
     ) -> None:
         self._stream = stream
-        self._supports_utf8 = self._get_utf8_support_info
-
+        self._supports_utf8 = self._get_utf8_support_info()
         super().__init__(
             verbosity=verbosity,
             decorated=decorated or self._has_color_support(),
@@ -47,7 +46,6 @@ class StreamOutput(Output):
     def supports_utf8(self) -> bool:
         return self._supports_utf8
 
-    @property
     def _get_utf8_support_info(self) -> bool:
         """
         Returns whether the stream supports the UTF-8 encoding.
