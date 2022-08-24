@@ -31,7 +31,7 @@ class StreamOutput(Output):
         formatter: Formatter | None = None,
     ) -> None:
         self._stream = stream
-        self._supports_utf8 = self._get_utf8_support_info()
+        self._supports_utf8 = self._get_utf8_support_info
 
         super().__init__(
             verbosity=verbosity,
