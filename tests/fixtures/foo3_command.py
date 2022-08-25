@@ -12,6 +12,6 @@ class Foo3Command(Command):
     aliases = ["foo3"]
 
     def handle(self) -> int:
-        question = self.ask("echo:")
+        question = self.ask("echo:", default="default input")
         self.line(question)
         return 0

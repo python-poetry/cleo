@@ -417,8 +417,10 @@ class Application:
                 del argv[index + 1 : index + 1 + (len(name.split(" ")) - 1)]
 
             stream = io.input.stream
+            interactive = io.input.is_interactive()
             io.set_input(ArgvInput(argv))
             io.input.set_stream(stream)
+            io.input.interactive(interactive)
 
         exit_code = self._run_command(command, io)
         self._running_command = None

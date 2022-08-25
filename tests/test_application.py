@@ -376,3 +376,15 @@ def test_run_namespaced_with_input() -> None:
 
     assert status_code == 0
     assert tester.io.fetch_output() == "Hello world!\n"
+
+
+@pytest.mark.parametrize("cmd", (Foo3Command(), FooSubNamespaced3Command()))
+def test_run_with_input_and_non_interactive(cmd: Command) -> None:
+    app = Application()
+    app.add(cmd)
+
+    tester = ApplicationTester(app)
+    status_code = tester.execute(f"--no-interaction {cmd.name}", inputs="Hello world!")
+
+    assert status_code == 0
+    assert tester.io.fetch_output() == "default input\n"
