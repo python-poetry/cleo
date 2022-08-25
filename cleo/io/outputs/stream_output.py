@@ -42,7 +42,6 @@ class StreamOutput(Output):
     def stream(self) -> TextIO:
         return self._stream
 
-    @property
     def supports_utf8(self) -> bool:
         return self._supports_utf8
 
