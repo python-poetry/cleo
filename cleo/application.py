@@ -325,6 +325,12 @@ class Application:
 
             try:
                 exit_code = self._run(io)
+            except BrokenPipeError:
+                # If we are piped to another process, it may close early and send a
+                # SIGPIPE: https://docs.python.org/3/library/signal.html#note-on-sigpipe
+                devnull = os.open(os.devnull, os.O_WRONLY)
+                os.dup2(devnull, sys.stdout.fileno())
+                exit_code = 0
             except Exception as e:
                 if not self._catch_exceptions:
                     raise
