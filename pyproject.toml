@@ -45,15 +45,24 @@ force_single_line = true
 atomic = true
 lines_after_imports = 2
 lines_between_types = 1
-src_paths = ["cleo", "tests"]
-skip_glob = ["*/setup.py"]
+src_paths = [
+    "cleo",
+    "tests"
+]
+add_imports = [
+    "from __future__ import annotations"
+]
 filter_files = true
 known_first_party = "cleo"
+
+[tool.pycln]
+all = true
 
 [tool.mypy]
 strict = true
 files = "cleo, tests"
 show_error_codes = true
+pretty = true
 
 # The following whitelist is used to allow for incremental adoption
 # of Mypy. Modules should be removed from this whitelist as and when
