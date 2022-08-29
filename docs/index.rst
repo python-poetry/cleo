@@ -15,3 +15,4 @@ with some useful additions.
     validators
     usage
     single_command_tool
+    api/index
