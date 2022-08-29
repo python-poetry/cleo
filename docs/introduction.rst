@@ -102,6 +102,8 @@ The signature can span multiple lines.
         {--option : Option description}
     """
 
+.. _output-coloring:
+
 Coloring the Output
 ===================
 
