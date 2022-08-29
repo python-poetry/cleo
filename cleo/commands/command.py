@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-import inspect
-import re
-
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import ContextManager
@@ -13,7 +10,6 @@ from cleo.formatters.style import Style
 from cleo.io.inputs.string_input import StringInput
 from cleo.io.null_io import NullIO
 from cleo.io.outputs.output import Verbosity
-from cleo.parser import Parser
 from cleo.ui.table_separator import TableSeparator
 
 
@@ -47,39 +43,12 @@ class Command(BaseCommand):
         return self._io
 
     def configure(self) -> None:
-        if not self.name:
-            doc = self.__doc__
-
-            if not doc:
-                for base in inspect.getmro(self.__class__):
-                    if base.__doc__ is not None:
-                        doc = base.__doc__
-                        break
-
-            if doc:
-                self._parse_doc(doc)
 
         for argument in self.arguments:
             self._definition.add_argument(argument)
 
         for option in self.options:
             self._definition.add_option(option)
-
-    def _parse_doc(self, doc: str) -> None:
-        lines = doc.strip().split("\n", 1)
-        if len(lines) > 1:
-            self.description = lines[0].strip()
-            signature = re.sub(r"\s{2,}", " ", lines[1].strip())
-            definition = Parser.parse(signature)
-            self.name = definition["name"]
-
-            for argument in definition["arguments"]:
-                self._definition.add_argument(argument)
-
-            for option in definition["options"]:
-                self._definition.add_option(option)
-        else:
-            self.description = lines[0].strip()
 
     def execute(self, io: IO) -> int:
         self._io = io
