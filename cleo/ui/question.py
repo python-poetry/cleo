@@ -132,92 +132,92 @@ class Question:
         matches = list(autocomplete)
         num_matches = len(matches)
 
+        # Add highlighted text style
+        style = Style(options=["reverse"])
+        io.error_output.formatter.set_style("hl", style)
+
         stty_mode = subprocess.check_output(["stty", "-g"]).decode().rstrip("\n")
 
         # Disable icanon (so we can read each keypress) and
         # echo (we'll do echoing here instead)
         subprocess.check_output(["stty", "-icanon", "-echo"])
+        try:
+            # Read a keypress
+            while True:
+                c = io.read(1)
 
-        # Add highlighted text style
-        style = Style(options=["reverse"])
-        io.error_output.formatter.set_style("hl", style)
+                # Backspace character
+                if c == "\177":
+                    if num_matches == 0 and i != 0:
+                        i -= 1
+                        # Move cursor backwards
+                        io.write_error("\033[1D")
 
-        # Read a keypress
-        while True:
-            c = io.read(1)
+                    if i == 0:
+                        ofs = -1
+                        matches = list(autocomplete)
+                        num_matches = len(matches)
+                    else:
+                        num_matches = 0
 
-            # Backspace character
-            if c == "\177":
-                if num_matches == 0 and i != 0:
-                    i -= 1
-                    # Move cursor backwards
-                    io.write_error("\033[1D")
+                    # Pop the last character off the end of our string
+                    ret = ret[:i]
+                # Did we read an escape sequence
+                elif c == "\033":
+                    c += io.read(2)
 
-                if i == 0:
-                    ofs = -1
-                    matches = list(autocomplete)
-                    num_matches = len(matches)
+                    # A = Up Arrow. B = Down Arrow
+                    if c[2] == "A" or c[2] == "B":
+                        if c[2] == "A" and ofs == -1:
+                            ofs = 0
+
+                        if num_matches == 0:
+                            continue
+
+                        ofs += -1 if c[2] == "A" else 1
+                        ofs = (num_matches + ofs) % num_matches
+                elif ord(c) < 32:
+                    if c in ["\t", "\n"]:
+                        if num_matches > 0 and ofs != -1:
+                            ret = matches[ofs]
+                            # Echo out remaining chars for current match
+                            io.write_error(ret[i:])
+                            i = len(ret)
+
+                        if c == "\n":
+                            io.write_error(c)
+                            break
+
+                        num_matches = 0
+
+                    continue
                 else:
-                    num_matches = 0
-
-                # Pop the last character off the end of our string
-                ret = ret[:i]
-            # Did we read an escape sequence
-            elif c == "\033":
-                c += io.read(2)
-
-                # A = Up Arrow. B = Down Arrow
-                if c[2] == "A" or c[2] == "B":
-                    if c[2] == "A" and ofs == -1:
-                        ofs = 0
-
-                    if num_matches == 0:
-                        continue
-
-                    ofs += -1 if c[2] == "A" else 1
-                    ofs = (num_matches + ofs) % num_matches
-            elif ord(c) < 32:
-                if c in ["\t", "\n"]:
-                    if num_matches > 0 and ofs != -1:
-                        ret = matches[ofs]
-                        # Echo out remaining chars for current match
-                        io.write_error(ret[i:])
-                        i = len(ret)
-
-                    if c == "\n":
-                        io.write_error(c)
-                        break
+                    io.write_error(c)
+                    ret += c
+                    i += 1
 
                     num_matches = 0
+                    ofs = 0
 
-                continue
-            else:
-                io.write_error(c)
-                ret += c
-                i += 1
+                    for value in autocomplete:
+                        # If typed characters match the beginning
+                        # chunk of value (e.g. [AcmeDe]moBundle)
+                        if value.startswith(ret) and i != len(value):
+                            num_matches += 1
+                            matches[num_matches - 1] = value
 
-                num_matches = 0
-                ofs = 0
+                # Erase characters from cursor to end of line
+                io.write_error("\033[K")
 
-                for value in autocomplete:
-                    # If typed characters match the beginning
-                    # chunk of value (e.g. [AcmeDe]moBundle)
-                    if value.startswith(ret) and i != len(value):
-                        num_matches += 1
-                        matches[num_matches - 1] = value
-
-            # Erase characters from cursor to end of line
-            io.write_error("\033[K")
-
-            if num_matches > 0 and ofs != -1:
-                # Save cursor position
-                io.write_error("\0337")
-                # Write highlighted text
-                io.write_error("<hl>" + matches[ofs][i:] + "</hl>")
-                # Restore cursor position
-                io.write_error("\0338")
-
-        subprocess.call(["stty", f"{stty_mode}"])
+                if num_matches > 0 and ofs != -1:
+                    # Save cursor position
+                    io.write_error("\0337")
+                    # Write highlighted text
+                    io.write_error("<hl>" + matches[ofs][i:] + "</hl>")
+                    # Restore cursor position
+                    io.write_error("\0338")
+        finally:
+            subprocess.call(["stty", f"{stty_mode}"])
 
         return ret
 
