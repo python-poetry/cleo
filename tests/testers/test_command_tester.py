@@ -4,16 +4,14 @@ import pytest
 
 from cleo.application import Application
 from cleo.commands.command import Command
+from cleo.helpers import argument
 from cleo.testers.command_tester import CommandTester
 
 
 class FooCommand(Command):
-    """
-    Foo command
-
-    foo
-        {foo : Foo argument}
-    """
+    name = "foo"
+    description = "Foo command"
+    arguments = [argument("foo", description="Foo argument")]
 
     def handle(self) -> int:
         self.line(self.argument("foo"))

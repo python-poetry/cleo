@@ -1,13 +1,18 @@
 from __future__ import annotations
 
 from cleo.commands.command import Command
+from cleo.helpers import option
 
 
 class HelloCommand(Command):
-    """
-    Complete me please.
-
-    hello
-        { --dangerous-option= : This $hould be `escaped`. }
-        { --option-without-description }
-    """
+    name = "hello"
+    options = [
+        option(
+            "dangerous-option",
+            flag=False,
+            default=" ",
+            description="This $hould be `escaped`.",
+        ),
+        option("option-without-description", flag=False),
+    ]
+    description = "Complete me please."
