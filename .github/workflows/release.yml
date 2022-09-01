@@ -56,7 +56,7 @@ jobs:
           path: dist
       - name: Install and set up Poetry
         run: |
-          curl -sL https://install.python-poetry.org | python - --preview -y
+          curl -sL https://install.python-poetry.org | python - -y
 
       - name: Update PATH
         shell: bash

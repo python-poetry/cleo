@@ -8,23 +8,18 @@ on:
 jobs:
   Tests:
     name: ${{ matrix.os }} / ${{ matrix.python-version }}
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.image }}
     strategy:
       matrix:
-        os: [
-          ubuntu-latest,
-          ubuntu-22.04, # testing extra until it becomes "-latest", current latest is 20.04
-          macos-latest,
-          macos-12, # same as in ubuntu
-          windows-latest
-        ]
-        python-version: [
-          "3.7",
-          "3.8",
-          "3.9",
-          "3.10",
-          "3.11.0rc1 - 3.11"
-        ]
+        os: [Ubuntu, macOS, Windows]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11.0-rc.1"]
+        include:
+          - os: Ubuntu
+            image: ubuntu-22.04
+          - os: Windows
+            image: windows-2022
+          - os: macOS
+            image: macos-12 
     defaults:
       run:
         shell: bash
