@@ -6,13 +6,12 @@ authors = [
     "Sébastien Eustace <sebastien@eustace.io>"
 ]
 license = "MIT"
-
 readme = "README.md"
-
+packages = [
+    { include = "cleo", from = "src" }
+]
 repository = "https://github.com/python-poetry/cleo"
-
 keywords = ["cli", "commands"]
-
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
@@ -46,7 +45,7 @@ atomic = true
 lines_after_imports = 2
 lines_between_types = 1
 src_paths = [
-    "cleo",
+    "src",
     "tests"
 ]
 add_imports = [
@@ -60,7 +59,7 @@ all = true
 
 [tool.mypy]
 strict = true
-files = "cleo, tests"
+files = ["src", "tests"]
 show_error_codes = true
 pretty = true
 
@@ -78,7 +77,7 @@ ignore_errors = true
 
 [tool.coverage.report]
 omit = [
-  "cleo/_compat.py",
+  "src/cleo/_compat.py",
 ]
 exclude_lines = [
     "pragma: no cover",
