@@ -501,7 +501,11 @@ class Application:
         elif io.input.has_parameter_option("--no-ansi", True):
             io.decorated(False)
 
-        if io.input.has_parameter_option(["--no-interaction", "-n"], True):
+        if io.input.has_parameter_option(["--no-interaction", "-n"], True) or (
+            io.input._interactive is None
+            and io.input.stream
+            and not io.input.stream.isatty()
+        ):
             io.interactive(False)
 
         shell_verbosity = int(os.getenv("SHELL_VERBOSITY", 0))
