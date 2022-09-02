@@ -232,7 +232,7 @@ This is a major release with some API changes.
 
 
 
-[unreleased]: https://github.com/python-poetry/cleo/compare/0.8.1...master
+[unreleased]: https://github.com/python-poetry/cleo/compare/0.8.1...main
 [0.8.1]: https://github.com/python-poetry/cleo/releases/tag/0.8.1
 [0.8.0]: https://github.com/python-poetry/cleo/releases/tag/0.8.0
 [0.7.6]: https://github.com/python-poetry/cleo/releases/tag/0.7.6
