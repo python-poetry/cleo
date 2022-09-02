@@ -77,6 +77,7 @@ class StreamOutput(Output):
             message += "\n"
 
         self._stream.write(message)
+        self._stream.flush()
 
     def _has_color_support(self) -> bool:
         # Follow https://no-color.org/
