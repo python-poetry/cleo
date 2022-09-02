@@ -21,7 +21,7 @@ class Input:
         self._stream: TextIO = None  # type: ignore[assignment]
         self._options: dict[str, Any] = {}
         self._arguments: dict[str, Any] = {}
-        self._interactive = True
+        self._interactive: bool | None = None
 
         if definition is None:
             self._definition = Definition()
@@ -56,7 +56,7 @@ class Input:
         """
         Reads the given amount of characters from the input stream.
         """
-        if not self._interactive:
+        if not self.is_interactive():
             return default
 
         return self._stream.read(length)
@@ -65,7 +65,7 @@ class Input:
         """
         Reads a line from the input stream.
         """
-        if not self._interactive:
+        if not self.is_interactive():
             return default
 
         return self._stream.readline(length)
@@ -83,7 +83,7 @@ class Input:
         return self._stream.closed
 
     def is_interactive(self) -> bool:
-        return self._interactive
+        return True if self._interactive is None else self._interactive
 
     def interactive(self, interactive: bool = True) -> None:
         self._interactive = interactive
