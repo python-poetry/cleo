@@ -6,5 +6,5 @@ from cleo.helpers import option
 
 class CommandWithColons(Command):
     name = "command:with:colons"
-    options = [option("goodbye", flag=False)]
+    options = [option("goodbye")]
     description = "Test."

@@ -10,9 +10,8 @@ class HelloCommand(Command):
         option(
             "dangerous-option",
             flag=False,
-            default=" ",
             description="This $hould be `escaped`.",
         ),
-        option("option-without-description", flag=False),
+        option("option-without-description"),
     ]
     description = "Complete me please."
