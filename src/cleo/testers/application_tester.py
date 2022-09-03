@@ -40,7 +40,7 @@ class ApplicationTester:
         self,
         args: str = "",
         inputs: str | None = None,
-        interactive: bool | None = None,
+        interactive: bool = True,
         verbosity: Verbosity | None = None,
         decorated: bool = False,
         supports_utf8: bool = True,

@@ -325,6 +325,12 @@ class Application:
 
             try:
                 exit_code = self._run(io)
+            except BrokenPipeError:
+                # If we are piped to another process, it may close early and send a
+                # SIGPIPE: https://docs.python.org/3/library/signal.html#note-on-sigpipe
+                devnull = os.open(os.devnull, os.O_WRONLY)
+                os.dup2(devnull, sys.stdout.fileno())
+                exit_code = 0
             except Exception as e:
                 if not self._catch_exceptions:
                     raise
@@ -501,7 +507,11 @@ class Application:
         elif io.input.has_parameter_option("--no-ansi", True):
             io.decorated(False)
 
-        if io.input.has_parameter_option(["--no-interaction", "-n"], True):
+        if io.input.has_parameter_option(["--no-interaction", "-n"], True) or (
+            io.input._interactive is None
+            and io.input.stream
+            and not io.input.stream.isatty()
+        ):
             io.interactive(False)
 
         shell_verbosity = int(os.getenv("SHELL_VERBOSITY", 0))
