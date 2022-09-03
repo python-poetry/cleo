@@ -4,7 +4,8 @@
 
 - Replaced `Terminal` class with `shutil.get_terminal_size()` from standard library 
 [#175](https://github.com/python-poetry/cleo/pull/175).
-
+- Removed doc comment-based command configuration notation 
+[#239](https://github.com/python-poetry/cleo/pull/175). 
 
 ## [0.8.1] - 2020-04-17
 
