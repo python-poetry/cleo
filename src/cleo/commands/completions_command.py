@@ -8,6 +8,7 @@ import re
 import subprocess
 
 from cleo import helpers
+from cleo._compat import shell_quote
 from cleo.commands.command import Command
 from cleo.commands.completions.templates import TEMPLATES
 
@@ -156,13 +157,14 @@ script. Consult your shells documentation for how to add such directives.
         for cmd in sorted(self.application.all().values(), key=lambda c: c.name or ""):
             if cmd.hidden or not cmd.enabled or not cmd.name:
                 continue
-            cmds.append(cmd.name)
+            command_name = shell_quote(cmd.name) if " " in cmd.name else cmd.name
+            cmds.append(command_name)
             options = " ".join(
                 f"--{opt.name}".replace(":", "\\:")
                 for opt in sorted(cmd.definition.options, key=lambda o: o.name)
             )
             cmds_opts += [
-                f"            ({cmd.name})",
+                f"            ({command_name})",
                 f'            opts="${{opts}} {options}"',
                 "            ;;",
                 "",  # newline
@@ -200,13 +202,14 @@ script. Consult your shells documentation for how to add such directives.
         for cmd in sorted(self.application.all().values(), key=lambda c: c.name or ""):
             if cmd.hidden or not cmd.enabled or not cmd.name:
                 continue
-            cmds.append(self._zsh_describe(cmd.name, sanitize(cmd.description)))
+            command_name = shell_quote(cmd.name) if " " in cmd.name else cmd.name
+            cmds.append(self._zsh_describe(command_name, sanitize(cmd.description)))
             options = " ".join(
                 self._zsh_describe(f"--{opt.name}", sanitize(opt.description))
                 for opt in sorted(cmd.definition.options, key=lambda o: o.name)
             )
             cmds_opts += [
-                f"            ({cmd.name})",
+                f"            ({command_name})",
                 f"            opts+=({options})",
                 "            ;;",
                 "",  # newline
@@ -243,21 +246,22 @@ script. Consult your shells documentation for how to add such directives.
         for cmd in sorted(self.application.all().values(), key=lambda c: c.name or ""):
             if cmd.hidden or not cmd.enabled or not cmd.name:
                 continue
+            command_name = shell_quote(cmd.name) if " " in cmd.name else cmd.name
             cmds.append(
                 f"complete -c {script_name} -f -n '__fish{function}_no_subcommand' "
-                f"-a {cmd.name} -d '{sanitize(cmd.description)}'"
+                f"-a {command_name} -d '{sanitize(cmd.description)}'"
             )
             cmds_opts += [
-                f"# {cmd.name}",
+                f"# {command_name}",
                 *[
                     f"complete -c {script_name} -A "
-                    f"-n '__fish_seen_subcommand_from {cmd.name}' "
+                    f"-n '__fish_seen_subcommand_from {command_name}' "
                     f"-l {opt.name} -d '{sanitize(opt.description)}'"
                     for opt in sorted(cmd.definition.options, key=lambda o: o.name)
                 ],
                 "",  # newline
             ]
-            cmds_names.append(cmd.name)
+            cmds_names.append(command_name)
 
         return TEMPLATES["fish"] % {
             "script_name": script_name,

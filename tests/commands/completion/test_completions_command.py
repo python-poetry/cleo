@@ -9,6 +9,7 @@ import pytest
 from cleo.application import Application
 from cleo.testers.command_tester import CommandTester
 from tests.commands.completion.fixtures.command_with_colons import CommandWithColons
+from tests.commands.completion.fixtures.command_with_space_in_name import SpacedCommand
 from tests.commands.completion.fixtures.hello_command import HelloCommand
 
 
@@ -19,6 +20,7 @@ if TYPE_CHECKING:
 app = Application()
 app.add(HelloCommand())
 app.add(CommandWithColons())
+app.add(SpacedCommand())
 
 
 def test_invalid_shell() -> None:
