@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
+from cleo._compat import WINDOWS
 from cleo.application import Application
 from cleo.testers.command_tester import CommandTester
 from tests.commands.completion.fixtures.command_with_colons import CommandWithColons
@@ -31,6 +32,7 @@ def test_invalid_shell() -> None:
         tester.execute("pomodoro")
 
 
+@pytest.mark.skipif(WINDOWS, reason="Only test linux shells")
 def test_bash(mocker: MockerFixture) -> None:
     mocker.patch(
         "cleo.io.inputs.string_input.StringInput.script_name",
@@ -52,6 +54,7 @@ def test_bash(mocker: MockerFixture) -> None:
     assert expected == tester.io.fetch_output().replace("\r\n", "\n")
 
 
+@pytest.mark.skipif(WINDOWS, reason="Only test linux shells")
 def test_zsh(mocker: MockerFixture) -> None:
     mocker.patch(
         "cleo.io.inputs.string_input.StringInput.script_name",
@@ -73,6 +76,7 @@ def test_zsh(mocker: MockerFixture) -> None:
     assert expected == tester.io.fetch_output().replace("\r\n", "\n")
 
 
+@pytest.mark.skipif(WINDOWS, reason="Only test linux shells")
 def test_fish(mocker: MockerFixture) -> None:
     mocker.patch(
         "cleo.io.inputs.string_input.StringInput.script_name",
