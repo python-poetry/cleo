@@ -14,14 +14,14 @@ if TYPE_CHECKING:
 
 
 class SelectChoiceValidator:
-    def __init__(self, question: Question) -> None:
+    def __init__(self, question: ChoiceQuestion) -> None:
         """
         Constructor.
         """
         self._question = question
         self._values = question.choices
 
-    def validate(self, selected: str | int) -> str | None:
+    def validate(self, selected: str | int) -> str | list[str] | None:
         """
         Validate a choice.
         """
@@ -32,14 +32,13 @@ class SelectChoiceValidator:
         if selected is None:
             return None
 
-        selected_choices = selected.replace(" ", "")
-
         if self._question.supports_multiple_choices():
             # Check for a separated comma values
-            if not re.match("^[a-zA-Z0-9_-]+(?:,[a-zA-Z0-9_-]+)*$", selected_choices):
+            _selected = selected.replace(" ", "")
+            if not re.match("^[a-zA-Z0-9_-]+(?:,[a-zA-Z0-9_-]+)*$", _selected):
                 raise ValueException(self._question.error_message.format(selected))
 
-            selected_choices = selected_choices.split(",")
+            selected_choices = _selected.split(",")
         else:
             selected_choices = [selected]
 
@@ -57,21 +56,11 @@ class SelectChoiceValidator:
                     f'Value should be one of {" or ".join(str(r) for r in results)}.'
                 )
 
-            try:
-                result = self._values.index(value)
-                result = self._values[result]
-            except ValueError:
-                try:
-                    value = int(value)
-
-                    if 0 <= value < len(self._values):
-                        result = self._values[value]
-                    else:
-                        result = False
-                except ValueError:
-                    result = False
-
-            if result is False:
+            if value in self._values:
+                result = value
+            elif value.isdigit() and 0 <= int(value) < len(self._values):
+                result = self._values[int(value)]
+            else:
                 raise ValueException(self._question.error_message.format(value))
 
             multiselect_choices.append(result)

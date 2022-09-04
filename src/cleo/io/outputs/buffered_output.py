@@ -1,14 +1,26 @@
 from __future__ import annotations
 
 from io import StringIO
+from typing import TYPE_CHECKING
 
 from cleo.io.outputs.output import Output
+from cleo.io.outputs.output import Verbosity
 from cleo.io.outputs.section_output import SectionOutput
 
 
+if TYPE_CHECKING:
+    from cleo.formatters.formatter import Formatter
+
+
 class BufferedOutput(Output):
-    def __init__(self, decorated: bool = False, supports_utf8: bool = True) -> None:
-        super().__init__(decorated=decorated)
+    def __init__(
+        self,
+        verbosity: Verbosity = Verbosity.NORMAL,
+        decorated: bool = False,
+        formatter: Formatter | None = None,
+        supports_utf8: bool = True,
+    ) -> None:
+        super().__init__(decorated=decorated, verbosity=verbosity, formatter=formatter)
 
         self._buffer = StringIO()
         self._supports_utf8 = supports_utf8

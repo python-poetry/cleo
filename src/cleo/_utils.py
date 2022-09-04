@@ -24,7 +24,6 @@ class TagStripper(HTMLParser):
     def handle_charref(self, name: str) -> None:
         self.fed.append(f"&#{name};")
 
-
     def get_data(self) -> str:
         return "".join(self.fed)
 

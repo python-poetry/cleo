@@ -6,13 +6,12 @@ authors = [
     "Sébastien Eustace <sebastien@eustace.io>"
 ]
 license = "MIT"
-
 readme = "README.md"
-
+packages = [
+    { include = "cleo", from = "src" }
+]
 repository = "https://github.com/python-poetry/cleo"
-
 keywords = ["cli", "commands"]
-
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
@@ -29,10 +28,10 @@ classifiers = [
 # Requirements
 [tool.poetry.dependencies]
 python = "^3.7"
-crashtest = "^0.3.1"
+crashtest = "^0.4.0"
 rapidfuzz = "^2.2.0"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "^7.1.2"
 pytest-mock = "^3.8.2"
 pre-commit = "^2.20.0"
@@ -45,15 +44,24 @@ force_single_line = true
 atomic = true
 lines_after_imports = 2
 lines_between_types = 1
-src_paths = ["cleo", "tests"]
-skip_glob = ["*/setup.py"]
+src_paths = [
+    "src",
+    "tests"
+]
+add_imports = [
+    "from __future__ import annotations"
+]
 filter_files = true
 known_first_party = "cleo"
 
+[tool.pycln]
+all = true
+
 [tool.mypy]
 strict = true
-files = "cleo, tests"
+files = ["src", "tests"]
 show_error_codes = true
+pretty = true
 
 # The following whitelist is used to allow for incremental adoption
 # of Mypy. Modules should be removed from this whitelist as and when
@@ -62,27 +70,20 @@ show_error_codes = true
 
 [[tool.mypy.overrides]]
 module = [
-    "cleo.io.buffered_io",
-    "cleo.ui.choice_question",
-    "cleo.ui.confirmation_question",
-    "cleo.ui.question",
     "cleo.ui.table",
-    "tests.ui.test_choice_question",
-    "tests.ui.test_confirmation_question",
-    "tests.ui.test_question",
-    "tests.ui.test_table",
 ]
 ignore_errors = true
 
 [tool.coverage.report]
 omit = [
-  "cleo/_compat.py",
+  "src/cleo/_compat.py",
 ]
 exclude_lines = [
     "pragma: no cover",
-    "if TYPE_CHECKING:"
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError"
 ]
 
 [build-system]
-requires = ["poetry-core~=1.0"]
+requires = ["poetry-core~=1.1.0"]
 build-backend = "poetry.core.masonry.api"
