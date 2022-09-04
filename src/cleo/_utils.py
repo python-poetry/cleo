@@ -71,9 +71,8 @@ def find_similar_names(name: str, names: list[str]) -> list[str]:
     distance_by_name = {
         k: v for k, v in distance_by_name.items() if v[0] < 2 * threshold
     }
-
     # Display results with shortest distance first
-    return sorted(distance_by_name, key=distance_by_name.get)
+    return sorted(distance_by_name, key=lambda x: distance_by_name[x])
 
 
 @dataclass
@@ -89,18 +88,20 @@ class TimeFormat:
 
 
 _TIME_FORMATS: list[TimeFormat] = [
-    TimeFormat(0, "< 1 sec"),
+    TimeFormat(1, "< 1 sec"),
     TimeFormat(2, "1 sec"),
-    TimeFormat(59, "secs", 1),
-    TimeFormat(60, "1 min"),
+    TimeFormat(60, "secs", 1),
+    TimeFormat(61, "1 min"),
     TimeFormat(3600, "mins", 60),
-    TimeFormat(5400, "1 hr"),
+    TimeFormat(5401, "1 hr"),
     TimeFormat(86400, "hrs", 3600),
-    TimeFormat(129600, "1 day"),
-    TimeFormat(604800, "days", 86400),
+    TimeFormat(129601, "1 day"),
+    TimeFormat(604801, "days", 86400),
 ]
 
 
 def format_time(secs: float) -> str:
-    format = next(fmt for fmt in _TIME_FORMATS if secs <= fmt.threshold)
+    format = next(
+        (fmt for fmt in _TIME_FORMATS if secs < fmt.threshold), _TIME_FORMATS[-1]
+    )
     return format.apply(secs)
