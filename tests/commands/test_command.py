@@ -9,12 +9,8 @@ from tests.fixtures.signature_command import SignatureCommand
 
 
 class MyCommand(Command):
-    """
-    Command testing.
-
-    test
-        {action : The action to execute.}
-    """
+    name = "test"
+    arguments = [argument("action", description="The action to execute.")]
 
     def handle(self) -> int:
         action = self.argument("action")

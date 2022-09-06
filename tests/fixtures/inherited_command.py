@@ -4,11 +4,8 @@ from cleo.commands.command import Command
 
 
 class ParentCommand(Command):
-    """
-    Parent Command.
-
-    parent
-    """
+    name = "parent"
+    description = "Parent Command."
 
 
 class ChildCommand(ParentCommand):

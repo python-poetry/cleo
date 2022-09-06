@@ -70,7 +70,6 @@ pretty = true
 
 [[tool.mypy.overrides]]
 module = [
-    "cleo._utils",
     "cleo.ui.table",
 ]
 ignore_errors = true

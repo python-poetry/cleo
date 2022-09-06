@@ -17,16 +17,26 @@ To make a command that greets you from the command line, create
 
 ```python
 from cleo.commands.command import Command
-
+from cleo.helpers import argument, option
 
 class GreetCommand(Command):
-    """
-    Greets someone
-
-    greet
-        {name? : Who do you want to greet?}
-        {--y|yell : If set, the task will yell in uppercase letters}
-    """
+    name = "greet"
+    description = "Greets someone"
+    arguments = [
+        argument(
+            "name",
+            description="Who do you want to greet?",
+            optional=True
+        )
+    ]
+    options = [
+        option(
+            "yell",
+            "y",
+            description="If set, the task will yell in uppercase letters",
+            flag=True
+        )
+    ]
 
     def handle(self):
         name = self.argument("name")
@@ -84,35 +94,6 @@ This prints:
 HELLO JOHN
 ```
 
-As you may have already seen, Cleo uses the command docstring to
-determine the command definition. The docstring must be in the following
-form :
-
-```python
-"""
-Command description
-
-Command signature
-"""
-```
-
-The signature being in the following form:
-
-```python
-"""
-command:name {argument : Argument description} {--option : Option description}
-"""
-```
-
-The signature can span multiple lines.
-
-```python
-"""
-command:name
-    {argument : Argument description}
-    {--option : Option description}
-"""
-```
 
 ### Coloring the Output
 
@@ -211,14 +192,27 @@ argument to the command and make the `name` argument required:
 
 ```python
 class GreetCommand(Command):
-    """
-    Greets someone
-
-    greet
-        {name : Who do you want to greet?}
-        {last_name? : Your last name?}
-        {--y|yell : If set, the task will yell in uppercase letters}
-    """
+    name = "greet"
+    description = "Greets someone"
+    arguments = [
+        argument(
+            "name",
+            description="Who do you want to greet?",
+        ),
+        argument(
+            "last_name",
+            description="Your last name?",
+            optional=True
+        )
+    ]
+    options = [
+        option(
+            "yell",
+            "y",
+            description="If set, the task will yell in uppercase letters",
+            flag=True
+        )
+    ]
 ```
 
 You now have access to a `last_name` argument in your command:
@@ -242,13 +236,23 @@ the end of the argument list:
 
 ```python
 class GreetCommand(Command):
-    """
-    Greets someone
-
-    greet
-        {names* : Who do you want to greet?}
-        {--y|yell : If set, the task will yell in uppercase letters}
-    """
+    name = "greet"
+    description = "Greets someone"
+    arguments = [
+        argument(
+            "names",
+            description="Who do you want to greet?",
+            multiple=True
+        )
+    ]
+    options = [
+        option(
+            "yell",
+            "y",
+            description="If set, the task will yell in uppercase letters",
+            flag=True
+        )
+    ]
 ```
 
 To use this, just specify as many names as you want:
@@ -265,34 +269,6 @@ if names:
     text = "Hello " + ", ".join(names)
 ```
 
-There are 3 argument variants you can use:
-
-| Mode     | Notation                            | Value                                                                                                       |
-| -------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Required | none (just write the argument name) | The argument is required                                                                                    |
-| Optional | `argument?`                         | The argument is optional and therefore can be omitted                                                       |
-| List     | `argument*`                         | The argument can contain an indefinite number of arguments and must be used at the end of the argument list |
-
-You can combine them like this:
-
-```python
-class GreetCommand(Command):
-    """
-    Greets someone
-
-    greet
-        {names?* : Who do you want to greet?}
-        {--y|yell : If set, the task will yell in uppercase letters}
-    """
-```
-
-If you want to set a default value, you can it like so:
-
-```text
-argument=default
-```
-
-The argument will then be considered optional.
 
 ### Using Options
 
@@ -312,20 +288,34 @@ how many times in a row the message should be printed:
 
 ```python
 class GreetCommand(Command):
-    """
-    Greets someone
-
-    greet
-        {name? : Who do you want to greet?}
-        {--y|yell : If set, the task will yell in uppercase letters}
-        {--iterations=1 : How many times should the message be printed?}
-    """
+    name = "greet"
+    description = "Greets someone"
+    arguments = [
+        argument(
+            "name",
+            description="Who do you want to greet?",
+            optional=True
+        )
+    ]
+    options = [
+        option(
+            "yell",
+            "y",
+            description="If set, the task will yell in uppercase letters",
+            flag=True
+        ),
+        option(
+            "iterations",
+            description="How many times should the message be printed?",
+            default=1
+        )
+    ]
 ```
 
 Next, use this in the command to print the message multiple times:
 
 ```python
-for _ in range(0, int(self.option("iterations"))):
+for _ in range(int(self.option("iterations"))):
     self.line(text)
 ```
 
@@ -348,28 +338,6 @@ $ python application.py greet John --iterations=5 --yell
 $ python application.py greet John --yell --iterations=5
 ```
 
-There are 4 option variants you can use:
-
-| Option         | Notation     | Value                                                                               |
-| -------------- | ------------ | ----------------------------------------------------------------------------------- |
-| List           | `--option=*` | This option accepts multiple values (e.g. `--dir=/foo --dir=/bar`)                  |
-| Flag           | `--option`   | Do not accept input for this option (e.g. `--yell`)                                 |
-| Requires value | `--option=`  | This value is required (e.g. `--iterations=5`), the option itself is still optional |
-| Optional value | `--option=?` | This option may or may not have a value (e.g. `--yell` or `--yell=loud`)            |
-
-You can combine them like this:
-
-```python
-class GreetCommand(Command):
-    """
-    Greets someone
-
-    greet
-        {name? : Who do you want to greet?}
-        {--y|yell : If set, the task will yell in uppercase letters}
-        {--iterations=?*1 : How many times should the message be printed?}
-    """
-```
 
 ### Testing Commands
 
