@@ -13,6 +13,7 @@
 
 from __future__ import annotations
 
+import datetime
 import os
 
 
@@ -44,8 +45,9 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
+this_year = datetime.datetime.now().year
 project = "Cleo"
-copyright = "2014, Sébastien Eustace"
+copyright = f"{this_year}, Sébastien Eustace"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
