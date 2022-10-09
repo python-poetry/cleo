@@ -26,7 +26,7 @@ copyright = f"{this_year}, {author}"
 
 release = cleo.__version__
 
-version_major, version_minor, _ = cleo.__version__.split(".", 2)
+version_major, version_minor, _ = release.split(".", 2)
 version = f"{version_major}.{version_minor}"
 
 
