@@ -8,6 +8,5 @@ tools capable of helping you with different tasks:
     :maxdepth: 1
 
     question_helper
-    formatter_helper
     progress_bar
     table

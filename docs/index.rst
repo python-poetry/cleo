@@ -12,6 +12,6 @@ with some useful additions.
     installation
     introduction
     helpers/index
-    validators
     usage
     single_command_tool
+    api/index
