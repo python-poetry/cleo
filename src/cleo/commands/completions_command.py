@@ -249,7 +249,7 @@ script. Consult your shells documentation for how to add such directives.
             command_name = shell_quote(cmd.name) if " " in cmd.name else cmd.name
             cmds.append(
                 f"complete -c {script_name} -f -n '__fish{function}_no_subcommand' "
-                f"-a '{command_name}' -d '{sanitize(cmd.description)}'"
+                f"-a '{cmd.name}' -d '{sanitize(cmd.description)}'"
             )
             cmds_opts += [
                 f"# {command_name}",
