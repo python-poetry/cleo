@@ -17,10 +17,10 @@ complete -c script -n '__fish_my_function_no_subcommand' -l verbose -d 'Increase
 complete -c script -n '__fish_my_function_no_subcommand' -l version -d 'Display this application version.'
 
 # commands
-complete -c script -f -n '__fish_my_function_no_subcommand' -a command:with:colons -d 'Test.'
-complete -c script -f -n '__fish_my_function_no_subcommand' -a hello -d 'Complete me please.'
-complete -c script -f -n '__fish_my_function_no_subcommand' -a help -d 'Displays help for a command.'
-complete -c script -f -n '__fish_my_function_no_subcommand' -a list -d 'Lists commands.'
+complete -c script -f -n '__fish_my_function_no_subcommand' -a 'command:with:colons' -d 'Test.'
+complete -c script -f -n '__fish_my_function_no_subcommand' -a 'hello' -d 'Complete me please.'
+complete -c script -f -n '__fish_my_function_no_subcommand' -a 'help' -d 'Displays help for a command.'
+complete -c script -f -n '__fish_my_function_no_subcommand' -a 'list' -d 'Lists commands.'
 complete -c script -f -n '__fish_my_function_no_subcommand' -a 'spaced command' -d 'Command with space in name.'
 
 # command options
