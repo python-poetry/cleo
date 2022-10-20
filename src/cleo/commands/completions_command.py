@@ -162,7 +162,7 @@ script. Consult your shells documentation for how to add such directives.
                 for opt in sorted(cmd.definition.options, key=lambda o: o.name)
             )
             cmds_opts += [
-                f"            ({cmd.name})",
+                f"            (\"{cmd.name}\")",
                 f'            opts="${{opts}} {options}"',
                 "            ;;",
                 "",  # newline
