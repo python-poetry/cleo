@@ -22,8 +22,8 @@ if TYPE_CHECKING:
     from cleo.ui.progress_bar import ProgressBar
     from cleo.ui.progress_indicator import ProgressIndicator
     from cleo.ui.question import Question
-    from cleo.ui.table import Table
     from cleo.ui.table import Rows
+    from cleo.ui.table import Table
 
 
 class Command(BaseCommand):

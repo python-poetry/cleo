@@ -107,7 +107,7 @@ class Table:
 
         return self
 
-    def set_headers(self, headers: Header | List[Header]) -> Table:
+    def set_headers(self, headers: Header | list[Header]) -> Table:
         if headers and not isinstance(headers[0], list):
             headers = cast("Header", headers)
             headers = [headers]
