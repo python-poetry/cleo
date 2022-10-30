@@ -5,11 +5,13 @@ import re
 
 from copy import deepcopy
 from typing import TYPE_CHECKING
-from typing import Generator
+from typing import Iterator
 from typing import List
 from typing import Union
+from typing import cast
 
 from cleo.formatters.formatter import Formatter
+from cleo.io.outputs.output import Output
 from cleo.ui.table_cell import TableCell
 from cleo.ui.table_cell_style import TableCellStyle
 from cleo.ui.table_separator import TableSeparator
@@ -18,10 +20,10 @@ from cleo.ui.table_style import TableStyle
 
 if TYPE_CHECKING:
     from cleo.io.io import IO
-    from cleo.io.outputs.output import Output
 
-_Row = List[Union[str, TableCell]]
-_Rows = List[Union[_Row, TableSeparator]]
+Row = List[Union[str, TableCell]]
+Rows = List[Union[Row, TableSeparator]]
+Header = Row
 
 
 class Table:
@@ -45,9 +47,9 @@ class Table:
         self._header_title: str | None = None
         self._footer_title: str | None = None
 
-        self._headers: list[str] = []
+        self._headers: list[Header] = []
 
-        self._rows: _Rows = []
+        self._rows: Rows = []
         self._horizontal = False
 
         self._effective_column_widths: dict[int, int] = {}
@@ -105,26 +107,29 @@ class Table:
 
         return self
 
-    def set_headers(self, headers: list[str]) -> Table:
+    def set_headers(self, headers: Header | List[Header]) -> Table:
         if headers and not isinstance(headers[0], list):
+            headers = cast("Header", headers)
             headers = [headers]
+
+        headers = cast("List[Header]", headers)
 
         self._headers = headers
 
         return self
 
-    def set_rows(self, rows: _Rows) -> Table:
+    def set_rows(self, rows: Rows) -> Table:
         self._rows = []
 
         return self.add_rows(rows)
 
-    def add_rows(self, rows: _Rows) -> Table:
+    def add_rows(self, rows: Rows) -> Table:
         for row in rows:
             self.add_row(row)
 
         return self
 
-    def add_row(self, row: _Row | TableSeparator) -> Table:
+    def add_row(self, row: Row | TableSeparator) -> Table:
         if isinstance(row, TableSeparator):
             self._rows.append(row)
 
@@ -153,7 +158,7 @@ class Table:
         divider = TableSeparator()
 
         if self._horizontal:
-            rows = []
+            rows: Rows = []
             headers = self._headers[0] if self._headers else []
             for i, header in enumerate(headers):
                 rows.append([header])
@@ -161,15 +166,18 @@ class Table:
                     if isinstance(row, TableSeparator):
                         continue
 
+                    rows_i = rows[i]
+                    assert not isinstance(rows_i, TableSeparator)
+
                     if len(row) > i:
-                        rows[i].append(row[i])
-                    elif isinstance(rows[i][0], TableCell) and rows[i][0].colspan >= 2:
+                        rows_i.append(row[i])
+                    elif isinstance(rows_i[0], TableCell) and rows_i[0].colspan >= 2:
                         # There is a title
                         pass
                     else:
-                        rows[i].append(None)
+                        rows_i.append("")
         else:
-            rows = self._headers + [divider] + self._rows
+            rows = cast("Rows", self._headers) + [divider] + self._rows
 
         self._calculate_number_of_columns(rows)
         rows = list(self._build_table_rows(rows))
@@ -339,7 +347,7 @@ class Table:
 
         self._io.write_line(row_content)
 
-    def _render_cell(self, row: _Row, column: int, cell_format: str) -> str:
+    def _render_cell(self, row: Row, column: int, cell_format: str) -> str:
         """
         Renders a table cell with padding.
         """
@@ -389,7 +397,7 @@ class Table:
 
         return cell_format.format(pad(content, width, style.padding_char))
 
-    def _calculate_number_of_columns(self, rows: _Rows) -> None:
+    def _calculate_number_of_columns(self, rows: Rows) -> None:
         columns = [0]
         for row in rows:
             if isinstance(row, TableSeparator):
@@ -399,8 +407,8 @@ class Table:
 
         self._number_of_columns = max(columns)
 
-    def _build_table_rows(self, rows: _Rows) -> Generator:
-        unmerged_rows = {}
+    def _build_table_rows(self, rows: Rows) -> Iterator[Row | TableSeparator]:
+        unmerged_rows: dict[int, dict[int, Row]] = {}
         row_key = 0
         while row_key < len(rows):
             rows = self._fill_next_rows(rows, row_key)
@@ -412,6 +420,7 @@ class Table:
                 if column in self._column_max_widths and self._column_max_widths[
                     column
                 ] < len(self._io.remove_format(cell)):
+                    assert isinstance(self._io, Output)
                     cell = self._io.formatter.format_and_wrap(
                         cell, self._column_max_widths[column] * colspan
                     )
@@ -434,7 +443,9 @@ class Table:
                         line = TableCell(line, colspan=colspan)
 
                     if line_key == 0:
-                        rows[row_key][column] = line
+                        row = rows[row_key]
+                        assert not isinstance(row, TableSeparator)
+                        row[column] = line
                     else:
                         if row_key not in unmerged_rows:
                             unmerged_rows[row_key] = {}
@@ -458,7 +469,9 @@ class Table:
     def _calculate_row_count(self) -> int:
         number_of_rows = len(
             list(
-                self._build_table_rows(self._headers + [TableSeparator()] + self._rows)
+                self._build_table_rows(
+                    cast("Rows", self._headers) + [TableSeparator()] + self._rows
+                )
             )
         )
 
@@ -470,16 +483,16 @@ class Table:
 
         return number_of_rows
 
-    def _fill_next_rows(self, rows: _Rows, line: int) -> _Rows:
+    def _fill_next_rows(self, rows: Rows, line: int) -> Rows:
         """
         Fill rows that contains rowspan > 1.
         """
-        unmerged_rows: dict[int, _Row] = {}
+        unmerged_rows: dict[int, dict[int, str | TableCell]] = {}
 
         for column, cell in enumerate(rows[line]):
             if isinstance(cell, TableCell) and cell.rowspan > 1:
                 nb_lines = cell.rowspan - 1
-                lines = [cell]
+                lines: Row = [cell]
                 if "\n" in cell:
                     lines = cell.replace("\n", "<fg=default;bg=default>\n</>").split(
                         "\n"
@@ -487,19 +500,21 @@ class Table:
                     if len(lines) > nb_lines:
                         nb_lines = cell.count("\n")
 
-                    rows[line][column] = TableCell(
+                    row = rows[line]
+                    assert not isinstance(row, TableSeparator)
+
+                    row[column] = TableCell(
                         lines[0], colspan=cell.colspan, style=cell.style
                     )
 
                 # Create a two dimensional dict (rowspan x colspan)
-                placeholder = {k: {} for k in range(line + 1, line + 1 + nb_lines)}
+                placeholder: dict[int, dict[int, str | TableCell]] = {
+                    k: {} for k in range(line + 1, line + 1 + nb_lines)
+                }
                 for k, v in unmerged_rows.items():
                     if k in placeholder:
                         for l, m in unmerged_rows[k].items():  # noqa: E741
-                            if l in placeholder[k]:
-                                placeholder[k][l].update(m)
-                            else:
-                                placeholder[k][l] = m
+                            placeholder[k][l] = m
                     else:
                         placeholder[k] = v
 
@@ -518,12 +533,14 @@ class Table:
 
         for unmerged_row_key, unmerged_row in unmerged_rows.items():
             # we need to know if unmerged_row will be merged or inserted into rows
+            assert self._number_of_columns is not None
+            this_row = None if unmerged_row_key >= len(rows) else rows[unmerged_row_key]
             if (
-                unmerged_row_key < len(rows)
-                and isinstance(rows[unmerged_row_key], list)
+                this_row is not None
+                and not isinstance(this_row, TableSeparator)
                 and (
                     (
-                        self._get_number_of_columns(rows[unmerged_row_key])
+                        self._get_number_of_columns(this_row)
                         + self._get_number_of_columns(
                             list(unmerged_rows[unmerged_row_key].values())
                         )
@@ -533,7 +550,7 @@ class Table:
             ):
                 # insert cell into row at cell_key position
                 for cell_key, cell in unmerged_row.items():
-                    rows[unmerged_row_key].insert(cell_key, cell)
+                    this_row.insert(cell_key, cell)
             else:
                 row = self._copy_row(rows, unmerged_row_key - 1)
                 for column, cell in unmerged_row.items():
@@ -544,7 +561,7 @@ class Table:
 
         return rows
 
-    def _fill_cells(self, row: _Row) -> list[str | TableCell]:
+    def _fill_cells(self, row: Row | TableSeparator) -> Row | TableSeparator:
         """
         Fills cells for a row that contains colspan > 1.
         """
@@ -563,7 +580,7 @@ class Table:
 
         return row
 
-    def _copy_row(self, rows: _Rows, line: int) -> _Row:
+    def _copy_row(self, rows: Rows, line: int) -> Row:
         """
         Copies a row.
         """
@@ -576,7 +593,7 @@ class Table:
 
         return row
 
-    def _get_number_of_columns(self, row: _Row) -> int:
+    def _get_number_of_columns(self, row: Row) -> int:
         """
         Gets number of columns by row.
         """
@@ -587,7 +604,7 @@ class Table:
 
         return columns
 
-    def _get_row_columns(self, row: _Row) -> list[int]:
+    def _get_row_columns(self, row: Row) -> list[int]:
         """
         Gets list of columns for the given row.
         """
@@ -605,7 +622,7 @@ class Table:
 
         return columns
 
-    def _calculate_column_widths(self, rows: _Rows) -> None:
+    def _calculate_column_widths(self, rows: Rows) -> None:
         """
         Calculates column widths.
         """
@@ -643,7 +660,7 @@ class Table:
     def _get_column_separator_width(self) -> int:
         return len(self.style.border_format.format(self.style.border_chars[3]))
 
-    def _get_cell_width(self, row: _Row, column: int) -> int:
+    def _get_cell_width(self, row: Row, column: int) -> int:
         """
         Gets cell width.
         """
