@@ -22,8 +22,8 @@ if TYPE_CHECKING:
     from cleo.ui.progress_bar import ProgressBar
     from cleo.ui.progress_indicator import ProgressIndicator
     from cleo.ui.question import Question
+    from cleo.ui.table import Rows
     from cleo.ui.table import Table
-    from cleo.ui.table import _Rows
 
 
 class Command(BaseCommand):
@@ -184,7 +184,7 @@ class Command(BaseCommand):
     def table(
         self,
         header: str | None = None,
-        rows: _Rows | None = None,
+        rows: Rows | None = None,
         style: str | None = None,
     ) -> Table:
         """
@@ -210,7 +210,7 @@ class Command(BaseCommand):
 
         return TableSeparator()
 
-    def render_table(self, headers: str, rows: _Rows, style: str | None = None) -> None:
+    def render_table(self, headers: str, rows: Rows, style: str | None = None) -> None:
         """
         Format input to textual table.
         """
