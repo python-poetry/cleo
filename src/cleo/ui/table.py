@@ -52,7 +52,7 @@ class Table:
 
         self._effective_column_widths: dict[int, int] = {}
 
-        self._number_of_columns = None
+        self._number_of_columns: int | None = None
 
         self._column_styles: dict[int, TableStyle] = {}
         self._column_widths: dict[int, int] = {}
@@ -66,6 +66,7 @@ class Table:
 
     @property
     def style(self) -> TableStyle:
+        assert self._style is not None
         return self._style
 
     def set_style(self, name: str) -> Table:
@@ -79,7 +80,7 @@ class Table:
         if column_index in self._column_styles:
             return self._column_styles[column_index]
 
-        return self._style
+        return self.style
 
     def set_column_style(self, column_index: int, style: str | TableStyle) -> Table:
         self._column_styles[column_index] = self._resolve_style(style)
@@ -200,25 +201,25 @@ class Table:
                     self._render_row_separator(
                         self.SEPARATOR_TOP,
                         self._header_title,
-                        self._style.header_title_format,
+                        self.style.header_title_format,
                     )
 
             if self._horizontal:
                 self._render_row(
-                    row, self._style.cell_row_format, self._style.cell_header_format
+                    row, self.style.cell_row_format, self.style.cell_header_format
                 )
             else:
                 self._render_row(
                     row,
-                    self._style.cell_header_format
+                    self.style.cell_header_format
                     if is_header
-                    else self._style.cell_row_format,
+                    else self.style.cell_row_format,
                 )
 
         self._render_row_separator(
             self.SEPARATOR_BOTTOM,
             self._footer_title,
-            self._style.footer_title_format,
+            self.style.footer_title_format,
         )
 
         self._cleanup()
@@ -241,11 +242,11 @@ class Table:
         if not count:
             return
 
-        borders = self._style.border_chars
-        if not borders[0] and not borders[2] and not self._style.crossing_char:
+        borders = self.style.border_chars
+        if not borders[0] and not borders[2] and not self.style.crossing_char:
             return
 
-        crossings = self._style.crossing_chars
+        crossings = self.style.crossing_chars
         if type == self.SEPARATOR_MID:
             horizontal, left_char, mid_char, right_char = (
                 borders[2],
@@ -281,6 +282,7 @@ class Table:
             markup += right_char if column == count - 1 else mid_char
 
         if title is not None:
+            assert title_format is not None
             formatted_title = title_format.format(title)
             title_length = len(self._io.remove_format(formatted_title))
             markup_length = len(markup)
@@ -300,15 +302,15 @@ class Table:
                 + markup[title_start + title_length :]
             )
 
-        self._io.write_line(self._style.border_format.format(markup))
+        self._io.write_line(self.style.border_format.format(markup))
 
     def _render_column_separator(self, type: int = BORDER_OUTSIDE) -> str:
         """
         Renders vertical column separator.
         """
-        borders = self._style.border_chars
+        borders = self.style.border_chars
 
-        return self._style.border_format.format(
+        return self.style.border_format.format(
             borders[1] if type == self.BORDER_OUTSIDE else borders[3]
         )
 
@@ -369,16 +371,18 @@ class Table:
                 r"^<(\w+|(\w+=[\w,]+;?)*)>.+</(\w+|(\w+=\w+;?)*)?>$", str(cell)
             )
             if is_not_styled_by_tag:
-                cell_format = cell.style.cell_format
-                if cell_format is None:
-                    cell_format = f"<{cell.style.tag}>{{}}</>"
+                cell_format = (
+                    cell.style.cell_format
+                    if cell.style.cell_format is not None
+                    else f"<{cell.style.tag}>{{}}</>"
+                )
 
                 if "</>" in content:
                     content = content.replace("</>", "")
                     width -= 3
 
                 if "<fg=default;bg=default>" in content:
-                    content = content.replace("<fg=default;bg=default>")
+                    content = content.replace("<fg=default;bg=default>", "")
                     width -= len("<fg=default;bg=default>")
 
             pad = cell.style.pad
@@ -572,7 +576,7 @@ class Table:
 
         return row
 
-    def _get_number_of_columns(self, row: _Row):
+    def _get_number_of_columns(self, row: _Row) -> int:
         """
         Gets number of columns by row.
         """
@@ -587,6 +591,7 @@ class Table:
         """
         Gets list of columns for the given row.
         """
+        assert self._number_of_columns is not None
         columns = list(range(0, self._number_of_columns))
 
         for cell_key, cell in enumerate(row):
@@ -604,6 +609,7 @@ class Table:
         """
         Calculates column widths.
         """
+        assert self._number_of_columns is not None
         for column in range(0, self._number_of_columns):
             lengths = [0]
             for row in rows:
@@ -631,11 +637,11 @@ class Table:
                 lengths.append(self._get_cell_width(row_, column))
 
             self._effective_column_widths[column] = (
-                max(lengths) + len(self._style.cell_row_content_format) - 2
+                max(lengths) + len(self.style.cell_row_content_format) - 2
             )
 
     def _get_column_separator_width(self) -> int:
-        return len(self._style.border_format.format(self._style.border_chars[3]))
+        return len(self.style.border_format.format(self.style.border_chars[3]))
 
     def _get_cell_width(self, row: _Row, column: int) -> int:
         """
@@ -704,6 +710,7 @@ class Table:
         if isinstance(name, TableStyle):
             return name
 
+        assert cls._styles is not None
         if name in cls._styles:
             return deepcopy(cls._styles[name])
 
