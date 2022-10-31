@@ -12,7 +12,7 @@ from cleo.ui.table_style import TableStyle
 
 if TYPE_CHECKING:
     from cleo.io.buffered_io import BufferedIO
-    from cleo.ui.table import _Rows
+    from cleo.ui.table import Rows
 
 books = [
     ["99921-58-10-7", "Divine Comedy", "Dante Alighieri"],
@@ -417,7 +417,7 @@ books = [
     ],
 )
 def test_render(
-    io: BufferedIO, headers: list[str], rows: _Rows, style: str, expected: str
+    io: BufferedIO, headers: list[str], rows: Rows, style: str, expected: str
 ) -> None:
     table = Table(io, style=style)
     table.set_headers(headers)
@@ -458,7 +458,7 @@ def test_column_style(io: BufferedIO) -> None:
 
 def test_style_for_side_effects(io: BufferedIO) -> None:
     headers = ["Type", "Class", "Name"]
-    rows: _Rows = [
+    rows: Rows = [
         ["GSV", "Range", "Bora Horza Gobuchul"],
         ["GSV", "Plate", "Sleeper Service"],
         ["GCU", "Ridge", "Grey Area"],
