@@ -14,7 +14,12 @@ from cleo.ui.table_separator import TableSeparator
 
 
 if TYPE_CHECKING:
-    from typing import Literal
+    import sys
+
+    if sys.version_info >= (3, 8):
+        from typing import Literal
+    else:
+        from typing_extensions import Literal
 
     from cleo.io.inputs.argument import Argument
     from cleo.io.inputs.option import Option

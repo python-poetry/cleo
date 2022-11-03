@@ -259,7 +259,7 @@ class ExceptionTrace:
 
         self._render_solution(io, self._exception)
 
-    def _render_exception(self, io: IO | Output, exception: Exception) -> None:
+    def _render_exception(self, io: IO | Output, exception: BaseException) -> None:
         from crashtest.inspector import Inspector
 
         inspector = Inspector(exception)
@@ -267,6 +267,7 @@ class ExceptionTrace:
             return
 
         if inspector.has_previous_exception():
+            assert inspector.previous_exception is not None  # make mypy happy
             self._render_exception(io, inspector.previous_exception)
             io.write_line("")
             io.write_line(

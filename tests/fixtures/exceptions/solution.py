@@ -2,8 +2,7 @@ from crashtest.contracts.base_solution import BaseSolution
 from crashtest.contracts.provides_solution import ProvidesSolution
 
 
-# mypy fails here because crashtest is not typed.
-class CustomError(ProvidesSolution, Exception):  # type: ignore
+class CustomError(ProvidesSolution, Exception):
     @property
     def solution(self) -> BaseSolution:
         solution = BaseSolution("Solution Title.", "Solution Description")

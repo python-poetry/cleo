@@ -288,13 +288,13 @@ def test_render_supports_solutions() -> None:
 
   Error with solution
 
-  at {trace._get_relative_file_path(solution.__file__)}:17 in call
-       13│         return solution
+  at {trace._get_relative_file_path(solution.__file__)}:16 in call
+       12│         return solution
+       13│ 
        14│ 
-       15│ 
-       16│ def call() -> None:
-    →  17│     raise CustomError("Error with solution")
-       18│ 
+       15│ def call() -> None:
+    →  16│     raise CustomError("Error with solution")
+       17│ 
 
   • Solution Title: Solution Description
     https://example.com,
@@ -325,13 +325,13 @@ def test_render_falls_back_on_ascii_symbols() -> None:
 
   Error with solution
 
-  at {trace._get_relative_file_path(solution.__file__)}:17 in call
-       13|         return solution
+  at {trace._get_relative_file_path(solution.__file__)}:16 in call
+       12|         return solution
+       13| 
        14| 
-       15| 
-       16| def call() -> None:
-    >  17|     raise CustomError("Error with solution")
-       18| 
+       15| def call() -> None:
+    >  16|     raise CustomError("Error with solution")
+       17| 
 
   * Solution Title: Solution Description
     https://example.com,
