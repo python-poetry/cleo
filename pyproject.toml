@@ -5,6 +5,11 @@ description = "Cleo allows you to create beautiful and testable command-line int
 authors = [
     "Sébastien Eustace <sebastien@eustace.io>"
 ]
+maintainers = [
+    "Bjorn Neergaard <bjorn@neersighted.com>",
+    "Branch Vincent <branchevincent@gmail.com>",
+    "Bartosz Sokorski <b.sokorski@gmail.com>",
+]
 license = "MIT"
 readme = "README.md"
 packages = [
