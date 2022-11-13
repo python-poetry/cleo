@@ -41,7 +41,7 @@ pytest-mock = "^3.8.2"
 pre-commit = "^2.20.0"
 pytest-cov = "^3.0.0"
 tox = "^3.25.1"
-mypy = "^0.982"
+mypy = "^0.990"
 
 [tool.poetry.group.doc.dependencies]
 Sphinx = "^5.2.3"
@@ -69,7 +69,6 @@ all = true
 [tool.mypy]
 strict = true
 files = ["src", "tests"]
-show_error_codes = true
 pretty = true
 
 [tool.coverage.report]
