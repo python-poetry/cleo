@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from cleo.exceptions import LogicException
+from cleo.exceptions import CleoLogicError
 
 
 class Argument:
@@ -46,13 +46,13 @@ class Argument:
 
     def set_default(self, default: Any | None = None) -> None:
         if self._required and default is not None:
-            raise LogicException("Cannot set a default value for required arguments")
+            raise CleoLogicError("Cannot set a default value for required arguments")
 
         if self._is_list:
             if default is None:
                 default = []
             elif not isinstance(default, list):
-                raise LogicException(
+                raise CleoLogicError(
                     "A default value for a list argument must be a list"
                 )
 

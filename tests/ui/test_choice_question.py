@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from cleo.exceptions import ValueException
+from cleo.exceptions import CleoValueError
 from cleo.ui.choice_question import ChoiceQuestion
 
 
@@ -85,13 +85,13 @@ def test_ask_choice(io: BufferedIO) -> None:
     question = ChoiceQuestion("What is your favourite superhero?", heroes)
     question.set_max_attempts(1)
 
-    with pytest.raises(ValueException) as e:
+    with pytest.raises(CleoValueError) as e:
         question.ask(io)
 
     assert str(e.value) == 'Value "4" is invalid'
     assert question.ask(io) == "Superman"
 
-    with pytest.raises(ValueException) as e:
+    with pytest.raises(CleoValueError) as e:
         question.ask(io)
 
     assert str(e.value) == 'Value "-2" is invalid'

@@ -4,8 +4,8 @@ import re
 
 from typing import Any
 
-from cleo.exceptions import LogicException
-from cleo.exceptions import ValueException
+from cleo.exceptions import CleoLogicError
+from cleo.exceptions import CleoValueError
 
 
 class Option:
@@ -27,7 +27,7 @@ class Option:
             name = name[2:]
 
         if not name:
-            raise ValueException("An option name cannot be empty")
+            raise CleoValueError("An option name cannot be empty")
 
         if shortcut is not None:
             shortcuts = re.split(r"\|-?", shortcut.lstrip("-"))
@@ -35,7 +35,7 @@ class Option:
             shortcut = "|".join(shortcuts)
 
             if not shortcut:
-                raise ValueException("An option shortcut cannot be empty")
+                raise CleoValueError("An option shortcut cannot be empty")
 
         self._name = name
         self._shortcut = shortcut
@@ -46,7 +46,7 @@ class Option:
         self._default = None
 
         if self._is_list and self._flag:
-            raise LogicException("A flag option cannot be a list as well")
+            raise CleoLogicError("A flag option cannot be a list as well")
 
         self.set_default(default)
 
@@ -80,13 +80,13 @@ class Option:
 
     def set_default(self, default: Any | None = None) -> None:
         if self._flag and default is not None:
-            raise LogicException("A flag option cannot have a default value")
+            raise CleoLogicError("A flag option cannot have a default value")
 
         if self._is_list:
             if default is None:
                 default = []
             elif not isinstance(default, list):
-                raise LogicException("A default value for a list option must be a list")
+                raise CleoLogicError("A default value for a list option must be a list")
 
         if self._flag:
             default = False

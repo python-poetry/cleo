@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from cleo.exceptions import ValueException
+from cleo.exceptions import CleoValueError
 from cleo.ui.component import Component
 
 
@@ -16,17 +16,17 @@ class UI:
 
     def register(self, component: Component) -> None:
         if not isinstance(component, Component):
-            raise ValueException(
+            raise CleoValueError(
                 "A UI component must inherit from the Component class."
             )
 
         if not component.name:
-            raise ValueException("A UI component cannot be anonymous.")
+            raise CleoValueError("A UI component cannot be anonymous.")
 
         self._components[component.name] = component
 
     def component(self, name: str) -> Component:
         if name not in self._components:
-            raise ValueException(f'UI component "{name}" does not exist.')
+            raise CleoValueError(f'UI component "{name}" does not exist.')
 
         return self._components[name]

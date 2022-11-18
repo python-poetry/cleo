@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 
-from cleo.exceptions import ValueException
+from cleo.exceptions import CleoValueError
 from cleo.formatters.style import Style
 from cleo.formatters.style_stack import StyleStack
 
@@ -71,7 +71,7 @@ class Formatter:
 
     def style(self, name: str) -> Style:
         if not self.has_style(name):
-            raise ValueException(f'Undefined style: "{name}"')
+            raise CleoValueError(f'Undefined style: "{name}"')
 
         return self._styles[name]
 

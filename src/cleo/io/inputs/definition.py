@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from typing import Any
 from typing import Sequence
 
-from cleo.exceptions import LogicException
+from cleo.exceptions import CleoLogicError
 from cleo.io.inputs.option import Option
 
 
@@ -94,15 +94,15 @@ class Definition:
 
     def add_argument(self, argument: Argument) -> None:
         if argument.name in self._arguments:
-            raise LogicException(
+            raise CleoLogicError(
                 f'An argument with name "{argument.name}" already exists'
             )
 
         if self._has_a_list_argument:
-            raise LogicException("Cannot add an argument after a list argument")
+            raise CleoLogicError("Cannot add an argument after a list argument")
 
         if argument.is_required() and self._has_optional:
-            raise LogicException("Cannot add a required argument after an optional one")
+            raise CleoLogicError("Cannot add a required argument after an optional one")
 
         if argument.is_list():
             self._has_a_list_argument = True
@@ -149,7 +149,7 @@ class Definition:
 
     def add_option(self, option: Option) -> None:
         if option.name in self._options and option != self._options[option.name]:
-            raise LogicException(f'An option named "{option.name}" already exists')
+            raise CleoLogicError(f'An option named "{option.name}" already exists')
 
         if option.shortcut:
             for shortcut in option.shortcut.split("|"):
@@ -157,7 +157,7 @@ class Definition:
                     shortcut in self._shortcuts
                     and option.name != self._shortcuts[shortcut]
                 ):
-                    raise LogicException(
+                    raise CleoLogicError(
                         f'An option with shortcut "{shortcut}" already exists'
                     )
 

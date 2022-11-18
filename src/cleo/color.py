@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 
-from cleo.exceptions import ValueException
+from cleo.exceptions import CleoValueError
 
 
 class Color:
@@ -107,14 +107,14 @@ class Color:
                 color = color[0] * 2 + color[1] * 2 + color[2] * 2
 
             if len(color) != 6:
-                raise ValueException(f'"{color}" is an invalid color')
+                raise CleoValueError(f'"{color}" is an invalid color')
 
             return ("4" if background else "3") + self._convert_hex_color_to_ansi(
                 int(color, 16)
             )
 
         if color not in self.COLORS:
-            raise ValueException(
+            raise CleoValueError(
                 f'"{color}" is an invalid color.'
                 f' It must be one of {", ".join(self.COLORS.keys())}'
             )

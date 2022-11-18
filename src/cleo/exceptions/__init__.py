@@ -3,42 +3,56 @@ from __future__ import annotations
 from cleo._utils import find_similar_names
 
 
-class CleoException(Exception):
+class CleoError(Exception):
+    """
+    Base Cleo exception.
+    """
 
     exit_code: int | None = None
 
 
-class CleoSimpleException(Exception):
-
-    pass
-
-
-class LogicException(CleoException):
-
-    pass
+class CleoLogicError(CleoError):
+    """
+    Raised when there is error in command arguments
+    and/or options configuration logic.
+    """
 
 
-class RuntimeException(CleoException):
-
-    pass
-
-
-class ValueException(CleoException):
-
-    pass
+class CleoRuntimeError(CleoError):
+    """
+    Raised when command is called with invalid options or arguments.
+    """
 
 
-class MissingArgumentsException(CleoSimpleException):
-
-    pass
-
-
-class NoSuchOptionException(CleoException):
-
-    pass
+class CleoValueError(CleoError):
+    """
+    Raised when wrong value was given to Cleo components.
+    """
 
 
-class CommandNotFoundException(CleoSimpleException):
+class CleoNoSuchOptionError(CleoError):
+    """
+    Raised when command does not have given option.
+    """
+
+
+class CleoUserError(CleoError):
+    """
+    Base exception for user errors.
+    """
+
+
+class CleoMissingArgumentsError(CleoUserError):
+    """
+    Raised when called command was not given required arguments.
+    """
+
+
+class CleoCommandNotFoundError(CleoUserError):
+    """
+    Raised when called command does not exist.
+    """
+
     def __init__(self, name: str, commands: list[str] | None = None) -> None:
         message = f'The command "{name}" does not exist.'
 
@@ -56,7 +70,11 @@ class CommandNotFoundException(CleoSimpleException):
         super().__init__(message)
 
 
-class NamespaceNotFoundException(CleoSimpleException):
+class CleoNamespaceNotFoundError(CleoUserError):
+    """
+    Raised when called namespace has no commands.
+    """
+
     def __init__(self, name: str, namespaces: list[str] | None = None) -> None:
         message = f'There are no commands in the "{name}" namespace.'
 
