@@ -5,7 +5,7 @@ import re
 from typing import TYPE_CHECKING
 from typing import Any
 
-from cleo.exceptions import ValueException
+from cleo.exceptions import CleoValueError
 from cleo.ui.question import Question
 
 
@@ -36,7 +36,7 @@ class SelectChoiceValidator:
             # Check for a separated comma values
             _selected = selected.replace(" ", "")
             if not re.match("^[a-zA-Z0-9_-]+(?:,[a-zA-Z0-9_-]+)*$", _selected):
-                raise ValueException(self._question.error_message.format(selected))
+                raise CleoValueError(self._question.error_message.format(selected))
 
             selected_choices = _selected.split(",")
         else:
@@ -51,7 +51,7 @@ class SelectChoiceValidator:
                     results.append(key)
 
             if len(results) > 1:
-                raise ValueException(
+                raise CleoValueError(
                     "The provided answer is ambiguous. "
                     f'Value should be one of {" or ".join(str(r) for r in results)}.'
                 )
@@ -61,7 +61,7 @@ class SelectChoiceValidator:
             elif value.isdigit() and 0 <= int(value) < len(self._values):
                 result = self._values[int(value)]
             else:
-                raise ValueException(self._question.error_message.format(value))
+                raise CleoValueError(self._question.error_message.format(value))
 
             multiselect_choices.append(result)
 

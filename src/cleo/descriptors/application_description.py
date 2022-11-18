@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import TYPE_CHECKING
 
-from cleo.exceptions import CommandNotFoundException
+from cleo.exceptions import CleoCommandNotFoundError
 
 
 if TYPE_CHECKING:
@@ -43,7 +43,7 @@ class ApplicationDescription:
             return self._commands[name]
         if name in self._aliases:
             return self._aliases[name]
-        raise CommandNotFoundException(name)
+        raise CleoCommandNotFoundError(name)
 
     def _inspect_application(self) -> None:
         namespace = None

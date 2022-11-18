@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Callable
 
 from cleo.commands.command import Command
-from cleo.exceptions import CommandNotFoundException
+from cleo.exceptions import CleoCommandNotFoundError
 from cleo.loaders.command_loader import CommandLoader
 
 
@@ -27,7 +27,7 @@ class FactoryCommandLoader(CommandLoader):
 
     def get(self, name: str) -> Command:
         if name not in self._factories:
-            raise CommandNotFoundException(name)
+            raise CleoCommandNotFoundError(name)
 
         factory = self._factories[name]
 

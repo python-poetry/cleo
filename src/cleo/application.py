@@ -18,11 +18,11 @@ from cleo.events.console_events import COMMAND
 from cleo.events.console_events import ERROR
 from cleo.events.console_events import TERMINATE
 from cleo.events.console_terminate_event import ConsoleTerminateEvent
-from cleo.exceptions import CleoException
-from cleo.exceptions import CleoSimpleException
-from cleo.exceptions import CommandNotFoundException
-from cleo.exceptions import LogicException
-from cleo.exceptions import NamespaceNotFoundException
+from cleo.exceptions import CleoCommandNotFoundError
+from cleo.exceptions import CleoError
+from cleo.exceptions import CleoLogicError
+from cleo.exceptions import CleoNamespaceNotFoundError
+from cleo.exceptions import CleoUserError
 from cleo.io.inputs.argument import Argument
 from cleo.io.inputs.argv_input import ArgvInput
 from cleo.io.inputs.definition import Definition
@@ -186,7 +186,7 @@ class Application:
             return None
 
         if not command.name:
-            raise LogicException(
+            raise CleoLogicError(
                 f'The command "{command.__class__.__name__}" cannot have an empty name'
             )
 
@@ -201,11 +201,11 @@ class Application:
         self._init()
 
         if not self.has(name):
-            raise CommandNotFoundException(name)
+            raise CleoCommandNotFoundError(name)
 
         if name not in self._commands:
             # The command was registered in a different name in the command loader
-            raise CommandNotFoundException(name)
+            raise CleoCommandNotFoundError(name)
 
         command = self._commands[name]
 
@@ -261,7 +261,7 @@ class Application:
         all_namespaces = self.get_namespaces()
 
         if namespace not in all_namespaces:
-            raise NamespaceNotFoundException(namespace, all_namespaces)
+            raise CleoNamespaceNotFoundError(namespace, all_namespaces)
 
         return namespace
 
@@ -279,7 +279,7 @@ class Application:
             name for name, command in self._commands.items() if not command.hidden
         ]
 
-        raise CommandNotFoundException(name, all_commands)
+        raise CleoCommandNotFoundError(name, all_commands)
 
     def all(self, namespace: str | None = None) -> dict[str, Command]:
         self._init()
@@ -370,7 +370,7 @@ class Application:
 
         # Errors must be ignored, full binding/validation
         # happens later when the command is known.
-        with suppress(CleoException):
+        with suppress(CleoError):
             # Makes ArgvInput.first_argument() able to
             # distinguish an option from an argument.
             io.input.bind(input_definition)
@@ -442,7 +442,7 @@ class Application:
         try:
             command.merge_application_definition()
             io.input.bind(command.definition)
-        except CleoException:
+        except CleoError:
             # Ignore invalid option/arguments for now,
             # to allow the listeners to customize the definition
             pass
@@ -498,7 +498,7 @@ class Application:
         trace = ExceptionTrace(
             error, solution_provider_repository=self._solution_provider_repository
         )
-        simple = not io.is_verbose() or isinstance(error, CleoSimpleException)
+        simple = not io.is_verbose() or isinstance(error, CleoUserError)
         trace.render(io.error_output, simple)
 
     def _configure_io(self, io: IO) -> None:

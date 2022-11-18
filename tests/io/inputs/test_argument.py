@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from cleo.exceptions import LogicException
+from cleo.exceptions import CleoLogicError
 from cleo.io.inputs.argument import Argument
 
 
@@ -44,14 +44,14 @@ def test_list_argument() -> None:
 
 def test_required_arguments_do_not_support_default_values() -> None:
     with pytest.raises(
-        LogicException, match="Cannot set a default value for required arguments"
+        CleoLogicError, match="Cannot set a default value for required arguments"
     ):
         Argument("foo", description="Foo description", default="bar")
 
 
 def test_list_arguments_do_not_support_non_list_default_values() -> None:
     with pytest.raises(
-        LogicException, match="A default value for a list argument must be a list"
+        CleoLogicError, match="A default value for a list argument must be a list"
     ):
         Argument(
             "foo",

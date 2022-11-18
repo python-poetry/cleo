@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from cleo.exceptions import ValueException
+from cleo.exceptions import CleoValueError
 from cleo.formatters.style import Style
 
 
@@ -38,4 +38,4 @@ class StyleStack:
 
                 return stacked_style
 
-        raise ValueException("Invalid nested tag found")
+        raise CleoValueError("Invalid nested tag found")

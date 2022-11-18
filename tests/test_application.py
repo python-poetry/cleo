@@ -9,8 +9,8 @@ import pytest
 
 from cleo.application import Application
 from cleo.commands.command import Command
-from cleo.exceptions import CommandNotFoundException
-from cleo.exceptions import NamespaceNotFoundException
+from cleo.exceptions import CleoCommandNotFoundError
+from cleo.exceptions import CleoNamespaceNotFoundError
 from cleo.io.io import IO
 from cleo.io.outputs.stream_output import StreamOutput
 from cleo.testers.application_tester import ApplicationTester
@@ -143,7 +143,7 @@ def test_find_ambiguous_namespace(app: Application) -> None:
     app.add(Foo2Command())
 
     with pytest.raises(
-        NamespaceNotFoundException,
+        CleoNamespaceNotFoundError,
         match=(
             r'There are no commands in the "f" namespace\.\n\n'
             r"Did you mean one of these\?\n    foo\n    foo1"
@@ -157,7 +157,7 @@ def test_find_invalid_namespace(app: Application) -> None:
     app.add(Foo2Command())
 
     with pytest.raises(
-        NamespaceNotFoundException,
+        CleoNamespaceNotFoundError,
         match=r'There are no commands in the "bar" namespace\.',
     ):
         app.find_namespace("bar")
@@ -169,7 +169,7 @@ def test_find_unique_name_but_namespace_name(app: Application) -> None:
     app.add(Foo2Command())
 
     with pytest.raises(
-        CommandNotFoundException,
+        CleoCommandNotFoundError,
         match=r'The command "foo1" does not exist\.',
     ):
         app.find("foo1")
@@ -186,7 +186,7 @@ def test_find_ambiguous_command(app: Application) -> None:
     app.add(FooCommand())
 
     with pytest.raises(
-        CommandNotFoundException,
+        CleoCommandNotFoundError,
         match=(
             r'The command "foo b" does not exist\.\n\nDid you mean this\?\n    foo bar'
         ),
@@ -200,7 +200,7 @@ def test_find_ambiguous_command_hidden(app: Application) -> None:
     app.add(foo)
 
     with pytest.raises(
-        CommandNotFoundException,
+        CleoCommandNotFoundError,
         match=r'The command "foo b" does not exist\.$',
     ):
         app.find("foo b")
@@ -225,7 +225,7 @@ def test_set_catch_exceptions(app: Application, environ: dict[str, str]) -> None
 
     app.catch_exceptions(False)
 
-    with pytest.raises(CommandNotFoundException):
+    with pytest.raises(CleoCommandNotFoundError):
         tester.execute("foo", decorated=False)
 
 
