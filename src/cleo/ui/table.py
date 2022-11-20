@@ -376,7 +376,11 @@ class Table:
         pad = style.pad
         if isinstance(cell, TableCell) and isinstance(cell.style, TableCellStyle):
             is_not_styled_by_tag = not re.match(
-                r"^<(\w+|(\w+=[\w,]+;?)*)>.+</(\w+|(\w+=\w+;?)*)?>$", str(cell)
+                (
+                    r"^<(\w+|((?:fg|bg|options)=[\w,]+;?)+)>"
+                    r".+<\/(\w+|((?:fg|bg|options)=[\w,]+;?)+)?>$"
+                ),
+                str(cell),
             )
             if is_not_styled_by_tag:
                 cell_format = (
