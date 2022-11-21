@@ -1,11 +1,33 @@
-# Change Log
+# Changelog
 
-## [1.0.0] - UNRELEASED
+## [1.0.0] - 2022-11-21
 
-- Replaced `Terminal` class with `shutil.get_terminal_size()` from standard library 
-[#175](https://github.com/python-poetry/cleo/pull/175).
+### Key points
+
+- Supported Python versions are now 3.7 up to 3.11.
+- `cleo` is now fully type-checked.
+- `cleo` no longer depends on `clikit`.
+
+### Changed
+
+- Replaced `Terminal` class with `shutil.get_terminal_size()` from standard library
+([#175](https://github.com/python-poetry/cleo/pull/175)).
+- Exceptions are now Errors ([#179](https://github.com/python-poetry/cleo/pull/179)).
+- `pylev` was dropped in favor of much faster `rapidfuzz` ([#173](https://github.com/python-poetry/cleo/pull/173)).
+- Default error verbosity was reduced ([#132](https://github.com/python-poetry/cleo/pull/132) & [#166](https://github.com/python-poetry/cleo/pull/166)).
+
+### Removed
+
 - Removed doc comment-based command configuration notation 
-[#239](https://github.com/python-poetry/cleo/pull/175). 
+([#239](https://github.com/python-poetry/cleo/pull/239)).
+
+### Fixed
+
+- `--no-interaction` is now automatically set when running in non-TTY terminals ([#245](https://github.com/python-poetry/cleo/pull/245)).
+- Generated completions will no longer cause shell errors for namespaced commands ([#247](https://github.com/python-poetry/cleo/pull/247)).
+- Using `^C` while autocompleting `Question` answer will no longer break terminal ([#240](https://github.com/python-poetry/cleo/pull/240)).
+- Namespaced commands no longer reset interactive state ([#234](https://github.com/python-poetry/cleo/pull/234)).
+- Fixed underlying regex that caused CVE-2022-42966 ([#285](https://github.com/python-poetry/cleo/pull/285)).
 
 ## [0.8.1] - 2020-04-17
 
@@ -233,7 +255,8 @@ This is a major release with some API changes.
 
 
 
-[unreleased]: https://github.com/python-poetry/cleo/compare/0.8.1...main
+[unreleased]: https://github.com/python-poetry/cleo/compare/1.0.0...main
+[1.0.0]: https://github.com/python-poetry/cleo/releases/tag/1.0.0
 [0.8.1]: https://github.com/python-poetry/cleo/releases/tag/0.8.1
 [0.8.0]: https://github.com/python-poetry/cleo/releases/tag/0.8.0
 [0.7.6]: https://github.com/python-poetry/cleo/releases/tag/0.7.6
