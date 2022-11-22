@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.0.1] - 2022-11-23
+
+- Relax `poetry-core` requirement for PEP 517 builds ([#291](https://github.com/python-poetry/cleo/pull/291)).
+
 ## [2.0.0] - 2022-11-21
 
 No source code changes.
@@ -263,7 +267,9 @@ This is a major release with some API changes.
 
 
 
-[unreleased]: https://github.com/python-poetry/cleo/compare/1.0.0...main
+[unreleased]: https://github.com/python-poetry/cleo/compare/2.0.1...main
+[2.0.1]: https://github.com/python-poetry/cleo/releases/tag/2.0.1
+[2.0.0]: https://github.com/python-poetry/cleo/releases/tag/2.0.0
 [1.0.0]: https://github.com/python-poetry/cleo/releases/tag/1.0.0
 [0.8.1]: https://github.com/python-poetry/cleo/releases/tag/0.8.1
 [0.8.0]: https://github.com/python-poetry/cleo/releases/tag/0.8.0
