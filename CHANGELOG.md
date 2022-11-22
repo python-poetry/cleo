@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.0] - 2022-11-21
+
+No source code changes.
+
+This is a version-only release to replace `1.0.0`, which was yanked on the
+grounds that it was incompatible with real dependents (i.e. Poetry) based on
+their version specifiers, which explicitly included `1.0.0` pre-releases.
+
 ## [1.0.0] - 2022-11-21
 
 ### Key points
