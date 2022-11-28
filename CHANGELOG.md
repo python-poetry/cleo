@@ -1,5 +1,7 @@
 # Changelog
 
+<!-- news notes entrypoint -->
+
 ## [2.0.1] - 2022-11-23
 
 - Relax `poetry-core` requirement for PEP 517 builds ([#291](https://github.com/python-poetry/cleo/pull/291)).
