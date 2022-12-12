@@ -37,4 +37,4 @@ complete -c script -A -n '__fish_seen_subcommand_from hello' -l option-without-d
 # list
 
 # 'spaced command'
-complete -c script -A -n '__fish_seen_subcommand_from 'spaced command'' -l goodbye -d ''
+complete -c script -A -n '__fish_seen_subcommand_from \'spaced command\'' -l goodbye -d ''
