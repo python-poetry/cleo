@@ -67,7 +67,7 @@ class SectionOutput(StreamOutput):
             self._lines += (
                 math.ceil(
                     len(self.remove_format(line_content).replace("\t", "        "))
-                    / self._terminal.columns
+                    / (self._terminal.columns or 1)
                 )
                 or 1
             )
