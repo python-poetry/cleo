@@ -42,7 +42,7 @@ _my_function()
             ;;
 
             ('spaced command')
-            opts="${opts} "
+            opts="${opts} --goodbye"
             ;;
 
         esac
