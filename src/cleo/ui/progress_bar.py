@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import math
 import re
-import shutil
 import time
 
 from typing import TYPE_CHECKING
@@ -12,6 +11,7 @@ from cleo._utils import format_time
 from cleo.cursor import Cursor
 from cleo.io.io import IO
 from cleo.io.outputs.section_output import SectionOutput
+from cleo.terminal import Terminal
 from cleo.ui.component import Component
 
 
@@ -57,7 +57,7 @@ class ProgressBar(Component):
             io = io.error_output
 
         self._io = io
-        self._terminal = shutil.get_terminal_size()
+        self._terminal = Terminal().size
         self._max = 0
         self._step_width: int = 1
         self._set_max_steps(max)
@@ -317,7 +317,7 @@ class ProgressBar(Component):
                         int(
                             math.floor(
                                 len(self._io.remove_format(message))
-                                / self._terminal.columns
+                                / self._terminal.width
                             )
                         )
                         + self._format_line_count
@@ -443,7 +443,7 @@ class ProgressBar(Component):
 
         lines_width = max(lines_length)
 
-        terminal_width = self._terminal.columns
+        terminal_width = self._terminal.width
 
         if lines_width <= terminal_width:
             return line
