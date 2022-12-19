@@ -37,7 +37,7 @@ class CompletionsCommand(Command):
         )
     ]
 
-    SUPPORTED_SHELLS = ("bash", "zsh", "fish")
+    SUPPORTED_SHELLS = ("bash", "zsh", "fish", "PowerShell")
 
     hidden = True
 
@@ -135,6 +135,8 @@ script. Consult your shells documentation for how to add such directives.
             return self.render_zsh()
         if shell == "fish":
             return self.render_fish()
+        if shell == "PowerShell":
+            return self.render_power_shell()
 
         raise RuntimeError(f"Unrecognized shell: {shell}")
 
@@ -280,9 +282,49 @@ script. Consult your shells documentation for how to add such directives.
             "cmds_names": " ".join(cmds_names),
         }
 
+    def render_power_shell(self) -> str:
+        script_name, script_path = self._get_script_name_and_path()
+        function = self._generate_function_name(script_name, script_path)
+
+        assert self.application
+        # Global options
+        opts = [
+            f'"--{opt.name}"'
+            for opt in sorted(self.application.definition.options, key=lambda o: o.name)
+        ]
+
+        # Command + options
+        cmds = []
+        cmds_opts = []
+        for cmd in sorted(self.application.all().values(), key=lambda c: c.name or ""):
+            if cmd.hidden or not cmd.enabled or not cmd.name:
+                continue
+
+            command_name = f'"{cmd.name}"'
+            cmds.append(command_name)
+            if len(cmd.definition.options) == 0:
+                continue
+            options = ", ".join(
+                f'"--{opt.name}"'
+                for opt in sorted(cmd.definition.options, key=lambda o: o.name)
+            )
+            cmds_opts += [f"        {command_name} {{ $options += {options}; Break; }}"]
+
+        return TEMPLATES["PowerShell"] % {
+            "function": function,
+            "script_name": script_name,
+            "opts": ", ".join(opts),
+            "cmds": ", ".join(cmds),
+            "cmds_opts": "\n".join(cmds_opts),
+        }
+
     def get_shell_type(self) -> str:
         shell = os.getenv("SHELL")
+
         if not shell:
+            if len(os.getenv("PSModulePath", "").split(os.pathsep)) >= 3:
+                return "PowerShell"
+
             raise RuntimeError(
                 "Could not read SHELL environment variable. "
                 "Please specify your shell type by passing it as the first argument."
