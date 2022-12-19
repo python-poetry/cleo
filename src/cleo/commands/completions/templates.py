@@ -122,7 +122,8 @@ end
 %(cmds_opts)s"""
 
 
-POWERSHELL_TEMPLATE = """\
+POWERSHELL_TEMPLATE = (
+    """\
 $%(function)s = {
     param(
         [string] $wordToComplete,
@@ -133,11 +134,13 @@ $%(function)s = {
     $options = %(opts)s
     $commands = %(cmds)s
 
-    if ($wordToComplete -notlike '--*' -and $wordToComplete -notlike "" -and ($commandAst.CommandElements.Count -eq "2")) {
+    if ($wordToComplete -notlike '--*' -and $wordToComplete -notlike "" -and """
+    """($commandAst.CommandElements.Count -eq "2")) {
         return $commands | Where-Object { $_ -like "$wordToComplete*" }
     }
 
-    $result = $commandAst.CommandElements | Select-Object -Skip 1 | Where-Object { $_ -notlike '--*' }
+    $result = $commandAst.CommandElements | Select-Object -Skip 1 | """
+    """Where-Object { $_ -notlike '--*' }
     switch ($result -Join " " ) {
 %(cmds_opts)s
     }
@@ -145,7 +148,9 @@ $%(function)s = {
     return $options | Where-Object { $_ -like "$wordToComplete*" }
 }
 
-Register-ArgumentCompleter -Native -CommandName %(script_name)s -ScriptBlock $%(function)s"""
+Register-ArgumentCompleter -Native -CommandName %(script_name)s """
+    """-ScriptBlock $%(function)s"""
+)
 
 TEMPLATES = {
     "bash": BASH_TEMPLATE,
