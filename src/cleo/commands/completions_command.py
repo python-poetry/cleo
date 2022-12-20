@@ -106,6 +106,13 @@ You must then either log out and log back in, or simply run
 
 For the new completions to take affect.
 
+<option=bold>PowerShell</>:
+
+PowerShell profiles are stored at $PROFILE path, so you can simply \
+run command like this:
+
+`<options=bold>{script_name} {command_name} PowerShell > $PROFILE</>`
+
 <options=bold>CUSTOM LOCATIONS</>:
 
 Alternatively, you could save these files to the place of your choosing, \

@@ -413,7 +413,7 @@ the `call_silent()` method instead.
 
 ### Autocompletion
 
-Cleo supports automatic (tab) completion in `bash`, `zsh` and `fish`.
+Cleo supports automatic (tab) completion in `bash`, `zsh`, `fish` and `PowerShell`.
 
 By default, your application will have a `completions` command. To register these completions for your application, run one of the following in a terminal (replacing `[program]` with the command you use to run your application):
 
@@ -434,4 +434,7 @@ echo "fpath+=~/.zfunc" >> ~/.zshrc
 
 # Fish
 [program] completions fish > ~/.config/fish/completions/[program].fish
+
+# PowerShell
+[program] completions PowerShell > $PROFILE
 ```
