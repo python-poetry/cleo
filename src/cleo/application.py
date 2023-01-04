@@ -428,6 +428,32 @@ class Application:
             io.input.set_stream(stream)
             io.input.interactive(interactive)
 
+        if name == "help" and isinstance(io.input, ArgvInput):
+            # If the command is `help` we suppose
+            # that all without `-` is a command (possible namespaced)
+            argv = io.input._tokens[:]
+
+            if io.input.script_name is not None:
+                argv.insert(0, io.input.script_name)
+            else:
+                # Needs because `ApplicationTester` doesn't add script name
+                argv.insert(0, self.name)
+
+            # filter all words after `help` without `-`
+            start = argv.index(name)
+            words = list(filter(lambda arg: "-" not in arg, argv[start + 1 :]))
+
+            if words:
+                index = argv.index(words[0])
+                argv[index] = " ".join(argv[index:])
+                del argv[index + 1 :]
+
+            stream = io.input.stream
+            interactive = io.input.is_interactive()
+            io.set_input(ArgvInput(argv))
+            io.input.set_stream(stream)
+            io.input.interactive(interactive)
+
         exit_code = self._run_command(command, io)
         self._running_command = None
 
