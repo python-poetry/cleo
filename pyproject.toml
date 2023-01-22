@@ -46,6 +46,26 @@ mypy = "^0.990"
 Sphinx = "^5.2.3"
 sphinx-rtd-theme = "^1.0.0"
 
+[tool.ruff]
+fix = true
+target-version = "py37"
+line-length = 88
+extend-exclude = [
+    "docs/*",
+]
+ignore = [
+    # ruff is not the same as isort, might change in the future
+    "I",
+    # exclude documentation checks until https://github.com/python-poetry/cleo/issues/251 is worked on
+    "D",
+]
+
+[tool.ruff.flake8-quotes]
+inline-quotes = "double"
+
+[tool.ruff.flake8-tidy-imports]
+ban-relative-imports = "all"
+
 [tool.isort]
 profile = "black"
 force_single_line = true
