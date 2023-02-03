@@ -57,7 +57,7 @@ class Application:
     >>> app.run()
     """
 
-    def __init__(self, name: str = "console", version: str = "") -> None:
+    def __init__(self, name: str = "console", version: str = "", styles: dict | None = None) -> None:
         self._name = name
         self._version = version
         self._display_name: str | None = None
@@ -72,6 +72,7 @@ class Application:
         self._auto_exit = True
         self._initialized = False
         self._ui: UI | None = None
+        self._styles: dict = styles or None
 
         # TODO: signals support
         self._event_dispatcher: EventDispatcher | None = None
@@ -544,6 +545,10 @@ class Application:
 
         if shell_verbosity == -1:
             io.interactive(False)
+
+        if self._styles:
+            for styleName, style in self._styles.items():
+                io.output.formatter.set_style(styleName, style)
 
     @property
     def _default_definition(self) -> Definition:
