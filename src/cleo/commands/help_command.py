@@ -5,7 +5,6 @@ from cleo.io.inputs.argument import Argument
 
 
 class HelpCommand(Command):
-
     name = "help"
 
     description = "Displays help for a command."

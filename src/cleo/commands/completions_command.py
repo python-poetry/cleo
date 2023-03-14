@@ -14,7 +14,6 @@ from cleo.commands.completions.templates import TEMPLATES
 
 
 class CompletionsCommand(Command):
-
     name = "completions"
     description = "Generate completion scripts for your shell."
 

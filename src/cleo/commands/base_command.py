@@ -14,7 +14,6 @@ if TYPE_CHECKING:
 
 
 class BaseCommand:
-
     name: str | None = None
 
     description = ""

@@ -4,7 +4,6 @@ from cleo.commands.command import Command
 
 
 class Foo2Command(Command):
-
     name = "foo1 bar"
 
     description = "The foo1 bar command"
