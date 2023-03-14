@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 
 
 class FooCommand(Command):
-
     name = "foo bar"
 
     description = "The foo bar command"

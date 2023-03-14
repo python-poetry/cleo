@@ -6,7 +6,6 @@ from cleo.exceptions import CleoValueError
 
 
 class Color:
-
     COLORS = {
         "black": (30, 40),
         "red": (31, 41),

@@ -5,7 +5,6 @@ from cleo.io.inputs.argument import Argument
 
 
 class ListCommand(Command):
-
     name = "list"
 
     description = "Lists commands."

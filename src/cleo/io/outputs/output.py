@@ -13,7 +13,6 @@ if TYPE_CHECKING:
 
 
 class Verbosity(Enum):
-
     QUIET: int = 16
     NORMAL: int = 32
     VERBOSE: int = 64
@@ -22,7 +21,6 @@ class Verbosity(Enum):
 
 
 class Type(Enum):
-
     NORMAL: int = 1
     RAW: int = 2
     PLAIN: int = 4
