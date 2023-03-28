@@ -19,7 +19,6 @@ class FooCommand(Command):
 
 
 class FooBarCommand(Command):
-
     name = "foo bar"
 
     def handle(self) -> int:

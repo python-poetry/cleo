@@ -8,7 +8,6 @@ from cleo.formatters.style_stack import StyleStack
 
 
 class Formatter:
-
     TAG_REGEX = re.compile(r"(?ix)<(([a-z](?:[^<>]*)) | /([a-z](?:[^<>]*))?)>")
 
     _inline_styles_cache: dict[str, Style] = {}

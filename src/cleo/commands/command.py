@@ -32,7 +32,6 @@ if TYPE_CHECKING:
 
 
 class Command(BaseCommand):
-
     arguments: list[Argument] = []
     options: list[Option] = []
     aliases: list[str] = []
@@ -48,7 +47,6 @@ class Command(BaseCommand):
         return self._io
 
     def configure(self) -> None:
-
         for argument in self.arguments:
             self._definition.add_argument(argument)
 

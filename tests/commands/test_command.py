@@ -24,7 +24,6 @@ class MyCommand(Command):
 
 
 class MySecondCommand(Command):
-
     name = "test2"
     description = "Command testing"
 

@@ -244,7 +244,6 @@ class ArgvInput(Input):
             if all:
                 all_names = '" "'.join([a.name for a in all])
                 if command_name:
-
                     message = (
                         f'Too many arguments to "{command_name}" command, '
                         f'expected arguments "{all_names}"'

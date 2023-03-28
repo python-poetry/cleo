@@ -27,7 +27,6 @@ Header = Row
 
 
 class Table:
-
     SEPARATOR_TOP: int = 0
     SEPARATOR_TOP_BOTTOM: int = 1
     SEPARATOR_MID: int = 2

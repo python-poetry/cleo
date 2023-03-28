@@ -12,7 +12,6 @@ if TYPE_CHECKING:
 
 
 class ApplicationDescription:
-
     GLOBAL_NAMESPACE = "_global"
 
     def __init__(

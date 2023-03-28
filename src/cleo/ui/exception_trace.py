@@ -28,7 +28,6 @@ if TYPE_CHECKING:
 
 
 class Highlighter:
-
     TOKEN_DEFAULT = "token_default"
     TOKEN_COMMENT = "token_comment"
     TOKEN_STRING = "token_string"

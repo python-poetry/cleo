@@ -1,6 +1,10 @@
+[build-system]
+requires = ["poetry-core>=1.1.0"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.poetry]
 name = "cleo"
-version = "2.0.1"
+version = "2.1.0.dev0"
 description = "Cleo allows you to create beautiful and testable command-line interfaces."
 authors = [
     "Sébastien Eustace <sebastien@eustace.io>"
@@ -41,10 +45,31 @@ pytest-mock = "^3.8.2"
 pre-commit = "^2.20.0"
 pytest-cov = "^3.0.0"
 mypy = "^0.990"
+towncrier = ">=22.12.0"
 
 [tool.poetry.group.doc.dependencies]
 Sphinx = "^5.2.3"
 sphinx-rtd-theme = "^1.0.0"
+
+[tool.ruff]
+fix = true
+target-version = "py37"
+line-length = 88
+extend-exclude = [
+    "docs/*",
+]
+ignore = [
+    # ruff is not the same as isort, might change in the future
+    "I",
+    # exclude documentation checks until https://github.com/python-poetry/cleo/issues/251 is worked on
+    "D",
+]
+
+[tool.ruff.flake8-quotes]
+inline-quotes = "double"
+
+[tool.ruff.flake8-tidy-imports]
+ban-relative-imports = "all"
 
 [tool.isort]
 profile = "black"
@@ -80,6 +105,40 @@ exclude_lines = [
     "raise NotImplementedError"
 ]
 
-[build-system]
-requires = ["poetry-core>=1.1.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.towncrier]
+package = "cleo"
+filename = "CHANGELOG.md"
+issue_format = "([#{issue}](https://github.com/python-poetry/cleo/pull/{issue}))"
+directory = "news/"
+title_format = "{version} ({project_date})"
+template = "news/news_template.jinja2"
+underlines = "-~^"
+start_string = "<!-- news notes entrypoint -->\n"
+
+[tool.towncrier.fragment.break]
+name = "Breaking Changes"
+showcontent = true
+
+[tool.towncrier.fragment.feat]
+name = "Features & Improvements"
+showcontent = true
+
+[tool.towncrier.fragment.bugfix]
+name = "Bug Fixes"
+showcontent = true
+
+[tool.towncrier.fragment.docs]
+name = "Documentation"
+showcontent = true
+
+[tool.towncrier.fragment.deps]
+name = "Dependencies"
+showcontent = true
+
+[tool.towncrier.fragment.removal]
+name = "Removals and Deprecations"
+showcontent = true
+
+[tool.towncrier.fragment.misc]
+name = "Miscellaneous"
+showcontent = true

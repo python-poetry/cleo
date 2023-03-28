@@ -149,7 +149,9 @@ test_render_very_verbose_better_error_message
     assert expected == io.fetch_output()
 
 
-def test_render_debug_better_error_message_recursion_error_with_multiple_duplicated_frames() -> None:  # noqa: E501
+def test_render_debug_better_error_message_recursion_error_with_multiple_duplicated_frames() -> (  # noqa: E501
+    None
+):
     def first() -> None:
         def second() -> None:
             first()
@@ -182,7 +184,7 @@ def test_render_can_ignore_given_files() -> None:
     trace.ignore_files_in(f"^{re.escape(nested1.__file__)}$")
     trace.render(io)
 
-    lineno = 179
+    lineno = 181
     expected = f"""
   Stack trace:
 
@@ -220,7 +222,7 @@ def test_render_shows_ignored_files_if_in_debug_mode() -> None:
     trace.ignore_files_in(f"^{re.escape(nested1.__file__)}$")
 
     trace.render(io)
-    lineno = 217
+    lineno = 219
     expected = f"""
   Stack trace:
 
@@ -419,7 +421,7 @@ def test_simple_render_aborts_if_no_message() -> None:
     trace = ExceptionTrace(e.value)
 
     trace.render(io, simple=True)
-    lineno = 417
+    lineno = 419
 
     expected = f"""
   AssertionError

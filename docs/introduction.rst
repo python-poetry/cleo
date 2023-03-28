@@ -407,7 +407,7 @@ console:
     import pytest
 
     from cleo import Application
-    from cleo import CommandTester
+    from cleo.testers.command_tester import CommandTester
 
     def test_execute(self):
         application = Application()
@@ -431,7 +431,7 @@ as a string to the ``CommandTester.execute()`` method:
     import pytest
 
     from cleo import Application
-    from cleo import CommandTester
+    from cleo.testers.command_tester import CommandTester
 
     def test_execute(self):
         application = Application()
