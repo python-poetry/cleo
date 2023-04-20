@@ -90,7 +90,7 @@ class StreamOutput(Output):
         if sys.platform == "win32":
             shell_supported = (
                 os.getenv("ANSICON") is not None
-                or os.getenv("ConEmuANSI") == "ON"
+                or os.getenv("ConEmuANSI") == "ON"  # noqa: SIM112
                 or os.getenv("TERM") == "xterm"
             )
 

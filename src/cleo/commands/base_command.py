@@ -82,7 +82,6 @@ class BaseCommand:
         """
         Configures the current command.
         """
-        pass
 
     def execute(self, io: IO) -> int:
         raise NotImplementedError()
@@ -91,7 +90,6 @@ class BaseCommand:
         """
         Interacts with the user.
         """
-        pass
 
     def initialize(self, io: IO) -> None:
         pass
