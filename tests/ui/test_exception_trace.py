@@ -439,5 +439,5 @@ test_simple_render_aborts_if_no_message
       {lineno + 2}│     trace = ExceptionTrace(e.value)
       {lineno + 3}│ 
       {lineno + 4}│     trace.render(io, simple=True)
-"""  # noqa: W293
+"""
     assert expected == io.fetch_output()

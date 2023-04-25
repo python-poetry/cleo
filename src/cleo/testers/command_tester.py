@@ -61,7 +61,7 @@ class CommandTester:
             if " " in name:
                 # If the command is namespaced we rearrange
                 # the input to parse it as a single argument
-                argv = [application.name, self._command.name] + input._tokens
+                argv = [application.name, self._command.name, *input._tokens]
 
                 input = ArgvInput(argv)
             else:
