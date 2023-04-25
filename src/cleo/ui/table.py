@@ -176,7 +176,7 @@ class Table:
                     else:
                         rows_i.append("")
         else:
-            rows = cast("Rows", self._headers) + [divider] + self._rows
+            rows = [*cast("Rows", self._headers), divider, *self._rows]
 
         self._calculate_number_of_columns(rows)
         rows = list(self._build_table_rows(rows))
@@ -473,7 +473,7 @@ class Table:
         number_of_rows = len(
             list(
                 self._build_table_rows(
-                    cast("Rows", self._headers) + [TableSeparator()] + self._rows
+                    [*cast("Rows", self._headers), TableSeparator(), *self._rows]
                 )
             )
         )

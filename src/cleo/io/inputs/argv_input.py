@@ -52,10 +52,7 @@ class ArgvInput(Input):
                 # Otherwise, use the last character
                 # (if it's a short option set, only the last one
                 # can take a value with space separator).
-                if len(token) > 1 and token[1] == "-":
-                    name = token[2:]
-                else:
-                    name = token[-1]
+                name = token[2:] if len(token) > 1 and token[1] == "-" else token[-1]
 
                 if name not in self._options and not self._definition.has_shortcut(
                     name
@@ -100,10 +97,7 @@ class ArgvInput(Input):
                 # Options with values:
                 # For long options, test for '--option=' at beginning
                 # For short options, test for '-o' at beginning
-                if value.find("--") == 0:
-                    leading = value + "="
-                else:
-                    leading = value
+                leading = value + "=" if value.find("--") == 0 else value
 
                 if token == value or leading != "" and token.find(leading) == 0:
                     return True
@@ -135,10 +129,7 @@ class ArgvInput(Input):
                 # Options with values:
                 # For long options, test for '--option=' at beginning
                 # For short options, test for '-o' at beginning
-                if value.find("--") == 0:
-                    leading = value + "="
-                else:
-                    leading = value
+                leading = value + "=" if value.find("--") == 0 else value
 
                 if token == value or leading != "" and token.find(leading) == 0:
                     return token[len(leading)]

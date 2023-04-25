@@ -97,10 +97,7 @@ class Formatter:
 
             # Opening tag
             open = text[1] != "/"
-            if open:
-                tag = match.group(1)
-            else:
-                tag = match.group(2)
+            tag = match.group(1) if open else match.group(2)
 
             style = None
             if tag:

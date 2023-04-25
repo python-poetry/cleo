@@ -134,7 +134,7 @@ class TextDescriptor(Descriptor):
             self._write("\n\n")
 
         self._write("<b>Usage:</b>")
-        for usage in [command.synopsis(True)] + command.aliases + command.usages:
+        for usage in [command.synopsis(True), *command.aliases, *command.usages]:
             self._write("\n")
             self._write("  " + Formatter.escape(usage))
 

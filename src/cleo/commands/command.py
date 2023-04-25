@@ -209,7 +209,6 @@ class Command(BaseCommand):
         """
         Return a TableSeparator instance.
         """
-        from cleo.ui.table_separator import TableSeparator
 
         return TableSeparator()
 
@@ -226,10 +225,7 @@ class Command(BaseCommand):
         Writes a string without a new line.
         Useful if you want to use overwrite().
         """
-        if style:
-            styled = f"<{style}>{text}</>"
-        else:
-            styled = text
+        styled = f"<{style}>{text}</>" if style else text
 
         self._io.write(styled)
 
@@ -242,10 +238,7 @@ class Command(BaseCommand):
         """
         Write a string as information output.
         """
-        if style:
-            styled = f"<{style}>{text}</>"
-        else:
-            styled = text
+        styled = f"<{style}>{text}</>" if style else text
 
         self._io.write_line(styled, verbosity=verbosity)
 
@@ -258,10 +251,7 @@ class Command(BaseCommand):
         """
         Write a string as information output to stderr.
         """
-        if style:
-            styled = f"<{style}>{text}</>"
-        else:
-            styled = text
+        styled = f"<{style}>{text}</>" if style else text
 
         self._io.write_error_line(styled, verbosity)
 

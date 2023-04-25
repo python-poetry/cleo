@@ -186,10 +186,7 @@ class Highlighter:
         for i, line in enumerate(lines):
             snippet = ""
             if mark_line is not None:
-                if mark_line == i + 1:
-                    snippet = marker
-                else:
-                    snippet = no_marker
+                snippet = marker if mark_line == i + 1 else no_marker
 
             line_number = f"{i + 1:>{max_line_length}}"
             styling = (

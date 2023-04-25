@@ -55,18 +55,20 @@ sphinx-rtd-theme = "^1.0.0"
 fix = true
 target-version = "py37"
 line-length = 88
+extend-select = [
+    "B",  # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "ERA",  # flake8-eradicate/eradicate
+    "PIE",  # flake8-pie
+    "SIM",  # flake8-simplify
+    "TID",  # flake8-tidy-imports
+    "TCH",  # flake8-type-checking
+    "N",  # pep8-naming
+    "RUF",  # ruff checks
+]
 extend-exclude = [
     "docs/*",
 ]
-ignore = [
-    # ruff is not the same as isort, might change in the future
-    "I",
-    # exclude documentation checks until https://github.com/python-poetry/cleo/issues/251 is worked on
-    "D",
-]
-
-[tool.ruff.flake8-quotes]
-inline-quotes = "double"
 
 [tool.ruff.flake8-tidy-imports]
 ban-relative-imports = "all"

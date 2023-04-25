@@ -5,7 +5,7 @@ from cleo.formatters.style import Style
 
 
 class StyleStack:
-    def __init__(self, empty_style: Style | None = None):
+    def __init__(self, empty_style: Style | None = None) -> None:
         if empty_style is None:
             empty_style = Style()
 
