@@ -53,44 +53,39 @@ sphinx-rtd-theme = "^1.0.0"
 
 [tool.ruff]
 fix = true
+unfixable = [
+    "ERA", # do not autoremove commented out code
+]
 target-version = "py37"
 line-length = 88
 extend-select = [
-    "B",  # flake8-bugbear
+    "B",   # flake8-bugbear
     "C4",  # flake8-comprehensions
-    "ERA",  # flake8-eradicate/eradicate
-    "PIE",  # flake8-pie
-    "SIM",  # flake8-simplify
-    "TID",  # flake8-tidy-imports
-    "TCH",  # flake8-type-checking
-    "N",  # pep8-naming
-    "RUF",  # ruff checks
+    "ERA", # flake8-eradicate/eradicate
+    "I",   # isort
+    "N",   # pep8-naming
+    "PIE", # flake8-pie
+    "PGH", # pygrep
+    "RUF", # ruff checks
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+    "TID", # flake8-tidy-imports
+    "UP",  # pyupgrade
 ]
 extend-exclude = [
     "docs/*",
+    "tests/fixtures/exceptions/*"
 ]
 
 [tool.ruff.flake8-tidy-imports]
 ban-relative-imports = "all"
 
-[tool.isort]
-profile = "black"
-force_single_line = true
-atomic = true
-lines_after_imports = 2
-lines_between_types = 1
-src_paths = [
-    "src",
-    "tests"
-]
-add_imports = [
-    "from __future__ import annotations"
-]
-filter_files = true
-known_first_party = "cleo"
-
-[tool.pycln]
-all = true
+[tool.ruff.isort]
+force-single-line = true
+lines-between-types = 1
+lines-after-imports = 2
+known-first-party = ["cleo"]
+required-imports = ["from __future__ import annotations"]
 
 [tool.mypy]
 strict = true
