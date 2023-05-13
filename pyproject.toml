@@ -37,7 +37,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.7"
 crashtest = "^0.4.1"
-rapidfuzz = "^2.2.0"
+rapidfuzz = "^3.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.1.2"
