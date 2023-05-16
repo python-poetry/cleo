@@ -117,7 +117,7 @@ class Question:
         """
         Outputs an error message.
         """
-        io.write_error_line(f"<error>{str(error)}</error>")
+        io.write_error_line(f"<error>{error!s}</error>")
 
     def _autocomplete(self, io: IO) -> str:
         """
