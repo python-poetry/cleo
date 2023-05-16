@@ -60,9 +60,9 @@ class Argument:
 
     def __repr__(self) -> str:
         return (
-            f"Argument({repr(self._name)}, "
+            f"Argument({self._name!r}, "
             f"required={self._required}, "
             f"is_list={self._is_list}, "
-            f"description={repr(self._description)}, "
-            f"default={repr(self._default)})"
+            f"description={self._description!r}, "
+            f"default={self._default!r})"
         )
