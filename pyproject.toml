@@ -15,9 +15,8 @@ maintainers = [
 ]
 license = "MIT"
 readme = "README.md"
-packages = [
-    { include = "cleo", from = "src" }
-]
+packages = [{ include = "cleo", from = "src" }]
+include = [{ path = "tests", format = "sdist" }]
 repository = "https://github.com/python-poetry/cleo"
 keywords = ["cli", "commands"]
 classifiers = [
