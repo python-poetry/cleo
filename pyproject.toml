@@ -42,7 +42,7 @@ rapidfuzz = "^3.0.0"
 pytest = "^7.1.2"
 pytest-mock = "^3.8.2"
 pre-commit = "^2.20.0"
-pytest-cov = "^3.0.0"
+pytest-cov = ">=3,<5"
 mypy = ">=0.990,<1.4"
 towncrier = ">=22.12.0"
 
