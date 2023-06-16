@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import math
-import shutil
 
 from typing import TYPE_CHECKING
 from typing import TextIO
 
 from cleo.io.outputs.output import Verbosity
 from cleo.io.outputs.stream_output import StreamOutput
+from cleo.terminal import Terminal
 
 
 if TYPE_CHECKING:
@@ -31,7 +31,7 @@ class SectionOutput(StreamOutput):
         self._lines = 0
         sections.insert(0, self)
         self._sections = sections
-        self._terminal = shutil.get_terminal_size()
+        self._terminal = Terminal().size
 
     @property
     def content(self) -> str:
@@ -67,7 +67,7 @@ class SectionOutput(StreamOutput):
             self._lines += (
                 math.ceil(
                     len(self.remove_format(line_content).replace("\t", "        "))
-                    / self._terminal.columns
+                    / self._terminal.width
                 )
                 or 1
             )
