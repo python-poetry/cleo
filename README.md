@@ -1,5 +1,6 @@
 # Cleo
 
+[![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org/)
 [![Tests](https://github.com/python-poetry/cleo/actions/workflows/tests.yml/badge.svg)](https://github.com/python-poetry/cleo/actions/workflows/tests.yml)
 [![PyPI version](https://img.shields.io/pypi/v/cleo)](https://pypi.org/project/cleo/)
 
