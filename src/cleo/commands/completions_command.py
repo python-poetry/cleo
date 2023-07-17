@@ -120,7 +120,7 @@ script. Consult your shells documentation for how to add such directives.
 
         if shell not in self.SUPPORTED_SHELLS:
             raise ValueError(
-                f'[shell] argument must be one of {", ".join(self.SUPPORTED_SHELLS)}'
+                f"[shell] argument must be one of {', '.join(self.SUPPORTED_SHELLS)}"
             )
 
         self.line(self.render(shell))

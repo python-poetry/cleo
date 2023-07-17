@@ -53,7 +53,7 @@ class SelectChoiceValidator:
             if len(results) > 1:
                 raise CleoValueError(
                     "The provided answer is ambiguous. "
-                    f'Value should be one of {" or ".join(str(r) for r in results)}.'
+                    f"Value should be one of {' or '.join(str(r) for r in results)}."
                 )
 
             if value in self._values:
@@ -123,7 +123,7 @@ class ChoiceQuestion(Question):
 
             message = (
                 f"<question>{message}</question> "
-                f'[<comment>{", ".join(default)}</comment>]:'
+                f"[<comment>{', '.join(default)}</comment>]:"
             )
         else:
             choices = self._choices

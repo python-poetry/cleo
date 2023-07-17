@@ -39,7 +39,7 @@ class TableCellStyle:
         tag = "<fg={};bg={}"
 
         if self._options:
-            tag += f';options={",".join(self._options)}'
+            tag += f";options={','.join(self._options)}"
 
         tag += ">"
 
