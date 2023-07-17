@@ -303,7 +303,7 @@ script. Consult your shells documentation for how to add such directives.
         value = '"' + value.replace(":", "\\:")
         if description:
             description = re.sub(
-                r'(["\'#&;`|*?~<>^()\[\]{}$\\\x0A\xFF])', r"\\\1", description
+                r"([\"'#&;`|*?~<>^()\[\]{}$\\\x0A\xFF])", r"\\\1", description
             )
             value += ":" + subprocess.list2cmdline([description]).strip('"')
 
