@@ -35,7 +35,7 @@ class SelectChoiceValidator:
         if self._question.supports_multiple_choices():
             # Check for a separated comma values
             _selected = selected.replace(" ", "")
-            if not re.match("^[a-zA-Z0-9_-]+(?:,[a-zA-Z0-9_-]+)*$", _selected):
+            if not re.match(r"^[a-zA-Z0-9_-]+(?:,[a-zA-Z0-9_-]+)*$", _selected):
                 raise CleoValueError(self._question.error_message.format(selected))
 
             selected_choices = _selected.split(",")

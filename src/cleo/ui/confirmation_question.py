@@ -17,7 +17,7 @@ class ConfirmationQuestion(Question):
     """
 
     def __init__(
-        self, question: str, default: bool = True, true_answer_regex: str = "(?i)^y"
+        self, question: str, default: bool = True, true_answer_regex: str = r"(?i)^y"
     ) -> None:
         super().__init__(question, default)
 

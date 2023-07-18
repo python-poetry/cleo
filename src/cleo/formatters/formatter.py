@@ -146,7 +146,7 @@ class Formatter:
         if string in self._inline_styles_cache:
             return self._inline_styles_cache[string]
 
-        matches = re.findall("([^=]+)=([^;]+)(;|$)", string.lower())
+        matches = re.findall(r"([^=]+)=([^;]+)(;|$)", string.lower())
         if not matches:
             return None
 

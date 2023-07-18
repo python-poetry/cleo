@@ -107,7 +107,7 @@ class Command(BaseCommand):
         return self._io.input.option(name)
 
     def confirm(
-        self, question: str, default: bool = False, true_answer_regex: str = "(?i)^y"
+        self, question: str, default: bool = False, true_answer_regex: str = r"(?i)^y"
     ) -> bool:
         """
         Confirm a question with the user.
