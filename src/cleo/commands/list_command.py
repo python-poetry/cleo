@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import ClassVar
+
 from cleo.commands.command import Command
 from cleo.io.inputs.argument import Argument
 
@@ -19,7 +21,7 @@ You can also display the commands for a specific namespace:
   <info>{command_full_name} test</info>
 """
 
-    arguments = [
+    arguments: ClassVar[list[Argument]] = [
         Argument("namespace", required=False, description="The namespace name")
     ]
 

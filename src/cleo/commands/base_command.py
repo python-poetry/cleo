@@ -3,6 +3,7 @@ from __future__ import annotations
 import inspect
 
 from typing import TYPE_CHECKING
+from typing import ClassVar
 
 from cleo.exceptions import CleoError
 from cleo.io.inputs.definition import Definition
@@ -23,7 +24,7 @@ class BaseCommand:
     enabled = True
     hidden = False
 
-    usages: list[str] = []
+    usages: ClassVar[list[str]] = []
 
     def __init__(self) -> None:
         self._definition = Definition()

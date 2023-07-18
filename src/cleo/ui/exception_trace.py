@@ -11,6 +11,7 @@ import sys
 import tokenize
 
 from typing import TYPE_CHECKING
+from typing import ClassVar
 
 from crashtest.frame_collection import FrameCollection
 
@@ -38,7 +39,7 @@ class Highlighter:
     LINE_MARKER = "line_marker"
     LINE_NUMBER = "line_number"
 
-    DEFAULT_THEME = {
+    DEFAULT_THEME: ClassVar[dict[str, str]] = {
         TOKEN_STRING: "fg=yellow;options=bold",
         TOKEN_NUMBER: "fg=blue;options=bold",
         TOKEN_COMMENT: "fg=default;options=dark,italic",
@@ -50,10 +51,10 @@ class Highlighter:
         LINE_NUMBER: "fg=default;options=dark",
     }
 
-    KEYWORDS = set(keyword.kwlist)
-    BUILTINS = set(dir(builtins))
+    KEYWORDS: ClassVar[set[str]] = set(keyword.kwlist)
+    BUILTINS: ClassVar[set[str]] = set(dir(builtins))
 
-    UI = {
+    UI: ClassVar[dict[bool, dict[str, str]]] = {
         False: {"arrow": ">", "delimiter": "|"},
         True: {"arrow": "→", "delimiter": "│"},
     }
@@ -209,14 +210,14 @@ class ExceptionTrace:
     Renders the trace of an exception.
     """
 
-    THEME = {
+    THEME: ClassVar[dict[str, str]] = {
         "comment": "<fg=black;options=bold>",
         "keyword": "<fg=yellow>",
         "builtin": "<fg=blue>",
         "literal": "<fg=magenta>",
     }
 
-    AST_ELEMENTS = {
+    AST_ELEMENTS: ClassVar[dict[str, list[str]]] = {
         "builtins": dir(builtins),
         "keywords": [
             getattr(ast, cls)
@@ -227,7 +228,7 @@ class ExceptionTrace:
         ],
     }
 
-    _FRAME_SNIPPET_CACHE: dict[tuple[Frame, int, int], list[str]] = {}
+    _FRAME_SNIPPET_CACHE: ClassVar[dict[tuple[Frame, int, int], list[str]]] = {}
 
     def __init__(
         self,
