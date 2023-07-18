@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import re
 
+from typing import ClassVar
+
 from cleo.exceptions import CleoValueError
 from cleo.formatters.style import Style
 from cleo.formatters.style_stack import StyleStack
@@ -10,7 +12,7 @@ from cleo.formatters.style_stack import StyleStack
 class Formatter:
     TAG_REGEX = re.compile(r"(?ix)<(([a-z](?:[^<>]*)) | /([a-z](?:[^<>]*))?)>")
 
-    _inline_styles_cache: dict[str, Style] = {}
+    _inline_styles_cache: ClassVar[dict[str, Style]] = {}
 
     def __init__(
         self, decorated: bool = False, styles: dict[str, Style] | None = None

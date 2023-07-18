@@ -7,22 +7,30 @@ import posixpath
 import re
 import subprocess
 
+from typing import TYPE_CHECKING
+from typing import ClassVar
+
 from cleo import helpers
 from cleo._compat import shell_quote
 from cleo.commands.command import Command
 from cleo.commands.completions.templates import TEMPLATES
 
 
+if TYPE_CHECKING:
+    from cleo.io.inputs.argument import Argument
+    from cleo.io.inputs.option import Option
+
+
 class CompletionsCommand(Command):
     name = "completions"
     description = "Generate completion scripts for your shell."
 
-    arguments = [
+    arguments: ClassVar[list[Argument]] = [
         helpers.argument(
             "shell", "The shell to generate the scripts for.", optional=True
         )
     ]
-    options = [
+    options: ClassVar[list[Option]] = [
         helpers.option(
             "alias", None, "Alias for the current command.", flag=False, multiple=True
         )

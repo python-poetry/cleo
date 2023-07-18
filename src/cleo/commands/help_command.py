@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import ClassVar
+
 from cleo.commands.command import Command
 from cleo.io.inputs.argument import Argument
 
@@ -9,7 +11,7 @@ class HelpCommand(Command):
 
     description = "Displays help for a command."
 
-    arguments = [
+    arguments: ClassVar[list[Argument]] = [
         Argument(
             "command_name",
             required=False,

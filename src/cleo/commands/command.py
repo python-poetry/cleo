@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from typing import Any
+from typing import ClassVar
 from typing import ContextManager
 from typing import cast
 
@@ -32,11 +33,11 @@ if TYPE_CHECKING:
 
 
 class Command(BaseCommand):
-    arguments: list[Argument] = []
-    options: list[Option] = []
-    aliases: list[str] = []
-    usages: list[str] = []
-    commands: list[BaseCommand] = []
+    arguments: ClassVar[list[Argument]] = []
+    options: ClassVar[list[Option]] = []
+    aliases: ClassVar[list[str]] = []
+    usages: ClassVar[list[str]] = []
+    commands: ClassVar[list[BaseCommand]] = []
 
     def __init__(self) -> None:
         self._io: IO = None  # type: ignore[assignment]

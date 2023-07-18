@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+from typing import ClassVar
+
 import pytest
 
 from cleo.application import Application
@@ -7,6 +10,11 @@ from cleo.commands.command import Command
 from cleo.helpers import argument
 from cleo.helpers import option
 from cleo.testers.application_tester import ApplicationTester
+
+
+if TYPE_CHECKING:
+    from cleo.io.inputs.argument import Argument
+    from cleo.io.inputs.option import Option
 
 
 class FooCommand(Command):
@@ -18,9 +26,9 @@ class FooCommand(Command):
 
     description = "Foo command"
 
-    arguments = [argument("foo")]
+    arguments: ClassVar[list[Argument]] = [argument("foo")]
 
-    options = [option("--bar")]
+    options: ClassVar[list[Option]] = [option("--bar")]
 
     def handle(self) -> int:
         self.line(self.argument("foo"))
@@ -39,9 +47,9 @@ class FooBarCommand(Command):
 
     description = "Foo Bar command"
 
-    arguments = [argument("foo")]
+    arguments: ClassVar[list[Argument]] = [argument("foo")]
 
-    options = [option("--baz")]
+    options: ClassVar[list[Option]] = [option("--baz")]
 
     def handle(self) -> int:
         self.line(self.argument("foo"))

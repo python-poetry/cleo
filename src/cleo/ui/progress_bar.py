@@ -5,6 +5,7 @@ import re
 import time
 
 from typing import TYPE_CHECKING
+from typing import ClassVar
 from typing import Match
 
 from cleo._utils import format_time
@@ -33,7 +34,7 @@ class ProgressBar(Component):
     progress_char = ">"
     redraw_freq: int | None = 1
 
-    formats = {
+    formats: ClassVar[dict[str, str]] = {
         "normal": " %current%/%max% [%bar%] %percent:3s%%",
         "normal_nomax": " %current% [%bar%]",
         "verbose": " %current%/%max% [%bar%] %percent:3s%% %elapsed:-6s%",

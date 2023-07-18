@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+from typing import ClassVar
+
 from cleo.application import Application
 from cleo.commands.command import Command
 from cleo.helpers import argument
@@ -8,9 +11,15 @@ from tests.fixtures.inherited_command import ChildCommand
 from tests.fixtures.signature_command import SignatureCommand
 
 
+if TYPE_CHECKING:
+    from cleo.io.inputs.argument import Argument
+
+
 class MyCommand(Command):
     name = "test"
-    arguments = [argument("action", description="The action to execute.")]
+    arguments: ClassVar[list[Argument]] = [
+        argument("action", description="The action to execute.")
+    ]
 
     def handle(self) -> int:
         action = self.argument("action")
@@ -27,7 +36,7 @@ class MySecondCommand(Command):
     name = "test2"
     description = "Command testing"
 
-    arguments = [argument("foo", "Bar", multiple=True)]
+    arguments: ClassVar[list[Argument]] = [argument("foo", "Bar", multiple=True)]
 
     def handle(self) -> int:
         foos = self.argument("foo")

@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import os
 
+from typing import ClassVar
+
 from cleo.exceptions import CleoValueError
 
 
 class Color:
-    COLORS = {
+    COLORS: ClassVar[dict[str, tuple[int, int]]] = {
         "black": (30, 40),
         "red": (31, 41),
         "green": (32, 42),
@@ -26,7 +28,7 @@ class Color:
         "white": (97, 107),
     }
 
-    AVAILABLE_OPTIONS = {
+    AVAILABLE_OPTIONS: ClassVar[dict[str, dict[str, int]]] = {
         "bold": {"set": 1, "unset": 22},
         "dark": {"set": 2, "unset": 22},
         "italic": {"set": 3, "unset": 23},
