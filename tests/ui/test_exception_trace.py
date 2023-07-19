@@ -181,7 +181,7 @@ def test_render_can_ignore_given_files() -> None:
         nested2.call()
 
     trace = ExceptionTrace(e.value)
-    trace.ignore_files_in(f"^{re.escape(nested1.__file__)}$")
+    trace.ignore_files_in(rf"^{re.escape(nested1.__file__)}$")
     trace.render(io)
 
     lineno = 181
@@ -219,7 +219,7 @@ def test_render_shows_ignored_files_if_in_debug_mode() -> None:
         nested2.call()
 
     trace = ExceptionTrace(e.value)
-    trace.ignore_files_in(f"^{re.escape(nested1.__file__)}$")
+    trace.ignore_files_in(rf"^{re.escape(nested1.__file__)}$")
 
     trace.render(io)
     lineno = 219

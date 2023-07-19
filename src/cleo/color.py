@@ -55,7 +55,7 @@ class Color:
             if option not in self.AVAILABLE_OPTIONS:
                 raise ValueError(
                     f'"{option}" is not a valid color option. '
-                    f'It must be one of {", ".join(self.AVAILABLE_OPTIONS.keys())}'
+                    f"It must be one of {', '.join(self.AVAILABLE_OPTIONS.keys())}"
                 )
 
             self._options[option] = self.AVAILABLE_OPTIONS[option]
@@ -78,7 +78,7 @@ class Color:
         if not codes:
             return ""
 
-        return f'\033[{";".join(codes)}m'
+        return f"\033[{';'.join(codes)}m"
 
     def unset(self) -> str:
         codes = []
@@ -95,7 +95,7 @@ class Color:
         if not codes:
             return ""
 
-        return f'\033[{";".join(codes)}m'
+        return f"\033[{';'.join(codes)}m"
 
     def _parse_color(self, color: str, background: bool) -> str:
         if not color:
@@ -117,7 +117,7 @@ class Color:
         if color not in self.COLORS:
             raise CleoValueError(
                 f'"{color}" is an invalid color.'
-                f' It must be one of {", ".join(self.COLORS.keys())}'
+                f" It must be one of {', '.join(self.COLORS.keys())}"
             )
 
         return str(self.COLORS[color][int(background)])

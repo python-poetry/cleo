@@ -120,7 +120,7 @@ script. Consult your shells documentation for how to add such directives.
 
         if shell not in self.SUPPORTED_SHELLS:
             raise ValueError(
-                f'[shell] argument must be one of {", ".join(self.SUPPORTED_SHELLS)}'
+                f"[shell] argument must be one of {', '.join(self.SUPPORTED_SHELLS)}"
             )
 
         self.line(self.render(shell))
@@ -297,13 +297,13 @@ script. Consult your shells documentation for how to add such directives.
     def _sanitize_for_function_name(self, name: str) -> str:
         name = name.replace("-", "_")
 
-        return re.sub("[^A-Za-z0-9_]+", "", name)
+        return re.sub(r"[^A-Za-z0-9_]+", "", name)
 
     def _zsh_describe(self, value: str, description: str | None = None) -> str:
         value = '"' + value.replace(":", "\\:")
         if description:
             description = re.sub(
-                r'(["\'#&;`|*?~<>^()\[\]{}$\\\x0A\xFF])', r"\\\1", description
+                r"([\"'#&;`|*?~<>^()\[\]{}$\\\x0A\xFF])", r"\\\1", description
             )
             value += ":" + subprocess.list2cmdline([description]).strip('"')
 

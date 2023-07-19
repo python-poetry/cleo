@@ -40,7 +40,7 @@ class TextDescriptor(Descriptor):
             argument.description,
         )
         self._write(
-            f'  <c1>{argument.name}</c1>  {" " * spacing_width}'
+            f"  <c1>{argument.name}</c1>  {' ' * spacing_width}"
             f"{sub_argument_description}{default}"
         )
 
@@ -82,7 +82,7 @@ class TextDescriptor(Descriptor):
         )
         self._write(
             f"  <c1>{synopsis}</c1>  "
-            f'{" " * spacing_width}{sub_option_description}'
+            f"{' ' * spacing_width}{sub_option_description}"
             f"{default}"
             f"{are_multiple_values_allowed}"
         )
@@ -204,7 +204,7 @@ class TextDescriptor(Descriptor):
                 and namespace["id"] != ApplicationDescription.GLOBAL_NAMESPACE
             ):
                 self._write("\n")
-                self._write(f' <comment>{namespace["id"]}</comment>')
+                self._write(f" <comment>{namespace['id']}</comment>")
 
             for name in namespace["commands"]:
                 self._write("\n")
@@ -216,7 +216,7 @@ class TextDescriptor(Descriptor):
                     else ""
                 )
                 self._write(
-                    f'  <c1>{name}</c1>{" " * spacing_width}'
+                    f"  <c1>{name}</c1>{' ' * spacing_width}"
                     f"{command_aliases + command.description}"
                 )
 
@@ -282,6 +282,6 @@ class TextDescriptor(Descriptor):
         aliases = command.aliases
 
         if aliases:
-            text = f'[{ "|".join(aliases) }] '
+            text = f"[{ '|'.join(aliases) }] "
 
         return text

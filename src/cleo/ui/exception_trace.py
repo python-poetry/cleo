@@ -182,7 +182,7 @@ class Highlighter:
         max_line_length = max(3, len(str(len(lines))))
 
         snippet_lines = []
-        marker = f'<{self._theme[self.LINE_MARKER]}>{self._ui["arrow"]}</> '
+        marker = f"<{self._theme[self.LINE_MARKER]}>{self._ui['arrow']}</> "
         no_marker = "  "
         for i, line in enumerate(lines):
             snippet = ""
@@ -198,7 +198,7 @@ class Highlighter:
             snippet += (
                 f"<{styling}>"
                 f"{line_number}</><{self._theme[self.LINE_NUMBER]}>"
-                f'{self._ui["delimiter"]}</> {line}'
+                f"{self._ui['delimiter']}</> {line}"
             )
             snippet_lines.append(snippet)
 
@@ -321,7 +321,7 @@ class ExceptionTrace:
             self._render_line(
                 io,
                 f"<fg=blue;options=bold>{symbol} </>"
-                f'<fg=default;options=bold>{title.rstrip(".")}</>:'
+                f"<fg=default;options=bold>{title.rstrip('.')}</>:"
                 f" {description}{joined_links}",
                 True,
             )
@@ -353,7 +353,7 @@ class ExceptionTrace:
 
                     self._render_line(
                         io,
-                        f'<fg=blue>{"...":>{max_frame_length}}</>  '
+                        f"<fg=blue>{'...':>{max_frame_length}}</>  "
                         f"Previous {frames_message} repeated "
                         f"<fg=blue>{collection.repetitions + 1}</> times",
                         True,
@@ -397,7 +397,7 @@ class ExceptionTrace:
                         for code_line in code_lines:
                             self._render_line(
                                 io,
-                                f'{" ":>{max_frame_length}}{code_line}',
+                                f"{' ':>{max_frame_length}}{code_line}",
                                 indent=3,
                             )
                     else:
@@ -410,7 +410,7 @@ class ExceptionTrace:
                             code_line = frame.line.strip()
 
                         self._render_line(
-                            io, f'{" ":>{max_frame_length}}    {code_line}'
+                            io, f"{' ':>{max_frame_length}}    {code_line}"
                         )
 
                     i -= 1
@@ -421,7 +421,7 @@ class ExceptionTrace:
         if new_line:
             io.write_line("")
 
-        io.write_line(f'{indent * " "}{line}')
+        io.write_line(f"{indent * ' '}{line}")
 
     def _get_relative_file_path(self, filepath: str) -> str:
         cwd = os.getcwd()

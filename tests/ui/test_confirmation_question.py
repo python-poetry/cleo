@@ -31,8 +31,8 @@ def test_ask(io: BufferedIO, input: str, expected: bool, default: bool) -> None:
 def test_ask_with_custom_answer(io: BufferedIO) -> None:
     io.set_user_input("j\ny\n")
 
-    question = ConfirmationQuestion("Do you like French fries?", False, "(?i)^(j|y)")
+    question = ConfirmationQuestion("Do you like French fries?", False, r"(?i)^(j|y)")
     assert question.ask(io)
 
-    question = ConfirmationQuestion("Do you like French fries?", False, "(?i)^(j|y)")
+    question = ConfirmationQuestion("Do you like French fries?", False, r"(?i)^(j|y)")
     assert question.ask(io)
