@@ -136,9 +136,12 @@ class StreamOutput(Output):
             if (mode.value & self.ENABLE_VIRTUAL_TERMINAL_PROCESSING) != 0:
                 return True
 
-            return kernel32.SetConsoleMode(
-                h, mode.value | self.ENABLE_VIRTUAL_TERMINAL_PROCESSING
-            ) != 0
+            return (
+                kernel32.SetConsoleMode(
+                    h, mode.value | self.ENABLE_VIRTUAL_TERMINAL_PROCESSING
+                )
+                != 0
+            )
 
         if not hasattr(self._stream, "fileno"):
             return False

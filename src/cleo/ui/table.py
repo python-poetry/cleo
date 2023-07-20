@@ -338,7 +338,7 @@ class Table:
             row_content += self._render_cell(
                 row,
                 column,
-                first_cell_format if first_cell_format and i == 0 else cell_format
+                first_cell_format if first_cell_format and i == 0 else cell_format,
             )
 
             row_content += self._render_column_separator(
