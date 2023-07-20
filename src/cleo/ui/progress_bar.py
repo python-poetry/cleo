@@ -366,13 +366,11 @@ class ProgressBar(Component):
     def bar_offset(self) -> int:
         if self._max:
             return math.floor(self._percent * self.bar_width)
-        else:
-            if self.redraw_freq is None:
-                return math.floor(
-                    (min(5, self.bar_width // 15) * self._write_count) % self.bar_width
-                )
-
-            return math.floor(self._step % self.bar_width)
+        if self.redraw_freq is None:
+            return math.floor(
+                (min(5, self.bar_width // 15) * self._write_count) % self.bar_width
+            )
+        return math.floor(self._step % self.bar_width)
 
     def _formatter_bar(self) -> str:
         complete_bars = self.bar_offset
