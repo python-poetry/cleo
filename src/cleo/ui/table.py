@@ -335,10 +335,11 @@ class Table:
         columns = self._get_row_columns(row)
         last = len(columns) - 1
         for i, column in enumerate(columns):
-            if first_cell_format and i == 0:
-                row_content += self._render_cell(row, column, first_cell_format)
-            else:
-                row_content += self._render_cell(row, column, cell_format)
+            row_content += self._render_cell(
+                row,
+                column,
+                first_cell_format if first_cell_format and i == 0 else cell_format
+            )
 
             row_content += self._render_column_separator(
                 self.BORDER_OUTSIDE if i == last else self.BORDER_INSIDE
