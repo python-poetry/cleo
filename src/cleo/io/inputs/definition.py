@@ -27,10 +27,7 @@ class Definition:
         self._options: dict[str, Option] = {}
         self._shortcuts: dict[str, str] = {}
 
-        if definition is None:
-            definition = []
-
-        self.set_definition(definition)
+        self.set_definition(definition or [])
 
     @property
     def arguments(self) -> list[Argument]:

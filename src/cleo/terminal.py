@@ -20,7 +20,7 @@ class Terminal:
     ) -> None:
         self._width = width
         self._height = height
-        self._fallback = TerminalSize(*(fallback if fallback is not None else (80, 25)))
+        self._fallback = TerminalSize(*(fallback or (80, 25)))
 
     @property
     def width(self) -> int:
