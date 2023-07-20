@@ -105,7 +105,7 @@ class Formatter:
             if tag:
                 style = self._create_style_from_string(tag)
 
-            if not open and not tag:
+            if not (open or tag):
                 # </>
                 self._style_stack.pop()
             elif style is None:

@@ -35,7 +35,7 @@ class Terminal:
         return self._get_terminal_size()
 
     def _get_terminal_size(self) -> TerminalSize:
-        if self._width is not None and self._height is not None:
+        if not (self._width is None or self._height is None):
             return TerminalSize(self._width, self._height)
 
         width = 0

@@ -265,7 +265,7 @@ class ArgvInput(Input):
 
         option = self._definition.option(name)
 
-        if value is not None and not option.accepts_value():
+        if not (value is None or option.accepts_value()):
             raise CleoRuntimeError(f'The "--{name}" option does not accept a value')
 
         if value in ["", None] and option.accepts_value() and self._parsed:

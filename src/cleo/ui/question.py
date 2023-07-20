@@ -87,7 +87,7 @@ class Question:
         """
         self._write_prompt(io)
 
-        if not self._autocomplete_values or not self._has_stty_available():
+        if not (self._autocomplete_values and self._has_stty_available()):
             ret: str | None = None
 
             if self.is_hidden():

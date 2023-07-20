@@ -199,9 +199,9 @@ class TextDescriptor(Descriptor):
             if not namespace["commands"]:
                 continue
 
-            if (
-                not described_namespace
-                and namespace["id"] != ApplicationDescription.GLOBAL_NAMESPACE
+            if not (
+                described_namespace
+                or namespace["id"] == ApplicationDescription.GLOBAL_NAMESPACE
             ):
                 self._write("\n")
                 self._write(f" <comment>{namespace['id']}</comment>")
