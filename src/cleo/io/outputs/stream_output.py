@@ -52,11 +52,9 @@ class StreamOutput(Output):
         encoding = self._stream.encoding or locale.getpreferredencoding(False)
 
         try:
-            encoding = codecs.lookup(encoding).name
+            return codecs.lookup(encoding).name == "utf-8"
         except Exception:
-            encoding = "utf-8"
-
-        return encoding == "utf-8"
+            return True
 
     def flush(self) -> None:
         self._stream.flush()
