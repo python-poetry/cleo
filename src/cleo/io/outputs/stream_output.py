@@ -8,6 +8,7 @@ import sys
 
 from typing import TYPE_CHECKING
 from typing import TextIO
+from typing import cast
 
 from cleo.io.outputs.output import Output
 from cleo.io.outputs.output import Verbosity
@@ -136,11 +137,12 @@ class StreamOutput(Output):
             if (mode.value & self.ENABLE_VIRTUAL_TERMINAL_PROCESSING) != 0:
                 return True
 
-            return (
+            return cast(
+                bool,
                 kernel32.SetConsoleMode(
                     h, mode.value | self.ENABLE_VIRTUAL_TERMINAL_PROCESSING
                 )
-                != 0
+                != 0,
             )
 
         if not hasattr(self._stream, "fileno"):
