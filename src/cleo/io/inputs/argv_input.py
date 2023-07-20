@@ -114,7 +114,7 @@ class ArgvInput(Input):
             values = [values]
 
         tokens = self._tokens[:]
-        while len(tokens) > 0:
+        while tokens:
             token = tokens.pop(0)
             if only_params and token == "--":
                 return default
