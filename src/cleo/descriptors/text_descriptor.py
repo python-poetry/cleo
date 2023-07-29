@@ -176,7 +176,7 @@ class TextDescriptor(Descriptor):
         namespaces = description.namespaces
 
         if described_namespace and namespaces:
-            described_namespace_info = list(namespaces.values())[0]
+            described_namespace_info = next(iter(namespaces.values()))
             for name in described_namespace_info["commands"]:
                 commands[name] = description.command(name)
 
