@@ -115,7 +115,7 @@ class ProgressIndicator:
         if not self._started:
             raise RuntimeError("Progress indicator has not yet been started.")
 
-        if self._auto_thread is not None and self._auto_running is not None:
+        if not (self._auto_thread is None or self._auto_running is None):
             self._auto_running.set()
             self._auto_thread.join()
 
@@ -152,7 +152,7 @@ class ProgressIndicator:
         self.finish(end_message, reset_indicator=True)
 
     def _spin(self) -> None:
-        while self._auto_running is not None and not self._auto_running.is_set():
+        while not (self._auto_running is None or self._auto_running.is_set()):
             self.advance()
 
             time.sleep(0.1)

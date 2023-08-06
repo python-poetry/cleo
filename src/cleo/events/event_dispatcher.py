@@ -61,7 +61,7 @@ class EventDispatcher:
             if event_name not in self._listeners:
                 return False
 
-            return len(self._listeners[event_name]) > 0
+            return bool(self._listeners[event_name])
 
         return any(self._listeners.values())
 

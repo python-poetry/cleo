@@ -37,8 +37,7 @@ class TokenParser:
 
                 continue
 
-            if self._current is not None:
-                tokens.append(self._parse_token())
+            tokens.append(self._parse_token())
 
         return tokens
 

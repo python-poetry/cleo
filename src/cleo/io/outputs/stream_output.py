@@ -8,6 +8,7 @@ import sys
 
 from typing import TYPE_CHECKING
 from typing import TextIO
+from typing import cast
 
 from cleo.io.outputs.output import Output
 from cleo.io.outputs.output import Verbosity
@@ -52,11 +53,9 @@ class StreamOutput(Output):
         encoding = self._stream.encoding or locale.getpreferredencoding(False)
 
         try:
-            encoding = codecs.lookup(encoding).name
+            return codecs.lookup(encoding).name == "utf-8"
         except Exception:
-            encoding = "utf-8"
-
-        return encoding == "utf-8"
+            return True
 
     def flush(self) -> None:
         self._stream.flush()
@@ -138,13 +137,13 @@ class StreamOutput(Output):
             if (mode.value & self.ENABLE_VIRTUAL_TERMINAL_PROCESSING) != 0:
                 return True
 
-            result: bool = (
+            return cast(
+                bool,
                 kernel32.SetConsoleMode(
                     h, mode.value | self.ENABLE_VIRTUAL_TERMINAL_PROCESSING
                 )
-                != 0
+                != 0,
             )
-            return result
 
         if not hasattr(self._stream, "fileno"):
             return False

@@ -8,10 +8,7 @@ class UI:
     def __init__(self, components: list[Component] | None = None) -> None:
         self._components: dict[str, Component] = {}
 
-        if components is None:
-            components = []
-
-        for component in components:
+        for component in components or []:
             self.register(component)
 
     def register(self, component: Component) -> None:

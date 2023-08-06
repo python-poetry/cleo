@@ -47,11 +47,8 @@ class Color:
         self._foreground = self._parse_color(foreground, False)
         self._background = self._parse_color(background, True)
 
-        if options is None:
-            options = []
-
         self._options = {}
-        for option in options:
+        for option in options or []:
             if option not in self.AVAILABLE_OPTIONS:
                 raise ValueError(
                     f'"{option}" is not a valid color option. '

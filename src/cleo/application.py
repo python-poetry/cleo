@@ -631,10 +631,7 @@ class Application:
         namespaces: list[str] = []
 
         for part in parts:
-            if namespaces:
-                namespaces.append(namespaces[-1] + " " + part)
-            else:
-                namespaces.append(part)
+            namespaces.append(namespaces[-1] + " " + part if namespaces else part)
 
         return namespaces
 
