@@ -4,6 +4,7 @@ import getpass
 import os
 import subprocess
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Callable
@@ -264,7 +265,7 @@ class Question:
         return ret.strip()
 
     def _has_stty_available(self) -> bool:
-        with open(os.devnull, "w") as devnull:
+        with Path(os.devnull).open("w") as devnull:
             try:
                 exit_code = subprocess.call(["stty"], stdout=devnull, stderr=devnull)
             except Exception:
