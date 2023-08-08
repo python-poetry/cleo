@@ -619,7 +619,7 @@ class Table:
                 columns = [
                     x
                     for x in columns
-                    if x not in list(range(cell_key + 1, cell_key + cell.colspan))
+                    if x not in range(cell_key + 1, cell_key + cell.colspan)
                 ]
 
         return columns
