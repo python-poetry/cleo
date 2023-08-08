@@ -695,27 +695,35 @@ class Table:
         if cls._styles is not None:
             return
 
-        borderless = TableStyle()
-        borderless.set_horizontal_border_chars("=")
-        borderless.set_vertical_border_chars(" ")
-        borderless.set_default_crossing_char(" ")
+        borderless = (
+            TableStyle()
+            .set_horizontal_border_chars("=")
+            .set_vertical_border_chars(" ")
+            .set_default_crossing_char(" ")
+        )
 
-        compact = TableStyle()
-        compact.set_horizontal_border_chars("")
-        compact.set_vertical_border_chars(" ")
-        compact.set_default_crossing_char("")
-        compact.set_cell_row_content_format("{}")
+        compact = (
+            TableStyle()
+            .set_horizontal_border_chars("")
+            .set_vertical_border_chars(" ")
+            .set_default_crossing_char("")
+            .set_cell_row_content_format("{}")
+        )
 
-        box = TableStyle()
-        box.set_horizontal_border_chars("─")
-        box.set_vertical_border_chars("│")
-        box.set_crossing_chars("┼", "┌", "┬", "┐", "┤", "┘", "┴", "└", "├")
+        box = (
+            TableStyle()
+            .set_horizontal_border_chars("─")
+            .set_vertical_border_chars("│")
+            .set_crossing_chars("┼", "┌", "┬", "┐", "┤", "┘", "┴", "└", "├")
+        )
 
-        box_double = TableStyle()
-        box_double.set_horizontal_border_chars("═", "─")
-        box_double.set_vertical_border_chars("║", "│")
-        box_double.set_crossing_chars(
-            "┼", "╔", "╤", "╗", "╢", "╝", "╧", "╚", "╟", "╠", "╪", "╣"
+        box_double = (
+            TableStyle()
+            .set_horizontal_border_chars("═", "─")
+            .set_vertical_border_chars("║", "│")
+            .set_crossing_chars(
+                "┼", "╔", "╤", "╗", "╢", "╝", "╧", "╚", "╟", "╠", "╪", "╣"
+            )
         )
 
         cls._styles = {
