@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 import re
 
+from contextlib import suppress
 from copy import deepcopy
 from typing import TYPE_CHECKING
 from typing import Iterator
@@ -670,11 +671,9 @@ class Table:
         """
         cell_width = 0
 
-        try:
+        with suppress(IndexError):
             cell = row[column]
             cell_width = len(self._io.remove_format(cell))
-        except IndexError:
-            pass
 
         column_width = (
             self._column_widths[column] if column in self._column_widths else 0
