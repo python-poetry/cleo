@@ -572,11 +572,11 @@ class Table:
         """
         new_row = []
 
-        for column, cell in enumerate(row):
+        for cell in row:
             new_row.append(cell)
 
             if isinstance(cell, TableCell) and cell.colspan > 1:
-                for _ in range(column + 1, column + cell.colspan):
+                for _ in range(1, cell.colspan):
                     # insert empty value at column position
                     new_row.append("")
 
