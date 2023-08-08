@@ -420,7 +420,7 @@ class Application:
                     break
 
             if index is not None:
-                del argv[index + 1 : index + 1 + (len(name.split(" ")) - 1)]
+                del argv[index + 1 : index + 1 + name.count(" ")]
 
             stream = io.input.stream
             interactive = io.input.is_interactive()
