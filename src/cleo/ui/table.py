@@ -580,10 +580,7 @@ class Table:
                 # insert empty value at column position
                 new_row.extend(repeat("", cell.colspan - 1))
 
-        if new_row:
-            return new_row
-
-        return row
+        return new_row or row
 
     def _copy_row(self, rows: Rows, line: int) -> Row:
         """
