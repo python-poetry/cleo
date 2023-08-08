@@ -5,6 +5,7 @@ import re
 
 from contextlib import suppress
 from copy import deepcopy
+from itertools import repeat
 from typing import TYPE_CHECKING
 from typing import Iterator
 from typing import List
@@ -576,9 +577,8 @@ class Table:
             new_row.append(cell)
 
             if isinstance(cell, TableCell) and cell.colspan > 1:
-                for _ in range(1, cell.colspan):
-                    # insert empty value at column position
-                    new_row.append("")
+                # insert empty value at column position
+                new_row.extend(repeat("", cell.colspan - 1))
 
         if new_row:
             return new_row
