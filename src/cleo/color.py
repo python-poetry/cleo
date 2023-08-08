@@ -52,7 +52,7 @@ class Color:
             if option not in self.AVAILABLE_OPTIONS:
                 raise ValueError(
                     f'"{option}" is not a valid color option. '
-                    f"It must be one of {', '.join(self.AVAILABLE_OPTIONS.keys())}"
+                    f"It must be one of {', '.join(self.AVAILABLE_OPTIONS)}"
                 )
 
             self._options[option] = self.AVAILABLE_OPTIONS[option]
@@ -114,7 +114,7 @@ class Color:
         if color not in self.COLORS:
             raise CleoValueError(
                 f'"{color}" is an invalid color.'
-                f" It must be one of {', '.join(self.COLORS.keys())}"
+                f" It must be one of {', '.join(self.COLORS)}"
             )
 
         return str(self.COLORS[color][int(background)])
