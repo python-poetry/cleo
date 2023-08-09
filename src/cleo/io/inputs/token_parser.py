@@ -21,9 +21,7 @@ class TokenParser:
 
         self._next_ = string[1] if len(string) > 1 else None
 
-        tokens = self._parse()
-
-        return tokens
+        return self._parse()
 
     def _parse(self) -> list[str]:
         tokens = []
