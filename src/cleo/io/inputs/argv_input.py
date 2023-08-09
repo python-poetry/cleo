@@ -270,7 +270,7 @@ class ArgvInput(Input):
             # If the option accepts a value, either required or optional,
             # we check if there is one
             next_token = self._parsed.pop(0)
-            if (next_token and next_token[0] != "-") or next_token in ["", None]:
+            if (next_token and next_token[0] != "-") or next_token in ("", None):
                 value = next_token
             else:
                 self._parsed.insert(0, next_token)
