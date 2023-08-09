@@ -46,11 +46,11 @@ class Input:
         """
         Returns the first argument from the raw parameters (not parsed).
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @property
     def script_name(self) -> str | None:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def read(self, length: int, default: str = "") -> str:
         """
@@ -162,7 +162,7 @@ class Input:
         """
         Returns true if the raw parameters (not parsed) contain a value.
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def parameter_option(
         self,
@@ -173,7 +173,7 @@ class Input:
         """
         Returns the value of a raw option (not parsed).
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def _parse(self) -> None:
-        raise NotImplementedError()
+        raise NotImplementedError
