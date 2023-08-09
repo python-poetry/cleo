@@ -47,7 +47,7 @@ class SectionOutput(StreamOutput):
 
         if lines:
             # Multiply lines by 2 to cater for each new line added between content
-            del self._content[-(lines * 2) :]
+            del self._content[-lines * 2 :]
         else:
             lines = self._lines
             self._content = []
