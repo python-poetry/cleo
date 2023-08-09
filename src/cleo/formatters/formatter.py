@@ -28,8 +28,7 @@ class Formatter:
         self.set_style("c2", Style("default", options=["bold"]))
         self.set_style("b", Style("default", options=["bold"]))
 
-        if styles is None:
-            styles = {}
+        styles = styles or {}
 
         for name, style in styles.items():
             self.set_style(name, style)
