@@ -100,11 +100,11 @@ class ProgressIndicator:
             raise RuntimeError("Progress indicator has not yet been started.")
 
         if not self._io.is_decorated():
-            return None
+            return
 
         current_time = self._get_current_time_in_milliseconds()
         if self._update_time is not None and current_time < self._update_time:
-            return None
+            return
 
         self._update_time = current_time + self._interval
         self._current += 1
