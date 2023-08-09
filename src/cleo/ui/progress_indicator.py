@@ -169,11 +169,8 @@ class ProgressIndicator:
 
     def _overwrite_callback(self, matches: Match[str]) -> str:
         if hasattr(self, f"_formatter_{matches.group(1)}"):
-            text = str(getattr(self, f"_formatter_{matches.group(1)}")())
-        else:
-            text = matches.group(0)
-
-        return text
+            return str(getattr(self, f"_formatter_{matches.group(1)}")())
+        return matches.group(0)
 
     def _overwrite(self, message: str) -> None:
         """
