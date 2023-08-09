@@ -72,9 +72,7 @@ class Highlighter:
         offset = line - lines_before - 1
         offset = max(offset, 0)
         length = lines_after + lines_before + 1
-        token_lines = token_lines[offset : offset + length]
-
-        return token_lines
+        return token_lines[offset : offset + length]
 
     def highlighted_lines(self, source: str) -> list[str]:
         source = source.replace("\r\n", "\n").replace("\r", "\n")
