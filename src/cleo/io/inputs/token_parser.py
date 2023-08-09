@@ -16,7 +16,7 @@ class TokenParser:
         self._string = string
         self._cursor = 0
         self._current = None
-        if len(string) > 0:
+        if string:
             self._current = string[0]
 
         self._next_ = None
