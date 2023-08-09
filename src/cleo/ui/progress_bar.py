@@ -250,10 +250,10 @@ class ProgressBar(Component):
             return matches.group(0)
 
         if matches.group(2):
+            n = int(matches.group(2).lstrip("-").rstrip("s"))
             if matches.group(2).startswith("-"):
-                text = text.ljust(int(matches.group(2).lstrip("-").rstrip("s")))
-            else:
-                text = text.rjust(int(matches.group(2).rstrip("s")))
+                return text.ljust(n)
+            return text.rjust(n)
 
         return text
 
