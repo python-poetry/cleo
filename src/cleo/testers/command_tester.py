@@ -51,7 +51,7 @@ class CommandTester:
         """
         application = self._command.application
 
-        input: StringInput | ArgvInput = StringInput(args)
+        input_: StringInput | ArgvInput = StringInput(args)
         if (
             application is not None
             and application.definition.has_argument("command")
@@ -61,13 +61,13 @@ class CommandTester:
             if " " in name:
                 # If the command is namespaced we rearrange
                 # the input to parse it as a single argument
-                argv = [application.name, self._command.name, *input._tokens]
+                argv = [application.name, self._command.name, *input_._tokens]
 
-                input = ArgvInput(argv)
+                input_ = ArgvInput(argv)
             else:
-                input = StringInput(name + " " + args)
+                input_ = StringInput(name + " " + args)
 
-        self._io.set_input(input)
+        self._io.set_input(input_)
         assert isinstance(self._io.output, BufferedOutput)
         assert isinstance(self._io.error_output, BufferedOutput)
         self._io.output.set_supports_utf8(supports_utf8)
