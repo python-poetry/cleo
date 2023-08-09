@@ -19,9 +19,7 @@ class TokenParser:
         if string:
             self._current = string[0]
 
-        self._next_ = None
-        if len(string) > 1:
-            self._next_ = string[1]
+        self._next_ = string[1] if len(string) > 1 else None
 
         tokens = self._parse()
 
