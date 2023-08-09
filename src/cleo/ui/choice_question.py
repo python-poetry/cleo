@@ -26,8 +26,7 @@ class SelectChoiceValidator:
         Validate a choice.
         """
         # Collapse all spaces.
-        if isinstance(selected, int):
-            selected = str(selected)
+        selected = str(selected)
 
         if selected is None:
             return None
