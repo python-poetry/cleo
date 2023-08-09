@@ -307,12 +307,7 @@ class ProgressBar(Component):
             if self._previous_message is not None:
                 if isinstance(self._io, SectionOutput):
                     lines_to_clear = (
-                        int(
-                            math.floor(
-                                len(self._io.remove_format(message))
-                                / self._terminal.width
-                            )
-                        )
+                        len(self._io.remove_format(message)) // self._terminal.width
                         + self._format_line_count
                         + 1
                     )
