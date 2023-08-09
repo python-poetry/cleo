@@ -223,15 +223,15 @@ class ArgvInput(Input):
             self._arguments[argument.name].append(token)
         # Unexpected argument
         else:
-            all = self._definition.arguments.copy()
+            all_ = self._definition.arguments.copy()
             command_name = None
-            argument = all[0]
+            argument = all_[0]
             if argument and argument.name == "command":
                 command_name = self._arguments.get("command")
-                del all[0]
+                del all_[0]
 
-            if all:
-                all_names = '" "'.join([a.name for a in all])
+            if all_:
+                all_names = '" "'.join([a.name for a in all_])
                 if command_name:
                     message = (
                         f'Too many arguments to "{command_name}" command, '
