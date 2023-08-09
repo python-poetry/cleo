@@ -395,7 +395,7 @@ class ExceptionTrace:
                         for code_line in code_lines:
                             self._render_line(
                                 io,
-                                f"{' ':>{max_frame_length}}{code_line}",
+                                f"{' ' * max_frame_length}{code_line}",
                                 indent=3,
                             )
                     else:
@@ -408,7 +408,7 @@ class ExceptionTrace:
                             code_line = frame.line.strip()
 
                         self._render_line(
-                            io, f"{' ':>{max_frame_length}}    {code_line}"
+                            io, f"{' ' * (max_frame_length + 4)}{code_line}"
                         )
 
                     i -= 1
