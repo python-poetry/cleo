@@ -42,7 +42,7 @@ class SectionOutput(StreamOutput):
         return self._lines
 
     def clear(self, lines: int | None = None) -> None:
-        if not self._content or not self.is_decorated():
+        if not (self._content and self.is_decorated()):
             return
 
         if lines:
