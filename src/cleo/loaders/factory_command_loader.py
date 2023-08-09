@@ -29,6 +29,4 @@ class FactoryCommandLoader(CommandLoader):
         if name not in self._factories:
             raise CleoCommandNotFoundError(name)
 
-        factory = self._factories[name]
-
-        return factory()
+        return self._factories[name]()
