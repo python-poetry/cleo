@@ -122,7 +122,7 @@ class ArgvInput(Input):
                     try:
                         return tokens.pop(0)
                     except IndexError:
-                        return
+                        return None
 
                 # Options with values:
                 # For long options, test for '--option=' at beginning
