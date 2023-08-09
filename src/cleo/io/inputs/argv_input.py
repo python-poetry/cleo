@@ -203,7 +203,7 @@ class ArgvInput(Input):
             if not value:
                 self._parsed.insert(0, value)
 
-            self._add_long_option(name[0:pos], value)
+            self._add_long_option(name[:pos], value)
         else:
             self._add_long_option(name, None)
 
