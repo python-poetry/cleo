@@ -304,9 +304,7 @@ class ExceptionTrace:
         solutions = self._solution_provider_repository.get_solutions_for_exception(
             exception
         )
-        symbol = "•"
-        if not io.supports_utf8():
-            symbol = "*"
+        symbol = "•" if io.supports_utf8() else "*"
 
         for solution in solutions:
             title = solution.solution_title
