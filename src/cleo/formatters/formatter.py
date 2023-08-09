@@ -98,14 +98,14 @@ class Formatter:
             offset = pos + len(text)
 
             # Opening tag
-            open = text[1] != "/"
-            tag = match.group(1) if open else match.group(2)
+            open_ = text[1] != "/"
+            tag = match.group(1) if open_ else match.group(2)
 
             style = None
             if tag:
                 style = self._create_style_from_string(tag)
 
-            if not (open or tag):
+            if not (open_ or tag):
                 # </>
                 self._style_stack.pop()
             elif style is None:
@@ -113,7 +113,7 @@ class Formatter:
                     text, output, width, current_line_length
                 )
                 output += formatted
-            elif open:
+            elif open_:
                 self._style_stack.push(style)
             else:
                 self._style_stack.pop(style)
