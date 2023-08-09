@@ -51,9 +51,7 @@ class Formatter:
         """
         if text and text[-1] == "\\":
             length = len(text)
-            text = text.rstrip("\\")
-            text = text.replace("\0", "")
-            text += "\0" * (length - len(text))
+            text = text.rstrip("\\").replace("\0", "").ljust(length - len(text), "\0")
 
         return text
 
