@@ -127,9 +127,9 @@ class ArgvInput(Input):
                 # Options with values:
                 # For long options, test for '--option=' at beginning
                 # For short options, test for '-o' at beginning
-                leading = value + "=" if value.find("--") == 0 else value
+                leading = value + "=" if value.startswith("--") else value
 
-                if token == value or leading != "" and token.find(leading) == 0:
+                if token == value or leading != "" and token.startswith(leading):
                     return token[len(leading)]
 
         return False
@@ -151,9 +151,9 @@ class ArgvInput(Input):
                 self._parse_argument(token)
             elif parse_options and token == "--":
                 parse_options = False
-            elif parse_options and token.find("--") == 0:
+            elif parse_options and token.startswith("--"):
                 self._parse_long_option(token)
-            elif parse_options and token[0] == "-" and token != "-":
+            elif parse_options and token.startswith("-") and token != "-":
                 self._parse_short_option(token)
             else:
                 self._parse_argument(token)
