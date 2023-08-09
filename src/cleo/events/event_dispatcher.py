@@ -58,11 +58,7 @@ class EventDispatcher:
 
     def has_listeners(self, event_name: str | None = None) -> bool:
         if event_name is not None:
-            if event_name not in self._listeners:
-                return False
-
-            return bool(self._listeners[event_name])
-
+            return bool(self._listeners.get(event_name))
         return any(self._listeners.values())
 
     def add_listener(
