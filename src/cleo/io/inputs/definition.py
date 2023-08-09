@@ -59,11 +59,7 @@ class Definition:
 
     @property
     def option_defaults(self) -> dict[str, Any]:
-        values = {}
-        for option in self._options.values():
-            values[option.name] = option.default
-
-        return values
+        return {o.name: o.default for o in self._options.values()}
 
     def set_definition(self, definition: Sequence[Argument | Option]) -> None:
         arguments = []
