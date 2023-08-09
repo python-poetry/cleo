@@ -20,7 +20,7 @@ class FactoryCommandLoader(CommandLoader):
 
     @property
     def names(self) -> list[str]:
-        return list(self._factories.keys())
+        return list(self._factories)
 
     def has(self, name: str) -> bool:
         return name in self._factories
