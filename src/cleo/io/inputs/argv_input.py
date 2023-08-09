@@ -144,7 +144,7 @@ class ArgvInput(Input):
         try:
             token = self._parsed.pop(0)
         except IndexError:
-            token = None
+            return
 
         while token is not None:
             if parse_options and token == "":
@@ -161,7 +161,7 @@ class ArgvInput(Input):
             try:
                 token = self._parsed.pop(0)
             except IndexError:
-                token = None
+                return
 
     def _parse_short_option(self, token: str) -> None:
         name = token[1:]
