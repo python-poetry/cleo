@@ -395,7 +395,7 @@ class ProgressBar(Component):
         return round((time.time() - self._start_time) / self._step * self._max)
 
     def _formatter_current(self) -> str:
-        return str(self._step).rjust(self._step_width, " ")
+        return str(self._step).rjust(self._step_width)
 
     def _formatter_max(self) -> int:
         return self._max
