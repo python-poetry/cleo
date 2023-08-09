@@ -132,10 +132,7 @@ class ChoiceQuestion(Question):
                 f"[<comment>{choices[int(default)]}</comment>]:"
             )
 
-        if len(self._choices) > 1:
-            width = max(*map(len, [str(k) for k, _ in enumerate(self._choices)]))
-        else:
-            width = 1
+        width = len(str(len(self._choices) - 1)) if len(self._choices) > 1 else 1
 
         messages = [message]
         for key, value in enumerate(self._choices):
