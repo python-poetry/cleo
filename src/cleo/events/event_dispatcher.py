@@ -18,7 +18,7 @@ class EventDispatcher:
 
     def dispatch(self, event: Event, event_name: str | None = None) -> Event:
         if event_name is None:
-            event_name = event.__class__.__name__
+            event_name = type(event).__name__
 
         listeners = cast("list[Listener]", self.get_listeners(event_name))
 
