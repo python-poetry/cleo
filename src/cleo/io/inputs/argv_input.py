@@ -54,9 +54,7 @@ class ArgvInput(Input):
                 # can take a value with space separator).
                 name = token[2:] if len(token) > 1 and token[1] == "-" else token[-1]
 
-                if name not in self._options and not self._definition.has_shortcut(
-                    name
-                ):
+                if not (name in self._options or self._definition.has_shortcut(name)):
                     # noop
                     continue
 
