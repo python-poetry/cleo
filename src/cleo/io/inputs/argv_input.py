@@ -231,7 +231,7 @@ class ArgvInput(Input):
                 del all_[0]
 
             if all_:
-                all_names = '" "'.join([a.name for a in all_])
+                all_names = '" "'.join(a.name for a in all_)
                 if command_name:
                     message = (
                         f'Too many arguments to "{command_name}" command, '
