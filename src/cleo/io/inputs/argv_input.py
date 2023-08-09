@@ -44,7 +44,7 @@ class ArgvInput(Input):
 
         for i, token in enumerate(self._tokens):
             if token and token[0] == "-":
-                if token.find("=") != -1 or len(self._tokens) <= (i + 1):
+                if "=" in token or len(self._tokens) <= (i + 1):
                     continue
 
                 # If it's a long option, consider that
