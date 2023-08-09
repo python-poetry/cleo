@@ -113,7 +113,7 @@ class Output:
         return self.formatter.remove_format(text)
 
     def section(self) -> SectionOutput:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def _write(self, message: str, new_line: bool = False) -> None:
-        raise NotImplementedError()
+        raise NotImplementedError
