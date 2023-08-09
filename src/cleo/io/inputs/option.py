@@ -31,8 +31,7 @@ class Option:
 
         if shortcut is not None:
             shortcuts = re.split(r"\|-?", shortcut.lstrip("-"))
-            shortcuts = [s for s in shortcuts if s]
-            shortcut = "|".join(shortcuts)
+            shortcut = "|".join(filter(None, shortcuts))
 
             if not shortcut:
                 raise CleoValueError("An option shortcut cannot be empty")
