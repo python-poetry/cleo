@@ -181,7 +181,7 @@ class TextDescriptor(Descriptor):
                 commands[name] = description.command(name)
 
         # calculate max width based on available commands per namespace
-        all_commands = list(commands.keys())
+        all_commands = list(commands)
         for namespace in namespaces.values():
             all_commands += namespace["commands"]
 
