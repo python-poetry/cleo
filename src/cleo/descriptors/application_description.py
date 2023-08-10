@@ -80,8 +80,6 @@ class ApplicationDescription:
 
         namespaced_commands_lst: dict[str, list[tuple[str, Command]]] = {}
         for namespace, commands in namespaced_commands.items():
-            namespaced_commands_lst[namespace] = sorted(
-                commands.items(), key=lambda x: x[0]
-            )
+            namespaced_commands_lst[namespace] = sorted(commands.items())
 
-        return sorted(namespaced_commands_lst.items(), key=lambda x: x[0])
+        return sorted(namespaced_commands_lst.items())
