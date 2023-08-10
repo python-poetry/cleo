@@ -36,16 +36,16 @@ class Descriptor:
         )
 
     def _describe_argument(self, argument: Argument, **options: Any) -> None:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def _describe_option(self, option: Option, **options: Any) -> None:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def _describe_definition(self, definition: Definition, **options: Any) -> None:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def _describe_command(self, command: Command, **options: Any) -> None:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def _describe_application(self, application: Application, **options: Any) -> None:
-        raise NotImplementedError()
+        raise NotImplementedError
