@@ -72,8 +72,7 @@ class Command(BaseCommand):
         """
         Call another command.
         """
-        if args is None:
-            args = ""
+        args = args or ""
 
         assert self.application is not None
         command = self.application.get(name)
@@ -86,8 +85,7 @@ class Command(BaseCommand):
         """
         Call another command silently.
         """
-        if args is None:
-            args = ""
+        args = args or ""
 
         assert self.application is not None
         command = self.application.get(name)
