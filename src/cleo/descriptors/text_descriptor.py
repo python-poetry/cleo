@@ -169,8 +169,7 @@ class TextDescriptor(Descriptor):
 
         self._describe_definition(Definition(application.definition.options), **options)
 
-        self._write("\n")
-        self._write("\n")
+        self._write("\n\n")
 
         commands = description.commands
         namespaces = description.namespaces
