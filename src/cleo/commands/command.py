@@ -75,11 +75,12 @@ class Command(BaseCommand):
         if args is None:
             args = ""
 
-        input = StringInput(args)
         assert self.application is not None
         command = self.application.get(name)
 
-        return self.application._run_command(command, self._io.with_input(input))
+        return self.application._run_command(
+            command, self._io.with_input(StringInput(args))
+        )
 
     def call_silent(self, name: str, args: str | None = None) -> int:
         """
@@ -88,11 +89,10 @@ class Command(BaseCommand):
         if args is None:
             args = ""
 
-        input = StringInput(args)
         assert self.application is not None
         command = self.application.get(name)
 
-        return self.application._run_command(command, NullIO(input))
+        return self.application._run_command(command, NullIO(StringInput(args)))
 
     def argument(self, name: str) -> Any:
         """
