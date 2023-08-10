@@ -176,14 +176,13 @@ class Command(BaseCommand):
         from cleo.ui.confirmation_question import ConfirmationQuestion
         from cleo.ui.question import Question
 
-        if not type:
-            return Question(question, **kwargs)
+        if type == "confirmation":
+            return ConfirmationQuestion(question, **kwargs)
 
         if type == "choice":
             return ChoiceQuestion(question, **kwargs)
 
-        if type == "confirmation":
-            return ConfirmationQuestion(question, **kwargs)
+        return Question(question, **kwargs)
 
     def table(
         self,
