@@ -261,7 +261,7 @@ class TextDescriptor(Descriptor):
         return total_width
 
     def _get_column_width(self, commands: Sequence[Command | str]) -> int:
-        widths = []
+        widths: list[int] = []
 
         for command in commands:
             if isinstance(command, Command):
