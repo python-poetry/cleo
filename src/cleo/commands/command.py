@@ -66,7 +66,7 @@ class Command(BaseCommand):
         """
         Executes the command.
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def call(self, name: str, args: str | None = None) -> int:
         """
