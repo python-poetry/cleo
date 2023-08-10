@@ -7,6 +7,7 @@ import posixpath
 import re
 import subprocess
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 from typing import ClassVar
 
@@ -142,7 +143,7 @@ script. Consult your shells documentation for how to add such directives.
         # we incorrectly infer `script_name` as `__main__.py`
         script_name = self._io.input.script_name or inspect.stack()[-1][1]
         script_path = posixpath.realpath(script_name)
-        script_name = os.path.basename(script_path)
+        script_name = Path(script_path).name
 
         return script_name, script_path
 
@@ -287,7 +288,7 @@ script. Consult your shells documentation for how to add such directives.
                 "Please specify your shell type by passing it as the first argument."
             )
 
-        return os.path.basename(shell)
+        return Path(shell).name
 
     def _generate_function_name(self, script_name: str, script_path: str) -> str:
         sanitized_name = self._sanitize_for_function_name(script_name)
