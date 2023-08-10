@@ -292,7 +292,7 @@ script. Consult your shells documentation for how to add such directives.
 
     def _generate_function_name(self, script_name: str, script_path: str) -> str:
         sanitized_name = self._sanitize_for_function_name(script_name)
-        md5_hash = hashlib.md5(script_path.encode()).hexdigest()[0:16]
+        md5_hash = hashlib.md5(script_path.encode()).hexdigest()[:16]
         return f"_{sanitized_name}_{md5_hash}_complete"
 
     def _sanitize_for_function_name(self, name: str) -> str:
