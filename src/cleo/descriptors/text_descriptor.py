@@ -278,10 +278,9 @@ class TextDescriptor(Descriptor):
         return max(widths) + 2
 
     def _get_command_aliases_text(self, command: Command) -> str:
-        text = ""
         aliases = command.aliases
 
         if aliases:
-            text = f"[{ '|'.join(aliases) }] "
+            return f"[{ '|'.join(aliases) }] "
 
-        return text
+        return ""
