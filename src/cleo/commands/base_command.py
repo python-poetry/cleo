@@ -85,7 +85,7 @@ class BaseCommand:
         """
 
     def execute(self, io: IO) -> int:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def interact(self, io: IO) -> None:
         """
