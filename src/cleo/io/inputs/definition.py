@@ -118,18 +118,11 @@ class Definition:
         return self._arguments[name]
 
     def has_argument(self, name: str | int) -> bool:
-        arguments: dict[str, Argument] | list[Argument]
         if isinstance(name, int):
-            arguments = list(self._arguments.values())
-        else:
-            arguments = self._arguments
-
-        try:
-            arguments[name]  # type: ignore[index]
-        except (KeyError, IndexError):
-            return False
-
-        return True
+            # Check if this is a valid argument index
+            # abs(x + (x < 0)) to normalize negative indices
+            return abs(name + (name < 0)) < len(self._arguments)
+        return name in self._arguments
 
     def set_options(self, options: list[Option]) -> None:
         self._options = {}
