@@ -614,11 +614,7 @@ class Application:
 
     def extract_namespace(self, name: str, limit: int | None = None) -> str:
         parts = name.split(" ")[:-1]
-
-        if limit is not None:
-            return " ".join(parts[:limit])
-
-        return " ".join(parts)
+        return " ".join(parts[:limit])
 
     def _get_default_ui(self) -> UI:
         from cleo.ui.progress_bar import ProgressBar
