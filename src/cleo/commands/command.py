@@ -72,25 +72,21 @@ class Command(BaseCommand):
         """
         Call another command.
         """
-        args = args or ""
-
         assert self.application is not None
         command = self.application.get(name)
 
         return self.application._run_command(
-            command, self._io.with_input(StringInput(args))
+            command, self._io.with_input(StringInput(args or ""))
         )
 
     def call_silent(self, name: str, args: str | None = None) -> int:
         """
         Call another command silently.
         """
-        args = args or ""
-
         assert self.application is not None
         command = self.application.get(name)
 
-        return self.application._run_command(command, NullIO(StringInput(args)))
+        return self.application._run_command(command, NullIO(StringInput(args or "")))
 
     def argument(self, name: str) -> Any:
         """
