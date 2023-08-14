@@ -160,7 +160,7 @@ class Command(BaseCommand):
     def create_question(
         self,
         question: str,
-        type: Literal["choice"] | Literal["confirmation"] | None = None,
+        type: Literal["choice", "confirmation"] | None = None,
         **kwargs: Any,
     ) -> Question:
         """
