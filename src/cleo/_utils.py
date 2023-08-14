@@ -59,20 +59,23 @@ def find_similar_names(name: str, names: list[str]) -> list[str]:
         distance = Levenshtein.distance(name, actual_name)
 
         is_similar = distance <= len(name) / 3
-        is_sub_string = actual_name.find(name) != -1
+        substring_index = actual_name.find(name)
+        is_substring = substring_index != -1
 
-        if is_similar or is_sub_string:
+        if is_similar or is_substring:
             distance_by_name[actual_name] = (
                 distance,
-                actual_name.find(name) if is_sub_string else float("inf"),
+                substring_index if is_substring else float("inf"),
             )
 
     # Only keep results with a distance below the threshold
     distance_by_name = {
-        k: v for k, v in distance_by_name.items() if v[0] < 2 * threshold
+        key: value
+        for key, value in distance_by_name.items()
+        if value[0] < 2 * threshold
     }
     # Display results with shortest distance first
-    return sorted(distance_by_name, key=lambda x: distance_by_name[x])
+    return sorted(distance_by_name, key=lambda key: distance_by_name[key])
 
 
 @dataclass
