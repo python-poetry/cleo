@@ -64,7 +64,7 @@ class Command(BaseCommand):
 
     def handle(self) -> int:
         """
-        Executes the command.
+        Execute the command.
         """
         raise NotImplementedError
 
