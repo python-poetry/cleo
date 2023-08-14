@@ -36,7 +36,7 @@ class BaseCommand:
         self.configure()
 
         for i, usage in enumerate(self.usages):
-            if self.name and usage.find(self.name) != 0:
+            if self.name and not usage.startswith(self.name):
                 self.usages[i] = f"{self.name} {usage}"
 
     @property
