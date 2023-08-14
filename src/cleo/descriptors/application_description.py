@@ -78,9 +78,9 @@ class ApplicationDescription:
             key = self._application.extract_namespace(name, 1) or "_global"
             namespaced_commands[key][name] = command
 
-        namespaced_commands_lst: dict[str, list[tuple[str, Command]]] = {
+        namespaced_commands_list: dict[str, list[tuple[str, Command]]] = {
             namespace: sorted(commands.items())
             for namespace, commands in namespaced_commands.items()
         }
 
-        return sorted(namespaced_commands_lst.items())
+        return sorted(namespaced_commands_list.items())
