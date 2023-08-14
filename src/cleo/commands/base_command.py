@@ -114,12 +114,7 @@ class BaseCommand:
 
         io.input.validate()
 
-        status_code = self.execute(io)
-
-        if status_code is None:
-            status_code = 0
-
-        return status_code
+        return self.execute(io)
 
     def merge_application_definition(self, merge_args: bool = True) -> None:
         if self._application is None:
