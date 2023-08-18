@@ -88,10 +88,8 @@ class EventDispatcher:
         """
         Sorts the internal list of listeners for the given event by priority.
         """
-        self._sorted[event_name] = []
+        prioritized_listeners = self._listeners[event_name]
+        sorted_listeners = self._sorted[event_name] = []
 
-        for _, listeners in sorted(
-            self._listeners[event_name].items(), key=lambda t: -t[0]
-        ):
-            for listener in listeners:
-                self._sorted[event_name].append(listener)
+        for priority in sorted(prioritized_listeners, reverse=True):
+            sorted_listeners.extend(prioritized_listeners[priority])
