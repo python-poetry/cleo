@@ -42,12 +42,12 @@ class Formatter:
 
         return cls.escape_trailing_backslash(text)
 
-    @classmethod
-    def escape_trailing_backslash(cls, text: str) -> str:
+    @staticmethod
+    def escape_trailing_backslash(text: str) -> str:
         """
-        Escapes trailing "\" in given text.
+        Escapes trailing "\\" in given text.
         """
-        if text and text[-1] == "\\":
+        if text.endswith("\\"):
             length = len(text)
             text = text.rstrip("\\").replace("\0", "").ljust(length, "\0")
 
