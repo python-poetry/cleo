@@ -121,7 +121,7 @@ class TableStyle:
         ╚═══════════════╧══════════════════════════╧══════════════════╝
         """
         self._horizontal_outside_border_char = outside
-        self._horizontal_inside_border_char = inside if inside is not None else outside
+        self._horizontal_inside_border_char = outside if inside is None else inside
 
         return self
 
@@ -142,7 +142,7 @@ class TableStyle:
         ╚═══════════════╧══════════════════════════╧══════════════════╝
         """
         self._vertical_outside_border_char = outside
-        self._vertical_inside_border_char = inside if inside is not None else outside
+        self._vertical_inside_border_char = outside if inside is None else inside
 
         return self
 
@@ -186,13 +186,13 @@ class TableStyle:
         self._crossing_bottom_left_char = bottom_left
         self._crossing_mid_left_char = mid_left
         self._crossing_top_left_bottom_char = (
-            top_left_bottom if top_left_bottom is not None else mid_left
+            mid_left if top_left_bottom is None else top_left_bottom
         )
         self._crossing_top_mid_bottom_char = (
-            top_mid_bottom if top_mid_bottom is not None else cross
+            cross if top_mid_bottom is None else top_mid_bottom
         )
         self._crossing_top_right_bottom_char = (
-            top_right_bottom if top_right_bottom is not None else mid_right
+            mid_right if top_right_bottom is None else top_right_bottom
         )
 
         return self
