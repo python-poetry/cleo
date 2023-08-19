@@ -22,7 +22,7 @@ class Definition:
     def __init__(self, definition: Sequence[Argument | Option] | None = None) -> None:
         self._arguments: dict[str, Argument] = {}
         self._required_count = 0
-        self._has_a_list_argument = False
+        self._has_list_argument = False
         self._has_optional = False
         self._options: dict[str, Option] = {}
         self._shortcuts: dict[str, str] = {}
@@ -35,7 +35,7 @@ class Definition:
 
     @property
     def argument_count(self) -> int:
-        if self._has_a_list_argument:
+        if self._has_list_argument:
             return sys.maxsize
 
         return len(self._arguments)
@@ -77,7 +77,7 @@ class Definition:
     def set_arguments(self, arguments: list[Argument]) -> None:
         self._arguments = {}
         self._required_count = 0
-        self._has_a_list_argument = False
+        self._has_list_argument = False
         self._has_optional = False
         self.add_arguments(arguments)
 
@@ -91,14 +91,14 @@ class Definition:
                 f'An argument with name "{argument.name}" already exists'
             )
 
-        if self._has_a_list_argument:
+        if self._has_list_argument:
             raise CleoLogicError("Cannot add an argument after a list argument")
 
         if argument.is_required() and self._has_optional:
             raise CleoLogicError("Cannot add a required argument after an optional one")
 
         if argument.is_list():
-            self._has_a_list_argument = True
+            self._has_list_argument = True
 
         if argument.is_required():
             self._required_count += 1
