@@ -117,11 +117,7 @@ class Formatter:
             message[offset:], output, width, current_line_length
         )
         output += formatted
-
-        if "\0" in output:
-            return output.replace("\0", "\\").replace("\\<", "<")
-
-        return output.replace("\\<", "<")
+        return output.replace("\0", "\\").replace("\\<", "<")
 
     def remove_format(self, text: str) -> str:
         decorated = self._decorated
