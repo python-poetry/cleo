@@ -43,8 +43,8 @@ class ArgvInput(Input):
         is_option = False
 
         for i, token in enumerate(self._tokens):
-            if token and token[0] == "-":
-                if "=" in token or len(self._tokens) <= (i + 1):
+            if token.startswith("-"):
+                if "=" in token or len(self._tokens) == (i + 1):
                     continue
 
                 # If it's a long option, consider that
@@ -52,7 +52,7 @@ class ArgvInput(Input):
                 # Otherwise, use the last character
                 # (if it's a short option set, only the last one
                 # can take a value with space separator).
-                name = token[2:] if len(token) > 1 and token[1] == "-" else token[-1]
+                name = token[2:] if len(token) > 1 else token[-1]
 
                 if not (name in self._options or self._definition.has_shortcut(name)):
                     # noop
