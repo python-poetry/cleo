@@ -66,7 +66,7 @@ class SectionOutput(StreamOutput):
         for line_content in content.split("\n"):
             self._lines += (
                 math.ceil(
-                    len(self.remove_format(line_content).replace("\t", "        "))
+                    len(self.remove_format(line_content).replace("\t", " " * 8))
                     / self._terminal.width
                 )
                 or 1
