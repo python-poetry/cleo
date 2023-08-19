@@ -4,6 +4,7 @@ import re
 
 from typing import TYPE_CHECKING
 from typing import Any
+from typing import cast
 
 from cleo.exceptions import CleoValueError
 from cleo.ui.question import Question
@@ -21,7 +22,7 @@ class SelectChoiceValidator:
         self._question = question
         self._values = question.choices
 
-    def validate(self, selected: str | int) -> str | list[str] | None:
+    def validate(self, selected: Any) -> str | list[str] | None:
         """
         Validate a choice.
         """
@@ -68,7 +69,7 @@ class SelectChoiceValidator:
         if self._question.supports_multiple_choices():
             return multiselect_choices
 
-        return multiselect_choices[0]
+        return cast("str | list[str] | None", multiselect_choices[0])
 
 
 class ChoiceQuestion(Question):
