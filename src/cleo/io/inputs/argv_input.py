@@ -167,12 +167,13 @@ class ArgvInput(Input):
         name = token[1:]
 
         if len(name) > 1:
+            shortcut = name[0]
             if (
-                self._definition.has_shortcut(name[0])
-                and self._definition.option_for_shortcut(name[0]).accepts_value()
+                self._definition.has_shortcut(shortcut)
+                and self._definition.option_for_shortcut(shortcut).accepts_value()
             ):
                 # An option with a value and no space
-                self._add_short_option(name[0], name[1:])
+                self._add_short_option(shortcut, name[1:])
             else:
                 self._parse_short_option_set(name)
         else:
