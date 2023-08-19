@@ -210,37 +210,38 @@ class ArgvInput(Input):
             self._add_long_option(name, None)
 
     def _parse_argument(self, token: str) -> None:
-        count = len(self._arguments)
+        next_argument = len(self._arguments)
+        last_argument = next_argument - 1
 
         # If the input is expecting another argument, add it
-        if self._definition.has_argument(count):
-            argument = self._definition.argument(count)
+        if self._definition.has_argument(next_argument):
+            argument = self._definition.argument(next_argument)
             self._arguments[argument.name] = [token] if argument.is_list() else token
         # If the last argument is a list, append the token to it
         elif (
-            self._definition.has_argument(count - 1)
-            and self._definition.argument(count - 1).is_list()
+            self._definition.has_argument(last_argument)
+            and self._definition.argument(last_argument).is_list()
         ):
-            argument = self._definition.argument(count - 1)
+            argument = self._definition.argument(last_argument)
             self._arguments[argument.name].append(token)
         # Unexpected argument
         else:
-            all_ = self._definition.arguments.copy()
+            all_arguments = self._definition.arguments.copy()
             command_name = None
-            argument = all_[0]
+            argument = all_arguments[0]
             if argument and argument.name == "command":
                 command_name = self._arguments.get("command")
-                del all_[0]
+                del all_arguments[0]
 
-            if all_:
-                all_names = '" "'.join(a.name for a in all_)
+            if all_arguments:
+                all_names = " ".join(a.name.join('""') for a in all_arguments)
                 if command_name:
                     message = (
                         f'Too many arguments to "{command_name}" command, '
-                        f'expected arguments "{all_names}"'
+                        f"expected arguments {all_names}"
                     )
                 else:
-                    message = f'Too many arguments, expected arguments "{all_names}"'
+                    message = f"Too many arguments, expected arguments {all_names}"
             elif command_name:
                 message = (
                     f'No arguments expected for "{command_name}" command, '
