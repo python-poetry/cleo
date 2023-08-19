@@ -188,7 +188,7 @@ class ArgvInput(Input):
             option = self._definition.option_for_shortcut(name[i])
             if option.accepts_value():
                 self._add_long_option(
-                    option.name, None if i == length - 1 else name[i + 1 :]
+                    option.name, name[i + 1 :] if i < length - 1 else None
                 )
 
                 break
