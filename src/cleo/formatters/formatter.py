@@ -125,10 +125,9 @@ class Formatter:
 
     def remove_format(self, text: str) -> str:
         decorated = self._decorated
-        self._decorated = False
 
-        text = self.format(text)
-        text = re.sub(r"\033\[[^m]*m", "", text)
+        self._decorated = False
+        text = re.sub(r"\033\[[^m]*m", "", self.format(text))
 
         self._decorated = decorated
 
