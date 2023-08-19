@@ -182,10 +182,11 @@ class ArgvInput(Input):
     def _parse_short_option_set(self, name: str) -> None:
         length = len(name)
         for i in range(length):
-            if not self._definition.has_shortcut(name[i]):
+            shortcut = name[i]
+            if not self._definition.has_shortcut(shortcut):
                 raise CleoRuntimeError(f'The option "{name[i]}" does not exist')
 
-            option = self._definition.option_for_shortcut(name[i])
+            option = self._definition.option_for_shortcut(shortcut)
             if option.accepts_value():
                 self._add_long_option(
                     option.name, name[i + 1 :] if i < length - 1 else None
