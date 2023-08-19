@@ -617,9 +617,9 @@ class Table:
             if isinstance(cell, TableCell) and cell.colspan > 1:
                 # exclude grouped columns.
                 columns = [
-                    x
-                    for x in columns
-                    if x not in range(cell_key + 1, cell_key + cell.colspan)
+                    column
+                    for column in columns
+                    if column not in range(cell_key + 1, cell_key + cell.colspan)
                 ]
 
         return columns
