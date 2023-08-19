@@ -188,7 +188,7 @@ class Formatter:
         text = prefix + re.sub(rf"([^\n]{{{width}}})\ *", "\\1\n", text)
         text = text.rstrip("\n") + (m.group(1) if m else "")
 
-        if not current_line_length and current and current[-1] != "\n":
+        if not current_line_length and current and not current.endswith("\n"):
             text = "\n" + text
 
         lines = text.split("\n")
@@ -198,7 +198,7 @@ class Formatter:
                 current_line_length = 0
 
         if self.is_decorated():
-            for i, line in enumerate(lines):
-                lines[i] = self._style_stack.current.apply(line)
+            apply = self._style_stack.current.apply
+            text = "\n".join(map(apply, lines))
 
-        return "\n".join(lines), current_line_length
+        return text, current_line_length
