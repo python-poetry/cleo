@@ -28,9 +28,7 @@ class Formatter:
         self.set_style("c2", Style("default", options=["bold"]))
         self.set_style("b", Style("default", options=["bold"]))
 
-        styles = styles or {}
-
-        for name, style in styles.items():
+        for name, style in (styles or {}).items():
             self.set_style(name, style)
 
         self._style_stack = StyleStack()
