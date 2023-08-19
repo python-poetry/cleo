@@ -484,7 +484,7 @@ class Table:
         if self._headers:
             number_of_rows += 1
 
-        if len(self._rows) > 0:
+        if self._rows:
             number_of_rows += 1
 
         return number_of_rows
