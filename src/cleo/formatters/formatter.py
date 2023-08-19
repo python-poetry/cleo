@@ -146,15 +146,15 @@ class Formatter:
 
         style = Style()
 
-        for match in matches:
-            if match[0] == "fg":
-                style.foreground(match[1])
-            elif match[0] == "bg":
-                style.background(match[1])
+        for where, style_options, _ in matches:
+            if where == "fg":
+                style.foreground(style_options)
+            elif where == "bg":
+                style.background(style_options)
             else:
                 try:
-                    for option in match[1].split(","):
-                        style.set_option(option.strip())
+                    for option in map(str.strip, style_options.split(",")):
+                        style.set_option(option)
                 except ValueError:
                     return None
 
