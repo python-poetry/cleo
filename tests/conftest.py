@@ -13,7 +13,10 @@ from cleo.io.inputs.string_input import StringInput
 
 
 if TYPE_CHECKING:
+    from typing import Callable
     from typing import Iterator
+
+    from pytest_mock import MockerFixture
 
 
 @pytest.fixture()
@@ -49,3 +52,15 @@ def argv() -> Iterator[None]:
     yield
 
     sys.argv = current_argv
+
+
+@pytest.fixture()
+def sleep(mocker: MockerFixture) -> Iterator[Callable[[float], None]]:
+    now = 0.0
+    mocker.patch("time.time", side_effect=lambda: now)
+
+    def _sleep(secs: float) -> None:
+        nonlocal now
+        now += secs
+
+    yield _sleep

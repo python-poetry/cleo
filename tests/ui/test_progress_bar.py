@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import time
-
 from typing import TYPE_CHECKING
 
 import pytest
@@ -11,6 +9,8 @@ from cleo.ui.progress_bar import ProgressBar
 
 
 if TYPE_CHECKING:
+    from typing import Callable
+
     from cleo.io.buffered_io import BufferedIO
 
 
@@ -486,16 +486,16 @@ def test_overwrite_multiple_progress_bars_with_section_outputs(
 
 
 def test_min_and_max_seconds_between_redraws(
-    ansi_bar: ProgressBar, ansi_io: BufferedIO
+    ansi_bar: ProgressBar, ansi_io: BufferedIO, sleep: Callable[[float], None]
 ) -> None:
     ansi_bar.min_seconds_between_redraws(0.5)
     ansi_bar.max_seconds_between_redraws(2 - 1)
 
     ansi_bar.start()
     ansi_bar.set_progress(1)
-    time.sleep(1)
+    sleep(1)
     ansi_bar.set_progress(2)
-    time.sleep(2)
+    sleep(2)
     ansi_bar.set_progress(3)
 
     output = [
