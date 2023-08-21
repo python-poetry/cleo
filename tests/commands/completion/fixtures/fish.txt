@@ -1,6 +1,6 @@
 function __fish_my_function_no_subcommand
     for i in (commandline -opc)
-        if contains -- $i command:with:colons hello help list 'spaced command'
+        if contains -- $i command:with:colons hello help list spaced
             return 1
         end
     end
@@ -21,7 +21,8 @@ complete -c script -f -n '__fish_my_function_no_subcommand' -a command:with:colo
 complete -c script -f -n '__fish_my_function_no_subcommand' -a hello -d 'Complete me please.'
 complete -c script -f -n '__fish_my_function_no_subcommand' -a help -d 'Displays help for a command.'
 complete -c script -f -n '__fish_my_function_no_subcommand' -a list -d 'Lists commands.'
-complete -c script -f -n '__fish_my_function_no_subcommand' -a 'spaced command' -d 'Command with space in name.'
+complete -c script -f -n '__fish_my_function_no_subcommand' -a spaced
+complete -c script -f -n '__fish_seen_subcommand_from spaced; and not __fish_seen_subcommand_from command' -a command -d 'Command with space in name.'
 
 # command options
 
@@ -36,5 +37,5 @@ complete -c script -A -n '__fish_seen_subcommand_from hello' -l option-without-d
 
 # list
 
-# 'spaced command'
-complete -c script -A -n '__fish_seen_subcommand_from \'spaced command\'' -l goodbye -d ''
+# spaced command
+complete -c script -A -n '__fish_seen_subcommand_from spaced; and __fish_seen_subcommand_from command' -l goodbye -d ''

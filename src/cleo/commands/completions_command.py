@@ -250,26 +250,54 @@ script. Consult your shells documentation for how to add such directives.
         # Commands + options
         cmds = []
         cmds_opts = []
-        cmds_names = []
+        namespaces = set()
         for cmd in sorted(self.application.all().values(), key=lambda c: c.name or ""):
             if cmd.hidden or not cmd.enabled or not cmd.name:
                 continue
-            command_name = shell_quote(cmd.name) if " " in cmd.name else cmd.name
-            cmds.append(
-                f"complete -c {script_name} -f -n '__fish{function}_no_subcommand' "
-                f"-a {command_name} -d '{sanitize(cmd.description)}'"
-            )
+            cmd_path = cmd.name.split(" ")
+            namespace = cmd_path[0]
+            cmd_name = cmd_path[-1] if " " in cmd.name else cmd.name
+
+            # We either have a command like `poetry add` or a nested (namespaced)
+            # command like `poetry cache clear`.
+            if len(cmd_path) == 1:
+                cmds.append(
+                    f"complete -c {script_name} -f -n '__fish{function}_no_subcommand' "
+                    f"-a {cmd_name} -d '{sanitize(cmd.description)}'"
+                )
+                condition = f"__fish_seen_subcommand_from {cmd_name}"
+            else:
+                # Complete the namespace first
+                if namespace not in namespaces:
+                    cmds.append(
+                        f"complete -c {script_name} -f -n "
+                        f"'__fish{function}_no_subcommand' -a {namespace}"
+                    )
+                # Now complete the command
+                subcmds = [
+                    name.split(" ")[-1] for name in self.application.all(namespace)
+                ]
+                cmds.append(
+                    f"complete -c {script_name} -f -n '__fish_seen_subcommand_from "
+                    f"{namespace}; and not __fish_seen_subcommand_from {' '.join(subcmds)}' "  # noqa: E501
+                    f"-a {cmd_name} -d '{sanitize(cmd.description)}'"
+                )
+                condition = (
+                    f"__fish_seen_subcommand_from {namespace}; "
+                    f"and __fish_seen_subcommand_from {cmd_name}"
+                )
+
             cmds_opts += [
-                f"# {command_name}",
+                f"# {cmd.name}",
                 *[
                     f"complete -c {script_name} -A "
-                    f"-n '__fish_seen_subcommand_from {sanitize(command_name)}' "
+                    f"-n '{condition}' "
                     f"-l {opt.name} -d '{sanitize(opt.description)}'"
                     for opt in sorted(cmd.definition.options, key=lambda o: o.name)
                 ],
                 "",  # newline
             ]
-            cmds_names.append(command_name)
+            namespaces.add(namespace)
 
         return TEMPLATES["fish"] % {
             "script_name": script_name,
@@ -277,7 +305,7 @@ script. Consult your shells documentation for how to add such directives.
             "opts": "\n".join(opts),
             "cmds": "\n".join(cmds),
             "cmds_opts": "\n".join(cmds_opts[:-1]),  # trim trailing newline
-            "cmds_names": " ".join(cmds_names),
+            "cmds_names": " ".join(sorted(namespaces)),
         }
 
     def get_shell_type(self) -> str:
