@@ -91,6 +91,10 @@ strict = true
 files = ["src", "tests"]
 pretty = true
 
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
 [tool.coverage.report]
 omit = [
   "src/cleo/_compat.py",
