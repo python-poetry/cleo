@@ -14,8 +14,6 @@ jobs:
         os: [Ubuntu, macOS, Windows]
         python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
         include:
-          - python-version: "3.7"
-            install-args: --version=1.5.1
           - os: Ubuntu
             image: ubuntu-22.04
           - os: Windows
@@ -29,56 +27,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install Poetry
+        run: pipx install poetry
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Get full python version
-        id: full-python-version
-        run: |
-          echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
-
-      - name: Install Poetry
-        run: |
-          curl -sL https://install.python-poetry.org | python - -y ${{ matrix.install-args }}
-
-      - name: Update PATH
-        if: ${{ matrix.os != 'Windows' }}
-        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Update Path for Windows
-        if: ${{ matrix.os == 'Windows' }}
-        run: echo "$APPDATA\Python\Scripts" >> $GITHUB_PATH
-
-      - name: Setup Poetry
-        run: |
-          poetry config virtualenvs.in-project true
-
-      - name: Set up cache
-        uses: actions/cache@v3
-        id: cache
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Ensure cache is healthy
-        if: steps.cache.outputs.cache-hit == 'true'
-        run: |
-          # `timeout` is not available on macOS, so we define a custom function.
-          [ "$(command -v timeout)" ] || function timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
-          # Using `timeout` is a safeguard against the Poetry command hanging for some reason.
-          timeout 10s poetry run pip --version || rm -rf .venv
+          cache: poetry
 
       - name: Install dependencies
-        run: |
-          poetry install
+        run: poetry install
 
       - name: Run typechecking
-        run: |
-          poetry run mypy
+        run: poetry run mypy
 
       - name: Run tests
-        run: |
-          poetry run pytest -q tests
-          poetry install
+        run: poetry run pytest
