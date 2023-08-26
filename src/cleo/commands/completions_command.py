@@ -262,7 +262,7 @@ script. Consult your shells documentation for how to add such directives.
             cmds_opts += [
                 f"# {command_name}",
                 *[
-                    f"complete -c {script_name} -A "
+                    f"complete -c {script_name} "
                     f"-n '__fish_seen_subcommand_from {sanitize(command_name)}' "
                     f"-l {opt.name} -d '{sanitize(opt.description)}'"
                     for opt in sorted(cmd.definition.options, key=lambda o: o.name)
