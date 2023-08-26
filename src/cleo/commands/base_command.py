@@ -114,7 +114,7 @@ class BaseCommand:
 
         io.input.validate()
 
-        return self.execute(io)
+        return self.execute(io) or 0
 
     def merge_application_definition(self, merge_args: bool = True) -> None:
         if self._application is None:
