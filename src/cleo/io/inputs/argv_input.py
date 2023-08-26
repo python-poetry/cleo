@@ -52,7 +52,7 @@ class ArgvInput(Input):
                 # Otherwise, use the last character
                 # (if it's a short option set, only the last one
                 # can take a value with space separator).
-                name = token[2:] if len(token) > 1 else token[-1]
+                name = token[2:] if token.startswith("--") else token[-1]
 
                 if not (name in self._options or self._definition.has_shortcut(name)):
                     # noop
