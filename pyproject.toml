@@ -32,18 +32,23 @@ classifiers = [
     "Topic :: Software Development",
 ]
 
-# Requirements
 [tool.poetry.dependencies]
 python = "^3.7"
 crashtest = "^0.4.1"
 rapidfuzz = "^3.0.0"
 
 [tool.poetry.group.dev.dependencies]
+mypy = [
+    { version = "^1.0", python = "<3.8" },
+    { version = "^1.5", python = ">=3.8" },
+]
+pre-commit = [
+    { version = "^2.0", python = "<3.8" },
+    { version = "^3.0", python = ">=3.8" },
+]
 pytest = "^7.1.2"
+pytest-cov = "^4.0"
 pytest-mock = "^3.8.2"
-pre-commit = "^2.20.0"
-pytest-cov = ">=3,<5"
-mypy = ">=0.990,<1.5"
 towncrier = ">=22.12.0"
 
 [tool.poetry.group.doc.dependencies]
