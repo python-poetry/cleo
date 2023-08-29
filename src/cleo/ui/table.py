@@ -613,7 +613,7 @@ class Table:
         Gets list of columns for the given row.
         """
         assert self._number_of_columns is not None
-        columns = list(range(0, self._number_of_columns))
+        columns = list(range(self._number_of_columns))
 
         for cell_key, cell in enumerate(row):
             if isinstance(cell, TableCell) and cell.colspan > 1:
@@ -631,7 +631,7 @@ class Table:
         Calculates column widths.
         """
         assert self._number_of_columns is not None
-        for column in range(0, self._number_of_columns):
+        for column in range(self._number_of_columns):
             lengths = [0]
             for row in rows:
                 if isinstance(row, TableSeparator):
