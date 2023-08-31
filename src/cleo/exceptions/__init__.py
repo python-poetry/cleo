@@ -48,6 +48,24 @@ class CleoMissingArgumentsError(CleoUserError):
     """
 
 
+def _suggest_similar_names(name: str, names: list[str]) -> str | None:
+    if not names:
+        return None
+
+    suggested_names = find_similar_names(name, names)
+
+    if not suggested_names:
+        return None
+
+    newline_separator = "\n    "
+    return "Did you mean " + newline_separator.join(
+        (
+            ("this?" if len(suggested_names) == 1 else "one of these?"),
+            newline_separator.join(suggested_names),
+        )
+    )
+
+
 class CleoCommandNotFoundError(CleoUserError):
     """
     Raised when called command does not exist.
@@ -55,18 +73,10 @@ class CleoCommandNotFoundError(CleoUserError):
 
     def __init__(self, name: str, commands: list[str] | None = None) -> None:
         message = f'The command "{name}" does not exist.'
-
         if commands:
-            suggested_names = find_similar_names(name, commands)
-
-            if suggested_names:
-                if len(suggested_names) == 1:
-                    message += "\n\nDid you mean this?\n    "
-                else:
-                    message += "\n\nDid you mean one of these?\n    "
-
-                message += "\n    ".join(suggested_names)
-
+            suggestions = _suggest_similar_names(name, commands)
+            if suggestions:
+                message += "\n\n" + suggestions
         super().__init__(message)
 
 
@@ -77,16 +87,8 @@ class CleoNamespaceNotFoundError(CleoUserError):
 
     def __init__(self, name: str, namespaces: list[str] | None = None) -> None:
         message = f'There are no commands in the "{name}" namespace.'
-
         if namespaces:
-            suggested_names = find_similar_names(name, namespaces)
-
-            if suggested_names:
-                if len(suggested_names) == 1:
-                    message += "\n\nDid you mean this?\n    "
-                else:
-                    message += "\n\nDid you mean one of these?\n    "
-
-                message += "\n    ".join(suggested_names)
-
+            suggestions = _suggest_similar_names(name, namespaces)
+            if suggestions:
+                message += "\n\n" + suggestions
         super().__init__(message)

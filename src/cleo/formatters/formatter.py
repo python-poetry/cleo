@@ -28,10 +28,7 @@ class Formatter:
         self.set_style("c2", Style("default", options=["bold"]))
         self.set_style("b", Style("default", options=["bold"]))
 
-        if styles is None:
-            styles = {}
-
-        for name, style in styles.items():
+        for name, style in (styles or {}).items():
             self.set_style(name, style)
 
         self._style_stack = StyleStack()
@@ -45,16 +42,14 @@ class Formatter:
 
         return cls.escape_trailing_backslash(text)
 
-    @classmethod
-    def escape_trailing_backslash(cls, text: str) -> str:
+    @staticmethod
+    def escape_trailing_backslash(text: str) -> str:
         """
-        Escapes trailing "\" in given text.
+        Escapes trailing "\\" in given text.
         """
-        if text and text[-1] == "\\":
+        if text.endswith("\\"):
             length = len(text)
-            text = text.rstrip("\\")
-            text = text.replace("\0", "")
-            text += "\0" * (length - len(text))
+            text = text.rstrip("\\").replace("\0", "").ljust(length, "\0")
 
         return text
 
@@ -98,14 +93,14 @@ class Formatter:
             offset = pos + len(text)
 
             # Opening tag
-            open = text[1] != "/"
-            tag = match.group(1) if open else match.group(2)
+            seen_open = text[1] != "/"
+            tag = match.group(1) if seen_open else match.group(2)
 
             style = None
             if tag:
                 style = self._create_style_from_string(tag)
 
-            if not (open or tag):
+            if not (seen_open or tag):
                 # </>
                 self._style_stack.pop()
             elif style is None:
@@ -113,7 +108,7 @@ class Formatter:
                     text, output, width, current_line_length
                 )
                 output += formatted
-            elif open:
+            elif seen_open:
                 self._style_stack.push(style)
             else:
                 self._style_stack.pop(style)
@@ -122,18 +117,13 @@ class Formatter:
             message[offset:], output, width, current_line_length
         )
         output += formatted
-
-        if output.find("\0") != -1:
-            return output.replace("\0", "\\").replace("\\<", "<")
-
-        return output.replace("\\<", "<")
+        return output.replace("\0", "\\").replace("\\<", "<")
 
     def remove_format(self, text: str) -> str:
         decorated = self._decorated
-        self._decorated = False
 
-        text = self.format(text)
-        text = re.sub(r"\033\[[^m]*m", "", text)
+        self._decorated = False
+        text = re.sub(r"\033\[[^m]*m", "", self.format(text))
 
         self._decorated = decorated
 
@@ -152,15 +142,15 @@ class Formatter:
 
         style = Style()
 
-        for match in matches:
-            if match[0] == "fg":
-                style.foreground(match[1])
-            elif match[0] == "bg":
-                style.background(match[1])
+        for where, style_options, _ in matches:
+            if where == "fg":
+                style.foreground(style_options)
+            elif where == "bg":
+                style.background(style_options)
             else:
                 try:
-                    for option in match[1].split(","):
-                        style.set_option(option.strip())
+                    for option in map(str.strip, style_options.split(",")):
+                        style.set_option(option)
                 except ValueError:
                     return None
 
@@ -194,7 +184,7 @@ class Formatter:
         text = prefix + re.sub(rf"([^\n]{{{width}}})\ *", "\\1\n", text)
         text = text.rstrip("\n") + (m.group(1) if m else "")
 
-        if not current_line_length and current and current[-1] != "\n":
+        if not current_line_length and current and not current.endswith("\n"):
             text = "\n" + text
 
         lines = text.split("\n")
@@ -204,7 +194,7 @@ class Formatter:
                 current_line_length = 0
 
         if self.is_decorated():
-            for i, line in enumerate(lines):
-                lines[i] = self._style_stack.current.apply(line)
+            apply = self._style_stack.current.apply
+            text = "\n".join(map(apply, lines))
 
-        return "\n".join(lines), current_line_length
+        return text, current_line_length

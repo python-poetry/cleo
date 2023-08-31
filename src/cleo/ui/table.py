@@ -3,7 +3,9 @@ from __future__ import annotations
 import math
 import re
 
+from contextlib import suppress
 from copy import deepcopy
+from itertools import repeat
 from typing import TYPE_CHECKING
 from typing import Iterator
 from typing import List
@@ -482,7 +484,7 @@ class Table:
         if self._headers:
             number_of_rows += 1
 
-        if len(self._rows) > 0:
+        if self._rows:
             number_of_rows += 1
 
         return number_of_rows
@@ -571,18 +573,14 @@ class Table:
         """
         new_row = []
 
-        for column, cell in enumerate(row):
+        for cell in row:
             new_row.append(cell)
 
             if isinstance(cell, TableCell) and cell.colspan > 1:
-                for _ in range(column + 1, column + cell.colspan):
-                    # insert empty value at column position
-                    new_row.append("")
+                # insert empty value at column position
+                new_row.extend(repeat("", cell.colspan - 1))
 
-        if new_row:
-            return new_row
-
-        return row
+        return new_row or row
 
     def _copy_row(self, rows: Rows, line: int) -> Row:
         """
@@ -619,9 +617,9 @@ class Table:
             if isinstance(cell, TableCell) and cell.colspan > 1:
                 # exclude grouped columns.
                 columns = [
-                    x
-                    for x in columns
-                    if x not in list(range(cell_key + 1, cell_key + cell.colspan))
+                    column
+                    for column in columns
+                    if column not in range(cell_key + 1, cell_key + cell.colspan)
                 ]
 
         return columns
@@ -670,11 +668,9 @@ class Table:
         """
         cell_width = 0
 
-        try:
+        with suppress(IndexError):
             cell = row[column]
             cell_width = len(self._io.remove_format(cell))
-        except IndexError:
-            pass
 
         column_width = (
             self._column_widths[column] if column in self._column_widths else 0
@@ -695,27 +691,35 @@ class Table:
         if cls._styles is not None:
             return
 
-        borderless = TableStyle()
-        borderless.set_horizontal_border_chars("=")
-        borderless.set_vertical_border_chars(" ")
-        borderless.set_default_crossing_char(" ")
+        borderless = (
+            TableStyle()
+            .set_horizontal_border_chars("=")
+            .set_vertical_border_chars(" ")
+            .set_default_crossing_char(" ")
+        )
 
-        compact = TableStyle()
-        compact.set_horizontal_border_chars("")
-        compact.set_vertical_border_chars(" ")
-        compact.set_default_crossing_char("")
-        compact.set_cell_row_content_format("{}")
+        compact = (
+            TableStyle()
+            .set_horizontal_border_chars("")
+            .set_vertical_border_chars(" ")
+            .set_default_crossing_char("")
+            .set_cell_row_content_format("{}")
+        )
 
-        box = TableStyle()
-        box.set_horizontal_border_chars("─")
-        box.set_vertical_border_chars("│")
-        box.set_crossing_chars("┼", "┌", "┬", "┐", "┤", "┘", "┴", "└", "├")
+        box = (
+            TableStyle()
+            .set_horizontal_border_chars("─")
+            .set_vertical_border_chars("│")
+            .set_crossing_chars("┼", "┌", "┬", "┐", "┤", "┘", "┴", "└", "├")
+        )
 
-        box_double = TableStyle()
-        box_double.set_horizontal_border_chars("═", "─")
-        box_double.set_vertical_border_chars("║", "│")
-        box_double.set_crossing_chars(
-            "┼", "╔", "╤", "╗", "╢", "╝", "╧", "╚", "╟", "╠", "╪", "╣"
+        box_double = (
+            TableStyle()
+            .set_horizontal_border_chars("═", "─")
+            .set_vertical_border_chars("║", "│")
+            .set_crossing_chars(
+                "┼", "╔", "╤", "╗", "╢", "╝", "╧", "╚", "╟", "╠", "╪", "╣"
+            )
         )
 
         cls._styles = {

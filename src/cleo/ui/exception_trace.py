@@ -72,9 +72,7 @@ class Highlighter:
         offset = line - lines_before - 1
         offset = max(offset, 0)
         length = lines_after + lines_before + 1
-        token_lines = token_lines[offset : offset + length]
-
-        return token_lines
+        return token_lines[offset : offset + length]
 
     def highlighted_lines(self, source: str) -> list[str]:
         source = source.replace("\r\n", "\n").replace("\r", "\n")
@@ -306,9 +304,7 @@ class ExceptionTrace:
         solutions = self._solution_provider_repository.get_solutions_for_exception(
             exception
         )
-        symbol = "•"
-        if not io.supports_utf8():
-            symbol = "*"
+        symbol = "•" if io.supports_utf8() else "*"
 
         for solution in solutions:
             title = solution.solution_title
@@ -397,7 +393,7 @@ class ExceptionTrace:
                         for code_line in code_lines:
                             self._render_line(
                                 io,
-                                f"{' ':>{max_frame_length}}{code_line}",
+                                f"{' ' * max_frame_length}{code_line}",
                                 indent=3,
                             )
                     else:
@@ -410,7 +406,7 @@ class ExceptionTrace:
                             code_line = frame.line.strip()
 
                         self._render_line(
-                            io, f"{' ':>{max_frame_length}}    {code_line}"
+                            io, f"{' ' * (max_frame_length + 4)}{code_line}"
                         )
 
                     i -= 1

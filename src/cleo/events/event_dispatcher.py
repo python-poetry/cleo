@@ -18,7 +18,7 @@ class EventDispatcher:
 
     def dispatch(self, event: Event, event_name: str | None = None) -> Event:
         if event_name is None:
-            event_name = event.__class__.__name__
+            event_name = type(event).__name__
 
         listeners = cast("list[Listener]", self.get_listeners(event_name))
 
@@ -58,11 +58,7 @@ class EventDispatcher:
 
     def has_listeners(self, event_name: str | None = None) -> bool:
         if event_name is not None:
-            if event_name not in self._listeners:
-                return False
-
-            return bool(self._listeners[event_name])
-
+            return bool(self._listeners.get(event_name))
         return any(self._listeners.values())
 
     def add_listener(
@@ -92,10 +88,8 @@ class EventDispatcher:
         """
         Sorts the internal list of listeners for the given event by priority.
         """
-        self._sorted[event_name] = []
+        prioritized_listeners = self._listeners[event_name]
+        sorted_listeners = self._sorted[event_name] = []
 
-        for _, listeners in sorted(
-            self._listeners[event_name].items(), key=lambda t: -t[0]
-        ):
-            for listener in listeners:
-                self._sorted[event_name].append(listener)
+        for priority in sorted(prioritized_listeners, reverse=True):
+            sorted_listeners.extend(prioritized_listeners[priority])

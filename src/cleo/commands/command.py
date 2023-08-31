@@ -64,35 +64,29 @@ class Command(BaseCommand):
 
     def handle(self) -> int:
         """
-        Executes the command.
+        Execute the command.
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def call(self, name: str, args: str | None = None) -> int:
         """
         Call another command.
         """
-        if args is None:
-            args = ""
-
-        input = StringInput(args)
         assert self.application is not None
         command = self.application.get(name)
 
-        return self.application._run_command(command, self._io.with_input(input))
+        return self.application._run_command(
+            command, self._io.with_input(StringInput(args or ""))
+        )
 
     def call_silent(self, name: str, args: str | None = None) -> int:
         """
         Call another command silently.
         """
-        if args is None:
-            args = ""
-
-        input = StringInput(args)
         assert self.application is not None
         command = self.application.get(name)
 
-        return self.application._run_command(command, NullIO(input))
+        return self.application._run_command(command, NullIO(StringInput(args or "")))
 
     def argument(self, name: str) -> Any:
         """
@@ -166,7 +160,7 @@ class Command(BaseCommand):
     def create_question(
         self,
         question: str,
-        type: Literal["choice"] | Literal["confirmation"] | None = None,
+        type: Literal["choice", "confirmation"] | None = None,
         **kwargs: Any,
     ) -> Question:
         """
@@ -176,14 +170,13 @@ class Command(BaseCommand):
         from cleo.ui.confirmation_question import ConfirmationQuestion
         from cleo.ui.question import Question
 
-        if not type:
-            return Question(question, **kwargs)
+        if type == "confirmation":
+            return ConfirmationQuestion(question, **kwargs)
 
         if type == "choice":
             return ChoiceQuestion(question, **kwargs)
 
-        if type == "confirmation":
-            return ConfirmationQuestion(question, **kwargs)
+        return Question(question, **kwargs)
 
     def table(
         self,

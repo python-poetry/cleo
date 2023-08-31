@@ -100,11 +100,11 @@ class ProgressIndicator:
             raise RuntimeError("Progress indicator has not yet been started.")
 
         if not self._io.is_decorated():
-            return None
+            return
 
         current_time = self._get_current_time_in_milliseconds()
         if self._update_time is not None and current_time < self._update_time:
-            return None
+            return
 
         self._update_time = current_time + self._interval
         self._current += 1
@@ -169,11 +169,8 @@ class ProgressIndicator:
 
     def _overwrite_callback(self, matches: Match[str]) -> str:
         if hasattr(self, f"_formatter_{matches.group(1)}"):
-            text = str(getattr(self, f"_formatter_{matches.group(1)}")())
-        else:
-            text = matches.group(0)
-
-        return text
+            return str(getattr(self, f"_formatter_{matches.group(1)}")())
+        return matches.group(0)
 
     def _overwrite(self, message: str) -> None:
         """

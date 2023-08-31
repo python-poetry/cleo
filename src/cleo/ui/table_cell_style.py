@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-from typing import Union
 
 
 if TYPE_CHECKING:
@@ -12,7 +11,7 @@ if TYPE_CHECKING:
     else:
         from typing_extensions import Literal
 
-    _Align = Union[Literal["left"], Literal["right"]]
+    _Align = Literal["left", "right"]
 
 
 class TableCellStyle:

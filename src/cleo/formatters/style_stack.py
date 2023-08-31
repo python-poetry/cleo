@@ -32,10 +32,11 @@ class StyleStack:
         if style is None:
             return self._styles.pop()
 
-        for i, stacked_style in reversed(list(enumerate(self._styles))):
-            if style.apply("") == stacked_style.apply(""):
-                self._styles = self._styles[:i]
+        sample = style.apply("")
 
+        for i, stacked_style in reversed(list(enumerate(self._styles))):
+            if sample == stacked_style.apply(""):
+                self._styles = self._styles[:i]
                 return stacked_style
 
         raise CleoValueError("Invalid nested tag found")

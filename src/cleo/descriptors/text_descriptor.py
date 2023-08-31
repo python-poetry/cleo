@@ -169,8 +169,7 @@ class TextDescriptor(Descriptor):
 
         self._describe_definition(Definition(application.definition.options), **options)
 
-        self._write("\n")
-        self._write("\n")
+        self._write("\n\n")
 
         commands = description.commands
         namespaces = description.namespaces
@@ -181,7 +180,7 @@ class TextDescriptor(Descriptor):
                 commands[name] = description.command(name)
 
         # calculate max width based on available commands per namespace
-        all_commands = list(commands.keys())
+        all_commands = list(commands)
         for namespace in namespaces.values():
             all_commands += namespace["commands"]
 
@@ -223,23 +222,18 @@ class TextDescriptor(Descriptor):
             self._write("\n")
 
     def _format_default_value(self, default: Any) -> str:
-        new_default: Any
         if isinstance(default, str):
             default = Formatter.escape(default)
         elif isinstance(default, list):
-            new_default = []
-            for value in default:
-                if isinstance(value, str):
-                    new_default.append(Formatter.escape(value))
-
-            default = new_default
+            default = [
+                Formatter.escape(value) for value in default if isinstance(value, str)
+            ]
         elif isinstance(default, dict):
-            new_default = {}
-            for key, value in default.items():
-                if isinstance(value, str):
-                    new_default[key] = Formatter.escape(value)
-
-            default = new_default
+            default = {
+                key: Formatter.escape(value)
+                for key, value in default.items()
+                if isinstance(value, str)
+            }
 
         return json.dumps(default).replace("\\\\", "\\")
 
@@ -261,7 +255,7 @@ class TextDescriptor(Descriptor):
         return total_width
 
     def _get_column_width(self, commands: Sequence[Command | str]) -> int:
-        widths = []
+        widths: list[int] = []
 
         for command in commands:
             if isinstance(command, Command):
@@ -278,10 +272,9 @@ class TextDescriptor(Descriptor):
         return max(widths) + 2
 
     def _get_command_aliases_text(self, command: Command) -> str:
-        text = ""
         aliases = command.aliases
 
         if aliases:
-            text = f"[{ '|'.join(aliases) }] "
+            return f"[{ '|'.join(aliases) }] "
 
-        return text
+        return ""

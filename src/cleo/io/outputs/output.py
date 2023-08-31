@@ -66,7 +66,7 @@ class Output:
         self._verbosity = verbosity
 
     def is_quiet(self) -> bool:
-        return self._verbosity == Verbosity.QUIET
+        return self._verbosity is Verbosity.QUIET
 
     def is_verbose(self) -> bool:
         return self._verbosity.value >= Verbosity.VERBOSE.value
@@ -75,7 +75,7 @@ class Output:
         return self._verbosity.value >= Verbosity.VERY_VERBOSE.value
 
     def is_debug(self) -> bool:
-        return self._verbosity == Verbosity.DEBUG
+        return self._verbosity is Verbosity.DEBUG
 
     def write_line(
         self,
@@ -99,9 +99,9 @@ class Output:
             return
 
         for message in messages:
-            if type == Type.NORMAL:
+            if type is Type.NORMAL:
                 message = self._formatter.format(message)
-            elif type == Type.PLAIN:
+            elif type is Type.PLAIN:
                 message = strip_tags(self._formatter.format(message))
 
             self._write(message, new_line=new_line)
@@ -113,7 +113,7 @@ class Output:
         return self.formatter.remove_format(text)
 
     def section(self) -> SectionOutput:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def _write(self, message: str, new_line: bool = False) -> None:
-        raise NotImplementedError()
+        raise NotImplementedError

@@ -43,8 +43,8 @@ class ArgvInput(Input):
         is_option = False
 
         for i, token in enumerate(self._tokens):
-            if token and token[0] == "-":
-                if token.find("=") != -1 or len(self._tokens) <= (i + 1):
+            if token.startswith("-"):
+                if "=" in token or len(self._tokens) == (i + 1):
                     continue
 
                 # If it's a long option, consider that
@@ -52,11 +52,9 @@ class ArgvInput(Input):
                 # Otherwise, use the last character
                 # (if it's a short option set, only the last one
                 # can take a value with space separator).
-                name = token[2:] if len(token) > 1 and token[1] == "-" else token[-1]
+                name = token[2:] if token.startswith("--") else token[-1]
 
-                if name not in self._options and not self._definition.has_shortcut(
-                    name
-                ):
+                if not (name in self._options or self._definition.has_shortcut(name)):
                     # noop
                     continue
 
@@ -97,9 +95,9 @@ class ArgvInput(Input):
                 # Options with values:
                 # For long options, test for '--option=' at beginning
                 # For short options, test for '-o' at beginning
-                leading = value + "=" if value.find("--") == 0 else value
+                leading = value + "=" if value.startswith("--") else value
 
-                if token == value or leading != "" and token.find(leading) == 0:
+                if token == value or leading != "" and token.startswith(leading):
                     return True
 
         return False
@@ -124,14 +122,14 @@ class ArgvInput(Input):
                     try:
                         return tokens.pop(0)
                     except IndexError:
-                        return
+                        return None
 
                 # Options with values:
                 # For long options, test for '--option=' at beginning
                 # For short options, test for '-o' at beginning
-                leading = value + "=" if value.find("--") == 0 else value
+                leading = value + "=" if value.startswith("--") else value
 
-                if token == value or leading != "" and token.find(leading) == 0:
+                if token == value or leading != "" and token.startswith(leading):
                     return token[len(leading)]
 
         return False
@@ -146,16 +144,16 @@ class ArgvInput(Input):
         try:
             token = self._parsed.pop(0)
         except IndexError:
-            token = None
+            return
 
         while token is not None:
             if parse_options and token == "":
                 self._parse_argument(token)
             elif parse_options and token == "--":
                 parse_options = False
-            elif parse_options and token.find("--") == 0:
+            elif parse_options and token.startswith("--"):
                 self._parse_long_option(token)
-            elif parse_options and token[0] == "-" and token != "-":
+            elif parse_options and token.startswith("-") and token != "-":
                 self._parse_short_option(token)
             else:
                 self._parse_argument(token)
@@ -163,18 +161,19 @@ class ArgvInput(Input):
             try:
                 token = self._parsed.pop(0)
             except IndexError:
-                token = None
+                return
 
     def _parse_short_option(self, token: str) -> None:
         name = token[1:]
 
         if len(name) > 1:
+            shortcut = name[0]
             if (
-                self._definition.has_shortcut(name[0])
-                and self._definition.option_for_shortcut(name[0]).accepts_value()
+                self._definition.has_shortcut(shortcut)
+                and self._definition.option_for_shortcut(shortcut).accepts_value()
             ):
                 # An option with a value and no space
-                self._add_short_option(name[0], name[1:])
+                self._add_short_option(shortcut, name[1:])
             else:
                 self._parse_short_option_set(name)
         else:
@@ -183,13 +182,14 @@ class ArgvInput(Input):
     def _parse_short_option_set(self, name: str) -> None:
         length = len(name)
         for i in range(length):
-            if not self._definition.has_shortcut(name[i]):
+            shortcut = name[i]
+            if not self._definition.has_shortcut(shortcut):
                 raise CleoRuntimeError(f'The option "{name[i]}" does not exist')
 
-            option = self._definition.option_for_shortcut(name[i])
+            option = self._definition.option_for_shortcut(shortcut)
             if option.accepts_value():
                 self._add_long_option(
-                    option.name, None if i == length - 1 else name[i + 1 :]
+                    option.name, name[i + 1 :] if i < length - 1 else None
                 )
 
                 break
@@ -205,42 +205,43 @@ class ArgvInput(Input):
             if not value:
                 self._parsed.insert(0, value)
 
-            self._add_long_option(name[0:pos], value)
+            self._add_long_option(name[:pos], value)
         else:
             self._add_long_option(name, None)
 
     def _parse_argument(self, token: str) -> None:
-        count = len(self._arguments)
+        next_argument = len(self._arguments)
+        last_argument = next_argument - 1
 
         # If the input is expecting another argument, add it
-        if self._definition.has_argument(count):
-            argument = self._definition.argument(count)
+        if self._definition.has_argument(next_argument):
+            argument = self._definition.argument(next_argument)
             self._arguments[argument.name] = [token] if argument.is_list() else token
         # If the last argument is a list, append the token to it
         elif (
-            self._definition.has_argument(count - 1)
-            and self._definition.argument(count - 1).is_list()
+            self._definition.has_argument(last_argument)
+            and self._definition.argument(last_argument).is_list()
         ):
-            argument = self._definition.argument(count - 1)
+            argument = self._definition.argument(last_argument)
             self._arguments[argument.name].append(token)
         # Unexpected argument
         else:
-            all = self._definition.arguments.copy()
+            all_arguments = self._definition.arguments.copy()
             command_name = None
-            argument = all[0]
+            argument = all_arguments[0]
             if argument and argument.name == "command":
                 command_name = self._arguments.get("command")
-                del all[0]
+                del all_arguments[0]
 
-            if all:
-                all_names = '" "'.join([a.name for a in all])
+            if all_arguments:
+                all_names = " ".join(a.name.join('""') for a in all_arguments)
                 if command_name:
                     message = (
                         f'Too many arguments to "{command_name}" command, '
-                        f'expected arguments "{all_names}"'
+                        f"expected arguments {all_names}"
                     )
                 else:
-                    message = f'Too many arguments, expected arguments "{all_names}"'
+                    message = f"Too many arguments, expected arguments {all_names}"
             elif command_name:
                 message = (
                     f'No arguments expected for "{command_name}" command, '
@@ -268,11 +269,11 @@ class ArgvInput(Input):
         if not (value is None or option.accepts_value()):
             raise CleoRuntimeError(f'The "--{name}" option does not accept a value')
 
-        if value in ["", None] and option.accepts_value() and self._parsed:
+        if value in ("", None) and option.accepts_value() and self._parsed:
             # If the option accepts a value, either required or optional,
             # we check if there is one
             next_token = self._parsed.pop(0)
-            if (next_token and next_token[0] != "-") or next_token in ["", None]:
+            if not next_token.startswith("-") or next_token in ("", None):
                 value = next_token
             else:
                 self._parsed.insert(0, next_token)

@@ -36,7 +36,7 @@ class BaseCommand:
         self.configure()
 
         for i, usage in enumerate(self.usages):
-            if self.name and usage.find(self.name) != 0:
+            if self.name and not usage.startswith(self.name):
                 self.usages[i] = f"{self.name} {usage}"
 
     @property
@@ -85,7 +85,7 @@ class BaseCommand:
         """
 
     def execute(self, io: IO) -> int:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def interact(self, io: IO) -> None:
         """
@@ -114,12 +114,7 @@ class BaseCommand:
 
         io.input.validate()
 
-        status_code = self.execute(io)
-
-        if status_code is None:
-            status_code = 0
-
-        return status_code
+        return self.execute(io) or 0
 
     def merge_application_definition(self, merge_args: bool = True) -> None:
         if self._application is None:

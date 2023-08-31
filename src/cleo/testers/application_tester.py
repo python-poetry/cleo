@@ -50,8 +50,7 @@ class ApplicationTester:
         """
         self._io.clear()
 
-        input = StringInput(args)
-        self._io.set_input(input)
+        self._io.set_input(StringInput(args))
         self._io.decorated(decorated)
         assert isinstance(self._io.output, BufferedOutput)
         assert isinstance(self._io.error_output, BufferedOutput)
