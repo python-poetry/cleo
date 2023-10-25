@@ -10,11 +10,13 @@ import subprocess
 from pathlib import Path
 from typing import TYPE_CHECKING
 from typing import ClassVar
+from typing import cast
 
 from cleo import helpers
 from cleo._compat import shell_quote
 from cleo.commands.command import Command
 from cleo.commands.completions.templates import TEMPLATES
+from cleo.exceptions import CleoRuntimeError
 
 
 if TYPE_CHECKING:
@@ -138,10 +140,32 @@ script. Consult your shells documentation for how to add such directives.
 
         raise RuntimeError(f"Unrecognized shell: {shell}")
 
+    @staticmethod
+    def _get_prog_name_from_stack() -> str:
+        package_name = ""
+        frame = inspect.currentframe()
+        f_back = frame.f_back if frame is not None else None
+        f_globals = f_back.f_globals if f_back is not None else None
+        # break reference cycle
+        # https://docs.python.org/3/library/inspect.html#the-interpreter-stack
+        del frame
+
+        if f_globals is not None:
+            package_name = cast(str, f_globals.get("__name__"))
+
+            if package_name == "__main__":
+                package_name = cast(str, f_globals.get("__package__"))
+
+            if package_name:
+                package_name = package_name.partition(".")[0]
+
+        if not package_name:
+            raise CleoRuntimeError("Can not determine package name")
+
+        return package_name
+
     def _get_script_name_and_path(self) -> tuple[str, str]:
-        # FIXME: when generating completions via `python -m script completions`,
-        # we incorrectly infer `script_name` as `__main__.py`
-        script_name = self._io.input.script_name or inspect.stack()[-1][1]
+        script_name = self._io.input.script_name or self._get_prog_name_from_stack()
         script_path = posixpath.realpath(script_name)
         script_name = Path(script_path).name
 
@@ -279,7 +303,7 @@ script. Consult your shells documentation for how to add such directives.
                 ]
                 cmds.append(
                     f"complete -c {script_name} -f -n '__fish_seen_subcommand_from "
-                    f"{namespace}; and not __fish_seen_subcommand_from {' '.join(subcmds)}' "  # noqa: E501
+                    f"{namespace}; and not __fish_seen_subcommand_from {' '.join(subcmds)}' "
                     f"-a {cmd_name} -d '{sanitize(cmd.description)}'"
                 )
                 condition = (
