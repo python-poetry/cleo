@@ -113,7 +113,7 @@ def test_render_debug_better_error_message_recursion_error() -> None:
         1\│ def recursion_error\(\) -> None:
     →   2\│     recursion_error\(\)
         3\│ 
-"""  # noqa: E501
+"""
 
     assert re.match(expected, io.fetch_output()) is not None
 
@@ -149,7 +149,7 @@ test_render_very_verbose_better_error_message
     assert expected == io.fetch_output()
 
 
-def test_render_debug_better_error_message_recursion_error_with_multiple_duplicated_frames() -> (  # noqa: E501
+def test_render_debug_better_error_message_recursion_error_with_multiple_duplicated_frames() -> (
     None
 ):
     def first() -> None:
