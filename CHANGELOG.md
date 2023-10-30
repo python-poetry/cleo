@@ -1,6 +1,21 @@
 # Changelog
 
 <!-- news notes entrypoint -->
+## [2.1.0] - 2023-10-30
+
+### Features & Improvements
+
+- Added support for Python 3.12 [#379](https://github.com/python-poetry/cleo/pull/379)
+- Added `CONTRIBUTING.md` document [#331](https://github.com/python-poetry/cleo/pull/331)
+- Added `tests/` directory to sdist artifact [#327](https://github.com/python-poetry/cleo/pull/327)
+
+### Bug fixes
+
+- Fixed subcommand completions for Fish [#359](https://github.com/python-poetry/cleo/pull/359)
+- Removed deprecated `-A` option from Fish completions [#366](https://github.com/python-poetry/cleo/pull/366)
+- Fixed program name discovery in completions script when running as module [#231](https://github.com/python-poetry/cleo/pull/231)
+- Fixed ANSI coloring detection in virtual terminal environments (Windows, PyCharm) [#104](https://github.com/python-poetry/cleo/pull/104)
+- Fixed terminal size detection [#299](https://github.com/python-poetry/cleo/pull/299)
 
 ## [2.0.1] - 2022-11-23
 
