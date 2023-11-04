@@ -243,17 +243,6 @@ tomli = {version = "*", optional = true, markers = "python_full_version <= \"3.1
 toml = ["tomli"]
 
 [[package]]
-name = "crashtest"
-version = "0.4.1"
-description = "Manage Python errors with ease"
-optional = false
-python-versions = ">=3.7,<4.0"
-files = [
-    {file = "crashtest-0.4.1-py3-none-any.whl", hash = "sha256:8d23eac5fa660409f57472e3851dab7ac18aba459a8d19cbbba86d3d5aecd2a5"},
-    {file = "crashtest-0.4.1.tar.gz", hash = "sha256:80d7b1f316ebfbd429f648076d6275c877ba30ba48979de4191714a75266f0ce"},
-]
-
-[[package]]
 name = "distlib"
 version = "0.3.7"
 description = "Distribution utilities"
@@ -1146,4 +1135,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "bf932ada0985bb687a328c6313c75087c93fc8b1d4bac8c03c378524301e214b"
+content-hash = "d62b54e19368d22edfff1837af4297243e1f364c5b41cdec8c95419a12d32cf5"
