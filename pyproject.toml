@@ -33,19 +33,13 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 crashtest = "^0.4.1"
 rapidfuzz = "^3.0.0"
 
 [tool.poetry.group.dev.dependencies]
-mypy = [
-    { version = "^1.0", python = "<3.8" },
-    { version = "^1.5", python = ">=3.8" },
-]
-pre-commit = [
-    { version = "^2.0", python = "<3.8" },
-    { version = "^3.0", python = ">=3.8" },
-]
+mypy = "^1.5"
+pre-commit = "^3.0"
 pytest = "^7.1.2"
 pytest-cov = "^4.0"
 pytest-mock = "^3.8.2"
@@ -60,7 +54,7 @@ fix = true
 unfixable = [
     "ERA", # do not autoremove commented out code
 ]
-target-version = "py37"
+target-version = "py38"
 line-length = 88
 extend-select = [
     "B",   # flake8-bugbear
