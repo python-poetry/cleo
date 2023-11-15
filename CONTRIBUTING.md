@@ -24,8 +24,8 @@ poetry run pytest
 
 ## Code Style and Linters
 
-We use [Black](https://github.com/psf/black) to format the code and [Ruff](https://github.com/charliermarsh/ruff) as the linter.
-They are all integrated into [pre-commit](https://pre-commit.com/). You can enable it by:
+We use [Ruff](https://github.com/charliermarsh/ruff) as the linter and formatter.
+It is integrated into [pre-commit](https://pre-commit.com/). You can enable it by:
 
 > NOTICE: `pre-commit` is declared as one of development dependencies of Cleo. If you don't have `pre-commit` installed globally, prepend the commands in this section with `poetry run`
 
@@ -58,5 +58,3 @@ your change. News fragments are placed in the `news/` directory, and should be n
 
 The contents of the file should be a single sentence in past tense that describes your changes (e.g., `Added CONTRIBUTING.md file.`).
 See entries in the [Change Log](/CHANGELOG.md) for more examples.
-
-
