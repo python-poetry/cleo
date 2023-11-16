@@ -47,7 +47,7 @@ their version specifiers, which explicitly included `1.0.0` pre-releases.
 
 ### Removed
 
-- Removed doc comment-based command configuration notation 
+- Removed doc comment-based command configuration notation
 ([#239](https://github.com/python-poetry/cleo/pull/239)).
 
 ### Fixed

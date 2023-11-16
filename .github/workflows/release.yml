@@ -33,7 +33,7 @@ jobs:
     - name: Build distributions
       run: |
         poetry build -vvv
-  
+
     - name: Upload distribution artifacts
       uses: actions/upload-artifact@v3
       with:
@@ -75,7 +75,7 @@ jobs:
           POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
         run: |
           poetry publish
-          
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
