@@ -367,8 +367,8 @@ class Application:
         name = self._get_command_name(io)
         if io.input.has_parameter_option(["--help", "-h"], True):
             if not name:
-                name = "help"
-                io.set_input(ArgvInput(["console", "help", self._default_command]))
+                name = "list"
+                io.set_input(ArgvInput(["console", self._default_command]))
             else:
                 self._want_helps = True
 
