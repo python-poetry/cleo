@@ -7,6 +7,7 @@ import sys
 from contextlib import suppress
 from typing import TYPE_CHECKING
 from typing import cast
+from typing import Optional
 
 from cleo.commands.completions_command import CompletionsCommand
 from cleo.commands.help_command import HelpCommand
@@ -22,6 +23,7 @@ from cleo.exceptions import CleoError
 from cleo.exceptions import CleoLogicError
 from cleo.exceptions import CleoNamespaceNotFoundError
 from cleo.exceptions import CleoUserError
+from cleo.formatters.style import Style
 from cleo.io.inputs.argument import Argument
 from cleo.io.inputs.argv_input import ArgvInput
 from cleo.io.inputs.definition import Definition
@@ -53,7 +55,7 @@ class Application:
     >>> app.run()
     """
 
-    def __init__(self, name: str = "console", version: str = "") -> None:
+    def __init__(self, name: str = "console", version: str = "", styles: dict[str, Style] | None = None) -> None:
         self._name = name
         self._version = version
         self._display_name: str | None = None
@@ -68,6 +70,7 @@ class Application:
         self._auto_exit = True
         self._initialized = False
         self._ui: UI | None = None
+        self._styles: Optional[dict[str, Style]] = styles or None
 
         # TODO: signals support
         self._event_dispatcher: EventDispatcher | None = None
@@ -531,6 +534,10 @@ class Application:
 
         if shell_verbosity == -1:
             io.interactive(False)
+
+        if self._styles:
+            for styleName, style in self._styles.items():
+                io.output.formatter.set_style(styleName, style)
 
     @property
     def _default_definition(self) -> Definition:
