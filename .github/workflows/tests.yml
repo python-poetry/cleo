@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+env:
+  PYTHONWARNDEFAULTENCODING: 'true'
+
 jobs:
   Tests:
     name: ${{ matrix.os }} / ${{ matrix.python-version }}

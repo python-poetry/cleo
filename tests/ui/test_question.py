@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 def has_tty_available() -> bool:
-    with open(os.devnull, "w") as devnull:
+    with open(os.devnull, "w", encoding="utf-8") as devnull:
         exit_code = subprocess.call(["stty", "2"], stdout=devnull, stderr=devnull)
 
     return exit_code == 0

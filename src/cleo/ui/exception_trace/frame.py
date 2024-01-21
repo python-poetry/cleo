@@ -62,7 +62,7 @@ class Frame:
             return ""
         if self._filename not in type(self)._content_cache:
             try:
-                file_content = Path(self._filename).read_text()
+                file_content = Path(self._filename).read_text(encoding="utf-8")
             except OSError:
                 file_content = ""
             type(self)._content_cache[self._filename] = file_content

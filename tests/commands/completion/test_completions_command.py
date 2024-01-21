@@ -48,7 +48,10 @@ def test_bash(mocker: MockerFixture) -> None:
     tester = CommandTester(command)
     tester.execute("bash")
 
-    with open(os.path.join(os.path.dirname(__file__), "fixtures", "bash.txt")) as f:
+    with open(
+        os.path.join(os.path.dirname(__file__), "fixtures", "bash.txt"),
+        encoding="utf-8",
+    ) as f:
         expected = f.read()
 
     assert expected == tester.io.fetch_output().replace("\r\n", "\n")
@@ -70,7 +73,9 @@ def test_zsh(mocker: MockerFixture) -> None:
     tester = CommandTester(command)
     tester.execute("zsh")
 
-    with open(os.path.join(os.path.dirname(__file__), "fixtures", "zsh.txt")) as f:
+    with open(
+        os.path.join(os.path.dirname(__file__), "fixtures", "zsh.txt"), encoding="utf-8"
+    ) as f:
         expected = f.read()
 
     assert expected == tester.io.fetch_output().replace("\r\n", "\n")
@@ -92,7 +97,10 @@ def test_fish(mocker: MockerFixture) -> None:
     tester = CommandTester(command)
     tester.execute("fish")
 
-    with open(os.path.join(os.path.dirname(__file__), "fixtures", "fish.txt")) as f:
+    with open(
+        os.path.join(os.path.dirname(__file__), "fixtures", "fish.txt"),
+        encoding="utf-8",
+    ) as f:
         expected = f.read()
 
     assert expected == tester.io.fetch_output().replace("\r\n", "\n")
