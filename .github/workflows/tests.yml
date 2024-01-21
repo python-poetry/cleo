@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 env:
-  PYTHONWARNDEFAULTENCODING: 'true'
+  PYTHONWARNDEFAULTENCODING: true
 
 jobs:
   Tests:
