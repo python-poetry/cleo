@@ -265,7 +265,7 @@ class Question:
         return ret.strip()
 
     def _has_stty_available(self) -> bool:
-        with Path(os.devnull).open("w") as devnull:
+        with Path(os.devnull).open("w", encoding="utf-8") as devnull:
             try:
                 exit_code = subprocess.call(["stty"], stdout=devnull, stderr=devnull)
             except Exception:

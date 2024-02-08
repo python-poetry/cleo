@@ -22,7 +22,7 @@ def test_frame() -> None:
     assert frame.function == "test_frame"
     assert frame.line == "        simple_exception()\n"
 
-    with open(__file__) as f:
+    with open(__file__, encoding="utf-8") as f:
         assert f.read() == frame.file_content
 
     assert repr(frame) == f"<Frame {__file__}, test_frame, 12>"
