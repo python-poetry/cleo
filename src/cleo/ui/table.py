@@ -672,9 +672,7 @@ class Table:
             cell = row[column]
             cell_width = len(self._io.remove_format(cell))
 
-        column_width = (
-            self._column_widths[column] if column in self._column_widths else 0
-        )
+        column_width = self._column_widths.get(column, 0)
         cell_width = max(cell_width, column_width)
 
         if column in self._column_max_widths:
