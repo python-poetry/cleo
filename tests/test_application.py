@@ -68,7 +68,9 @@ def test_long_version() -> None:
 
 
 def test_help(app: Application) -> None:
-    assert app.help == FIXTURES_PATH.joinpath("application_help.txt").read_text()
+    assert app.help == FIXTURES_PATH.joinpath("application_help.txt").read_text(
+        encoding="utf-8"
+    )
 
 
 def test_all(app: Application) -> None:
@@ -218,10 +220,9 @@ def test_set_catch_exceptions(app: Application, environ: dict[str, str]) -> None
     tester.execute("foo", decorated=False)
 
     assert tester.io.fetch_output() == ""
-    assert (
-        tester.io.fetch_error()
-        == FIXTURES_PATH.joinpath("application_exception1.txt").read_text()
-    )
+    assert tester.io.fetch_error() == FIXTURES_PATH.joinpath(
+        "application_exception1.txt"
+    ).read_text(encoding="utf-8")
 
     app.catch_exceptions(False)
 
@@ -256,42 +257,37 @@ def test_run(app: Application, argv: list[str]) -> None:
 def test_run_runs_the_list_command_without_arguments(tester: ApplicationTester) -> None:
     tester.execute("", decorated=False)
 
-    assert (
-        tester.io.fetch_output()
-        == FIXTURES_PATH.joinpath("application_run1.txt").read_text()
-    )
+    assert tester.io.fetch_output() == FIXTURES_PATH.joinpath(
+        "application_run1.txt"
+    ).read_text(encoding="utf-8")
 
 
 def test_run_runs_help_command_if_required(tester: ApplicationTester) -> None:
     tester.execute("--help", decorated=False)
 
-    assert (
-        tester.io.fetch_output()
-        == FIXTURES_PATH.joinpath("application_run2.txt").read_text()
-    )
+    assert tester.io.fetch_output() == FIXTURES_PATH.joinpath(
+        "application_run2.txt"
+    ).read_text(encoding="utf-8")
 
     tester.execute("-h", decorated=False)
 
-    assert (
-        tester.io.fetch_output()
-        == FIXTURES_PATH.joinpath("application_run2.txt").read_text()
-    )
+    assert tester.io.fetch_output() == FIXTURES_PATH.joinpath(
+        "application_run2.txt"
+    ).read_text(encoding="utf-8")
 
 
 def test_run_runs_help_command_with_command(tester: ApplicationTester) -> None:
     tester.execute("--help list", decorated=False)
 
-    assert (
-        tester.io.fetch_output()
-        == FIXTURES_PATH.joinpath("application_run3.txt").read_text()
-    )
+    assert tester.io.fetch_output() == FIXTURES_PATH.joinpath(
+        "application_run3.txt"
+    ).read_text(encoding="utf-8")
 
     tester.execute("list -h", decorated=False)
 
-    assert (
-        tester.io.fetch_output()
-        == FIXTURES_PATH.joinpath("application_run3.txt").read_text()
-    )
+    assert tester.io.fetch_output() == FIXTURES_PATH.joinpath(
+        "application_run3.txt"
+    ).read_text(encoding="utf-8")
 
 
 def test_run_removes_all_output_if_quiet(tester: ApplicationTester) -> None:
@@ -325,33 +321,29 @@ def test_run_with_verbosity(tester: ApplicationTester) -> None:
 def test_run_with_version(tester: ApplicationTester) -> None:
     tester.execute("--version")
 
-    assert (
-        tester.io.fetch_output()
-        == FIXTURES_PATH.joinpath("application_run4.txt").read_text()
-    )
+    assert tester.io.fetch_output() == FIXTURES_PATH.joinpath(
+        "application_run4.txt"
+    ).read_text(encoding="utf-8")
 
     tester.execute("-V")
 
-    assert (
-        tester.io.fetch_output()
-        == FIXTURES_PATH.joinpath("application_run4.txt").read_text()
-    )
+    assert tester.io.fetch_output() == FIXTURES_PATH.joinpath(
+        "application_run4.txt"
+    ).read_text(encoding="utf-8")
 
 
 def test_run_with_help(tester: ApplicationTester) -> None:
     tester.execute("help --help")
 
-    assert (
-        tester.io.fetch_output()
-        == FIXTURES_PATH.joinpath("application_run5.txt").read_text()
-    )
+    assert tester.io.fetch_output() == FIXTURES_PATH.joinpath(
+        "application_run5.txt"
+    ).read_text(encoding="utf-8")
 
     tester.execute("-h help")
 
-    assert (
-        tester.io.fetch_output()
-        == FIXTURES_PATH.joinpath("application_run5.txt").read_text()
-    )
+    assert tester.io.fetch_output() == FIXTURES_PATH.joinpath(
+        "application_run5.txt"
+    ).read_text(encoding="utf-8")
 
 
 def test_run_with_input() -> None:
