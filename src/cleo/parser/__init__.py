@@ -61,6 +61,8 @@ All other classes in this module are considered implementation details.
 considered public as object names -- the API of the formatter objects is
 still considered an implementation detail.)
 """
+from __future__ import annotations
+
 
 __version__ = '1.1'
 __all__ = [
@@ -85,11 +87,14 @@ __all__ = [
 ]
 
 
+import contextlib
 import os as _os
 import re as _re
 import sys as _sys
 
-from gettext import gettext as _, ngettext
+from gettext import gettext as _
+from gettext import ngettext
+
 
 SUPPRESS = '==SUPPRESS=='
 
@@ -104,7 +109,7 @@ _UNRECOGNIZED_ARGS_ATTR = '_unrecognized_args'
 # Utility functions and classes
 # =============================
 
-class _AttributeHolder(object):
+class _AttributeHolder:
     """Abstract base class that provides __repr__.
 
     The __repr__ method returns a string in the format::
@@ -121,12 +126,12 @@ class _AttributeHolder(object):
             arg_strings.append(repr(arg))
         for name, value in self._get_kwargs():
             if name.isidentifier():
-                arg_strings.append('%s=%r' % (name, value))
+                arg_strings.append(f'{name}={value}')
             else:
                 star_args[name] = value
         if star_args:
-            arg_strings.append('**%s' % repr(star_args))
-        return '%s(%s)' % (type_name, ', '.join(arg_strings))
+            arg_strings.append(f'**{star_args}')
+        return f'{type_name}({", ".join(arg_strings)})'
 
     def _get_kwargs(self):
         return list(self.__dict__.items())
@@ -141,7 +146,7 @@ def _copy_items(items):
     # The copy module is used only in the 'append' and 'append_const'
     # actions, and it is needed only when the default value isn't a list.
     # Delay its import for speeding up the common case.
-    if type(items) is list:
+    if isinstance(items, list):
         return items[:]
     import copy
     return copy.copy(items)
@@ -152,7 +157,7 @@ def _copy_items(items):
 # ===============
 
 
-class HelpFormatter(object):
+class HelpFormatter:
     """Formatter for generating usage messages and argument help strings.
 
     Only the name of this class is considered a public API. All the methods
@@ -199,7 +204,7 @@ class HelpFormatter(object):
         assert self._current_indent >= 0, 'Indent decreased below 0.'
         self._level -= 1
 
-    class _Section(object):
+    class _Section:
 
         def __init__(self, formatter, parent, heading=None):
             self.formatter = formatter
@@ -298,15 +303,15 @@ class HelpFormatter(object):
 
         # if usage is specified, use that
         if usage is not None:
-            usage = usage % dict(prog=self._prog)
+            usage = usage % {'prog': self._prog}
 
         # if no optionals or positionals are available, usage is just prog
         elif usage is None and not actions:
-            usage = '%(prog)s' % dict(prog=self._prog)
+            usage = f'{self._prog}'
 
         # if optionals and positionals are available, calculate usage
         elif usage is None:
-            prog = '%(prog)s' % dict(prog=self._prog)
+            prog = f'{self._prog}'
 
             # split optionals from positionals
             optionals = []
@@ -365,10 +370,10 @@ class HelpFormatter(object):
                 if len(prefix) + len(prog) <= 0.75 * text_width:
                     indent = ' ' * (len(prefix) + len(prog) + 1)
                     if opt_parts:
-                        lines = get_lines([prog] + opt_parts, indent, prefix)
+                        lines = get_lines([prog, *opt_parts], indent, prefix)
                         lines.extend(get_lines(pos_parts, indent))
                     elif pos_parts:
-                        lines = get_lines([prog] + pos_parts, indent, prefix)
+                        lines = get_lines([prog, *pos_parts], indent, prefix)
                     else:
                         lines = [prog]
 
@@ -381,13 +386,13 @@ class HelpFormatter(object):
                         lines = []
                         lines.extend(get_lines(opt_parts, indent))
                         lines.extend(get_lines(pos_parts, indent))
-                    lines = [prog] + lines
+                    lines = [prog, *lines]
 
                 # join lines into usage
                 usage = '\n'.join(lines)
 
         # prefix with 'usage:'
-        return '%s%s\n\n' % (prefix, usage)
+        return f'{prefix}{usage}\n\n'
 
     def _format_actions_usage(self, actions, groups):
         # find group indices and identify actions in groups
@@ -454,8 +459,7 @@ class HelpFormatter(object):
                 part = self._format_args(action, default)
 
                 # if it's in a group, strip the outer []
-                if action in group_actions:
-                    if part[0] == '[' and part[-1] == ']':
+                if action in group_actions and part[0] == '[' and part[-1] == ']':
                         part = part[1:-1]
 
                 # add the action string to the list
@@ -475,7 +479,7 @@ class HelpFormatter(object):
                 else:
                     default = self._get_default_metavar_for_optional(action)
                     args_string = self._format_args(action, default)
-                    part = '%s %s' % (option_string, args_string)
+                    part = f'{option_string} {args_string}'
 
                 # make it look optional if it's not required or in a group
                 if not action.required and action not in group_actions:
@@ -496,7 +500,7 @@ class HelpFormatter(object):
         close = r'[\])]'
         text = _re.sub(r'(%s) ' % open, r'\1', text)
         text = _re.sub(r' (%s)' % close, r'\1', text)
-        text = _re.sub(r'%s *%s' % (open, close), r'', text)
+        text = _re.sub(rf'{open} *{close}', r'', text)
         text = text.strip()
 
         # return the text
@@ -504,7 +508,7 @@ class HelpFormatter(object):
 
     def _format_text(self, text):
         if '%(prog)' in text:
-            text = text % dict(prog=self._prog)
+            text = text % {'prog': self._prog}
         text_width = max(self._width - self._current_indent, 11)
         indent = ' ' * self._current_indent
         return self._fill_text(text, text_width, indent) + '\n\n'
@@ -602,11 +606,11 @@ class HelpFormatter(object):
         elif action.nargs == ZERO_OR_MORE:
             metavar = get_metavar(1)
             if len(metavar) == 2:
-                result = '[%s [%s ...]]' % metavar
+                result = '[{} [{} ...]]'.format(*metavar)
             else:
                 result = '[%s ...]' % metavar
         elif action.nargs == ONE_OR_MORE:
-            result = '%s [%s ...]' % get_metavar(2)
+            result = '{} [{} ...]'.format(*get_metavar(2))
         elif action.nargs == REMAINDER:
             result = '...'
         elif action.nargs == PARSER:
@@ -710,11 +714,10 @@ class ArgumentDefaultsHelpFormatter(HelpFormatter):
         if help is None:
             help = ''
 
-        if '%(default)' not in help:
-            if action.default is not SUPPRESS:
-                defaulting_nargs = [OPTIONAL, ZERO_OR_MORE]
-                if action.option_strings or action.nargs in defaulting_nargs:
-                    help += ' (default: %(default)s)'
+        if '%(default)' not in help and action.default is not SUPPRESS:
+            defaulting_nargs = [OPTIONAL, ZERO_OR_MORE]
+            if action.option_strings or action.nargs in defaulting_nargs:
+                help += ' (default: %(default)s)'
         return help
 
 
@@ -769,13 +772,12 @@ class ArgumentError(Exception):
             format = '%(message)s'
         else:
             format = _('argument %(argument_name)s: %(message)s')
-        return format % dict(message=self.message,
-                             argument_name=self.argument_name)
+        return format % {'message': self.message,
+                             'argument_name': self.argument_name}
 
 
 class ArgumentTypeError(Exception):
     """An error from trying to convert a command line string to a type."""
-    pass
 
 
 # ==============
@@ -905,7 +907,7 @@ class BooleanOptionalAction(Action):
 
         # We need `_deprecated` special value to ban explicit arguments that
         # match default value. Like:
-        #   parser.add_argument('-f', action=BooleanOptionalAction, type=int)
+        #   parser.add_argument('-f', action=BooleanOptionalAction, type=int) # noqa: ERA001
         for field_name in ('type', 'choices', 'metavar'):
             if locals()[field_name] is not _deprecated_default:
                 import warnings
@@ -963,7 +965,7 @@ class _StoreAction(Action):
                              'true or store const may be more appropriate')
         if const is not None and nargs != OPTIONAL:
             raise ValueError('nargs must be %r to supply const' % OPTIONAL)
-        super(_StoreAction, self).__init__(
+        super().__init__(
             option_strings=option_strings,
             dest=dest,
             nargs=nargs,
@@ -991,7 +993,7 @@ class _StoreConstAction(Action):
                  help=None,
                  metavar=None,
                  deprecated=False):
-        super(_StoreConstAction, self).__init__(
+        super().__init__(
             option_strings=option_strings,
             dest=dest,
             nargs=0,
@@ -1014,7 +1016,7 @@ class _StoreTrueAction(_StoreConstAction):
                  required=False,
                  help=None,
                  deprecated=False):
-        super(_StoreTrueAction, self).__init__(
+        super().__init__(
             option_strings=option_strings,
             dest=dest,
             const=True,
@@ -1033,7 +1035,7 @@ class _StoreFalseAction(_StoreConstAction):
                  required=False,
                  help=None,
                  deprecated=False):
-        super(_StoreFalseAction, self).__init__(
+        super().__init__(
             option_strings=option_strings,
             dest=dest,
             const=False,
@@ -1063,7 +1065,7 @@ class _AppendAction(Action):
                              'the append const action may be more appropriate')
         if const is not None and nargs != OPTIONAL:
             raise ValueError('nargs must be %r to supply const' % OPTIONAL)
-        super(_AppendAction, self).__init__(
+        super().__init__(
             option_strings=option_strings,
             dest=dest,
             nargs=nargs,
@@ -1094,7 +1096,7 @@ class _AppendConstAction(Action):
                  help=None,
                  metavar=None,
                  deprecated=False):
-        super(_AppendConstAction, self).__init__(
+        super().__init__(
             option_strings=option_strings,
             dest=dest,
             nargs=0,
@@ -1121,7 +1123,7 @@ class _CountAction(Action):
                  required=False,
                  help=None,
                  deprecated=False):
-        super(_CountAction, self).__init__(
+        super().__init__(
             option_strings=option_strings,
             dest=dest,
             nargs=0,
@@ -1145,7 +1147,7 @@ class _HelpAction(Action):
                  default=SUPPRESS,
                  help=None,
                  deprecated=False):
-        super(_HelpAction, self).__init__(
+        super().__init__(
             option_strings=option_strings,
             dest=dest,
             default=default,
@@ -1167,7 +1169,7 @@ class _VersionAction(Action):
                  default=SUPPRESS,
                  help="show program's version number and exit",
                  deprecated=False):
-        super(_VersionAction, self).__init__(
+        super().__init__(
             option_strings=option_strings,
             dest=dest,
             default=default,
@@ -1212,7 +1214,7 @@ class _SubParsersAction(Action):
         self._choices_actions = []
         self._deprecated = set()
 
-        super(_SubParsersAction, self).__init__(
+        super().__init__(
             option_strings=option_strings,
             dest=dest,
             nargs=PARSER,
@@ -1224,7 +1226,7 @@ class _SubParsersAction(Action):
     def add_parser(self, name, *, deprecated=False, **kwargs):
         # set prog from the existing prefix
         if kwargs.get('prog') is None:
-            kwargs['prog'] = '%s %s' % (self._prog_prefix, name)
+            kwargs['prog'] = f'{self._prog_prefix} {name}'
 
         aliases = kwargs.pop('aliases', ())
 
@@ -1269,11 +1271,11 @@ class _SubParsersAction(Action):
         # select the parser
         try:
             subparser = self._name_parser_map[parser_name]
-        except KeyError:
+        except KeyError as err:
             args = {'parser_name': parser_name,
                     'choices': ', '.join(self._name_parser_map)}
             msg = _('unknown parser %(parser_name)r (choices: %(choices)s)') % args
-            raise ArgumentError(self, msg)
+            raise ArgumentError(self, msg) from err
 
         if parser_name in self._deprecated:
             parser._warning(_("command '%(parser_name)s' is deprecated") %
@@ -1305,7 +1307,7 @@ class _ExtendAction(_AppendAction):
 # Type classes
 # ==============
 
-class FileType(object):
+class FileType:
     """Factory for creating file object types
 
     Instances of FileType are typically passed as type= arguments to the
@@ -1341,20 +1343,20 @@ class FileType(object):
 
         # all other arguments are used as file names
         try:
-            return open(string, self._mode, self._bufsize, self._encoding,
+            return open(string, self._mode, self._bufsize, self._encoding, # noqa: SIM115
                         self._errors)
         except OSError as e:
             args = {'filename': string, 'error': e}
             message = _("can't open '%(filename)s': %(error)s")
-            raise ArgumentTypeError(message % args)
+            raise ArgumentTypeError(message % args) from e
 
     def __repr__(self):
         args = self._mode, self._bufsize
         kwargs = [('encoding', self._encoding), ('errors', self._errors)]
         args_str = ', '.join([repr(arg) for arg in args if arg != -1] +
-                             ['%s=%r' % (kw, arg) for kw, arg in kwargs
+                             [f'{kw}={arg!r}' for kw, arg in kwargs
                               if arg is not None])
-        return '%s(%s)' % (type(self).__name__, args_str)
+        return f'{type(self).__name__}({args_str})'
 
 # ===========================
 # Optional and Positional Parsing
@@ -1380,14 +1382,14 @@ class Namespace(_AttributeHolder):
         return key in self.__dict__
 
 
-class _ActionsContainer(object):
+class _ActionsContainer:
 
     def __init__(self,
                  description,
                  prefix_chars,
                  argument_default,
                  conflict_handler):
-        super(_ActionsContainer, self).__init__()
+        super().__init__()
 
         self.description = description
         self.argument_default = argument_default
@@ -1494,24 +1496,24 @@ class _ActionsContainer(object):
         # create the action object, and add it to the parser
         action_class = self._pop_action_class(kwargs)
         if not callable(action_class):
-            raise ValueError('unknown action "%s"' % (action_class,))
+            raise ValueError(f'unknown action "{action_class}"')
         action = action_class(**kwargs)
 
         # raise an error if the action type is not callable
         type_func = self._registry_get('type', action.type, action.type)
         if not callable(type_func):
-            raise ValueError('%r is not callable' % (type_func,))
+            raise ValueError(f'{type_func!r} is not callable')
 
         if type_func is FileType:
-            raise ValueError('%r is a FileType class object, instance of it'
-                             ' must be passed' % (type_func,))
+            raise ValueError(f'{type_func!r} is a FileType class object, instance of it'
+                             ' must be passed')
 
         # raise an error if the metavar does not match the type
         if hasattr(self, "_get_formatter"):
             try:
                 self._get_formatter()._format_args(action, None)
-            except TypeError:
-                raise ValueError("length of metavar tuple does not match nargs")
+            except TypeError as e:
+                raise ValueError("length of metavar tuple does not match nargs") from e
 
         return self._add_action(action)
 
@@ -1539,9 +1541,8 @@ class _ActionsContainer(object):
 
         # set the flag if any option strings look like negative numbers
         for option_string in action.option_strings:
-            if self._negative_number_matcher.match(option_string):
-                if not self._has_negative_number_optionals:
-                    self._has_negative_number_optionals.append(True)
+            if self._negative_number_matcher.match(option_string) and not self._has_negative_number_optionals:
+                self._has_negative_number_optionals.append(True)
 
         # return the created action
         return action
@@ -1613,7 +1614,7 @@ class _ActionsContainer(object):
         long_option_strings = []
         for option_string in args:
             # error on strings that don't start with an appropriate prefix
-            if not option_string[0] in self.prefix_chars:
+            if option_string[0] not in self.prefix_chars:
                 args = {'option': option_string,
                         'prefix_chars': self.prefix_chars}
                 msg = _('invalid option string %(option)r: '
@@ -1650,9 +1651,9 @@ class _ActionsContainer(object):
         handler_func_name = '_handle_conflict_%s' % self.conflict_handler
         try:
             return getattr(self, handler_func_name)
-        except AttributeError:
+        except AttributeError as e:
             msg = _('invalid conflict_resolution value: %r')
-            raise ValueError(msg % self.conflict_handler)
+            raise ValueError(msg % self.conflict_handler) from e
 
     def _check_conflict(self, action):
 
@@ -1700,7 +1701,7 @@ class _ArgumentGroup(_ActionsContainer):
         update('conflict_handler', container.conflict_handler)
         update('prefix_chars', container.prefix_chars)
         update('argument_default', container.argument_default)
-        super_init = super(_ArgumentGroup, self).__init__
+        super_init = super().__init__
         super_init(description=description, **kwargs)
 
         # group attributes
@@ -1717,12 +1718,12 @@ class _ArgumentGroup(_ActionsContainer):
         self._mutually_exclusive_groups = container._mutually_exclusive_groups
 
     def _add_action(self, action):
-        action = super(_ArgumentGroup, self)._add_action(action)
+        action = super()._add_action(action)
         self._group_actions.append(action)
         return action
 
     def _remove_action(self, action):
-        super(_ArgumentGroup, self)._remove_action(action)
+        super()._remove_action(action)
         self._group_actions.remove(action)
 
     def add_argument_group(self, *args, **kwargs):
@@ -1738,7 +1739,7 @@ class _ArgumentGroup(_ActionsContainer):
 class _MutuallyExclusiveGroup(_ArgumentGroup):
 
     def __init__(self, container, required=False):
-        super(_MutuallyExclusiveGroup, self).__init__(container)
+        super().__init__(container)
         self.required = required
         self._container = container
 
@@ -1791,7 +1792,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
                  usage=None,
                  description=None,
                  epilog=None,
-                 parents=[],
+                 parents=None,
                  formatter_class=HelpFormatter,
                  prefix_chars='-',
                  fromfile_prefix_chars=None,
@@ -1801,7 +1802,9 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
                  allow_abbrev=True,
                  exit_on_error=True):
 
-        superinit = super(ArgumentParser, self).__init__
+        if parents is None:
+            parents = []
+        superinit = super().__init__
         superinit(description=description,
                   prefix_chars=prefix_chars,
                   argument_default=argument_default,
@@ -1923,12 +1926,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
         return args
 
     def parse_known_args(self, args=None, namespace=None):
-        if args is None:
-            # args default to the system args
-            args = _sys.argv[1:]
-        else:
-            # make sure that args are mutable
-            args = list(args)
+        args = _sys.argv[1:] if args is None else list(args)
 
         # default Namespace built from parser defaults
         if namespace is None:
@@ -1936,10 +1934,8 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
 
         # add any action defaults that aren't present
         for action in self._actions:
-            if action.dest is not SUPPRESS:
-                if not hasattr(namespace, action.dest):
-                    if action.default is not SUPPRESS:
-                        setattr(namespace, action.dest, action.default)
+            if action.dest is not SUPPRESS and not hasattr(namespace, action.dest) and action.default is not SUPPRESS:
+                setattr(namespace, action.dest, action.default)
 
         # add any parser defaults that aren't present
         for dest in self._defaults:
@@ -1986,7 +1982,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
             # all args after -- are non-options
             if arg_string == '--':
                 arg_string_pattern_parts.append('-')
-                for arg_string in arg_strings_iter:
+                for _ in arg_strings_iter:
                     arg_string_pattern_parts.append('A')
 
             # otherwise, add the arg to the arg strings
@@ -2302,7 +2298,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
             return None
 
         # if it doesn't start with a prefix, it was meant to be positional
-        if not arg_string[0] in self.prefix_chars:
+        if arg_string[0] not in self.prefix_chars:
             return None
 
         # if the option string is present in the parser, return the action
@@ -2341,9 +2337,8 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
         # if it was not found as an option, but it looks like a negative
         # number, it was meant to be positional
         # unless there are negative-number-like options
-        if self._negative_number_matcher.match(arg_string):
-            if not self._has_negative_number_optionals:
-                return None
+        if self._negative_number_matcher.match(arg_string) and not self._has_negative_number_optionals:
+            return None
 
         # if it contains a space, it was meant to be a positional
         if ' ' in arg_string:
@@ -2485,7 +2480,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
                 for action in positionals:
                     # deactivate positionals
                     action.save_nargs = action.nargs
-                    # action.nargs = 0
+                    # action.nargs = 0  # noqa: ERA001
                     action.nargs = SUPPRESS
                     action.save_default = action.default
                     action.default = SUPPRESS
@@ -2496,7 +2491,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
                     if (hasattr(namespace, action.dest)
                             and getattr(namespace, action.dest)==[]):
                         from warnings import warn
-                        warn('Do not expect %s in %s' % (action.dest, namespace))
+                        warn(f'Do not expect {action.dest} in {namespace}', stacklevel=1)
                         delattr(namespace, action.dest)
             finally:
                 # restore nargs and usage before exiting
@@ -2531,17 +2526,12 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
     def _get_values(self, action, arg_strings):
         # for everything but PARSER, REMAINDER args, strip out first '--'
         if not action.option_strings and action.nargs not in [PARSER, REMAINDER]:
-            try:
+            with contextlib.suppress(ValueError):
                 arg_strings.remove('--')
-            except ValueError:
-                pass
 
         # optional argument produces a default when not present
         if not arg_strings and action.nargs == OPTIONAL:
-            if action.option_strings:
-                value = action.const
-            else:
-                value = action.default
+            value = action.const if action.option_strings else action.default
             if isinstance(value, str):
                 value = self._get_value(action, value)
                 self._check_value(action, value)
@@ -2599,14 +2589,14 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
         # ArgumentTypeErrors indicate errors
         except ArgumentTypeError as err:
             msg = str(err)
-            raise ArgumentError(action, msg)
+            raise ArgumentError(action, msg) from err
 
         # TypeErrors or ValueErrors also indicate errors
-        except (TypeError, ValueError):
+        except (TypeError, ValueError) as err:
             name = getattr(action.type, '__name__', repr(action.type))
             args = {'type': name, 'value': arg_string}
             msg = _('invalid %(type)s value: %(value)r')
-            raise ArgumentError(action, msg % args)
+            raise ArgumentError(action, msg % args) from err
 
         # return the converted value
         return result
@@ -2670,10 +2660,8 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
     def _print_message(self, message, file=None):
         if message:
             file = file or _sys.stderr
-            try:
+            with contextlib.suppress(AttributeError, OSError):
                 file.write(message)
-            except (AttributeError, OSError):
-                pass
 
     # ===============
     # Exiting methods
