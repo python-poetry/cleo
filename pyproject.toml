@@ -45,8 +45,8 @@ pytest-mock = "^3.8.2"
 towncrier = ">=22.12.0"
 
 [tool.poetry.group.doc.dependencies]
-Sphinx = "^5.2.3"
-sphinx-rtd-theme = "^1.0.0"
+sphinx = "^7.1"
+furo = "^2023.9.10"
 
 [tool.ruff]
 fix = true
