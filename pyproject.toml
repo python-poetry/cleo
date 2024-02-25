@@ -39,7 +39,7 @@ rapidfuzz = "^3.0.0"
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.5"
 pre-commit = "^3.0"
-pytest = "^7.1.2"
+pytest = ">=7.1.2,<9.0.0"
 pytest-cov = "^4.0"
 pytest-mock = "^3.8.2"
 towncrier = ">=22.12.0"
