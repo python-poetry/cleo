@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-import os
-
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
@@ -16,6 +15,8 @@ from tests.commands.completion.fixtures.hello_command import HelloCommand
 
 if TYPE_CHECKING:
     from pytest_mock import MockerFixture
+
+FIXTURES_PATH = Path(__file__).parent / "fixtures"
 
 
 app = Application()
@@ -48,10 +49,7 @@ def test_bash(mocker: MockerFixture) -> None:
     tester = CommandTester(command)
     tester.execute("bash")
 
-    with open(
-        os.path.join(os.path.dirname(__file__), "fixtures", "bash.txt"),
-        encoding="utf-8",
-    ) as f:
+    with (FIXTURES_PATH / "bash.txt").open(encoding="utf-8") as f:
         expected = f.read()
 
     assert expected == tester.io.fetch_output().replace("\r\n", "\n")
@@ -73,9 +71,7 @@ def test_zsh(mocker: MockerFixture) -> None:
     tester = CommandTester(command)
     tester.execute("zsh")
 
-    with open(
-        os.path.join(os.path.dirname(__file__), "fixtures", "zsh.txt"), encoding="utf-8"
-    ) as f:
+    with (FIXTURES_PATH / "zsh.txt").open(encoding="utf-8") as f:
         expected = f.read()
 
     assert expected == tester.io.fetch_output().replace("\r\n", "\n")
@@ -97,10 +93,7 @@ def test_fish(mocker: MockerFixture) -> None:
     tester = CommandTester(command)
     tester.execute("fish")
 
-    with open(
-        os.path.join(os.path.dirname(__file__), "fixtures", "fish.txt"),
-        encoding="utf-8",
-    ) as f:
+    with (FIXTURES_PATH / "fish.txt").open(encoding="utf-8") as f:
         expected = f.read()
 
     assert expected == tester.io.fetch_output().replace("\r\n", "\n")

@@ -261,8 +261,7 @@ class TextDescriptor(Descriptor):
             if isinstance(command, Command):
                 assert command.name is not None
                 widths.append(len(command.name))
-                for alias in command.aliases:
-                    widths.append(len(alias))
+                widths = [len(alias) for alias in command.aliases]
             else:
                 widths.append(len(command))
 
