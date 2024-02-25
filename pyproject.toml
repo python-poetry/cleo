@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "cleo"
-version = "2.1.0"
+version = "3.0.0.dev0"
 description = "Cleo allows you to create beautiful and testable command-line interfaces."
 authors = [
     "Sébastien Eustace <sebastien@eustace.io>"
