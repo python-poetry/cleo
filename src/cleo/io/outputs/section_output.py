@@ -76,7 +76,8 @@ class SectionOutput(StreamOutput):
 
     def _write(self, message: str, new_line: bool = False) -> None:
         if not self.is_decorated():
-            return super()._write(message, new_line=new_line)
+            super()._write(message, new_line=new_line)
+            return
 
         erased_content = self._pop_stream_content_until_current_section()
 
@@ -84,7 +85,6 @@ class SectionOutput(StreamOutput):
 
         super()._write(message, new_line=True)
         super()._write(erased_content, new_line=False)
-        return None
 
     def _pop_stream_content_until_current_section(
         self, lines_to_clear_count: int = 0
