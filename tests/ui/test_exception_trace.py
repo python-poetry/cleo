@@ -90,7 +90,7 @@ def test_render_debug_better_error_message_recursion_error() -> None:
     expected = rf"""^
   Stack trace:
 
-  \d+  {re.escape(trace._get_relative_file_path(__file__))}:{lineno} in test_render_debug_better_error_message_recursion_error
+  \d+  {re.escape(str(trace._get_relative_file_path(__file__)))}:{lineno} in test_render_debug_better_error_message_recursion_error
          {lineno - 2}\│ 
          {lineno - 1}\│     try:
       →  {lineno + 0}\│         recursion.recursion_error\(\)
@@ -99,7 +99,7 @@ def test_render_debug_better_error_message_recursion_error() -> None:
 
   ...  Previous frame repeated \d+ times
 
-  \s*\d+  {re.escape(trace._get_relative_file_path(recursion.__file__))}:2 in recursion_error
+  \s*\d+  {re.escape(str(trace._get_relative_file_path(recursion.__file__)))}:2 in recursion_error
           1\│ def recursion_error\(\) -> None:
       →   2\│     recursion_error\(\)
           3\│ 
@@ -108,7 +108,7 @@ def test_render_debug_better_error_message_recursion_error() -> None:
 
   maximum recursion depth exceeded
 
-  at {re.escape(trace._get_relative_file_path(recursion.__file__))}:2 in recursion_error
+  at {re.escape(str(trace._get_relative_file_path(recursion.__file__)))}:2 in recursion_error
         1\│ def recursion_error\(\) -> None:
     →   2\│     recursion_error\(\)
         3\│ 

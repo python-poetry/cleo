@@ -190,7 +190,7 @@ class ProgressIndicator:
                 return self.VERY_VERBOSE
 
             return self.VERY_VERBOSE_NO_ANSI
-        elif self._io.is_verbose():
+        if self._io.is_verbose():
             if decorated:
                 return self.VERY_VERBOSE
 
