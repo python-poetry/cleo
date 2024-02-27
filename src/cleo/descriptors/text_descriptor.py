@@ -81,7 +81,7 @@ class TextDescriptor(Descriptor):
             "<comment> (multiple values allowed)</comment>" if option.is_list() else ""
         )
         are_choices_allowed = (
-            f"<comment> {{{', '.join(option.choices)}}}]</comment>" if option.choices else ""
+            f"<comment> {{{', '.join(option.choices)}}}</comment>" if option.choices else ""
         )
         self._write(
             f"  <c1>{synopsis}</c1>  "
