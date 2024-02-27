@@ -30,6 +30,7 @@ def option(
     value_required: bool = True,
     multiple: bool = False,
     default: Any | None = None,
+    choices: list[str] | None = None,
 ) -> Option:
     return Option(
         long_name,
@@ -39,4 +40,5 @@ def option(
         is_list=multiple,
         description=description,
         default=default,
+        choices=choices,
     )

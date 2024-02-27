@@ -80,11 +80,15 @@ class TextDescriptor(Descriptor):
         are_multiple_values_allowed = (
             "<comment> (multiple values allowed)</comment>" if option.is_list() else ""
         )
+        are_choices_allowed = (
+            f"<comment> {{{', '.join(option.choices)}}}]</comment>" if option.choices else ""
+        )
         self._write(
             f"  <c1>{synopsis}</c1>  "
             f"{' ' * spacing_width}{sub_option_description}"
             f"{default}"
             f"{are_multiple_values_allowed}"
+            f"{are_choices_allowed}"
         )
 
     def _describe_definition(self, definition: Definition, **options: Any) -> None:

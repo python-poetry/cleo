@@ -22,6 +22,7 @@ class Option:
         is_list: bool = False,
         description: str | None = None,
         default: Any | None = None,
+        choices: list[str] | None = None,
     ) -> None:
         if name.startswith("--"):
             name = name[2:]
@@ -43,9 +44,16 @@ class Option:
         self._is_list = is_list
         self._description = description or ""
         self._default = None
+        self._choices = choices
 
         if self._is_list and self._flag:
             raise CleoLogicError("A flag option cannot be a list as well")
+        
+        if self._choices and self._flag:
+            raise CleoLogicError("A flag option cannot have choices")
+
+        if self._choices and not self._requires_value:
+            raise CleoLogicError("An option with choices requires a value")
 
         self.set_default(default)
 
@@ -64,6 +72,10 @@ class Option:
     @property
     def default(self) -> Any | None:
         return self._default
+    
+    @property
+    def choices(self) -> list[str] | None:
+        return self._choices
 
     def is_flag(self) -> bool:
         return self._flag
