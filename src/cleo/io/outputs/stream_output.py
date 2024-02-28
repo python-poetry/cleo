@@ -87,6 +87,8 @@ class StreamOutput(Output):
         # Follow https://no-color.org/
         if "NO_COLOR" in os.environ:
             return False
+        if "FORCE_COLOR" in os.environ:
+            return True
 
         if os.getenv("TERM_PROGRAM") == "Hyper":
             return True
