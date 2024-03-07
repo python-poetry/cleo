@@ -120,6 +120,21 @@ def test_silent_help(app: Application) -> None:
     assert tester.io.fetch_output() == ""
 
 
+def test_help_multiple_word_command(app: Application) -> None:
+    app.catch_exceptions(False)
+
+    foo = FooCommand()
+    app.add(foo)
+
+    tester = ApplicationTester(app)
+    tester.execute("help foo bar")
+
+    assert (
+        tester.io.fetch_output()
+        == FIXTURES_PATH.joinpath("application_help_multiple_word.txt").read_text()
+    )
+
+
 def test_get_namespaces(app: Application) -> None:
     app.add(FooCommand())
     app.add(Foo1Command())
