@@ -31,7 +31,7 @@ def generate_output(expected: list[str]) -> str:
             count = line.count("\n")
 
             if count:
-                output += f"\x1B[{count}A\x1B[1G\x1b[2K"
+                output += f"\x1b[{count}A\x1b[1G\x1b[2K"
             else:
                 output += "\x1b[1G\x1b[2K"
 

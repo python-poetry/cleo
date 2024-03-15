@@ -177,7 +177,7 @@ class ProgressIndicator:
         Overwrites a previous message to the output.
         """
         if self._io.is_decorated():
-            self._io.write("\x0D\x1B[2K")
+            self._io.write("\x0d\x1b[2K")
             self._io.write(message)
         else:
             self._io.write_line(message)
