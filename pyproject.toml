@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "cleo"
-version = "2.1.0"
+version = "3.0.0.dev0"
 description = "Cleo allows you to create beautiful and testable command-line interfaces."
 authors = [
     "Sébastien Eustace <sebastien@eustace.io>"
@@ -39,14 +39,14 @@ rapidfuzz = "^3.0.0"
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.5"
 pre-commit = "^3.0"
-pytest = "^7.1.2"
+pytest = "^8.0.0"
 pytest-cov = "^4.0"
 pytest-mock = "^3.8.2"
 towncrier = ">=22.12.0"
 
 [tool.poetry.group.doc.dependencies]
-Sphinx = "^5.2.3"
-sphinx-rtd-theme = "^1.0.0"
+sphinx = "^7.1"
+furo = "^2023.9.10"
 
 [tool.ruff]
 fix = true
@@ -58,22 +58,30 @@ extend-exclude = [
 ]
 
 [tool.ruff.lint]
+ignore = [
+    "ISC001", # prevent conflicts with the formatter
+]
 unfixable = [
-    "ERA", # do not autoremove commented out code
+    "ERA",    # do not autoremove commented out code
 ]
 extend-select = [
-    "B",   # flake8-bugbear
-    "C4",  # flake8-comprehensions
-    "ERA", # flake8-eradicate/eradicate
-    "I",   # isort
-    "N",   # pep8-naming
-    "PIE", # flake8-pie
-    "PGH", # pygrep
-    "RUF", # ruff checks
-    "SIM", # flake8-simplify
-    "TCH", # flake8-type-checking
-    "TID", # flake8-tidy-imports
-    "UP",  # pyupgrade
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "ERA",    # flake8-eradicate/eradicate
+    "I",      # isort
+    "N",      # pep8-naming
+    "PIE",    # flake8-pie
+    "PGH",    # pygrep
+    "PTH",    # flake8-use-pathlib
+    "ISC",    # flake8-implicit-string-concat
+    "RET",    # flake8-return
+    "FLY",    # flynt
+    "PERF",   # perflint
+    "RUF",    # ruff checks
+    "SIM",    # flake8-simplify
+    "TCH",    # flake8-type-checking
+    "TID",    # flake8-tidy-imports
+    "UP",     # pyupgrade
 ]
 
 [tool.ruff.lint.flake8-tidy-imports]

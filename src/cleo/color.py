@@ -69,8 +69,7 @@ class Color:
         if self._background:
             codes.append(self._background)
 
-        for option in self._options.values():
-            codes.append(str(option["set"]))
+        codes.extend(str(option["set"]) for option in self._options.values())
 
         if not codes:
             return ""
@@ -86,8 +85,7 @@ class Color:
         if self._background:
             codes.append("49")
 
-        for option in self._options.values():
-            codes.append(str(option["unset"]))
+        codes.extend(str(option["unset"]) for option in self._options.values())
 
         if not codes:
             return ""

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import inspect
 
+from pathlib import Path
+
 from cleo.ui.exception_trace.frame import Frame
 from tests.ui.exception_trace.helpers import nested_exception
 from tests.ui.exception_trace.helpers import simple_exception
@@ -17,15 +19,12 @@ def test_frame() -> None:
         same_frame = Frame(frame_info)
         assert frame_info.frame == frame.frame
 
-    assert frame.lineno == 12
+    assert frame.lineno == 14
     assert frame.filename == __file__
     assert frame.function == "test_frame"
     assert frame.line == "        simple_exception()\n"
-
-    with open(__file__, encoding="utf-8") as f:
-        assert f.read() == frame.file_content
-
-    assert repr(frame) == f"<Frame {__file__}, test_frame, 12>"
+    assert Path(__file__).read_text(encoding="utf-8") == frame.file_content
+    assert repr(frame) == f"<Frame {__file__}, test_frame, 14>"
 
     try:
         nested_exception()

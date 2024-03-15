@@ -526,7 +526,7 @@ class Table:
 
                 unmerged_rows = placeholder
 
-                for unmerged_row_key, _ in unmerged_rows.items():
+                for unmerged_row_key in unmerged_rows:
                     value = ""
                     if unmerged_row_key - line < len(lines):
                         value = lines[unmerged_row_key - line]
@@ -650,7 +650,7 @@ class Table:
                             for position, content in enumerate(content_columns):
                                 try:
                                     row_[i + position] = content
-                                except IndexError:
+                                except IndexError:  # noqa: PERF203
                                     row_.append(content)
 
                 lengths.append(self._get_cell_width(row_, column))

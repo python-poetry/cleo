@@ -100,11 +100,11 @@ class Input:
         self._parse()
 
     def validate(self) -> None:
-        missing_arguments = []
-
-        for argument in self._definition.arguments:
-            if argument.name not in self._arguments and argument.is_required():
-                missing_arguments.append(argument.name)
+        missing_arguments = [
+            argument.name
+            for argument in self._definition.arguments
+            if argument.name not in self._arguments and argument.is_required()
+        ]
 
         if missing_arguments:
             raise CleoMissingArgumentsError(
