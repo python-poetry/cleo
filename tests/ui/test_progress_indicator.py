@@ -49,19 +49,19 @@ def test_default_indicator(ansi_io: BufferedIO, sleep: Callable[[float], None]) 
         " | Done...",
     ]
 
-    expected = "\x0D\x1B[2K" + "\x0D\x1B[2K".join(output)
+    expected = "\x0d\x1b[2K" + "\x0d\x1b[2K".join(output)
 
     expected += "\n"
 
     output = [" - Starting Again...", " \\ Starting Again...", " \\ Done Again..."]
 
-    expected += "\x0D\x1B[2K" + "\x0D\x1B[2K".join(output)
+    expected += "\x0d\x1b[2K" + "\x0d\x1b[2K".join(output)
 
     expected += "\n"
 
     output = [" - Starting Again...", " \\ Starting Again...", " - Done Again..."]
 
-    expected += "\x0D\x1B[2K" + "\x0D\x1B[2K".join(output)
+    expected += "\x0d\x1b[2K" + "\x0d\x1b[2K".join(output)
 
     expected += "\n"
 
@@ -106,19 +106,19 @@ def test_explicit_format(ansi_io: BufferedIO, sleep: Callable[[float], None]) ->
         " | Done...",
     ]
 
-    expected = "\x0D\x1B[2K" + "\x0D\x1B[2K".join(output)
+    expected = "\x0d\x1b[2K" + "\x0d\x1b[2K".join(output)
 
     expected += "\n"
 
     output = [" - Starting Again...", " \\ Starting Again...", " \\ Done Again..."]
 
-    expected += "\x0D\x1B[2K" + "\x0D\x1B[2K".join(output)
+    expected += "\x0d\x1b[2K" + "\x0d\x1b[2K".join(output)
 
     expected += "\n"
 
     output = [" - Starting Again...", " \\ Starting Again...", " - Done Again..."]
 
-    expected += "\x0D\x1B[2K" + "\x0D\x1B[2K".join(output)
+    expected += "\x0d\x1b[2K" + "\x0d\x1b[2K".join(output)
 
     expected += "\n"
 

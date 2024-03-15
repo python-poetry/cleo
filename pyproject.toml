@@ -58,27 +58,30 @@ extend-exclude = [
 ]
 
 [tool.ruff.lint]
+ignore = [
+    "ISC001", # prevent conflicts with the formatter
+]
 unfixable = [
-    "ERA", # do not autoremove commented out code
+    "ERA",    # do not autoremove commented out code
 ]
 extend-select = [
-    "B",    # flake8-bugbear
-    "C4",   # flake8-comprehensions
-    "ERA",  # flake8-eradicate/eradicate
-    "I",    # isort
-    "N",    # pep8-naming
-    "PIE",  # flake8-pie
-    "PGH",  # pygrep
-    "PTH",  # flake8-use-pathlib
-    "ISC",  # flake8-implicit-string-concat
-    "RET",  # flake8-return
-    "FLY",  # flynt
-    "PERF", # perflint
-    "RUF",  # ruff checks
-    "SIM",  # flake8-simplify
-    "TCH",  # flake8-type-checking
-    "TID",  # flake8-tidy-imports
-    "UP",   # pyupgrade
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "ERA",    # flake8-eradicate/eradicate
+    "I",      # isort
+    "N",      # pep8-naming
+    "PIE",    # flake8-pie
+    "PGH",    # pygrep
+    "PTH",    # flake8-use-pathlib
+    "ISC",    # flake8-implicit-string-concat
+    "RET",    # flake8-return
+    "FLY",    # flynt
+    "PERF",   # perflint
+    "RUF",    # ruff checks
+    "SIM",    # flake8-simplify
+    "TCH",    # flake8-type-checking
+    "TID",    # flake8-tidy-imports
+    "UP",     # pyupgrade
 ]
 
 [tool.ruff.lint.flake8-tidy-imports]
