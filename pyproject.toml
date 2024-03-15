@@ -46,7 +46,7 @@ towncrier = ">=22.12.0"
 
 [tool.poetry.group.doc.dependencies]
 sphinx = "^7.1"
-furo = "^2023.9.10"
+furo = ">=2023.9.10,<2025.0.0"
 
 [tool.ruff]
 fix = true
