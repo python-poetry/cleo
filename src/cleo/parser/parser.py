@@ -89,9 +89,10 @@ __all__ = [
 
 
 import contextlib
-import os
 import re
 import sys
+
+from pathlib import Path
 
 
 SUPPRESS = "==SUPPRESS=="
@@ -119,10 +120,8 @@ class _AttributeHolder:
 
     def __repr__(self):
         type_name = type(self).__name__
-        arg_strings = []
+        arg_strings = [repr(arg) for arg in self._get_args()]
         star_args = {}
-        for arg in self._get_args():
-            arg_strings.append(repr(arg))
         for name, value in self._get_kwargs():
             if name.isidentifier():
                 arg_strings.append(f"{name}={value}")
@@ -261,8 +260,12 @@ class HelpFormatter:
             # find all invocations
             get_invocation = self._format_action_invocation
             invocations = [get_invocation(action)]
-            for subaction in self._iter_indented_subactions(action):
-                invocations.append(get_invocation(subaction))
+            invocations.extend(
+                [
+                    get_invocation(subaction)
+                    for subaction in self._iter_indented_subactions(action)
+                ]
+            )
 
             # update the maximum item length
             invocation_length = max(map(len, invocations))
@@ -488,10 +491,9 @@ class HelpFormatter:
         text = re.sub(r"(%s) " % open, r"\1", text)
         text = re.sub(r" (%s)" % close, r"\1", text)
         text = re.sub(rf"{open} *{close}", r"", text)
-        text = text.strip()
 
         # return the text
-        return text
+        return text.strip()
 
     def _format_text(self, text):
         if "%(prog)" in text:
@@ -533,16 +535,21 @@ class HelpFormatter:
             if help_text:
                 help_lines = self._split_lines(help_text, help_width)
                 parts.append("%*s%s\n" % (indent_first, "", help_lines[0]))
-                for line in help_lines[1:]:
-                    parts.append("%*s%s\n" % (help_position, "", line))
+                parts.extend(
+                    ["%*s%s\n" % (help_position, "", line) for line in help_lines[1:]]
+                )
 
         # or add a newline if the description doesn't end with one
         elif not action_header.endswith("\n"):
             parts.append("\n")
 
         # if there are any sub-actions, add their help as well
-        for subaction in self._iter_indented_subactions(action):
-            parts.append(self._format_action(subaction))
+        parts.extend(
+            [
+                self._format_action(subaction)
+                for subaction in self._iter_indented_subactions(action)
+            ]
+        )
 
         # return a single string
         return self._join_parts(parts)
@@ -553,18 +560,16 @@ class HelpFormatter:
             (metavar,) = self._metavar_formatter(action, default)(1)
             return metavar
 
-        else:
-            # if the Optional doesn't take a value, format is:
-            #    -s, --long
-            if action.nargs == 0:
-                return ", ".join(action.option_strings)
+        # if the Optional doesn't take a value, format is:
+        #    -s, --long
+        if action.nargs == 0:
+            return ", ".join(action.option_strings)
 
-            # if the Optional takes a value, format is:
-            #    -s, --long ARGS
-            else:
-                default = self._get_default_metavar_for_optional(action)
-                args_string = self._format_args(action, default)
-                return ", ".join(action.option_strings) + " " + args_string
+        # if the Optional takes a value, format is:
+        #    -s, --long ARGS
+        default = self._get_default_metavar_for_optional(action)
+        args_string = self._format_args(action, default)
+        return ", ".join(action.option_strings) + " " + args_string
 
     def _metavar_formatter(self, action, default_metavar):
         if action.metavar is not None:
@@ -578,8 +583,8 @@ class HelpFormatter:
         def format(tuple_size):
             if isinstance(result, tuple):
                 return result
-            else:
-                return (result,) * tuple_size
+
+            return (result,) * tuple_size
 
         return format
 
@@ -732,16 +737,15 @@ class MetavarTypeHelpFormatter(HelpFormatter):
 def _get_action_name(argument):
     if argument is None:
         return None
-    elif argument.option_strings:
+    if argument.option_strings:
         return "/".join(argument.option_strings)
-    elif argument.metavar not in (None, SUPPRESS):
+    if argument.metavar not in (None, SUPPRESS):
         return argument.metavar
-    elif argument.dest not in (None, SUPPRESS):
+    if argument.dest not in (None, SUPPRESS):
         return argument.dest
-    elif argument.choices:
+    if argument.choices:
         return "{" + ",".join(argument.choices) + "}"
-    else:
-        return None
+    return None
 
 
 class ArgumentError(Exception):
@@ -1286,18 +1290,11 @@ class _SubParsersAction(Action):
         try:
             subparser = self._name_parser_map[parser_name]
         except KeyError as err:
-            args = {
-                "parser_name": parser_name,
-                "choices": ", ".join(self._name_parser_map),
-            }
-            msg = "unknown parser %(parser_name)r (choices: %(choices)s)" % args
+            msg = f"unknown parser {parser_name!r} (choices: {', '.join(self._name_parser_map)!s})"
             raise ArgumentError(self, msg) from err
 
         if parser_name in self._deprecated:
-            parser._warning(
-                "command '%(parser_name)s' is deprecated"
-                % {"parser_name": parser_name}
-            )
+            parser._warning(f"command '{parser_name!s}' is deprecated")
 
         # parse all the remaining options into the namespace
         # store any unrecognized options on the object, so that the top
@@ -1356,16 +1353,15 @@ class FileType:
         if string == "-":
             if "r" in self._mode:
                 return sys.stdin.buffer if "b" in self._mode else sys.stdin
-            elif any(c in self._mode for c in "wax"):
+            if any(c in self._mode for c in "wax"):
                 return sys.stdout.buffer if "b" in self._mode else sys.stdout
-            else:
-                msg = _('argument "-" with mode %r') % self._mode
-                raise ValueError(msg)
+
+            msg = 'argument "-" with mode %r' % self._mode
+            raise ValueError(msg)
 
         # all other arguments are used as file names
         try:
-            return open(  # noqa: SIM115
-                string,
+            return Path(string).open(  # noqa: SIM115
                 self._mode,
                 self._bufsize,
                 self._encoding,
@@ -1643,7 +1639,7 @@ class _ActionsContainer:
             # error on strings that don't start with an appropriate prefix
             if option_string[0] not in self.prefix_chars:
                 args = {"option": option_string, "prefix_chars": self.prefix_chars}
-                msg = _(
+                msg = (
                     "invalid option string %(option)r: "
                     "must start with a character %(prefix_chars)r"
                 )
@@ -1841,7 +1837,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
 
         # default setting for prog
         if prog is None:
-            prog = os.path.basename(sys.argv[0])
+            prog = Path(sys.argv[0]).name
 
         self.prog = prog
         self.usage = usage
@@ -2014,8 +2010,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
             # all args after -- are non-options
             if arg_string == "--":
                 arg_string_pattern_parts.append("-")
-                for _ in arg_strings_iter:
-                    arg_string_pattern_parts.append("A")
+                arg_string_pattern_parts.extend(["A" for _ in arg_strings_iter])
 
             # otherwise, add the arg to the arg strings
             # and note the index if it was an option
@@ -2138,10 +2133,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
             assert action_tuples
             for action, args, option_string in action_tuples:
                 if action.deprecated and option_string not in warned:
-                    self._warning(
-                        "option '%(option)s' is deprecated"
-                        % {"option": option_string}
-                    )
+                    self._warning(f"option '{option_string!s}' is deprecated")
                     warned.add(option_string)
                 take_action(action, args, option_string)
             return stop
@@ -2163,10 +2155,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
                 args = arg_strings[start_index : start_index + arg_count]
                 start_index += arg_count
                 if args and action.deprecated and action.dest not in warned:
-                    self._warning(
-                        "argument '%(argument_name)s' is deprecated"
-                        % {"argument_name": action.dest}
-                    )
+                    self._warning(f"argument '{action.dest!s}' is deprecated")
                     warned.add(action.dest)
                 take_action(action, args)
 
@@ -2196,8 +2185,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
                 if positionals_end_index > start_index:
                     start_index = positionals_end_index
                     continue
-                else:
-                    start_index = positionals_end_index
+                start_index = positionals_end_index
 
             # if we consumed all the positionals we could and we're not
             # at the index of an option string, there were extra arguments
@@ -2241,8 +2229,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
 
         if required_actions:
             self.error(
-                "the following arguments are required: %s"
-                % ", ".join(required_actions)
+                "the following arguments are required: %s" % ", ".join(required_actions)
             )
 
         # make sure all required groups had one option present
@@ -2276,8 +2263,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
             # replace arguments referencing files with the file content
             else:
                 try:
-                    with open(
-                        arg_string[1:],
+                    with Path(arg_string[1:]).open(
                         encoding=sys.getfilesystemencoding(),
                         errors=sys.getfilesystemencodeerrors(),
                     ) as args_file:
@@ -2311,11 +2297,8 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
             msg = nargs_errors.get(action.nargs)
             if msg is None:
                 msg = (
-                    (
-                         "expected %s arguments" if action.nargs else "expected %s argument"
-                    )
-                    % action.nargs
-                )
+                    "expected %s arguments" if action.nargs else "expected %s argument"
+                ) % action.nargs
             raise ArgumentError(action, msg)
 
         # return the number of arguments matched
@@ -2742,9 +2725,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
         should either exit or raise an exception.
         """
         self.print_usage(sys.stderr)
-        args = {"prog": self.prog, "message": message}
-        self.exit(2, "%(prog)s: error: %(message)s\n" % args)
+        self.exit(2, f"{self.prog!s}: error: {message!s}\n")
 
     def _warning(self, message):
-        args = {"prog": self.prog, "message": message}
-        self._print_message("%(prog)s: warning: %(message)s\n" % args, sys.stderr)
+        self._print_message(f"{self.prog!s}: warning: {message!s}\n", sys.stderr)
