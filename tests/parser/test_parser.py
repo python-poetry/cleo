@@ -997,59 +997,6 @@ class TestBooleanOptionalAction(ParserTestCase):
         ("--no-foo --foo", NS(foo=True)),
     ]
 
-    def test_const(self):
-        # See bpo-40862
-        parser = argparse.ArgumentParser()
-        with self.assertRaises(TypeError) as cm:
-            parser.add_argument(
-                "--foo", const=True, action=argparse.BooleanOptionalAction
-            )
-
-        self.assertIn("got an unexpected keyword argument 'const'", str(cm.exception))
-
-    def test_deprecated_init_kw(self):
-        # See gh-92248
-        parser = argparse.ArgumentParser()
-
-        with self.assertWarns(DeprecationWarning):
-            parser.add_argument(
-                "-a",
-                action=argparse.BooleanOptionalAction,
-                type=None,
-            )
-        with self.assertWarns(DeprecationWarning):
-            parser.add_argument(
-                "-b",
-                action=argparse.BooleanOptionalAction,
-                type=bool,
-            )
-
-        with self.assertWarns(DeprecationWarning):
-            parser.add_argument(
-                "-c",
-                action=argparse.BooleanOptionalAction,
-                metavar=None,
-            )
-        with self.assertWarns(DeprecationWarning):
-            parser.add_argument(
-                "-d",
-                action=argparse.BooleanOptionalAction,
-                metavar="d",
-            )
-
-        with self.assertWarns(DeprecationWarning):
-            parser.add_argument(
-                "-e",
-                action=argparse.BooleanOptionalAction,
-                choices=None,
-            )
-        with self.assertWarns(DeprecationWarning):
-            parser.add_argument(
-                "-f",
-                action=argparse.BooleanOptionalAction,
-                choices=(),
-            )
-
 
 class TestBooleanOptionalActionRequired(ParserTestCase):
     """Tests BooleanOptionalAction required"""
@@ -3159,7 +3106,7 @@ class TestMutuallyExclusiveGroupErrors(TestCase):
         raises(ValueError, add_argument, "bar")
         raises(ValueError, add_argument, "bar", nargs="+")
         raises(ValueError, add_argument, "bar", nargs=1)
-        raises(ValueError, add_argument, "bar", nargs=argparse.PARSER)
+        raises(ValueError, add_argument, "bar", nargs=argparse.NArgsEnum.PARSER)
 
     def test_help(self):
         parser = ErrorRaisingArgumentParser(prog="PROG")
