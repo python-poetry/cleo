@@ -84,12 +84,7 @@ __all__ = [
     "MetavarTypeHelpFormatter",
     "Namespace",
     "Action",
-    "ONE_OR_MORE",
-    "OPTIONAL",
-    "PARSER",
-    "REMAINDER",
     "SUPPRESS",
-    "ZERO_OR_MORE",
 ]
 
 
@@ -97,17 +92,21 @@ import contextlib
 import re
 import sys
 
+from enum import StrEnum
 from pathlib import Path
 
 
 SUPPRESS = "==SUPPRESS=="
-
-OPTIONAL = "?"
-ZERO_OR_MORE = "*"
-ONE_OR_MORE = "+"
-PARSER = "A..."
-REMAINDER = "..."
 _UNRECOGNIZED_ARGS_ATTR = "_unrecognized_args"
+
+
+class NArgsEnum(StrEnum):
+    OPTIONAL = "?"
+    ZERO_OR_MORE = "*"
+    ONE_OR_MORE = "+"
+    PARSER = "A..."
+    REMAINDER = "..."
+
 
 # =============================
 # Utility functions and classes
@@ -597,19 +596,19 @@ class HelpFormatter:
         get_metavar = self._metavar_formatter(action, default_metavar)
         if action.nargs is None:
             result = "%s" % get_metavar(1)
-        elif action.nargs == OPTIONAL:
+        elif action.nargs == NArgsEnum.OPTIONAL:
             result = "[%s]" % get_metavar(1)
-        elif action.nargs == ZERO_OR_MORE:
+        elif action.nargs == NArgsEnum.ZERO_OR_MORE:
             metavar = get_metavar(1)
             if len(metavar) == 2:
                 result = "[%s [%s ...]]" % metavar  # noqa: UP031
             else:
                 result = "[%s ...]" % metavar
-        elif action.nargs == ONE_OR_MORE:
+        elif action.nargs == NArgsEnum.ONE_OR_MORE:
             result = "%s [%s ...]" % get_metavar(2)  # noqa: UP031
-        elif action.nargs == REMAINDER:
+        elif action.nargs == NArgsEnum.REMAINDER:
             result = "..."
-        elif action.nargs == PARSER:
+        elif action.nargs == NArgsEnum.PARSER:
             result = "%s ..." % get_metavar(1)
         elif action.nargs == SUPPRESS:
             result = ""
@@ -713,7 +712,7 @@ class ArgumentDefaultsHelpFormatter(HelpFormatter):
             help = ""
 
         if "%(default)" not in help and action.default is not SUPPRESS:
-            defaulting_nargs = [OPTIONAL, ZERO_OR_MORE]
+            defaulting_nargs = [NArgsEnum.OPTIONAL, NArgsEnum.ZERO_OR_MORE]
             if action.option_strings or action.nargs in defaulting_nargs:
                 help += " (default: %(default)s)"
         return help
@@ -969,8 +968,8 @@ class _StoreAction(Action):
                 "have nothing to store, actions such as store "
                 "true or store const may be more appropriate"
             )
-        if const is not None and nargs != OPTIONAL:
-            raise ValueError("nargs must be %r to supply const" % OPTIONAL)
+        if const is not None and nargs != NArgsEnum.OPTIONAL:
+            raise ValueError("nargs must be %r to supply const" % NArgsEnum.OPTIONAL)
         super().__init__(
             option_strings=option_strings,
             dest=dest,
@@ -1079,8 +1078,8 @@ class _AppendAction(Action):
                 "strings are not supplying the value to append, "
                 "the append const action may be more appropriate"
             )
-        if const is not None and nargs != OPTIONAL:
-            raise ValueError("nargs must be %r to supply const" % OPTIONAL)
+        if const is not None and nargs != NArgsEnum.OPTIONAL:
+            raise ValueError("nargs must be %r to supply const" % NArgsEnum.OPTIONAL)
         super().__init__(
             option_strings=option_strings,
             dest=dest,
@@ -1240,7 +1239,7 @@ class _SubParsersAction(Action):
         super().__init__(
             option_strings=option_strings,
             dest=dest,
-            nargs=PARSER,
+            nargs=NArgsEnum.PARSER,
             choices=self._name_parser_map,
             required=required,
             help=help,
@@ -1628,9 +1627,9 @@ class _ActionsContainer:
 
         # mark positional arguments as required if at least one is
         # always required
-        if kwargs.get("nargs") not in [OPTIONAL, ZERO_OR_MORE]:
+        if kwargs.get("nargs") not in [NArgsEnum.OPTIONAL, NArgsEnum.ZERO_OR_MORE]:
             kwargs["required"] = True
-        if kwargs.get("nargs") == ZERO_OR_MORE and "default" not in kwargs:
+        if kwargs.get("nargs") == NArgsEnum.ZERO_OR_MORE and "default" not in kwargs:
             kwargs["required"] = True
 
         # return the keyword arguments with no option strings
@@ -2299,8 +2298,8 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
         if match is None:
             nargs_errors = {
                 None: "expected one argument",
-                OPTIONAL: "expected at most one argument",
-                ONE_OR_MORE: "expected at least one argument",
+                NArgsEnum.OPTIONAL: "expected at most one argument",
+                NArgsEnum.ONE_OR_MORE: "expected at least one argument",
             }
             msg = nargs_errors.get(action.nargs)
             if msg is None:
@@ -2444,23 +2443,23 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
             nargs_pattern = "(-*A-*)"
 
         # allow zero or one arguments
-        elif nargs == OPTIONAL:
+        elif nargs == NArgsEnum.OPTIONAL:
             nargs_pattern = "(-*A?-*)"
 
         # allow zero or more arguments
-        elif nargs == ZERO_OR_MORE:
+        elif nargs == NArgsEnum.ZERO_OR_MORE:
             nargs_pattern = "(-*[A-]*)"
 
         # allow one or more arguments
-        elif nargs == ONE_OR_MORE:
+        elif nargs == NArgsEnum.ONE_OR_MORE:
             nargs_pattern = "(-*A[A-]*)"
 
         # allow any number of options or arguments
-        elif nargs == REMAINDER:
+        elif nargs == NArgsEnum.REMAINDER:
             nargs_pattern = "([-AO]*)"
 
         # allow one argument followed by any number of options or arguments
-        elif nargs == PARSER:
+        elif nargs == NArgsEnum.PARSER:
             nargs_pattern = "(-*A[-AO]*)"
 
         # suppress action, like nargs=0
@@ -2504,7 +2503,11 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
         # namespace
 
         positionals = self._get_positional_actions()
-        a = [action for action in positionals if action.nargs in [PARSER, REMAINDER]]
+        a = [
+            action
+            for action in positionals
+            if action.nargs in [NArgsEnum.PARSER, NArgsEnum.REMAINDER]
+        ]
         if a:
             raise TypeError(
                 "parse_intermixed_args: positional arg" " with nargs=%s" % a[0].nargs
@@ -2577,12 +2580,15 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
     # ========================
     def _get_values(self, action, arg_strings):
         # for everything but PARSER, REMAINDER args, strip out first '--'
-        if not action.option_strings and action.nargs not in [PARSER, REMAINDER]:
+        if not action.option_strings and action.nargs not in [
+            NArgsEnum.PARSER,
+            NArgsEnum.REMAINDER,
+        ]:
             with contextlib.suppress(ValueError):
                 arg_strings.remove("--")
 
         # optional argument produces a default when not present
-        if not arg_strings and action.nargs == OPTIONAL:
+        if not arg_strings and action.nargs == NArgsEnum.OPTIONAL:
             value = action.const if action.option_strings else action.default
             if isinstance(value, str):
                 value = self._get_value(action, value)
@@ -2592,7 +2598,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
         # args, use the default if it is anything other than None
         elif (
             not arg_strings
-            and action.nargs == ZERO_OR_MORE
+            and action.nargs == NArgsEnum.ZERO_OR_MORE
             and not action.option_strings
         ):
             if action.default is not None:
@@ -2604,17 +2610,17 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
                 value = arg_strings
 
         # single argument or optional argument produces a single value
-        elif len(arg_strings) == 1 and action.nargs in [None, OPTIONAL]:
+        elif len(arg_strings) == 1 and action.nargs in [None, NArgsEnum.OPTIONAL]:
             (arg_string,) = arg_strings
             value = self._get_value(action, arg_string)
             self._check_value(action, value)
 
         # REMAINDER arguments convert all values, checking none
-        elif action.nargs == REMAINDER:
+        elif action.nargs == NArgsEnum.REMAINDER:
             value = [self._get_value(action, v) for v in arg_strings]
 
         # PARSER arguments convert all values, but check only the first
-        elif action.nargs == PARSER:
+        elif action.nargs == NArgsEnum.PARSER:
             value = [self._get_value(action, v) for v in arg_strings]
             self._check_value(action, value[0])
 
