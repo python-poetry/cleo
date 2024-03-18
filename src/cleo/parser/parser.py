@@ -581,7 +581,7 @@ class HelpFormatter:
             result = action.metavar
         elif action.choices is not None:
             choice_strs = [str(choice) for choice in action.choices]
-            result = "{%s}" % ",".join(choice_strs)
+            result = f"{{{','.join(choice_strs)}}}"
         else:
             result = default_metavar
 
@@ -602,11 +602,11 @@ class HelpFormatter:
         elif action.nargs == ZERO_OR_MORE:
             metavar = get_metavar(1)
             if len(metavar) == 2:
-                result = "[{} [{} ...]]".format(*metavar)
+                result = "[%s [%s ...]]" % metavar  # noqa: UP031
             else:
                 result = "[%s ...]" % metavar
         elif action.nargs == ONE_OR_MORE:
-            result = "{} [{} ...]".format(*get_metavar(2))
+            result = "%s [%s ...]" % get_metavar(2)  # noqa: UP031
         elif action.nargs == REMAINDER:
             result = "..."
         elif action.nargs == PARSER:
@@ -2517,7 +2517,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
             if action in positionals
         ]:
             raise TypeError(
-                "parse_intermixed_args: positional in" " mutuallyExclusiveGroup"
+                "parse_intermixed_args: positional in mutuallyExclusiveGroup"
             )
 
         try:

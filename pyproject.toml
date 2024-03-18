@@ -49,7 +49,7 @@ sphinx = "^7.1"
 furo = "^2023.9.10"
 
 [tool.ruff]
-fix = true
+fix = false # old/bad practices in original parser code cause issues when autofixed
 target-version = "py38"
 line-length = 88
 extend-exclude = [
