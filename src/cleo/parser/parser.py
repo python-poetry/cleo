@@ -1,6 +1,11 @@
 # Author: Steven J. Bethard <steven.bethard@gmail.com>.
 # New maintainer as of 29 August 2019:  Raymond Hettinger <raymond.hettinger@gmail.com>
 
+# =====================================================================
+# Originally from CPython rev: c2cb31bbe1262213085c425bc853d6587c66cae9
+# =====================================================================
+
+
 """Command-line parsing library
 
 This module is an optparse-inspired command-line parsing library that:
@@ -124,11 +129,11 @@ class _AttributeHolder:
         star_args = {}
         for name, value in self._get_kwargs():
             if name.isidentifier():
-                arg_strings.append(f"{name}={value}")
+                arg_strings.append(f"{name}={value!r}")
             else:
                 star_args[name] = value
         if star_args:
-            arg_strings.append(f"**{star_args}")
+            arg_strings.append(f"**{star_args!r}")
         return f'{type_name}({", ".join(arg_strings)})'
 
     def _get_kwargs(self):
@@ -908,11 +913,11 @@ class BooleanOptionalAction(Action):
             if locals()[field_name] is not _deprecated_default:
                 import warnings
 
-                warnings._deprecated(
-                    field_name,
-                    "{name!r} is deprecated as of Python 3.12 and will be "
-                    "removed in Python {remove}.",
-                    remove=(3, 14),
+                warnings.warn(
+                    f"{field_name!r} is deprecated as of Python 3.12 and will be "
+                    "removed in Python 3.14.",
+                    DeprecationWarning,
+                    stacklevel=3,
                 )
 
         if type is _deprecated_default:
@@ -2174,9 +2179,12 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
             max_option_string_index = -1
         while start_index <= max_option_string_index:
             # consume any Positionals preceding the next option
-            next_option_string_index = min(
-                [index for index in option_string_indices if index >= start_index]
-            )
+            next_option_string_index = start_index
+            while next_option_string_index <= max_option_string_index:
+                if next_option_string_index in option_string_indices:
+                    break
+                next_option_string_index += 1
+
             if start_index != next_option_string_index:
                 positionals_end_index = consume_positionals(start_index)
 
@@ -2532,9 +2540,9 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
                         hasattr(namespace, action.dest)
                         and getattr(namespace, action.dest) == []
                     ):
-                        from warnings import warn
+                        from warnings import warning
 
-                        warn(
+                        warning(
                             f"Do not expect {action.dest} in {namespace}", stacklevel=1
                         )
                         delattr(namespace, action.dest)

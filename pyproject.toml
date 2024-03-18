@@ -83,6 +83,9 @@ extend-select = [
     "TID",    # flake8-tidy-imports
     "UP",     # pyupgrade
 ]
+exclude = [
+    "tests/parser/test_parser.py",
+]
 
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
