@@ -234,14 +234,13 @@ script. Consult your shells documentation for how to add such directives.
         for cmd in sorted(self.application.all().values(), key=lambda c: c.name or ""):
             if cmd.hidden or not (cmd.enabled and cmd.name):
                 continue
-            command_name = shell_quote(cmd.name) if " " in cmd.name else cmd.name
-            cmds.append(self._zsh_describe(command_name, sanitize(cmd.description)))
+            cmds.append(self._zsh_describe(cmd.name, sanitize(cmd.description)))
             options = " ".join(
                 self._zsh_describe(f"--{opt.name}", sanitize(opt.description))
                 for opt in sorted(cmd.definition.options, key=lambda o: o.name)
             )
             cmds_opts += [
-                f"            ({command_name})",
+                f"            ({cmd.name})",
                 f"            opts+=({options})",
                 "            ;;",
                 "",  # newline
