@@ -1,5 +1,9 @@
 # Cleo
 
+> [!CAUTION]
+> Cleo is currently being rewritten for version 3.0. While contributions are appreciated,
+> please consult the [writeup issue](https://github.com/python-poetry/cleo/issues/415) and our Discord channel (link below) before submitting a PR.
+
 [![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org/)
 [![Tests](https://github.com/python-poetry/cleo/actions/workflows/tests.yml/badge.svg)](https://github.com/python-poetry/cleo/actions/workflows/tests.yml)
 [![PyPI version](https://img.shields.io/pypi/v/cleo)](https://pypi.org/project/cleo/)
@@ -10,7 +14,7 @@ Create beautiful and testable command-line interfaces.
 
 - [Documentation](http://cleo.readthedocs.io)
 - [Issue Tracker](https://github.com/python-poetry/cleo/issues)
-
+- [Discord (`#cleo`)](https://discord.gg/jHNNrNrhpC)
 ## Usage
 
 To make a command that greets you from the command line, create
