@@ -14,7 +14,7 @@ Create beautiful and testable command-line interfaces.
 
 - [Documentation](http://cleo.readthedocs.io)
 - [Issue Tracker](https://github.com/python-poetry/cleo/issues)
-- [Discord](https://discord.gg/jHNNrNrhpC)
+- [Discord (`#cleo`)](https://discord.gg/jHNNrNrhpC)
 ## Usage
 
 To make a command that greets you from the command line, create
