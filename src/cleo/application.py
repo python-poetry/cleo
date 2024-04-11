@@ -247,9 +247,7 @@ class Application:
         return namespaces
 
     def find_namespace(self, namespace: str) -> str:
-        all_namespaces = self.get_namespaces()
-
-        if namespace not in all_namespaces:
+        if namespace not in (all_namespaces := self.get_namespaces()):
             raise CleoNamespaceNotFoundError(namespace, all_namespaces)
 
         return namespace
