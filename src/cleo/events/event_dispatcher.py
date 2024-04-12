@@ -20,9 +20,7 @@ class EventDispatcher:
         if event_name is None:
             event_name = type(event).__name__
 
-        listeners = cast("list[Listener]", self.get_listeners(event_name))
-
-        if listeners:
+        if listeners := cast("list[Listener]", self.get_listeners(event_name)):
             self._do_dispatch(listeners, event_name, event)
 
         return event
