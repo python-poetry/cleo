@@ -216,6 +216,12 @@ class ArgvInput(Input):
         # If the input is expecting another argument, add it
         if self._definition.has_argument(next_argument):
             argument = self._definition.argument(next_argument)
+            if argument.has_choices and token not in argument.choices:
+                choices = ['"' + choice + '"' for choice in argument.choices]
+                raise CleoRuntimeError(
+                    f'Invalid value for the "{argument.name}" argument: "{token}" (choose from {", ".join(choices)})'
+                )
+
             self._arguments[argument.name] = [token] if argument.is_list() else token
         # If the last argument is a list, append the token to it
         elif (

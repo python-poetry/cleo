@@ -31,6 +31,13 @@ class TextDescriptor(Descriptor):
         else:
             default = ""
 
+        if argument.choices:
+            choices = (
+                f"<comment> {{{self._format_choices(argument.choices)}}}</comment>"
+            )
+        else:
+            choices = ""
+
         total_width = options.get("total_width", len(argument.name))
 
         spacing_width = total_width - len(argument.name)
@@ -41,7 +48,7 @@ class TextDescriptor(Descriptor):
         )
         self._write(
             f"  <c1>{argument.name}</c1>  {' ' * spacing_width}"
-            f"{sub_argument_description}{default}"
+            f"{sub_argument_description}{default}{choices}"
         )
 
     def _describe_option(self, option: Option, **options: Any) -> None:
@@ -239,6 +246,10 @@ class TextDescriptor(Descriptor):
             }
 
         return json.dumps(default).replace("\\\\", "\\")
+    
+    def _format_choices(self, choices: list[str]) -> str:
+        choice = ", ".join(choices)
+        return choice
 
     def _calculate_total_width_for_options(self, options: list[Option]) -> int:
         total_width = 0
