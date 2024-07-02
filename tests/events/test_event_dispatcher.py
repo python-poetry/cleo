@@ -42,7 +42,7 @@ class EventListener:
 
 
 def test_initial_state(dispatcher: EventDispatcher) -> None:
-    assert {} == dispatcher.get_listeners()
+    assert dispatcher.get_listeners() == {}
     assert not dispatcher.has_listeners(PRE_FOO)
     assert not dispatcher.has_listeners(POST_FOO)
 

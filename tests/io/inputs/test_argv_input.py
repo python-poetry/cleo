@@ -30,7 +30,7 @@ def test_it_uses_argv_by_default(argv: Iterator[None]) -> None:
 
     i = ArgvInput()
 
-    assert ["foo"] == i._tokens
+    assert i._tokens == ["foo"]
 
 
 def test_parse_arguments() -> None:

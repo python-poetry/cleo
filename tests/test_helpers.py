@@ -22,13 +22,13 @@ def test_argument() -> None:
 
     assert arg.is_required()
     assert arg.is_list()
-    assert [] == arg.default
+    assert arg.default == []
 
     arg = argument("foo", "Foo", optional=True, multiple=True, default=["bar"])
 
     assert not arg.is_required()
     assert arg.is_list()
-    assert ["bar"] == arg.default
+    assert arg.default == ["bar"]
 
 
 def test_option() -> None:
