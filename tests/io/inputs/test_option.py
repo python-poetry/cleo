@@ -110,7 +110,7 @@ def test_list() -> None:
     assert opt.accepts_value()
     assert opt.requires_value()
     assert opt.is_list()
-    assert [] == opt.default
+    assert opt.default == []
 
 
 def test_multi_valued_with_default() -> None:
@@ -120,4 +120,4 @@ def test_multi_valued_with_default() -> None:
     assert opt.accepts_value()
     assert opt.requires_value()
     assert opt.is_list()
-    assert ["foo", "bar"] == opt.default
+    assert opt.default == ["foo", "bar"]
