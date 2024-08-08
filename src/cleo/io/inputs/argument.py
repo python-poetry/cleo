@@ -49,15 +49,14 @@ class Argument:
 
     def is_list(self) -> bool:
         return self._is_list
-    
+
     @property
     def has_choices(self) -> bool:
         return bool(self._choices)
 
     def set_default(self, default: Any | None = None) -> None:
-        if self._choices and default is not None:
-            if default not in self._choices:
-                raise CleoLogicError("A default value must be in choices")
+        if self._choices and default is not None and default not in self._choices:
+            raise CleoLogicError("A default value must be in choices")
 
         if self._required and default is not None:
             raise CleoLogicError("Cannot set a default value for required arguments")

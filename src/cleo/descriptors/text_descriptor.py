@@ -88,7 +88,9 @@ class TextDescriptor(Descriptor):
             "<comment> (multiple values allowed)</comment>" if option.is_list() else ""
         )
         are_choices_allowed = (
-            f"<comment> {{{', '.join(option.choices)}}}</comment>" if option.choices else ""
+            f"<comment> {{{', '.join(option.choices)}}}</comment>"
+            if option.choices
+            else ""
         )
         self._write(
             f"  <c1>{synopsis}</c1>  "
@@ -246,10 +248,9 @@ class TextDescriptor(Descriptor):
             }
 
         return json.dumps(default).replace("\\\\", "\\")
-    
+
     def _format_choices(self, choices: list[str]) -> str:
-        choice = ", ".join(choices)
-        return choice
+        return ", ".join(choices)
 
     def _calculate_total_width_for_options(self, options: list[Option]) -> int:
         total_width = 0
@@ -286,6 +287,6 @@ class TextDescriptor(Descriptor):
 
     def _get_command_aliases_text(self, command: Command) -> str:
         if aliases := command.aliases:
-            return f"[{ '|'.join(aliases) }] "
+            return f"[{'|'.join(aliases)}] "
 
         return ""

@@ -374,8 +374,8 @@ def test_run_namespaced_with_input() -> None:
 def test_run_with_choices() -> None:
     app = Application()
     command = ChoiceCommand()
-    app.add(command) 
-    
+    app.add(command)
+
     tester = ApplicationTester(app)
     status_code = tester.execute("choice wrong_choice")
 

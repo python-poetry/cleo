@@ -299,10 +299,9 @@ class ArgvInput(Input):
         else:
             self._options[name] = value
 
-        if option.choices:
-            if value not in option.choices:
-                choices = ['"' + choice + '"' for choice in option.choices]
-                raise CleoRuntimeError(
-                    f'Invalid value for the "--{name}" option: "{value}" ' \
-                    f'(choose from {", ".join(choices)})'
-                )
+        if option.choices and value not in option.choices:
+            choices = ['"' + choice + '"' for choice in option.choices]
+            raise CleoRuntimeError(
+                f'Invalid value for the "--{name}" option: "{value}" '
+                f'(choose from {", ".join(choices)})'
+            )

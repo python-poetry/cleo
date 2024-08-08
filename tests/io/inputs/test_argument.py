@@ -61,18 +61,14 @@ def test_list_arguments_do_not_support_non_list_default_values() -> None:
             default="bar",
         )
 
+
 def test_argument_with_choices() -> None:
     argument = Argument("foo", choices=["choice1", "choice2"])
 
     assert argument.name == "foo"
     assert argument.choices == ["choice1", "choice2"]
 
+
 def test_argument_default_not_in_choices() -> None:
-    with pytest.raises(
-        CleoLogicError, match="A default value must be in choices"
-    ):
-        Argument(
-            "foo",
-            default="arg0",
-            choices=["arg1", "arg2"]
-        )
+    with pytest.raises(CleoLogicError, match="A default value must be in choices"):
+        Argument("foo", default="arg0", choices=["arg1", "arg2"])

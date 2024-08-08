@@ -48,7 +48,7 @@ class Option:
 
         if self._is_list and self._flag:
             raise CleoLogicError("A flag option cannot be a list as well")
-        
+
         if self._choices and self._flag:
             raise CleoLogicError("A flag option cannot have choices")
 
@@ -72,7 +72,7 @@ class Option:
     @property
     def default(self) -> Any | None:
         return self._default
-    
+
     @property
     def choices(self) -> list[str] | None:
         return self._choices
