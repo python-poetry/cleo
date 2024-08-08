@@ -1,0 +1,2 @@
+
+Invalid value for the "foo" argument: "wrong_choice" (choose from "choice1", "choice2")
