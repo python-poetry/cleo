@@ -31,6 +31,13 @@ class TextDescriptor(Descriptor):
         else:
             default = ""
 
+        if argument.choices:
+            choices = (
+                f"<comment> {{{self._format_choices(argument.choices)}}}</comment>"
+            )
+        else:
+            choices = ""
+
         total_width = options.get("total_width", len(argument.name))
 
         spacing_width = total_width - len(argument.name)
@@ -41,7 +48,7 @@ class TextDescriptor(Descriptor):
         )
         self._write(
             f"  <c1>{argument.name}</c1>  {' ' * spacing_width}"
-            f"{sub_argument_description}{default}"
+            f"{sub_argument_description}{default}{choices}"
         )
 
     def _describe_option(self, option: Option, **options: Any) -> None:
@@ -80,11 +87,17 @@ class TextDescriptor(Descriptor):
         are_multiple_values_allowed = (
             "<comment> (multiple values allowed)</comment>" if option.is_list() else ""
         )
+        are_choices_allowed = (
+            f"<comment> {{{', '.join(option.choices)}}}</comment>"
+            if option.choices
+            else ""
+        )
         self._write(
             f"  <c1>{synopsis}</c1>  "
             f"{' ' * spacing_width}{sub_option_description}"
             f"{default}"
             f"{are_multiple_values_allowed}"
+            f"{are_choices_allowed}"
         )
 
     def _describe_definition(self, definition: Definition, **options: Any) -> None:
@@ -236,6 +249,9 @@ class TextDescriptor(Descriptor):
 
         return json.dumps(default).replace("\\\\", "\\")
 
+    def _format_choices(self, choices: list[str]) -> str:
+        return ", ".join(choices)
+
     def _calculate_total_width_for_options(self, options: list[Option]) -> int:
         total_width = 0
 
@@ -271,6 +287,6 @@ class TextDescriptor(Descriptor):
 
     def _get_command_aliases_text(self, command: Command) -> str:
         if aliases := command.aliases:
-            return f"[{ '|'.join(aliases) }] "
+            return f"[{'|'.join(aliases)}] "
 
         return ""

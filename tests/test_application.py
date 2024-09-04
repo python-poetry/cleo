@@ -14,6 +14,7 @@ from cleo.exceptions import CleoNamespaceNotFoundError
 from cleo.io.io import IO
 from cleo.io.outputs.stream_output import StreamOutput
 from cleo.testers.application_tester import ApplicationTester
+from tests.fixtures.choice_command import ChoiceCommand
 from tests.fixtures.foo1_command import Foo1Command
 from tests.fixtures.foo2_command import Foo2Command
 from tests.fixtures.foo3_command import Foo3Command
@@ -368,6 +369,20 @@ def test_run_namespaced_with_input() -> None:
 
     assert status_code == 0
     assert tester.io.fetch_output() == "Hello world!\n"
+
+
+def test_run_with_choices() -> None:
+    app = Application()
+    command = ChoiceCommand()
+    app.add(command)
+
+    tester = ApplicationTester(app)
+    status_code = tester.execute("choice wrong_choice")
+
+    assert status_code != 0
+    assert tester.io.fetch_error() == FIXTURES_PATH.joinpath(
+        "application_choice_exception.txt"
+    ).read_text(encoding="utf-8")
 
 
 @pytest.mark.parametrize("cmd", (Foo3Command(), FooSubNamespaced3Command()))
