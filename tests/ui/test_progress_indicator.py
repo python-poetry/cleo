@@ -6,7 +6,7 @@ from cleo.ui.progress_indicator import ProgressIndicator
 
 
 if TYPE_CHECKING:
-    from typing import Callable
+    from collections.abc import Callable
 
     from cleo.io.buffered_io import BufferedIO
 

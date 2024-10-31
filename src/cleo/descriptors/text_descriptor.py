@@ -5,7 +5,6 @@ import re
 
 from typing import TYPE_CHECKING
 from typing import Any
-from typing import Sequence
 
 from cleo.commands.command import Command
 from cleo.descriptors.descriptor import Descriptor
@@ -14,6 +13,8 @@ from cleo.io.inputs.definition import Definition
 
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from cleo.application import Application
     from cleo.io.inputs.argument import Argument
     from cleo.io.inputs.option import Option

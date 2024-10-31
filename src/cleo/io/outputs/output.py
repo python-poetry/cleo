@@ -2,13 +2,14 @@ from __future__ import annotations
 
 from enum import Enum
 from typing import TYPE_CHECKING
-from typing import Iterable
 
 from cleo._utils import strip_tags
 from cleo.formatters.formatter import Formatter
 
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
+
     from cleo.io.outputs.section_output import SectionOutput
 
 
