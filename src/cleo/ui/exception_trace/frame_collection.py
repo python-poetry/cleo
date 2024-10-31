@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-from typing import List
-
 from cleo.ui.exception_trace.frame import Frame
 
 
-class FrameCollection(List[Frame]):
+class FrameCollection(list[Frame]):
     def __init__(self, frames: list[Frame] | None = None, count: int = 0) -> None:
         if frames is None:
             frames = []
