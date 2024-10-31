@@ -4,9 +4,9 @@ import math
 import re
 import time
 
+from re import Match
 from typing import TYPE_CHECKING
 from typing import ClassVar
-from typing import Match
 
 from cleo._utils import format_time
 from cleo.cursor import Cursor

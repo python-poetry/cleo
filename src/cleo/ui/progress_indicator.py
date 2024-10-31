@@ -12,8 +12,8 @@ from cleo.io.io import IO
 
 
 if TYPE_CHECKING:
-    from typing import Iterator
-    from typing import Match
+    from collections.abc import Iterator
+    from re import Match
 
     from cleo.io.outputs.output import Output
 

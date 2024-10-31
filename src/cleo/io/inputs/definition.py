@@ -4,13 +4,14 @@ import sys
 
 from typing import TYPE_CHECKING
 from typing import Any
-from typing import Sequence
 
 from cleo.exceptions import CleoLogicError
 from cleo.io.inputs.option import Option
 
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from cleo.io.inputs.argument import Argument
 
 

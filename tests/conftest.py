@@ -13,8 +13,8 @@ from cleo.io.inputs.string_input import StringInput
 
 
 if TYPE_CHECKING:
-    from typing import Callable
-    from typing import Iterator
+    from collections.abc import Callable
+    from collections.abc import Iterator
 
     from pytest_mock import MockerFixture
 
