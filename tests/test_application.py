@@ -148,7 +148,7 @@ def test_find_ambiguous_namespace(app: Application) -> None:
         CleoNamespaceNotFoundError,
         match=(
             r'There are no commands in the "f" namespace\.\n\n'
-            r"Did you mean one of these\?\n    foo\n    foo1"
+            r"Did you mean this\?\n    foo"
         ),
     ):
         app.find_namespace("f")
