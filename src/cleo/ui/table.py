@@ -7,8 +7,6 @@ from contextlib import suppress
 from copy import deepcopy
 from itertools import repeat
 from typing import TYPE_CHECKING
-from typing import Iterator
-from typing import List
 from typing import Union
 from typing import cast
 
@@ -21,10 +19,12 @@ from cleo.ui.table_style import TableStyle
 
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from cleo.io.io import IO
 
-Row = List[Union[str, TableCell]]
-Rows = List[Union[Row, TableSeparator]]
+Row = list[Union[str, TableCell]]
+Rows = list[Union[Row, TableSeparator]]
 Header = Row
 
 
@@ -113,7 +113,7 @@ class Table:
             headers = cast("Header", headers)
             headers = [headers]
 
-        headers = cast("List[Header]", headers)
+        headers = cast("list[Header]", headers)
 
         self._headers = headers
 

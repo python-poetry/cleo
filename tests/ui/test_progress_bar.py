@@ -9,7 +9,7 @@ from cleo.ui.progress_bar import ProgressBar
 
 
 if TYPE_CHECKING:
-    from typing import Callable
+    from collections.abc import Callable
 
     from cleo.io.buffered_io import BufferedIO
 
