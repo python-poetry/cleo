@@ -1,6 +1,14 @@
 # Changelog
 
 <!-- news notes entrypoint -->
+
+## [2.2.0] (2024-11-17)
+
+### Dependencies
+
+- Removed `crashtest` dependency and vendored part of it into `cleo` ([#382](https://github.com/python-poetry/cleo/pull/382))
+- Removed `rapidfuzz` dependency ([#442](https://github.com/python-poetry/cleo/pull/442))
+ 
 ## [2.1.0] - 2023-10-30
 
 ### Features & Improvements
@@ -284,7 +292,9 @@ This is a major release with some API changes.
 
 
 
-[unreleased]: https://github.com/python-poetry/cleo/compare/2.0.1...main
+[unreleased]: https://github.com/python-poetry/cleo/compare/2.2.0...main
+[2.2.0]: https://github.com/python-poetry/cleo/releases/tag/2.2.0
+[2.1.0]: https://github.com/python-poetry/cleo/releases/tag/2.1.0
 [2.0.1]: https://github.com/python-poetry/cleo/releases/tag/2.0.1
 [2.0.0]: https://github.com/python-poetry/cleo/releases/tag/2.0.0
 [1.0.0]: https://github.com/python-poetry/cleo/releases/tag/1.0.0
