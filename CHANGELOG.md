@@ -2,6 +2,12 @@
 
 <!-- news notes entrypoint -->
 
+## [2.2.1] (2024-11-18)
+
+### Bug Fixes
+
+- Fix API breakage for `ExceptionTrace`. ([#447](https://github.com/python-poetry/cleo/pull/447))
+
 ## [2.2.0] (2024-11-17)
 
 ### Dependencies
@@ -292,7 +298,8 @@ This is a major release with some API changes.
 
 
 
-[unreleased]: https://github.com/python-poetry/cleo/compare/2.2.0...main
+[unreleased]: https://github.com/python-poetry/cleo/compare/2.2.1...main
+[2.2.0]: https://github.com/python-poetry/cleo/releases/tag/2.2.1
 [2.2.0]: https://github.com/python-poetry/cleo/releases/tag/2.2.0
 [2.1.0]: https://github.com/python-poetry/cleo/releases/tag/2.1.0
 [2.0.1]: https://github.com/python-poetry/cleo/releases/tag/2.0.1
