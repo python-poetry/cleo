@@ -5,7 +5,6 @@ import inspect
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import ClassVar
-from typing import ContextManager
 from typing import cast
 
 from cleo.exceptions import CleoError
@@ -18,6 +17,7 @@ from cleo.ui.table_separator import TableSeparator
 
 
 if TYPE_CHECKING:
+    from contextlib import AbstractContextManager
     from typing import Literal
 
     from cleo.application import Application
@@ -412,7 +412,7 @@ class Command:
         fmt: str | None = None,
         interval: int = 100,
         values: list[str] | None = None,
-    ) -> ContextManager[ProgressIndicator]:
+    ) -> AbstractContextManager[ProgressIndicator]:
         """
         Automatically spin a progress indicator.
         """

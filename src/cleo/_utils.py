@@ -3,9 +3,8 @@ from __future__ import annotations
 import math
 
 from dataclasses import dataclass
+from difflib import SequenceMatcher
 from html.parser import HTMLParser
-
-from rapidfuzz.distance import Levenshtein
 
 
 class TagStripper(HTMLParser):
@@ -51,12 +50,12 @@ def find_similar_names(name: str, names: list[str]) -> list[str]:
     """
     Finds names similar to a given command name.
     """
-    threshold = 1e3
+    threshold = 0.4
     distance_by_name = {}
-
+    if " " in name:
+        names = [name for name in names if " " in name]
     for actual_name in names:
-        # Get Levenshtein distance between the input and each command name
-        distance = Levenshtein.distance(name, actual_name)
+        distance = SequenceMatcher(None, actual_name, name).ratio()
 
         is_similar = distance <= len(name) / 3
         substring_index = actual_name.find(name)
@@ -70,9 +69,7 @@ def find_similar_names(name: str, names: list[str]) -> list[str]:
 
     # Only keep results with a distance below the threshold
     distance_by_name = {
-        key: value
-        for key, value in distance_by_name.items()
-        if value[0] < 2 * threshold
+        key: value for key, value in distance_by_name.items() if value[0] > threshold
     }
     # Display results with shortest distance first
     return sorted(distance_by_name, key=lambda key: distance_by_name[key])

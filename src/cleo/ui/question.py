@@ -4,10 +4,10 @@ import getpass
 import os
 import subprocess
 
+from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING
 from typing import Any
-from typing import Callable
 
 from cleo.formatters.style import Style
 from cleo.io.outputs.stream_output import StreamOutput
