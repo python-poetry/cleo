@@ -1,0 +1,80 @@
+name: Downstream Tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [labeled, unlabeled]
+# TODO: re-enable after Cleo 3.0 is applied in Poetry
+#  push:
+#    branches: [main]
+
+jobs:
+  tests:
+    if: "contains(github.event.pull_request.labels.*.name, 'poetry downstream tests')"
+    name: ${{ matrix.ref }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ref: ["main"]
+      fail-fast: false
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: cleo
+
+      - uses: actions/checkout@v4
+        with:
+          path: poetry
+          repository: python-poetry/poetry
+          ref: ${{ matrix.ref }}
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Get full python version
+        id: full-python-version
+        run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
+
+      - name: Set up Poetry
+        run: |
+          pip install poetry
+          poetry config virtualenvs.in-project true
+
+      - name: Set up cache
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: ./poetry/.venv
+          key: venv-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Ensure cache is healthy
+        if: steps.cache.outputs.cache-hit == 'true'
+        working-directory: ./poetry
+        run: timeout 10s poetry run pip --version >/dev/null 2>&1 || rm -rf .venv
+
+      - name: Switch downstream to development Cleo
+        working-directory: ./poetry
+        run: |
+          # remove Cleo from main group to avoid version conflicts
+          # with a potential entry in the test group
+          poetry remove cleo
+          # add to test group to overwrite a potential entry in that group
+          poetry add --lock --group test ../cleo
+
+      - name: Install downstream dependencies
+        working-directory: ./poetry
+        run: |
+          # force update of directory dependency in cached venv
+          # (even if directory dependency with same version is already installed)
+          poetry run pip uninstall -y cleo
+          poetry install
+
+      # TODO: mark run as success even when this fails and add comment to PR instead
+      - name: Run downstream test suite
+        working-directory: ./poetry
+        run: poetry run pytest
