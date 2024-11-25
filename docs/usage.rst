@@ -8,7 +8,7 @@ built-in options as well as a couple of built-in commands for Cleo.
 
     These examples assume you have added a file ``application.py`` to run at
     the cli:
-    
+
     .. code-block:: python
 
         #!/usr/bin/env python
@@ -18,7 +18,7 @@ built-in options as well as a couple of built-in commands for Cleo.
 
         application = Application()
         # ...
-        
+
         if __name__ == '__main__':
             application.run()
 

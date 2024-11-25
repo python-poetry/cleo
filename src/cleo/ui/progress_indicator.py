@@ -12,8 +12,8 @@ from cleo.io.io import IO
 
 
 if TYPE_CHECKING:
-    from typing import Iterator
-    from typing import Match
+    from collections.abc import Iterator
+    from re import Match
 
     from cleo.io.outputs.output import Output
 
@@ -100,11 +100,11 @@ class ProgressIndicator:
             raise RuntimeError("Progress indicator has not yet been started.")
 
         if not self._io.is_decorated():
-            return None
+            return
 
         current_time = self._get_current_time_in_milliseconds()
         if self._update_time is not None and current_time < self._update_time:
-            return None
+            return
 
         self._update_time = current_time + self._interval
         self._current += 1
@@ -115,7 +115,7 @@ class ProgressIndicator:
         if not self._started:
             raise RuntimeError("Progress indicator has not yet been started.")
 
-        if self._auto_thread is not None and self._auto_running is not None:
+        if not (self._auto_thread is None or self._auto_running is None):
             self._auto_running.set()
             self._auto_thread.join()
 
@@ -152,7 +152,7 @@ class ProgressIndicator:
         self.finish(end_message, reset_indicator=True)
 
     def _spin(self) -> None:
-        while self._auto_running is not None and not self._auto_running.is_set():
+        while not (self._auto_running is None or self._auto_running.is_set()):
             self.advance()
 
             time.sleep(0.1)
@@ -169,18 +169,15 @@ class ProgressIndicator:
 
     def _overwrite_callback(self, matches: Match[str]) -> str:
         if hasattr(self, f"_formatter_{matches.group(1)}"):
-            text = str(getattr(self, f"_formatter_{matches.group(1)}")())
-        else:
-            text = matches.group(0)
-
-        return text
+            return str(getattr(self, f"_formatter_{matches.group(1)}")())
+        return matches.group(0)
 
     def _overwrite(self, message: str) -> None:
         """
         Overwrites a previous message to the output.
         """
         if self._io.is_decorated():
-            self._io.write("\x0D\x1B[2K")
+            self._io.write("\x0d\x1b[2K")
             self._io.write(message)
         else:
             self._io.write_line(message)
@@ -193,7 +190,7 @@ class ProgressIndicator:
                 return self.VERY_VERBOSE
 
             return self.VERY_VERBOSE_NO_ANSI
-        elif self._io.is_verbose():
+        if self._io.is_verbose():
             if decorated:
                 return self.VERY_VERBOSE
 

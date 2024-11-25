@@ -3,10 +3,10 @@ from __future__ import annotations
 import math
 import re
 
+from contextlib import suppress
 from copy import deepcopy
+from itertools import repeat
 from typing import TYPE_CHECKING
-from typing import Iterator
-from typing import List
 from typing import Union
 from typing import cast
 
@@ -19,10 +19,12 @@ from cleo.ui.table_style import TableStyle
 
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from cleo.io.io import IO
 
-Row = List[Union[str, TableCell]]
-Rows = List[Union[Row, TableSeparator]]
+Row = list[Union[str, TableCell]]
+Rows = list[Union[Row, TableSeparator]]
 Header = Row
 
 
@@ -111,7 +113,7 @@ class Table:
             headers = cast("Header", headers)
             headers = [headers]
 
-        headers = cast("List[Header]", headers)
+        headers = cast("list[Header]", headers)
 
         self._headers = headers
 
@@ -335,10 +337,11 @@ class Table:
         columns = self._get_row_columns(row)
         last = len(columns) - 1
         for i, column in enumerate(columns):
-            if first_cell_format and i == 0:
-                row_content += self._render_cell(row, column, first_cell_format)
-            else:
-                row_content += self._render_cell(row, column, cell_format)
+            row_content += self._render_cell(
+                row,
+                column,
+                first_cell_format if first_cell_format and i == 0 else cell_format,
+            )
 
             row_content += self._render_column_separator(
                 self.BORDER_OUTSIDE if i == last else self.BORDER_INSIDE
@@ -481,7 +484,7 @@ class Table:
         if self._headers:
             number_of_rows += 1
 
-        if len(self._rows) > 0:
+        if self._rows:
             number_of_rows += 1
 
         return number_of_rows
@@ -523,7 +526,7 @@ class Table:
 
                 unmerged_rows = placeholder
 
-                for unmerged_row_key, _ in unmerged_rows.items():
+                for unmerged_row_key in unmerged_rows:
                     value = ""
                     if unmerged_row_key - line < len(lines):
                         value = lines[unmerged_row_key - line]
@@ -570,18 +573,14 @@ class Table:
         """
         new_row = []
 
-        for column, cell in enumerate(row):
+        for cell in row:
             new_row.append(cell)
 
             if isinstance(cell, TableCell) and cell.colspan > 1:
-                for _ in range(column + 1, column + cell.colspan):
-                    # insert empty value at column position
-                    new_row.append("")
+                # insert empty value at column position
+                new_row.extend(repeat("", cell.colspan - 1))
 
-        if new_row:
-            return new_row
-
-        return row
+        return new_row or row
 
     def _copy_row(self, rows: Rows, line: int) -> Row:
         """
@@ -612,15 +611,15 @@ class Table:
         Gets list of columns for the given row.
         """
         assert self._number_of_columns is not None
-        columns = list(range(0, self._number_of_columns))
+        columns = list(range(self._number_of_columns))
 
         for cell_key, cell in enumerate(row):
             if isinstance(cell, TableCell) and cell.colspan > 1:
                 # exclude grouped columns.
                 columns = [
-                    x
-                    for x in columns
-                    if x not in list(range(cell_key + 1, cell_key + cell.colspan))
+                    column
+                    for column in columns
+                    if column not in range(cell_key + 1, cell_key + cell.colspan)
                 ]
 
         return columns
@@ -630,7 +629,7 @@ class Table:
         Calculates column widths.
         """
         assert self._number_of_columns is not None
-        for column in range(0, self._number_of_columns):
+        for column in range(self._number_of_columns):
             lengths = [0]
             for row in rows:
                 if isinstance(row, TableSeparator):
@@ -651,7 +650,7 @@ class Table:
                             for position, content in enumerate(content_columns):
                                 try:
                                     row_[i + position] = content
-                                except IndexError:
+                                except IndexError:  # noqa: PERF203
                                     row_.append(content)
 
                 lengths.append(self._get_cell_width(row_, column))
@@ -669,15 +668,11 @@ class Table:
         """
         cell_width = 0
 
-        try:
+        with suppress(IndexError):
             cell = row[column]
             cell_width = len(self._io.remove_format(cell))
-        except IndexError:
-            pass
 
-        column_width = (
-            self._column_widths[column] if column in self._column_widths else 0
-        )
+        column_width = self._column_widths.get(column, 0)
         cell_width = max(cell_width, column_width)
 
         if column in self._column_max_widths:
@@ -694,27 +689,35 @@ class Table:
         if cls._styles is not None:
             return
 
-        borderless = TableStyle()
-        borderless.set_horizontal_border_chars("=")
-        borderless.set_vertical_border_chars(" ")
-        borderless.set_default_crossing_char(" ")
+        borderless = (
+            TableStyle()
+            .set_horizontal_border_chars("=")
+            .set_vertical_border_chars(" ")
+            .set_default_crossing_char(" ")
+        )
 
-        compact = TableStyle()
-        compact.set_horizontal_border_chars("")
-        compact.set_vertical_border_chars(" ")
-        compact.set_default_crossing_char("")
-        compact.set_cell_row_content_format("{}")
+        compact = (
+            TableStyle()
+            .set_horizontal_border_chars("")
+            .set_vertical_border_chars(" ")
+            .set_default_crossing_char("")
+            .set_cell_row_content_format("{}")
+        )
 
-        box = TableStyle()
-        box.set_horizontal_border_chars("─")
-        box.set_vertical_border_chars("│")
-        box.set_crossing_chars("┼", "┌", "┬", "┐", "┤", "┘", "┴", "└", "├")
+        box = (
+            TableStyle()
+            .set_horizontal_border_chars("─")
+            .set_vertical_border_chars("│")
+            .set_crossing_chars("┼", "┌", "┬", "┐", "┤", "┘", "┴", "└", "├")
+        )
 
-        box_double = TableStyle()
-        box_double.set_horizontal_border_chars("═", "─")
-        box_double.set_vertical_border_chars("║", "│")
-        box_double.set_crossing_chars(
-            "┼", "╔", "╤", "╗", "╢", "╝", "╧", "╚", "╟", "╠", "╪", "╣"
+        box_double = (
+            TableStyle()
+            .set_horizontal_border_chars("═", "─")
+            .set_vertical_border_chars("║", "│")
+            .set_crossing_chars(
+                "┼", "╔", "╤", "╗", "╢", "╝", "╧", "╚", "╟", "╠", "╪", "╣"
+            )
         )
 
         cls._styles = {

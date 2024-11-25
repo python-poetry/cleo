@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import ClassVar
+
 from cleo.commands.command import Command
 
 
@@ -8,7 +10,7 @@ class FooSubNamespaced2Command(Command):
 
     description = "The foo baz bam command"
 
-    aliases = ["foobazbam"]
+    aliases: ClassVar[list[str]] = ["foobazbam"]
 
     def handle(self) -> int:
         return 0

@@ -13,7 +13,4 @@ if TYPE_CHECKING:
 
 class NullIO(IO):
     def __init__(self, input: Input | None = None) -> None:
-        if input is None:
-            input = StringInput("")
-
-        super().__init__(input, NullOutput(), NullOutput())
+        super().__init__(input or StringInput(""), NullOutput(), NullOutput())

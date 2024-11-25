@@ -17,7 +17,7 @@ class ConfirmationQuestion(Question):
     """
 
     def __init__(
-        self, question: str, default: bool = True, true_answer_regex: str = "(?i)^y"
+        self, question: str, default: bool = True, true_answer_regex: str = r"(?i)^y"
     ) -> None:
         super().__init__(question, default)
 
@@ -41,6 +41,6 @@ class ConfirmationQuestion(Question):
 
         answer_is_true = re.match(self._true_answer_regex, answer) is not None
         if self.default is False:
-            return (answer and answer_is_true) or False
+            return bool(answer and answer_is_true)
 
         return not answer or answer_is_true

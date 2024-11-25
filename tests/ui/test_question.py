@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import subprocess
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
@@ -15,7 +16,7 @@ if TYPE_CHECKING:
 
 
 def has_tty_available() -> bool:
-    with open(os.devnull, "w") as devnull:
+    with Path(os.devnull).open("w", encoding="utf-8") as devnull:
         exit_code = subprocess.call(["stty", "2"], stdout=devnull, stderr=devnull)
 
     return exit_code == 0

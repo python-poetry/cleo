@@ -1,13 +1,28 @@
 ci:
   autofix_prs: false
+  autoupdate_schedule: monthly
 
 repos:
-  - repo: https://github.com/psf/black
-    rev: 23.3.0
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
     hooks:
-      - id: black
+      - id: trailing-whitespace
+        exclude: ^(.*\.egg-info/|tests/(fixtures|ui).*)$
+      - id: end-of-file-fixer
+        exclude: ^(.*\.egg-info/|tests/(fixtures|ui).*)$
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-toml
+      - id: check-yaml
+      - id: pretty-format-json
+        args: [ --autofix, --no-ensure-ascii, --no-sort-keys ]
+      - id: check-ast
+      - id: debug-statements
+      - id: check-docstring-first
 
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.0.272
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.7.2
     hooks:
       - id: ruff
+      - id: ruff-format

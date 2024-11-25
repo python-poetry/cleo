@@ -8,12 +8,11 @@ import pytest
 
 from cleo.io.buffered_io import BufferedIO
 from cleo.io.outputs.output import Verbosity
-from cleo.ui.exception_trace import ExceptionTrace
+from cleo.ui.exception_trace.component import ExceptionTrace
 from tests.fixtures.exceptions import nested1
 from tests.fixtures.exceptions import nested2
 from tests.fixtures.exceptions import recursion
 from tests.fixtures.exceptions import simple
-from tests.fixtures.exceptions import solution
 
 
 def test_render_better_error_message() -> None:
@@ -51,7 +50,7 @@ def test_render_debug_better_error_message() -> None:
 
     trace.render(io)
 
-    lineno = 48
+    lineno = 47
     expected = f"""
   Stack trace:
 
@@ -85,13 +84,13 @@ def test_render_debug_better_error_message_recursion_error() -> None:
     except RecursionError as e:
         trace = ExceptionTrace(e)
 
-    lineno = 84
+    lineno = 83
     trace.render(io)
 
     expected = rf"""^
   Stack trace:
 
-  \d+  {re.escape(trace._get_relative_file_path(__file__))}:{lineno} in test_render_debug_better_error_message_recursion_error
+  \d+  {re.escape(str(trace._get_relative_file_path(__file__)))}:{lineno} in test_render_debug_better_error_message_recursion_error
          {lineno - 2}\│ 
          {lineno - 1}\│     try:
       →  {lineno + 0}\│         recursion.recursion_error\(\)
@@ -100,7 +99,7 @@ def test_render_debug_better_error_message_recursion_error() -> None:
 
   ...  Previous frame repeated \d+ times
 
-  \s*\d+  {re.escape(trace._get_relative_file_path(recursion.__file__))}:2 in recursion_error
+  \s*\d+  {re.escape(str(trace._get_relative_file_path(recursion.__file__)))}:2 in recursion_error
           1\│ def recursion_error\(\) -> None:
       →   2\│     recursion_error\(\)
           3\│ 
@@ -109,11 +108,11 @@ def test_render_debug_better_error_message_recursion_error() -> None:
 
   maximum recursion depth exceeded
 
-  at {re.escape(trace._get_relative_file_path(recursion.__file__))}:2 in recursion_error
+  at {re.escape(str(trace._get_relative_file_path(recursion.__file__)))}:2 in recursion_error
         1\│ def recursion_error\(\) -> None:
     →   2\│     recursion_error\(\)
         3\│ 
-"""  # noqa: E501
+"""
 
     assert re.match(expected, io.fetch_output()) is not None
 
@@ -132,7 +131,7 @@ def test_render_very_verbose_better_error_message() -> None:
     expected = f"""
   Stack trace:
 
-  1  {trace._get_relative_file_path(__file__)}:126 in \
+  1  {trace._get_relative_file_path(__file__)}:125 in \
 test_render_very_verbose_better_error_message
        simple.simple_exception()
 
@@ -149,7 +148,7 @@ test_render_very_verbose_better_error_message
     assert expected == io.fetch_output()
 
 
-def test_render_debug_better_error_message_recursion_error_with_multiple_duplicated_frames() -> (  # noqa: E501
+def test_render_debug_better_error_message_recursion_error_with_multiple_duplicated_frames() -> (
     None
 ):
     def first() -> None:
@@ -181,10 +180,10 @@ def test_render_can_ignore_given_files() -> None:
         nested2.call()
 
     trace = ExceptionTrace(e.value)
-    trace.ignore_files_in(f"^{re.escape(nested1.__file__)}$")
+    trace.ignore_files_in(rf"^{re.escape(nested1.__file__)}$")
     trace.render(io)
 
-    lineno = 181
+    lineno = 180
     expected = f"""
   Stack trace:
 
@@ -219,10 +218,10 @@ def test_render_shows_ignored_files_if_in_debug_mode() -> None:
         nested2.call()
 
     trace = ExceptionTrace(e.value)
-    trace.ignore_files_in(f"^{re.escape(nested1.__file__)}$")
+    trace.ignore_files_in(rf"^{re.escape(nested1.__file__)}$")
 
     trace.render(io)
-    lineno = 219
+    lineno = 218
     expected = f"""
   Stack trace:
 
@@ -269,90 +268,40 @@ test_render_shows_ignored_files_if_in_debug_mode
     assert io.fetch_output() == expected
 
 
-def test_render_supports_solutions() -> None:
-    from crashtest.solution_providers.solution_provider_repository import (
-        SolutionProviderRepository,
-    )
-
-    io = BufferedIO()
-
-    with pytest.raises(solution.CustomError) as e:
-        solution.call()
-
-    trace = ExceptionTrace(
-        e.value, solution_provider_repository=SolutionProviderRepository()
-    )
-
-    trace.render(io)
-
-    expected = f"""
-  CustomError
-
-  Error with solution
-
-  at {trace._get_relative_file_path(solution.__file__)}:16 in call
-       12│         return solution
-       13│ 
-       14│ 
-       15│ def call() -> None:
-    →  16│     raise CustomError("Error with solution")
-       17│ 
-
-  • Solution Title: Solution Description
-    https://example.com,
-    https://example2.com
-"""
-
-    assert io.fetch_output() == expected
-
-
 def test_render_falls_back_on_ascii_symbols() -> None:
-    from crashtest.solution_providers.solution_provider_repository import (
-        SolutionProviderRepository,
-    )
-
     io = BufferedIO(supports_utf8=False)
 
-    with pytest.raises(solution.CustomError) as e:
-        solution.call()
+    with pytest.raises(Exception) as e:
+        simple.simple_exception()
 
-    trace = ExceptionTrace(
-        e.value, solution_provider_repository=SolutionProviderRepository()
-    )
+    trace = ExceptionTrace(e.value)
 
     trace.render(io)
 
     expected = f"""
-  CustomError
+  Exception
 
-  Error with solution
+  Failed
 
-  at {trace._get_relative_file_path(solution.__file__)}:16 in call
-       12|         return solution
-       13| 
-       14| 
-       15| def call() -> None:
-    >  16|     raise CustomError("Error with solution")
-       17| 
-
-  * Solution Title: Solution Description
-    https://example.com,
-    https://example2.com
+  at {trace._get_relative_file_path(simple.__file__)}:2 in simple_exception
+        1| def simple_exception() -> None:
+    >   2|     raise Exception("Failed")
+        3| 
 """
 
     assert io.fetch_output() == expected
 
 
 def test_empty_source_file_do_not_break_highlighter() -> None:
-    from cleo.ui.exception_trace import Highlighter
+    from cleo.ui.exception_trace.component import Highlighter
 
     highlighter = Highlighter()
     highlighter.highlighted_lines("")
 
 
-def test_doctrings_are_corrrectly_rendered() -> None:
+def test_docstrings_are_correctly_rendered() -> None:
     from cleo.formatters.formatter import Formatter
-    from cleo.ui.exception_trace import Highlighter
+    from cleo.ui.exception_trace.component import Highlighter
 
     source = '''
 def test():
@@ -386,32 +335,6 @@ Failed
     assert io.fetch_output() == expected
 
 
-def test_simple_render_supports_solutions() -> None:
-    from crashtest.solution_providers.solution_provider_repository import (
-        SolutionProviderRepository,
-    )
-
-    io = BufferedIO()
-
-    with pytest.raises(solution.CustomError) as e:
-        solution.call()
-
-    trace = ExceptionTrace(
-        e.value, solution_provider_repository=SolutionProviderRepository()
-    )
-
-    trace.render(io, simple=True)
-
-    expected = """
-Error with solution
-
-  • Solution Title: Solution Description
-    https://example.com,
-    https://example2.com
-"""
-    assert io.fetch_output() == expected
-
-
 def test_simple_render_aborts_if_no_message() -> None:
     io = BufferedIO()
 
@@ -421,7 +344,7 @@ def test_simple_render_aborts_if_no_message() -> None:
     trace = ExceptionTrace(e.value)
 
     trace.render(io, simple=True)
-    lineno = 419
+    lineno = 342
 
     expected = f"""
   AssertionError

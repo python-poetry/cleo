@@ -10,21 +10,18 @@ import re
 import sys
 import tokenize
 
+from pathlib import Path
 from typing import TYPE_CHECKING
-
-from crashtest.frame_collection import FrameCollection
+from typing import ClassVar
 
 from cleo.formatters.formatter import Formatter
+from cleo.ui.exception_trace.frame_collection import FrameCollection
 
 
 if TYPE_CHECKING:
-    from crashtest.frame import Frame
-    from crashtest.solution_providers.solution_provider_repository import (
-        SolutionProviderRepository,
-    )
-
     from cleo.io.io import IO
     from cleo.io.outputs.output import Output
+    from cleo.ui.exception_trace.frame import Frame
 
 
 class Highlighter:
@@ -38,7 +35,7 @@ class Highlighter:
     LINE_MARKER = "line_marker"
     LINE_NUMBER = "line_number"
 
-    DEFAULT_THEME = {
+    DEFAULT_THEME: ClassVar[dict[str, str]] = {
         TOKEN_STRING: "fg=yellow;options=bold",
         TOKEN_NUMBER: "fg=blue;options=bold",
         TOKEN_COMMENT: "fg=default;options=dark,italic",
@@ -50,10 +47,10 @@ class Highlighter:
         LINE_NUMBER: "fg=default;options=dark",
     }
 
-    KEYWORDS = set(keyword.kwlist)
-    BUILTINS = set(dir(builtins))
+    KEYWORDS: ClassVar[set[str]] = set(keyword.kwlist)
+    BUILTINS: ClassVar[set[str]] = set(dir(builtins))
 
-    UI = {
+    UI: ClassVar[dict[bool, dict[str, str]]] = {
         False: {"arrow": ">", "delimiter": "|"},
         True: {"arrow": "→", "delimiter": "│"},
     }
@@ -71,9 +68,7 @@ class Highlighter:
         offset = line - lines_before - 1
         offset = max(offset, 0)
         length = lines_after + lines_before + 1
-        token_lines = token_lines[offset : offset + length]
-
-        return token_lines
+        return token_lines[offset : offset + length]
 
     def highlighted_lines(self, source: str) -> list[str]:
         source = source.replace("\r\n", "\n").replace("\r", "\n")
@@ -181,7 +176,7 @@ class Highlighter:
         max_line_length = max(3, len(str(len(lines))))
 
         snippet_lines = []
-        marker = f'<{self._theme[self.LINE_MARKER]}>{self._ui["arrow"]}</> '
+        marker = f"<{self._theme[self.LINE_MARKER]}>{self._ui['arrow']}</> "
         no_marker = "  "
         for i, line in enumerate(lines):
             snippet = ""
@@ -197,7 +192,7 @@ class Highlighter:
             snippet += (
                 f"<{styling}>"
                 f"{line_number}</><{self._theme[self.LINE_NUMBER]}>"
-                f'{self._ui["delimiter"]}</> {line}'
+                f"{self._ui['delimiter']}</> {line}"
             )
             snippet_lines.append(snippet)
 
@@ -209,14 +204,14 @@ class ExceptionTrace:
     Renders the trace of an exception.
     """
 
-    THEME = {
+    THEME: ClassVar[dict[str, str]] = {
         "comment": "<fg=black;options=bold>",
         "keyword": "<fg=yellow>",
         "builtin": "<fg=blue>",
         "literal": "<fg=magenta>",
     }
 
-    AST_ELEMENTS = {
+    AST_ELEMENTS: ClassVar[dict[str, list[str]]] = {
         "builtins": dir(builtins),
         "keywords": [
             getattr(ast, cls)
@@ -227,15 +222,13 @@ class ExceptionTrace:
         ],
     }
 
-    _FRAME_SNIPPET_CACHE: dict[tuple[Frame, int, int], list[str]] = {}
+    _FRAME_SNIPPET_CACHE: ClassVar[dict[tuple[Frame, int, int], list[str]]] = {}
 
     def __init__(
         self,
         exception: Exception,
-        solution_provider_repository: SolutionProviderRepository | None = None,
     ) -> None:
         self._exception = exception
-        self._solution_provider_repository = solution_provider_repository
         self._exc_info = sys.exc_info()
         self._ignore: str | None = None
 
@@ -246,17 +239,14 @@ class ExceptionTrace:
 
     def render(self, io: IO | Output, simple: bool = False) -> None:
         # If simple rendering wouldn't show anything useful, abandon it.
-        simple_string = str(self._exception) if simple else ""
-        if simple_string:
+        if simple_string := str(self._exception) if simple else "":
             io.write_line("")
             io.write_line(f"<error>{simple_string}</error>")
         else:
             self._render_exception(io, self._exception)
 
-        self._render_solution(io, self._exception)
-
     def _render_exception(self, io: IO | Output, exception: BaseException) -> None:
-        from crashtest.inspector import Inspector
+        from cleo.ui.exception_trace.inspector import Inspector
 
         inspector = Inspector(exception)
         if not inspector.frames:
@@ -298,33 +288,6 @@ class ExceptionTrace:
         for code_line in code_lines:
             self._render_line(io, code_line, indent=4)
 
-    def _render_solution(self, io: IO | Output, exception: Exception) -> None:
-        if self._solution_provider_repository is None:
-            return
-
-        solutions = self._solution_provider_repository.get_solutions_for_exception(
-            exception
-        )
-        symbol = "•"
-        if not io.supports_utf8():
-            symbol = "*"
-
-        for solution in solutions:
-            title = solution.solution_title
-            description = solution.solution_description
-            links = solution.documentation_links
-
-            description = description.replace("\n", "\n    ").strip(" ")
-
-            joined_links = ",".join(f"\n    <fg=blue>{link}</>" for link in links)
-            self._render_line(
-                io,
-                f"<fg=blue;options=bold>{symbol} </>"
-                f'<fg=default;options=bold>{title.rstrip(".")}</>:'
-                f" {description}{joined_links}",
-                True,
-            )
-
     def _render_trace(self, io: IO | Output, frames: FrameCollection) -> None:
         stack_frames = FrameCollection()
         for frame in frames:
@@ -344,7 +307,7 @@ class ExceptionTrace:
             frame_collections = stack_frames.compact()
             i = remaining_frames_length
             for collection in frame_collections:
-                if collection.is_repeated():
+                if collection.is_repeated:
                     if len(collection) > 1:
                         frames_message = f"<fg=yellow>{len(collection)}</> frames"
                     else:
@@ -352,7 +315,7 @@ class ExceptionTrace:
 
                     self._render_line(
                         io,
-                        f'<fg=blue>{"...":>{max_frame_length}}</>  '
+                        f"<fg=blue>{'...':>{max_frame_length}}</>  "
                         f"Previous {frames_message} repeated "
                         f"<fg=blue>{collection.repetitions + 1}</> times",
                         True,
@@ -361,15 +324,13 @@ class ExceptionTrace:
                     i -= len(collection) * (collection.repetitions + 1)
 
                 for frame in collection:
-                    relative_file_path = self._get_relative_file_path(frame.filename)
-                    relative_file_path_parts = relative_file_path.split(os.path.sep)
-                    relative_file_path = (
-                        f"<fg=default;options=dark>{Formatter.escape(os.sep)}</>".join(
-                            relative_file_path_parts[:-1]
-                            + [
-                                "<fg=default;options=bold>"
-                                f"{relative_file_path_parts[-1]}</>"
-                            ]
+                    relative_file_path_parts = self._get_relative_file_path(
+                        frame.filename
+                    ).parts
+                    relative_file_path = f"<fg=default;options=dark>{Formatter.escape(os.sep)}</>".join(
+                        (
+                            *relative_file_path_parts[:-1],
+                            f"<fg=default;options=bold>{relative_file_path_parts[-1]}</>",
                         )
                     )
                     self._render_line(
@@ -396,7 +357,7 @@ class ExceptionTrace:
                         for code_line in code_lines:
                             self._render_line(
                                 io,
-                                f'{" ":>{max_frame_length}}{code_line}',
+                                f"{' ' * max_frame_length}{code_line}",
                                 indent=3,
                             )
                     else:
@@ -409,27 +370,26 @@ class ExceptionTrace:
                             code_line = frame.line.strip()
 
                         self._render_line(
-                            io, f'{" ":>{max_frame_length}}    {code_line}'
+                            io, f"{' ' * (max_frame_length + 4)}{code_line}"
                         )
 
                     i -= 1
 
+    @staticmethod
     def _render_line(
-        self, io: IO | Output, line: str, new_line: bool = False, indent: int = 2
+        io: IO | Output, line: str, new_line: bool = False, indent: int = 2
     ) -> None:
         if new_line:
             io.write_line("")
 
-        io.write_line(f'{indent * " "}{line}')
+        io.write_line(f"{indent * ' '}{line}")
 
-    def _get_relative_file_path(self, filepath: str) -> str:
-        cwd = os.getcwd()
+    @staticmethod
+    def _get_relative_file_path(filepath: str) -> Path:
+        if cwd := Path.cwd():
+            filepath = filepath.replace(f"{cwd}{os.sep}", "")
 
-        if cwd:
-            filepath = filepath.replace(cwd + os.path.sep, "")
+        if home := Path("~").expanduser():
+            filepath = filepath.replace(f"{home}{os.sep}", f"~{os.sep}")
 
-        home = os.path.expanduser("~")
-        if home:
-            filepath = filepath.replace(home + os.path.sep, "~" + os.path.sep)
-
-        return filepath
+        return Path(filepath)

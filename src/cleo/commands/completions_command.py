@@ -7,22 +7,33 @@ import posixpath
 import re
 import subprocess
 
+from pathlib import Path
+from typing import TYPE_CHECKING
+from typing import ClassVar
+from typing import cast
+
 from cleo import helpers
 from cleo._compat import shell_quote
 from cleo.commands.command import Command
 from cleo.commands.completions.templates import TEMPLATES
+from cleo.exceptions import CleoRuntimeError
+
+
+if TYPE_CHECKING:
+    from cleo.io.inputs.argument import Argument
+    from cleo.io.inputs.option import Option
 
 
 class CompletionsCommand(Command):
     name = "completions"
     description = "Generate completion scripts for your shell."
 
-    arguments = [
+    arguments: ClassVar[list[Argument]] = [
         helpers.argument(
             "shell", "The shell to generate the scripts for.", optional=True
         )
     ]
-    options = [
+    options: ClassVar[list[Option]] = [
         helpers.option(
             "alias", None, "Alias for the current command.", flag=False, multiple=True
         )
@@ -112,7 +123,7 @@ script. Consult your shells documentation for how to add such directives.
 
         if shell not in self.SUPPORTED_SHELLS:
             raise ValueError(
-                f'[shell] argument must be one of {", ".join(self.SUPPORTED_SHELLS)}'
+                f"[shell] argument must be one of {', '.join(self.SUPPORTED_SHELLS)}"
             )
 
         self.line(self.render(shell))
@@ -129,12 +140,34 @@ script. Consult your shells documentation for how to add such directives.
 
         raise RuntimeError(f"Unrecognized shell: {shell}")
 
+    @staticmethod
+    def _get_prog_name_from_stack() -> str:
+        package_name = ""
+        frame = inspect.currentframe()
+        f_back = frame.f_back if frame is not None else None
+        f_globals = f_back.f_globals if f_back is not None else None
+        # break reference cycle
+        # https://docs.python.org/3/library/inspect.html#the-interpreter-stack
+        del frame
+
+        if f_globals is not None:
+            package_name = cast(str, f_globals.get("__name__"))
+
+            if package_name == "__main__":
+                package_name = cast(str, f_globals.get("__package__"))
+
+            if package_name:
+                package_name = package_name.partition(".")[0]
+
+        if not package_name:
+            raise CleoRuntimeError("Can not determine package name")
+
+        return package_name
+
     def _get_script_name_and_path(self) -> tuple[str, str]:
-        # FIXME: when generating completions via `python -m script completions`,
-        # we incorrectly infer `script_name` as `__main__.py`
-        script_name = self._io.input.script_name or inspect.stack()[-1][1]
+        script_name = self._io.input.script_name or self._get_prog_name_from_stack()
         script_path = posixpath.realpath(script_name)
-        script_name = os.path.basename(script_path)
+        script_name = Path(script_path).name
 
         return script_name, script_path
 
@@ -154,7 +187,7 @@ script. Consult your shells documentation for how to add such directives.
         cmds = []
         cmds_opts = []
         for cmd in sorted(self.application.all().values(), key=lambda c: c.name or ""):
-            if cmd.hidden or not cmd.enabled or not cmd.name:
+            if cmd.hidden or not (cmd.enabled and cmd.name):
                 continue
             command_name = shell_quote(cmd.name) if " " in cmd.name else cmd.name
             cmds.append(command_name)
@@ -199,7 +232,7 @@ script. Consult your shells documentation for how to add such directives.
         cmds = []
         cmds_opts = []
         for cmd in sorted(self.application.all().values(), key=lambda c: c.name or ""):
-            if cmd.hidden or not cmd.enabled or not cmd.name:
+            if cmd.hidden or not (cmd.enabled and cmd.name):
                 continue
             command_name = shell_quote(cmd.name) if " " in cmd.name else cmd.name
             cmds.append(self._zsh_describe(command_name, sanitize(cmd.description)))
@@ -241,26 +274,54 @@ script. Consult your shells documentation for how to add such directives.
         # Commands + options
         cmds = []
         cmds_opts = []
-        cmds_names = []
+        namespaces = set()
         for cmd in sorted(self.application.all().values(), key=lambda c: c.name or ""):
             if cmd.hidden or not cmd.enabled or not cmd.name:
                 continue
-            command_name = shell_quote(cmd.name) if " " in cmd.name else cmd.name
-            cmds.append(
-                f"complete -c {script_name} -f -n '__fish{function}_no_subcommand' "
-                f"-a {command_name} -d '{sanitize(cmd.description)}'"
-            )
+            cmd_path = cmd.name.split(" ")
+            namespace = cmd_path[0]
+            cmd_name = cmd_path[-1] if " " in cmd.name else cmd.name
+
+            # We either have a command like `poetry add` or a nested (namespaced)
+            # command like `poetry cache clear`.
+            if len(cmd_path) == 1:
+                cmds.append(
+                    f"complete -c {script_name} -f -n '__fish{function}_no_subcommand' "
+                    f"-a {cmd_name} -d '{sanitize(cmd.description)}'"
+                )
+                condition = f"__fish_seen_subcommand_from {cmd_name}"
+            else:
+                # Complete the namespace first
+                if namespace not in namespaces:
+                    cmds.append(
+                        f"complete -c {script_name} -f -n "
+                        f"'__fish{function}_no_subcommand' -a {namespace}"
+                    )
+                # Now complete the command
+                subcmds = [
+                    name.split(" ")[-1] for name in self.application.all(namespace)
+                ]
+                cmds.append(
+                    f"complete -c {script_name} -f -n '__fish_seen_subcommand_from "
+                    f"{namespace}; and not __fish_seen_subcommand_from {' '.join(subcmds)}' "
+                    f"-a {cmd_name} -d '{sanitize(cmd.description)}'"
+                )
+                condition = (
+                    f"__fish_seen_subcommand_from {namespace}; "
+                    f"and __fish_seen_subcommand_from {cmd_name}"
+                )
+
             cmds_opts += [
-                f"# {command_name}",
+                f"# {cmd.name}",
                 *[
-                    f"complete -c {script_name} -A "
-                    f"-n '__fish_seen_subcommand_from {sanitize(command_name)}' "
+                    f"complete -c {script_name} "
+                    f"-n '{condition}' "
                     f"-l {opt.name} -d '{sanitize(opt.description)}'"
                     for opt in sorted(cmd.definition.options, key=lambda o: o.name)
                 ],
                 "",  # newline
             ]
-            cmds_names.append(command_name)
+            namespaces.add(namespace)
 
         return TEMPLATES["fish"] % {
             "script_name": script_name,
@@ -268,7 +329,7 @@ script. Consult your shells documentation for how to add such directives.
             "opts": "\n".join(opts),
             "cmds": "\n".join(cmds),
             "cmds_opts": "\n".join(cmds_opts[:-1]),  # trim trailing newline
-            "cmds_names": " ".join(cmds_names),
+            "cmds_names": " ".join(sorted(namespaces)),
         }
 
     def get_shell_type(self) -> str:
@@ -279,23 +340,23 @@ script. Consult your shells documentation for how to add such directives.
                 "Please specify your shell type by passing it as the first argument."
             )
 
-        return os.path.basename(shell)
+        return Path(shell).name
 
     def _generate_function_name(self, script_name: str, script_path: str) -> str:
         sanitized_name = self._sanitize_for_function_name(script_name)
-        md5_hash = hashlib.md5(script_path.encode()).hexdigest()[0:16]
+        md5_hash = hashlib.md5(script_path.encode()).hexdigest()[:16]
         return f"_{sanitized_name}_{md5_hash}_complete"
 
     def _sanitize_for_function_name(self, name: str) -> str:
         name = name.replace("-", "_")
 
-        return re.sub("[^A-Za-z0-9_]+", "", name)
+        return re.sub(r"[^A-Za-z0-9_]+", "", name)
 
     def _zsh_describe(self, value: str, description: str | None = None) -> str:
         value = '"' + value.replace(":", "\\:")
         if description:
             description = re.sub(
-                r'(["\'#&;`|*?~<>^()\[\]{}$\\\x0A\xFF])', r"\\\1", description
+                r"([\"'#&;`|*?~<>^()\[\]{}$\\\x0A\xFF])", r"\\\1", description
             )
             value += ":" + subprocess.list2cmdline([description]).strip('"')
 

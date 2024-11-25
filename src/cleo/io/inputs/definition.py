@@ -4,13 +4,14 @@ import sys
 
 from typing import TYPE_CHECKING
 from typing import Any
-from typing import Sequence
 
 from cleo.exceptions import CleoLogicError
 from cleo.io.inputs.option import Option
 
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from cleo.io.inputs.argument import Argument
 
 
@@ -22,15 +23,12 @@ class Definition:
     def __init__(self, definition: Sequence[Argument | Option] | None = None) -> None:
         self._arguments: dict[str, Argument] = {}
         self._required_count = 0
-        self._has_a_list_argument = False
+        self._has_list_argument = False
         self._has_optional = False
         self._options: dict[str, Option] = {}
         self._shortcuts: dict[str, str] = {}
 
-        if definition is None:
-            definition = []
-
-        self.set_definition(definition)
+        self.set_definition(definition or [])
 
     @property
     def arguments(self) -> list[Argument]:
@@ -38,7 +36,7 @@ class Definition:
 
     @property
     def argument_count(self) -> int:
-        if self._has_a_list_argument:
+        if self._has_list_argument:
             return sys.maxsize
 
         return len(self._arguments)
@@ -62,11 +60,7 @@ class Definition:
 
     @property
     def option_defaults(self) -> dict[str, Any]:
-        values = {}
-        for option in self._options.values():
-            values[option.name] = option.default
-
-        return values
+        return {o.name: o.default for o in self._options.values()}
 
     def set_definition(self, definition: Sequence[Argument | Option]) -> None:
         arguments = []
@@ -84,7 +78,7 @@ class Definition:
     def set_arguments(self, arguments: list[Argument]) -> None:
         self._arguments = {}
         self._required_count = 0
-        self._has_a_list_argument = False
+        self._has_list_argument = False
         self._has_optional = False
         self.add_arguments(arguments)
 
@@ -98,14 +92,14 @@ class Definition:
                 f'An argument with name "{argument.name}" already exists'
             )
 
-        if self._has_a_list_argument:
+        if self._has_list_argument:
             raise CleoLogicError("Cannot add an argument after a list argument")
 
         if argument.is_required() and self._has_optional:
             raise CleoLogicError("Cannot add a required argument after an optional one")
 
         if argument.is_list():
-            self._has_a_list_argument = True
+            self._has_list_argument = True
 
         if argument.is_required():
             self._required_count += 1
@@ -125,18 +119,11 @@ class Definition:
         return self._arguments[name]
 
     def has_argument(self, name: str | int) -> bool:
-        arguments: dict[str, Argument] | list[Argument]
         if isinstance(name, int):
-            arguments = list(self._arguments.values())
-        else:
-            arguments = self._arguments
-
-        try:
-            arguments[name]  # type: ignore[index]
-        except (KeyError, IndexError):
-            return False
-
-        return True
+            # Check if this is a valid argument index
+            # abs(x + (x < 0)) to normalize negative indices
+            return abs(name + (name < 0)) < len(self._arguments)
+        return name in self._arguments
 
     def set_options(self, options: list[Option]) -> None:
         self._options = {}

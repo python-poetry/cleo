@@ -34,10 +34,6 @@ from cleo.ui.ui import UI
 
 
 if TYPE_CHECKING:
-    from crashtest.solution_providers.solution_provider_repository import (
-        SolutionProviderRepository,
-    )
-
     from cleo.commands.command import Command
     from cleo.events.event_dispatcher import EventDispatcher
     from cleo.io.inputs.input import Input
@@ -77,8 +73,6 @@ class Application:
         self._event_dispatcher: EventDispatcher | None = None
 
         self._command_loader: CommandLoader | None = None
-
-        self._solution_provider_repository: SolutionProviderRepository | None = None
 
     @property
     def name(self) -> str:
@@ -170,11 +164,6 @@ class Application:
     def is_single_command(self) -> bool:
         return self._single_command
 
-    def set_solution_provider_repository(
-        self, solution_provider_repository: SolutionProviderRepository
-    ) -> None:
-        self._solution_provider_repository = solution_provider_repository
-
     def add(self, command: Command) -> Command | None:
         self._init()
 
@@ -258,9 +247,7 @@ class Application:
         return namespaces
 
     def find_namespace(self, namespace: str) -> str:
-        all_namespaces = self.get_namespaces()
-
-        if namespace not in all_namespaces:
+        if namespace not in (all_namespaces := self.get_namespaces()):
             raise CleoNamespaceNotFoundError(namespace, all_namespaces)
 
         return namespace
@@ -420,7 +407,7 @@ class Application:
                     break
 
             if index is not None:
-                del argv[index + 1 : index + 1 + (len(name.split(" ")) - 1)]
+                del argv[index + 1 : index + 1 + name.count(" ")]
 
             stream = io.input.stream
             interactive = io.input.is_interactive()
@@ -493,11 +480,9 @@ class Application:
         return IO(input, output, error_output)
 
     def render_error(self, error: Exception, io: IO) -> None:
-        from cleo.ui.exception_trace import ExceptionTrace
+        from cleo.ui.exception_trace.component import ExceptionTrace
 
-        trace = ExceptionTrace(
-            error, solution_provider_repository=self._solution_provider_repository
-        )
+        trace = ExceptionTrace(error)
         simple = not io.is_verbose() or isinstance(error, CleoUserError)
         trace.render(io.error_output, simple)
 
@@ -614,11 +599,7 @@ class Application:
 
     def extract_namespace(self, name: str, limit: int | None = None) -> str:
         parts = name.split(" ")[:-1]
-
-        if limit is not None:
-            return " ".join(parts[:limit])
-
-        return " ".join(parts)
+        return " ".join(parts[:limit])
 
     def _get_default_ui(self) -> UI:
         from cleo.ui.progress_bar import ProgressBar
@@ -631,10 +612,7 @@ class Application:
         namespaces: list[str] = []
 
         for part in parts:
-            if namespaces:
-                namespaces.append(namespaces[-1] + " " + part)
-            else:
-                namespaces.append(part)
+            namespaces.append(namespaces[-1] + " " + part if namespaces else part)
 
         return namespaces
 

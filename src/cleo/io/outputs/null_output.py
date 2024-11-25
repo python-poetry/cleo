@@ -1,10 +1,14 @@
 from __future__ import annotations
 
-from typing import Iterable
+from typing import TYPE_CHECKING
 
 from cleo.io.outputs.output import Output
 from cleo.io.outputs.output import Type
 from cleo.io.outputs.output import Verbosity
+
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 class NullOutput(Output):

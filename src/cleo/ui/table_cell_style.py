@@ -1,18 +1,12 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-from typing import Union
 
 
 if TYPE_CHECKING:
-    import sys
+    from typing import Literal
 
-    if sys.version_info >= (3, 8):
-        from typing import Literal
-    else:
-        from typing_extensions import Literal
-
-    _Align = Union[Literal["left"], Literal["right"]]
+    _Align = Literal["left", "right"]
 
 
 class TableCellStyle:
@@ -39,7 +33,7 @@ class TableCellStyle:
         tag = "<fg={};bg={}"
 
         if self._options:
-            tag += f';options={",".join(self._options)}'
+            tag += f";options={','.join(self._options)}"
 
         tag += ">"
 

@@ -42,12 +42,12 @@ class SectionOutput(StreamOutput):
         return self._lines
 
     def clear(self, lines: int | None = None) -> None:
-        if not self._content or not self.is_decorated():
+        if not (self._content and self.is_decorated()):
             return
 
         if lines:
             # Multiply lines by 2 to cater for each new line added between content
-            del self._content[-(lines * 2) :]
+            del self._content[-lines * 2 :]
         else:
             lines = self._lines
             self._content = []
@@ -66,7 +66,7 @@ class SectionOutput(StreamOutput):
         for line_content in content.split("\n"):
             self._lines += (
                 math.ceil(
-                    len(self.remove_format(line_content).replace("\t", "        "))
+                    len(self.remove_format(line_content).replace("\t", " " * 8))
                     / self._terminal.width
                 )
                 or 1
@@ -76,7 +76,8 @@ class SectionOutput(StreamOutput):
 
     def _write(self, message: str, new_line: bool = False) -> None:
         if not self.is_decorated():
-            return super()._write(message, new_line=new_line)
+            super()._write(message, new_line=new_line)
+            return
 
         erased_content = self._pop_stream_content_until_current_section()
 

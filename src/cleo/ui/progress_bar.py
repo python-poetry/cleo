@@ -4,8 +4,9 @@ import math
 import re
 import time
 
+from re import Match
 from typing import TYPE_CHECKING
-from typing import Match
+from typing import ClassVar
 
 from cleo._utils import format_time
 from cleo.cursor import Cursor
@@ -33,13 +34,13 @@ class ProgressBar(Component):
     progress_char = ">"
     redraw_freq: int | None = 1
 
-    formats = {
+    formats: ClassVar[dict[str, str]] = {
         "normal": " %current%/%max% [%bar%] %percent:3s%%",
         "normal_nomax": " %current% [%bar%]",
         "verbose": " %current%/%max% [%bar%] %percent:3s%% %elapsed:-6s%",
         "verbose_nomax": " %current% [%bar%] %elapsed:6s%",
         "very_verbose": (
-            " %current%/%max% [%bar%] %percent:3s%%" " %elapsed:6s%/%estimated:-6s%"
+            " %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s%"
         ),
         "very_verbose_nomax": " %current% [%bar%] %elapsed:6s%",
         "debug": " %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s%",
@@ -193,11 +194,7 @@ class ProgressBar(Component):
         curr_period = int(step / redraw_freq)
 
         self._step = step
-
-        if self._max:
-            self._percent = self._step / self._max
-        else:
-            self._percent = 0.0
+        self._percent = step / (self._max or math.inf)
 
         time_interval = time.time() - self._last_write_time
 
@@ -253,10 +250,10 @@ class ProgressBar(Component):
             return matches.group(0)
 
         if matches.group(2):
+            n = int(matches.group(2).lstrip("-").rstrip("s"))
             if matches.group(2).startswith("-"):
-                text = text.ljust(int(matches.group(2).lstrip("-").rstrip("s")))
-            else:
-                text = text.rjust(int(matches.group(2).rstrip("s")))
+                return text.ljust(n)
+            return text.rjust(n)
 
         return text
 
@@ -295,11 +292,7 @@ class ProgressBar(Component):
         Sets the progress bar maximal steps.
         """
         self._max = max(0, mx)
-
-        if self._max:
-            self._step_width = len(str(self._max))
-        else:
-            self._step_width = 4
+        self._step_width = len(str(self._max)) if self._max else 4
 
     def _overwrite(self, message: str) -> None:
         """
@@ -314,12 +307,7 @@ class ProgressBar(Component):
             if self._previous_message is not None:
                 if isinstance(self._io, SectionOutput):
                     lines_to_clear = (
-                        int(
-                            math.floor(
-                                len(self._io.remove_format(message))
-                                / self._terminal.width
-                            )
-                        )
+                        len(self._io.remove_format(message)) // self._terminal.width
                         + self._format_line_count
                         + 1
                     )
@@ -340,38 +328,25 @@ class ProgressBar(Component):
         self._write_count += 1
 
     def _determine_best_format(self) -> str:
+        fmt = "normal"
         if self._io.is_debug():
-            if self._max:
-                return "debug"
-
-            return "debug_nomax"
+            fmt = "debug"
         elif self._io.is_very_verbose():
-            if self._max:
-                return "very_verbose"
-
-            return "very_verbose_nomax"
+            fmt = "very_verbose"
         elif self._io.is_verbose():
-            if self._max:
-                return "verbose"
+            fmt = "verbose"
 
-            return "verbose_nomax"
-
-        if self._max:
-            return "normal"
-
-        return "normal_nomax"
+        return fmt if self._max else f"{fmt}_nomax"
 
     @property
     def bar_offset(self) -> int:
         if self._max:
             return math.floor(self._percent * self.bar_width)
-        else:
-            if self.redraw_freq is None:
-                return math.floor(
-                    (min(5, self.bar_width // 15) * self._write_count) % self.bar_width
-                )
-
-            return math.floor(self._step % self.bar_width)
+        if self.redraw_freq is None:
+            return math.floor(
+                (min(5, self.bar_width // 15) * self._write_count) % self.bar_width
+            )
+        return math.floor(self._step % self.bar_width)
 
     def _formatter_bar(self) -> str:
         complete_bars = self.bar_offset
@@ -415,14 +390,12 @@ class ProgressBar(Component):
             )
 
         if not self._step:
-            estimated = 0
-        else:
-            estimated = round((time.time() - self._start_time) / self._step * self._max)
+            return 0
 
-        return estimated
+        return round((time.time() - self._start_time) / self._step * self._max)
 
     def _formatter_current(self) -> str:
-        return str(self._step).rjust(self._step_width, " ")
+        return str(self._step).rjust(self._step_width)
 
     def _formatter_max(self) -> int:
         return self._max

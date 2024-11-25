@@ -4,9 +4,10 @@ import getpass
 import os
 import subprocess
 
+from collections.abc import Callable
+from pathlib import Path
 from typing import TYPE_CHECKING
 from typing import Any
-from typing import Callable
 
 from cleo.formatters.style import Style
 from cleo.io.outputs.stream_output import StreamOutput
@@ -87,7 +88,7 @@ class Question:
         """
         self._write_prompt(io)
 
-        if not self._autocomplete_values or not self._has_stty_available():
+        if not (self._autocomplete_values and self._has_stty_available()):
             ret: str | None = None
 
             if self.is_hidden():
@@ -264,7 +265,7 @@ class Question:
         return ret.strip()
 
     def _has_stty_available(self) -> bool:
-        with open(os.devnull, "w") as devnull:
+        with Path(os.devnull).open("w", encoding="utf-8") as devnull:
             try:
                 exit_code = subprocess.call(["stty"], stdout=devnull, stderr=devnull)
             except Exception:

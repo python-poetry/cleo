@@ -4,6 +4,7 @@ import pytest
 
 from cleo._utils import find_similar_names
 from cleo._utils import format_time
+from cleo._utils import strip_tags
 
 
 @pytest.mark.parametrize(
@@ -29,13 +30,18 @@ def test_format_time(input_secs: float, expected: str) -> None:
 @pytest.mark.parametrize(
     ["name", "expected"],
     [
-        ("", ["help", "foo1", "foo2", "bar1", "bar2", "foo bar1", "foo bar2"]),
-        ("hellp", ["help"]),
-        ("bar2", ["bar2", "bar1", "foo bar2"]),
-        ("bar1", ["bar1", "bar2", "foo bar1"]),
-        ("foo", ["foo1", "foo2", "foo bar1", "foo bar2"]),
+        ("env add", ["env remove", "env activate", "env info", "env list", "env use"]),
+        ("evn add", ["env activate", "env use"]),
+        ("env", ["env remove", "env info", "env list", "env use"]),
     ],
 )
 def test_find_similar_names(name: str, expected: list[str]) -> None:
-    names = ["help", "foo1", "foo2", "bar1", "bar2", "foo bar1", "foo bar2"]
+    names = ["env info", "env use", "env activate", "env remove", "env list"]
     assert find_similar_names(name, names) == expected
+
+
+@pytest.mark.parametrize(
+    "value, expected", (("<ab> cde</>", " cde"), ("<ab", "<ab"), ("cd>", "cd>"))
+)
+def test_strip_tags(value: str, expected: str) -> None:
+    assert strip_tags(value) == expected

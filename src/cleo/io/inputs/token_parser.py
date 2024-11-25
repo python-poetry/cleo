@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 
+QUOTES = {"'", '"'}
+
+
 class TokenParser:
     """
     Parses tokens from a string passed to StringArgs.
@@ -16,16 +19,12 @@ class TokenParser:
         self._string = string
         self._cursor = 0
         self._current = None
-        if len(string) > 0:
+        if string:
             self._current = string[0]
 
-        self._next_ = None
-        if len(string) > 1:
-            self._next_ = string[1]
+        self._next_ = string[1] if len(string) > 1 else None
 
-        tokens = self._parse()
-
-        return tokens
+        return self._parse()
 
     def _parse(self) -> list[str]:
         tokens = []
@@ -37,8 +36,7 @@ class TokenParser:
 
                 continue
 
-            if self._current is not None:
-                tokens.append(self._parse_token())
+            tokens.append(self._parse_token())
 
         return tokens
 
@@ -68,7 +66,7 @@ class TokenParser:
 
             if self._current == "\\":
                 token += self._parse_escape_sequence()
-            elif self._current in ["'", '"']:
+            elif self._current in QUOTES:
                 token += self._parse_quoted_string()
             else:
                 token += self._current
@@ -102,7 +100,7 @@ class TokenParser:
         return string
 
     def _parse_escape_sequence(self) -> str:
-        if self._next_ in ['"', "'"]:
+        if self._next_ in QUOTES:
             sequence = self._next_
         else:
             assert self._next_ is not None

@@ -13,16 +13,16 @@ class CommandLoader:
         """
         All registered command names.
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get(self, name: str) -> Command:
         """
         Loads a command.
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def has(self, name: str) -> bool:
         """
         Checks whether a command exists or not.
         """
-        raise NotImplementedError()
+        raise NotImplementedError

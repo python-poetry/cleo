@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import time
-
 from typing import TYPE_CHECKING
 
 import pytest
@@ -11,6 +9,8 @@ from cleo.ui.progress_bar import ProgressBar
 
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from cleo.io.buffered_io import BufferedIO
 
 
@@ -31,7 +31,7 @@ def generate_output(expected: list[str]) -> str:
             count = line.count("\n")
 
             if count:
-                output += f"\x1B[{count}A\x1B[1G\x1b[2K"
+                output += f"\x1b[{count}A\x1b[1G\x1b[2K"
             else:
                 output += "\x1b[1G\x1b[2K"
 
@@ -326,21 +326,21 @@ def test_non_decorated_output(io: BufferedIO) -> None:
 
     bar.finish()
 
-    expected = "\n".join(
-        [
-            "   0/200 [>---------------------------]   0%",
-            "  20/200 [==>-------------------------]  10%",
-            "  40/200 [=====>----------------------]  20%",
-            "  60/200 [========>-------------------]  30%",
-            "  80/200 [===========>----------------]  40%",
-            " 100/200 [==============>-------------]  50%",
-            " 120/200 [================>-----------]  60%",
-            " 140/200 [===================>--------]  70%",
-            " 160/200 [======================>-----]  80%",
-            " 180/200 [=========================>--]  90%",
-            " 200/200 [============================] 100%",
-        ]
-    )
+    output = [
+        "   0/200 [>---------------------------]   0%",
+        "  20/200 [==>-------------------------]  10%",
+        "  40/200 [=====>----------------------]  20%",
+        "  60/200 [========>-------------------]  30%",
+        "  80/200 [===========>----------------]  40%",
+        " 100/200 [==============>-------------]  50%",
+        " 120/200 [================>-----------]  60%",
+        " 140/200 [===================>--------]  70%",
+        " 160/200 [======================>-----]  80%",
+        " 180/200 [=========================>--]  90%",
+        " 200/200 [============================] 100%",
+    ]
+
+    expected = "\n".join(output)
 
     assert expected == io.fetch_error()
 
@@ -486,16 +486,16 @@ def test_overwrite_multiple_progress_bars_with_section_outputs(
 
 
 def test_min_and_max_seconds_between_redraws(
-    ansi_bar: ProgressBar, ansi_io: BufferedIO
+    ansi_bar: ProgressBar, ansi_io: BufferedIO, sleep: Callable[[float], None]
 ) -> None:
     ansi_bar.min_seconds_between_redraws(0.5)
     ansi_bar.max_seconds_between_redraws(2 - 1)
 
     ansi_bar.start()
     ansi_bar.set_progress(1)
-    time.sleep(1)
+    sleep(1)
     ansi_bar.set_progress(2)
-    time.sleep(2)
+    sleep(2)
     ansi_bar.set_progress(3)
 
     output = [

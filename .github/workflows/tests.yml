@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+env:
+  PYTHONWARNDEFAULTENCODING: true
+
 jobs:
   Tests:
     name: ${{ matrix.os }} / ${{ matrix.python-version }}
@@ -12,7 +15,7 @@ jobs:
     strategy:
       matrix:
         os: [Ubuntu, macOS, Windows]
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
         include:
           - os: Ubuntu
             image: ubuntu-22.04
@@ -25,58 +28,22 @@ jobs:
         shell: bash
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Get full python version
-        id: full-python-version
-        run: |
-          echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
+      - uses: actions/checkout@v4
 
       - name: Install Poetry
-        run: |
-          curl -sL https://install.python-poetry.org | python - -y
+        run: pipx install poetry
 
-      - name: Update PATH
-        if: ${{ matrix.os != 'Windows' }}
-        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Update Path for Windows
-        if: ${{ matrix.os == 'Windows' }}
-        run: echo "$APPDATA\Python\Scripts" >> $GITHUB_PATH
-
-      - name: Setup Poetry
-        run: |
-          poetry config virtualenvs.in-project true
-
-      - name: Set up cache
-        uses: actions/cache@v3
-        id: cache
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
         with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Ensure cache is healthy
-        if: steps.cache.outputs.cache-hit == 'true'
-        run: |
-          # `timeout` is not available on macOS, so we define a custom function.
-          [ "$(command -v timeout)" ] || function timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
-          # Using `timeout` is a safeguard against the Poetry command hanging for some reason.
-          timeout 10s poetry run pip --version || rm -rf .venv
+          python-version: ${{ matrix.python-version }}
+          cache: poetry
 
       - name: Install dependencies
-        run: |
-          poetry install
+        run: poetry install
 
       - name: Run typechecking
-        run: |
-          poetry run mypy
+        run: poetry run mypy
 
       - name: Run tests
-        run: |
-          poetry run pytest -q tests
-          poetry install
+        run: poetry run pytest

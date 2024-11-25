@@ -4,6 +4,7 @@ import re
 
 from typing import TYPE_CHECKING
 from typing import Any
+from typing import cast
 
 from cleo.exceptions import CleoValueError
 from cleo.ui.question import Question
@@ -21,7 +22,7 @@ class SelectChoiceValidator:
         self._question = question
         self._values = question.choices
 
-    def validate(self, selected: str | int) -> str | list[str] | None:
+    def validate(self, selected: Any) -> str | list[str] | None:
         """
         Validate a choice.
         """
@@ -35,7 +36,7 @@ class SelectChoiceValidator:
         if self._question.supports_multiple_choices():
             # Check for a separated comma values
             _selected = selected.replace(" ", "")
-            if not re.match("^[a-zA-Z0-9_-]+(?:,[a-zA-Z0-9_-]+)*$", _selected):
+            if not re.match(r"^[a-zA-Z0-9_-]+(?:,[a-zA-Z0-9_-]+)*$", _selected):
                 raise CleoValueError(self._question.error_message.format(selected))
 
             selected_choices = _selected.split(",")
@@ -53,7 +54,7 @@ class SelectChoiceValidator:
             if len(results) > 1:
                 raise CleoValueError(
                     "The provided answer is ambiguous. "
-                    f'Value should be one of {" or ".join(str(r) for r in results)}.'
+                    f"Value should be one of {' or '.join(str(r) for r in results)}."
                 )
 
             if value in self._values:
@@ -68,7 +69,7 @@ class SelectChoiceValidator:
         if self._question.supports_multiple_choices():
             return multiselect_choices
 
-        return multiselect_choices[0]
+        return cast("str | list[str] | None", multiselect_choices[0])
 
 
 class ChoiceQuestion(Question):
@@ -123,7 +124,7 @@ class ChoiceQuestion(Question):
 
             message = (
                 f"<question>{message}</question> "
-                f'[<comment>{", ".join(default)}</comment>]:'
+                f"[<comment>{', '.join(default)}</comment>]:"
             )
         else:
             choices = self._choices
@@ -132,10 +133,7 @@ class ChoiceQuestion(Question):
                 f"[<comment>{choices[int(default)]}</comment>]:"
             )
 
-        if len(self._choices) > 1:
-            width = max(*map(len, [str(k) for k, _ in enumerate(self._choices)]))
-        else:
-            width = 1
+        width = len(str(len(self._choices) - 1)) if len(self._choices) > 1 else 1
 
         messages = [message]
         for key, value in enumerate(self._choices):

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from typing import ClassVar
 
 from cleo.commands.command import Command
 
@@ -14,7 +15,7 @@ class FooCommand(Command):
 
     description = "The foo bar command"
 
-    aliases = ["afoobar"]
+    aliases: ClassVar[list[str]] = ["afoobar"]
 
     def interact(self, io: IO) -> None:
         io.write_line("interact called")

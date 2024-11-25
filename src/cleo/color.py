@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import os
 
+from typing import ClassVar
+
 from cleo.exceptions import CleoValueError
 
 
 class Color:
-    COLORS = {
+    COLORS: ClassVar[dict[str, tuple[int, int]]] = {
         "black": (30, 40),
         "red": (31, 41),
         "green": (32, 42),
@@ -26,7 +28,7 @@ class Color:
         "white": (97, 107),
     }
 
-    AVAILABLE_OPTIONS = {
+    AVAILABLE_OPTIONS: ClassVar[dict[str, dict[str, int]]] = {
         "bold": {"set": 1, "unset": 22},
         "dark": {"set": 2, "unset": 22},
         "italic": {"set": 3, "unset": 23},
@@ -45,15 +47,12 @@ class Color:
         self._foreground = self._parse_color(foreground, False)
         self._background = self._parse_color(background, True)
 
-        if options is None:
-            options = []
-
         self._options = {}
-        for option in options:
+        for option in options or []:
             if option not in self.AVAILABLE_OPTIONS:
                 raise ValueError(
                     f'"{option}" is not a valid color option. '
-                    f'It must be one of {", ".join(self.AVAILABLE_OPTIONS.keys())}'
+                    f"It must be one of {', '.join(self.AVAILABLE_OPTIONS)}"
                 )
 
             self._options[option] = self.AVAILABLE_OPTIONS[option]
@@ -70,13 +69,12 @@ class Color:
         if self._background:
             codes.append(self._background)
 
-        for option in self._options.values():
-            codes.append(str(option["set"]))
+        codes.extend(str(option["set"]) for option in self._options.values())
 
         if not codes:
             return ""
 
-        return f'\033[{";".join(codes)}m'
+        return f"\033[{';'.join(codes)}m"
 
     def unset(self) -> str:
         codes = []
@@ -87,13 +85,12 @@ class Color:
         if self._background:
             codes.append("49")
 
-        for option in self._options.values():
-            codes.append(str(option["unset"]))
+        codes.extend(str(option["unset"]) for option in self._options.values())
 
         if not codes:
             return ""
 
-        return f'\033[{";".join(codes)}m'
+        return f"\033[{';'.join(codes)}m"
 
     def _parse_color(self, color: str, background: bool) -> str:
         if not color:
@@ -115,7 +112,7 @@ class Color:
         if color not in self.COLORS:
             raise CleoValueError(
                 f'"{color}" is an invalid color.'
-                f' It must be one of {", ".join(self.COLORS.keys())}'
+                f" It must be one of {', '.join(self.COLORS)}"
             )
 
         return str(self.COLORS[color][int(background)])

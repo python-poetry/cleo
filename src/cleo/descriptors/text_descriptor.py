@@ -5,7 +5,6 @@ import re
 
 from typing import TYPE_CHECKING
 from typing import Any
-from typing import Sequence
 
 from cleo.commands.command import Command
 from cleo.descriptors.descriptor import Descriptor
@@ -14,6 +13,8 @@ from cleo.io.inputs.definition import Definition
 
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from cleo.application import Application
     from cleo.io.inputs.argument import Argument
     from cleo.io.inputs.option import Option
@@ -40,7 +41,7 @@ class TextDescriptor(Descriptor):
             argument.description,
         )
         self._write(
-            f'  <c1>{argument.name}</c1>  {" " * spacing_width}'
+            f"  <c1>{argument.name}</c1>  {' ' * spacing_width}"
             f"{sub_argument_description}{default}"
         )
 
@@ -82,7 +83,7 @@ class TextDescriptor(Descriptor):
         )
         self._write(
             f"  <c1>{synopsis}</c1>  "
-            f'{" " * spacing_width}{sub_option_description}'
+            f"{' ' * spacing_width}{sub_option_description}"
             f"{default}"
             f"{are_multiple_values_allowed}"
         )
@@ -160,8 +161,7 @@ class TextDescriptor(Descriptor):
         described_namespace = options.get("namespace")
         description = ApplicationDescription(application, namespace=described_namespace)
 
-        help_text = application.help
-        if help_text:
+        if help_text := application.help:
             self._write(f"{help_text}\n\n")
 
         self._write("<b>Usage:</b>\n")
@@ -169,19 +169,18 @@ class TextDescriptor(Descriptor):
 
         self._describe_definition(Definition(application.definition.options), **options)
 
-        self._write("\n")
-        self._write("\n")
+        self._write("\n\n")
 
         commands = description.commands
         namespaces = description.namespaces
 
         if described_namespace and namespaces:
-            described_namespace_info = list(namespaces.values())[0]
+            described_namespace_info = next(iter(namespaces.values()))
             for name in described_namespace_info["commands"]:
                 commands[name] = description.command(name)
 
         # calculate max width based on available commands per namespace
-        all_commands = list(commands.keys())
+        all_commands = list(commands)
         for namespace in namespaces.values():
             all_commands += namespace["commands"]
 
@@ -199,12 +198,12 @@ class TextDescriptor(Descriptor):
             if not namespace["commands"]:
                 continue
 
-            if (
-                not described_namespace
-                and namespace["id"] != ApplicationDescription.GLOBAL_NAMESPACE
+            if not (
+                described_namespace
+                or namespace["id"] == ApplicationDescription.GLOBAL_NAMESPACE
             ):
                 self._write("\n")
-                self._write(f' <comment>{namespace["id"]}</comment>')
+                self._write(f" <comment>{namespace['id']}</comment>")
 
             for name in namespace["commands"]:
                 self._write("\n")
@@ -216,30 +215,25 @@ class TextDescriptor(Descriptor):
                     else ""
                 )
                 self._write(
-                    f'  <c1>{name}</c1>{" " * spacing_width}'
+                    f"  <c1>{name}</c1>{' ' * spacing_width}"
                     f"{command_aliases + command.description}"
                 )
 
             self._write("\n")
 
     def _format_default_value(self, default: Any) -> str:
-        new_default: Any
         if isinstance(default, str):
             default = Formatter.escape(default)
         elif isinstance(default, list):
-            new_default = []
-            for value in default:
-                if isinstance(value, str):
-                    new_default.append(Formatter.escape(value))
-
-            default = new_default
+            default = [
+                Formatter.escape(value) for value in default if isinstance(value, str)
+            ]
         elif isinstance(default, dict):
-            new_default = {}
-            for key, value in default.items():
-                if isinstance(value, str):
-                    new_default[key] = Formatter.escape(value)
-
-            default = new_default
+            default = {
+                key: Formatter.escape(value)
+                for key, value in default.items()
+                if isinstance(value, str)
+            }
 
         return json.dumps(default).replace("\\\\", "\\")
 
@@ -261,14 +255,13 @@ class TextDescriptor(Descriptor):
         return total_width
 
     def _get_column_width(self, commands: Sequence[Command | str]) -> int:
-        widths = []
+        widths: list[int] = []
 
         for command in commands:
             if isinstance(command, Command):
                 assert command.name is not None
                 widths.append(len(command.name))
-                for alias in command.aliases:
-                    widths.append(len(alias))
+                widths.extend(len(alias) for alias in command.aliases)
             else:
                 widths.append(len(command))
 
@@ -278,10 +271,7 @@ class TextDescriptor(Descriptor):
         return max(widths) + 2
 
     def _get_command_aliases_text(self, command: Command) -> str:
-        text = ""
-        aliases = command.aliases
+        if aliases := command.aliases:
+            return f"[{ '|'.join(aliases) }] "
 
-        if aliases:
-            text = f'[{ "|".join(aliases) }] '
-
-        return text
+        return ""
