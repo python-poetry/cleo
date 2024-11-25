@@ -97,7 +97,7 @@ class ArgvInput(Input):
                 # For short options, test for '-o' at beginning
                 leading = value + "=" if value.startswith("--") else value
 
-                if token == value or leading != "" and token.startswith(leading):
+                if token == value or (leading != "" and token.startswith(leading)):
                     return True
 
         return False
@@ -129,7 +129,7 @@ class ArgvInput(Input):
                 # For short options, test for '-o' at beginning
                 leading = value + "=" if value.startswith("--") else value
 
-                if token == value or leading != "" and token.startswith(leading):
+                if token == value or (leading != "" and token.startswith(leading)):
                     return token[len(leading)]
 
         return False
