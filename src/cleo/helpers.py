@@ -40,3 +40,12 @@ def option(
         description=description,
         default=default,
     )
+
+
+def tokenize(string: str) -> list[str]:  # pragma: no cover
+    """
+    Split the string using shell-like syntax. Maps directly to using `shlex.split`
+    """
+    import shlex
+
+    return shlex.split(string)

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from cleo.helpers import tokenize
 from cleo.io.inputs.argv_input import ArgvInput
-from cleo.io.inputs.token_parser import TokenParser
 
 
 class StringInput(ArgvInput):
@@ -15,4 +15,4 @@ class StringInput(ArgvInput):
         self._set_tokens(self._tokenize(input))
 
     def _tokenize(self, input: str) -> list[str]:
-        return TokenParser().parse(input)
+        return tokenize(input)
