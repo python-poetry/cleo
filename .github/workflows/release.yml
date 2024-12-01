@@ -1,88 +1,58 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - '*.*.*'
+  release:
+    types: [published]
 
 jobs:
-
-  Build:
+  build:
+    name: Build
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Get tag
-      id: tag
-      run: |
-        echo tag=${GITHUB_REF#refs/tags/} >> $GITHUB_OUTPUT
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.10"
+      - run: pipx run build
 
-    - name: Install and set up Poetry
-      run: |
-        curl -sL https://install.python-poetry.org | python - -y
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        with:
+          name: distfiles
+          path: dist/
+          if-no-files-found: error
 
-    - name: Update PATH
-      shell: bash
-      run: echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-    - name: Build distributions
-      run: |
-        poetry build -vvv
-
-    - name: Upload distribution artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: project-dist
-        path: dist
-
-  Publish:
-    needs: [Build]
+  upload-github:
+    name: Upload (GitHub)
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
+    needs: build
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Get tag
-        id: tag
-        run: |
-          echo tag=${GITHUB_REF#refs/tags/} >> $GITHUB_OUTPUT
+      # We need to be in a git repo for gh to work.
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
-      - name: Download distribution artifact
-        uses: actions/download-artifact@master
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
-          name: project-dist
-          path: dist
+          name: distfiles
+          path: dist/
 
-      - name: Install and set up Poetry
-        run: |
-          curl -sL https://install.python-poetry.org | python - -y
-
-      - name: Update PATH
-        shell: bash
-        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Check distributions
-        run: |
-          ls -la dist
-
-      - name: Publish to PyPI
+      - run: gh release upload ${{ github.event.release.tag_name }} dist/*.{tar.gz,whl}
         env:
-          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
-        run: |
-          poetry publish
+          GH_TOKEN: ${{ github.token }}
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+  upload-pypi:
+    name: Upload (PyPI)
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/cleo/
+    permissions:
+      id-token: write
+    needs: build
+    steps:
+      - uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
         with:
-          tag_name: ${{ steps.tag.outputs.tag }}
-          release_name: ${{ steps.tag.outputs.tag }}
-          draft: false
-          prerelease: false
+          name: distfiles
+          path: dist/
+
+      - uses: pypa/gh-action-pypi-publish@81e9d935c883d0b210363ab89cf05f3894778450 # v1.8.14
+        with:
+          print-hash: true
