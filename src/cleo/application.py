@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 import re
 import sys
@@ -27,6 +28,7 @@ from cleo.io.inputs.argv_input import ArgvInput
 from cleo.io.inputs.definition import Definition
 from cleo.io.inputs.option import Option
 from cleo.io.io import IO
+from cleo.io.output_handler import OutputHandler
 from cleo.io.outputs.output import Verbosity
 from cleo.io.outputs.stream_output import StreamOutput
 from cleo.terminal import Terminal
@@ -309,6 +311,7 @@ class Application:
             io = self.create_io(input, output, error_output)
 
             self._configure_io(io)
+            self._configure_logging(io)
 
             try:
                 exit_code = self._run(io)
@@ -529,6 +532,26 @@ class Application:
 
         if shell_verbosity == -1:
             io.interactive(False)
+
+    def _configure_logging(self, io: IO) -> None:
+        """
+        Configures the built-in logging package to write it's output via Cleo's output class.
+        """
+        root = logging.getLogger()
+
+        level_mapping = {
+            Verbosity.QUIET: logging.CRITICAL,  # Nothing gets emitted to the output anyway
+            Verbosity.NORMAL: logging.WARNING,
+            Verbosity.VERBOSE: logging.INFO,
+            Verbosity.VERY_VERBOSE: logging.DEBUG,
+            Verbosity.DEBUG: logging.DEBUG,
+        }
+
+        root.setLevel(level_mapping[io.output.verbosity])
+
+        handler = OutputHandler(io.output)
+        handler.setLevel(level_mapping[io.output.verbosity])
+        root.addHandler(handler)
 
     @property
     def _default_definition(self) -> Definition:
