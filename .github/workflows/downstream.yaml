@@ -23,10 +23,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          persist-credentials: false
           path: cleo
 
       - uses: actions/checkout@v4
         with:
+          persist-credentials: false
           path: poetry
           repository: python-poetry/poetry
           ref: ${{ matrix.ref }}
