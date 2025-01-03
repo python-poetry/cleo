@@ -5,7 +5,7 @@
 > please consult the [writeup issue](https://github.com/python-poetry/cleo/issues/415) and our Discord channel (link below) before submitting a PR.
 
 [![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org/)
-[![Tests](https://github.com/python-poetry/cleo/actions/workflows/tests.yml/badge.svg)](https://github.com/python-poetry/cleo/actions/workflows/tests.yml)
+[![Tests](https://github.com/python-poetry/cleo/actions/workflows/tests.yaml/badge.svg)](https://github.com/python-poetry/cleo/actions/workflows/tests.yaml)
 [![PyPI version](https://img.shields.io/pypi/v/cleo)](https://pypi.org/project/cleo/)
 
 Create beautiful and testable command-line interfaces.
