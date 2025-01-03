@@ -87,7 +87,7 @@ ZSH completions are commonly stored in any directory listed in your \
 generated script to one of those directories, or add your own \
 to this list.
 
-Adding a custom directory is often the safest best if you're unsure \
+Adding a custom directory is often the safest bet if you're unsure \
 of which directory to use. First create the directory, for this \
 example we'll create a hidden directory inside our `<options=bold>$HOME</>` directory
 
