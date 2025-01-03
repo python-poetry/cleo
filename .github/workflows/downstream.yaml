@@ -10,8 +10,8 @@ on:
 
 jobs:
   tests:
-    if: "contains(github.event.pull_request.labels.*.name, 'poetry downstream tests')"
     name: ${{ matrix.ref }}
+    if: "contains(github.event.pull_request.labels.*.name, 'poetry downstream tests')"
     runs-on: ubuntu-latest
     strategy:
       matrix:

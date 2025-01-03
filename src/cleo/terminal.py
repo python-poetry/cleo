@@ -50,6 +50,7 @@ class Terminal:
 
         if width <= 0 or height <= 0:
             try:
+                assert sys.__stdout__ is not None
                 os_size = os.get_terminal_size(sys.__stdout__.fileno())
                 size = TerminalSize(*os_size)
             except (AttributeError, ValueError, OSError):
