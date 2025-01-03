@@ -14,17 +14,17 @@ if TYPE_CHECKING:
 
 
 class Verbosity(Enum):
-    QUIET: int = 16
-    NORMAL: int = 32
-    VERBOSE: int = 64
-    VERY_VERBOSE: int = 128
-    DEBUG: int = 256
+    QUIET = 16
+    NORMAL = 32
+    VERBOSE = 64
+    VERY_VERBOSE = 128
+    DEBUG = 256
 
 
 class Type(Enum):
-    NORMAL: int = 1
-    RAW: int = 2
-    PLAIN: int = 4
+    NORMAL = 1
+    RAW = 2
+    PLAIN = 4
 
 
 class Output:
