@@ -32,8 +32,9 @@ def root_logger() -> logging.Logger:
     return root
 
 
-def test_run_with_logging_integration_normal(
-    tester: ApplicationTester, root_logger: logging.Logger
+def test_cleohandler_normal(
+    tester: ApplicationTester,
+    root_logger: logging.Logger,
 ) -> None:
     handler = CleoHandler(tester.io.output)
     root_logger.addHandler(handler)
@@ -46,8 +47,9 @@ def test_run_with_logging_integration_normal(
     assert tester.io.fetch_output() == expected
 
 
-def test_run_with_logging_integration_quiet(
-    tester: ApplicationTester, root_logger: logging.Logger
+def test_cleohandler_quiet(
+    tester: ApplicationTester,
+    root_logger: logging.Logger,
 ) -> None:
     handler = CleoHandler(tester.io.output)
     root_logger.addHandler(handler)
@@ -58,8 +60,9 @@ def test_run_with_logging_integration_quiet(
     assert tester.io.fetch_output() == ""
 
 
-def test_run_with_logging_integration_verbose(
-    tester: ApplicationTester, root_logger: logging.Logger
+def test_cleohandler_verbose(
+    tester: ApplicationTester,
+    root_logger: logging.Logger,
 ) -> None:
     handler = CleoHandler(tester.io.output)
     root_logger.addHandler(handler)
@@ -76,8 +79,9 @@ def test_run_with_logging_integration_verbose(
     assert tester.io.fetch_output() == expected
 
 
-def test_run_with_logging_integration_very_verbose(
-    tester: ApplicationTester, root_logger: logging.Logger
+def test_cleohandler_very_verbose(
+    tester: ApplicationTester,
+    root_logger: logging.Logger,
 ) -> None:
     handler = CleoHandler(tester.io.output)
     root_logger.addHandler(handler)
@@ -93,3 +97,51 @@ def test_run_with_logging_integration_very_verbose(
 
     assert status_code == 0
     assert tester.io.fetch_output() == expected
+
+
+def test_cleohandler_exception_normal(
+    tester: ApplicationTester,
+    root_logger: logging.Logger,
+) -> None:
+    handler = CleoHandler(tester.io.output)
+    root_logger.addHandler(handler)
+
+    status_code = tester.execute("--exception")
+
+    assert status_code == 0
+    lines = tester.io.fetch_output().splitlines()
+
+    assert len(lines) == 7
+    assert lines[0] == "This is an exception that I raised"
+
+
+def test_cleohandler_exception_verbose(
+    tester: ApplicationTester,
+    root_logger: logging.Logger,
+) -> None:
+    handler = CleoHandler(tester.io.output)
+    root_logger.addHandler(handler)
+
+    status_code = tester.execute("-v --exception")
+
+    assert status_code == 0
+    lines = tester.io.fetch_output().splitlines()
+
+    assert len(lines) == 20
+    assert lines[0] == "This is an exception that I raised"
+
+
+def test_cleohandler_exception_very_verbose(
+    tester: ApplicationTester,
+    root_logger: logging.Logger,
+) -> None:
+    handler = CleoHandler(tester.io.output)
+    root_logger.addHandler(handler)
+
+    status_code = tester.execute("-vv --exception")
+
+    assert status_code == 0
+    lines = tester.io.fetch_output().splitlines()
+
+    assert len(lines) == 20
+    assert lines[0] == "This is an exception that I raised"
