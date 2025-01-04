@@ -5,12 +5,14 @@ import logging
 from typing import TYPE_CHECKING
 from typing import ClassVar
 
+from cleo.io.outputs.output import Verbosity
+
 
 if TYPE_CHECKING:
     from cleo.io.outputs.output import Output
 
 
-class OutputHandler(logging.Handler):
+class CleoHandler(logging.Handler):
     """
     A handler class which writes logging records, appropriately formatted,
     to a Cleo output stream.
@@ -44,3 +46,17 @@ class OutputHandler(logging.Handler):
 
         except Exception:
             self.handleError(record)
+
+    def setLevel(self, verbosity: Verbosity) -> None:  # noqa: N802
+        """
+        Set the logging level of this handler. verbosity must be an instance of Cleo's Verbosity enum.
+        This level is then mapped to it's corresponding `logging` level.
+        """
+        level_mapping = {
+            Verbosity.QUIET: logging.CRITICAL,  # Nothing gets emitted to the output anyway
+            Verbosity.NORMAL: logging.WARNING,
+            Verbosity.VERBOSE: logging.INFO,
+            Verbosity.VERY_VERBOSE: logging.DEBUG,
+            Verbosity.DEBUG: logging.DEBUG,
+        }
+        return super().setLevel(level_mapping[verbosity])
