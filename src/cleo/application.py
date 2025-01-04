@@ -538,7 +538,8 @@ class Application:
         Configures the built-in logging package to write it's output via Cleo's output class.
         """
         handler = CleoHandler(io.output)
-        handler.setLevel(io.output.verbosity)
+        handler.setLevel(handler.remap_verbosity(io.output.verbosity))
+
         root = logging.getLogger()
         root.addHandler(handler)
         root.setLevel(handler.level)
