@@ -1,24 +1,31 @@
 [build-system]
-requires = ["poetry-core>=1.1.0"]
+requires = ["poetry-core>=2.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry]
+[project]
 name = "cleo"
 version = "3.0.0.dev0"
 description = "Cleo allows you to create beautiful and testable command-line interfaces."
+requires-python = ">=3.9"
 authors = [
-    "Sébastien Eustace <sebastien@eustace.io>"
+    { name = "Sébastien Eustace", email = "sebastien@eustace.io" }
 ]
 maintainers = [
-    "Branch Vincent <branchevincent@gmail.com>",
-    "Bartosz Sokorski <b.sokorski@gmail.com>",
+    { name = "Bartosz Sokorski", email = "b.sokorski@gmail.com" },
+    { name = "Branch Vincent", email = "branchvincent@gmail.com" }
 ]
-license = "MIT"
+license = { text = "MIT" }
 readme = "README.md"
+keywords = ["cli", "commands"]
+dynamic = ["classifiers"]
+
+[project.urls]
+Repository = "https://github.com/python-poetry/cleo"
+
+[tool.poetry]
+requires-poetry = ">=2.0"
 packages = [{ include = "cleo", from = "src" }]
 include = [{ path = "tests", format = "sdist" }]
-repository = "https://github.com/python-poetry/cleo"
-keywords = ["cli", "commands"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
@@ -31,9 +38,6 @@ classifiers = [
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development",
 ]
-
-[tool.poetry.dependencies]
-python = "^3.9"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.5"
