@@ -13,23 +13,7 @@ if TYPE_CHECKING:
 
 
 def test_ask_choice(io: BufferedIO) -> None:
-    io.set_user_input(
-        "\n"
-        "1\n"
-        "  1  \n"
-        "John\n"
-        "1\n"
-        "\n"
-        "John\n"
-        "1\n"
-        "0,2\n"
-        " 0 , 2  \n"
-        "\n"
-        "\n"
-        "4\n"
-        "0\n"
-        "-2\n"
-    )
+    io.set_user_input("\n1\n  1  \nJohn\n1\n\nJohn\n1\n0,2\n 0 , 2  \n\n\n4\n0\n-2\n")
 
     heroes = ["Superman", "Batman", "Spiderman"]
     question = ChoiceQuestion("What is your favorite superhero?", heroes, "2")
