@@ -272,6 +272,6 @@ class TextDescriptor(Descriptor):
 
     def _get_command_aliases_text(self, command: Command) -> str:
         if aliases := command.aliases:
-            return f"[{ '|'.join(aliases) }] "
+            return f"[{'|'.join(aliases)}] "
 
         return ""
