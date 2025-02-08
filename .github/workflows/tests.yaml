@@ -8,6 +8,8 @@ on:
 env:
   PYTHONWARNDEFAULTENCODING: true
 
+permissions: {}
+
 jobs:
   Tests:
     name: ${{ matrix.os }} / ${{ matrix.python-version }}
