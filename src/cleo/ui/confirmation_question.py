@@ -27,7 +27,7 @@ class ConfirmationQuestion(Question):
     def _write_prompt(self, io: IO) -> None:
         message = (
             f"<question>{self._question} (yes/no)</> "
-            f'[<comment>{"yes" if self._default else "no"}</>] '
+            f"[<comment>{'yes' if self._default else 'no'}</>] "
         )
 
         io.write_error(message)

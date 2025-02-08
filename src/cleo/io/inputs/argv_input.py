@@ -244,8 +244,7 @@ class ArgvInput(Input):
                     message = f"Too many arguments, expected arguments {all_names}"
             elif command_name:
                 message = (
-                    f'No arguments expected for "{command_name}" command, '
-                    f'got "{token}"'
+                    f'No arguments expected for "{command_name}" command, got "{token}"'
                 )
             else:
                 message = f'No arguments expected, got "{token}"'
