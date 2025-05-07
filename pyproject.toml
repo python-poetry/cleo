@@ -41,7 +41,7 @@ classifiers = [
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.15"
-pre-commit = "^3.0"
+pre-commit = "^4.2"
 pytest = "^8.3.5"
 pytest-cov = "^6.1"
 pytest-mock = "^3.8.2"
