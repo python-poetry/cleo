@@ -401,7 +401,7 @@ class ProgressBar(Component):
         return self._max
 
     def _formatter_percent(self) -> int:
-        return int(math.floor(self._percent * 100))
+        return math.floor(self._percent * 100)
 
     def _build_line(self) -> str:
         regex = re.compile(r"(?i)%([a-z\-_]+)(?::([^%]+))?%")

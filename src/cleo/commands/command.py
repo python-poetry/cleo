@@ -219,7 +219,7 @@ class Command:
         confirmation = ConfirmationQuestion(
             question, default=default, true_answer_regex=true_answer_regex
         )
-        return cast(bool, confirmation.ask(self._io))
+        return cast("bool", confirmation.ask(self._io))
 
     def ask(self, question: str | Question, default: Any | None = None) -> Any:
         """

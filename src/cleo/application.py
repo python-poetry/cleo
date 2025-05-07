@@ -201,7 +201,7 @@ class Application:
         if self._want_helps:
             self._want_helps = False
 
-            help_command: HelpCommand = cast(HelpCommand, self.get("help"))
+            help_command: HelpCommand = cast("HelpCommand", self.get("help"))
             help_command.set_command(command)
 
             return help_command

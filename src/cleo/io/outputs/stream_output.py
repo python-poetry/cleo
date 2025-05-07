@@ -145,7 +145,7 @@ class StreamOutput(Output):
                 return True
 
             return cast(
-                bool,
+                "bool",
                 kernel32.SetConsoleMode(
                     h, mode.value | self.ENABLE_VIRTUAL_TERMINAL_PROCESSING
                 )
