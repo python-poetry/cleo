@@ -151,10 +151,10 @@ script. Consult your shells documentation for how to add such directives.
         del frame
 
         if f_globals is not None:
-            package_name = cast(str, f_globals.get("__name__"))
+            package_name = cast("str", f_globals.get("__name__"))
 
             if package_name == "__main__":
-                package_name = cast(str, f_globals.get("__package__"))
+                package_name = cast("str", f_globals.get("__package__"))
 
             if package_name:
                 package_name = package_name.partition(".")[0]
