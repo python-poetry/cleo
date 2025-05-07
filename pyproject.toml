@@ -43,7 +43,7 @@ classifiers = [
 mypy = "^1.15"
 pre-commit = "^3.0"
 pytest = "^8.0.0"
-pytest-cov = "^4.0"
+pytest-cov = "^6.1"
 pytest-mock = "^3.8.2"
 towncrier = ">=22.12.0"
 
