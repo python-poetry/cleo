@@ -20,8 +20,11 @@ class Formatter:
         self._decorated = decorated
         self._styles: dict[str, Style] = {}
 
+        self.set_style("success", Style("green"))
         self.set_style("error", Style("red", options=["bold"]))
+        self.set_style("warning", Style("yellow"))
         self.set_style("info", Style("blue"))
+        self.set_style("debug", Style("default", options=["dark"]))
         self.set_style("comment", Style("green"))
         self.set_style("question", Style("cyan"))
         self.set_style("c1", Style("cyan"))
