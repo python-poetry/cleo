@@ -5,8 +5,11 @@ import logging
 from logging import LogRecord
 from typing import TYPE_CHECKING
 from typing import ClassVar
+from typing import cast
 
+from cleo.exceptions import CleoUserError
 from cleo.io.outputs.output import Verbosity
+from cleo.ui.exception_trace.component import ExceptionTrace
 
 
 if TYPE_CHECKING:
@@ -65,6 +68,14 @@ class CleoHandler(logging.Handler):
         try:
             msg = self.tags.get(record.levelname, "") + self.format(record) + "</>"
             self.output.write(msg, new_line=True)
+            if record.exc_info:
+                _type, error, traceback = record.exc_info
+                simple = not self.output.is_verbose() or isinstance(
+                    error, CleoUserError
+                )
+                error = cast(Exception, error)
+                trace = ExceptionTrace(error)
+                trace.render(self.output, simple)
 
         except Exception:
             self.handleError(record)
