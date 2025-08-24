@@ -27,7 +27,7 @@ class OutputHandler(logging.Handler):
         super().__init__()
         self.output = output
 
-    def emit(self, record: logging.LogRecord):
+    def emit(self, record: logging.LogRecord) -> None:
         """
         Emit a record.
 
