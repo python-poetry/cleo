@@ -47,16 +47,13 @@ class CleoHandler(logging.Handler):
         except Exception:
             self.handleError(record)
 
-    def setLevel(self, verbosity: Verbosity) -> None:  # noqa: N802
-        """
-        Set the logging level of this handler. verbosity must be an instance of Cleo's Verbosity enum.
-        This level is then mapped to it's corresponding `logging` level.
-        """
-        level_mapping = {
+    @staticmethod
+    def remap_verbosity(verbosity: Verbosity) -> int:
+        verbosity_mapping: dict[Verbosity, int] = {
             Verbosity.QUIET: logging.CRITICAL,  # Nothing gets emitted to the output anyway
             Verbosity.NORMAL: logging.WARNING,
             Verbosity.VERBOSE: logging.INFO,
             Verbosity.VERY_VERBOSE: logging.DEBUG,
             Verbosity.DEBUG: logging.DEBUG,
         }
-        return super().setLevel(level_mapping[verbosity])
+        return verbosity_mapping[verbosity]
