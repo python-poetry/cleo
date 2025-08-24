@@ -41,7 +41,7 @@ def test_cleohandler_normal(
 
     status_code = tester.execute("")
 
-    expected = "This is an warning log record\n" "This is an error log record\n"
+    expected = "This is an warning log record\nThis is an error log record\n"
 
     assert status_code == 0
     assert tester.io.fetch_output() == expected

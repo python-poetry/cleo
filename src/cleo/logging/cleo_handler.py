@@ -44,8 +44,8 @@ class CleoHandler(logging.Handler):
     tags: ClassVar[dict[str, str]] = {
         "CRITICAL": "<error>",
         "ERROR": "<error>",
-        "WARNING": "<fg=yellow>",
-        "DEBUG": "<fg=dark_gray>",
+        "WARNING": "<warning>",
+        "DEBUG": "<debug>",
     }
 
     def __init__(self, output: Output):
@@ -73,7 +73,7 @@ class CleoHandler(logging.Handler):
                 simple = not self.output.is_verbose() or isinstance(
                     error, CleoUserError
                 )
-                error = cast(Exception, error)
+                error = cast("Exception", error)
                 trace = ExceptionTrace(error)
                 trace.render(self.output, simple)
 
