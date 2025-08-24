@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import os
 import re
 import sys
@@ -30,7 +29,6 @@ from cleo.io.inputs.option import Option
 from cleo.io.io import IO
 from cleo.io.outputs.output import Verbosity
 from cleo.io.outputs.stream_output import StreamOutput
-from cleo.logging.cleo_handler import CleoHandler
 from cleo.terminal import Terminal
 from cleo.ui.ui import UI
 
@@ -311,7 +309,6 @@ class Application:
             io = self.create_io(input, output, error_output)
 
             self._configure_io(io)
-            self._configure_logging(io)
 
             try:
                 exit_code = self._run(io)
@@ -532,17 +529,6 @@ class Application:
 
         if shell_verbosity == -1:
             io.interactive(False)
-
-    def _configure_logging(self, io: IO) -> None:
-        """
-        Configures the built-in logging package to write it's output via Cleo's output class.
-        """
-        handler = CleoHandler(io.output)
-        handler.setLevel(handler.remap_verbosity(io.output.verbosity))
-
-        root = logging.getLogger()
-        root.addHandler(handler)
-        root.setLevel(handler.level)
 
     @property
     def _default_definition(self) -> Definition:
