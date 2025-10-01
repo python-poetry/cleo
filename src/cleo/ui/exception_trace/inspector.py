@@ -12,7 +12,9 @@ class Inspector:
         self._frames: FrameCollection | None = None
         self._outer_frames = None
         self._inner_frames = None
-        self._previous_exception = exception.__context__
+        self._previous_exception = (
+            None if exception.__suppress_context__ else exception.__context__
+        )
 
     @property
     def exception(self) -> BaseException:
