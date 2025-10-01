@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         os: [Ubuntu, macOS, Windows]
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
         include:
           - os: Ubuntu
             image: ubuntu-22.04
@@ -42,6 +42,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: poetry
+          allow-prereleases: 'true'
 
       - name: Install dependencies
         run: poetry install
