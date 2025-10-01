@@ -20,11 +20,11 @@ jobs:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
         include:
           - os: Ubuntu
-            image: ubuntu-22.04
+            image: ubuntu-24.04
           - os: Windows
-            image: windows-2022
+            image: windows-2025
           - os: macOS
-            image: macos-14
+            image: macos-15
     defaults:
       run:
         shell: bash
