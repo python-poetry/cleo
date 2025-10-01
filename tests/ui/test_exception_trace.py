@@ -11,6 +11,7 @@ from cleo.io.outputs.output import Verbosity
 from cleo.ui.exception_trace.component import ExceptionTrace
 from tests.fixtures.exceptions import nested1
 from tests.fixtures.exceptions import nested2
+from tests.fixtures.exceptions import raiser_with_suppressed_context
 from tests.fixtures.exceptions import recursion
 from tests.fixtures.exceptions import simple
 
@@ -50,7 +51,7 @@ def test_render_debug_better_error_message() -> None:
 
     trace.render(io)
 
-    lineno = 47
+    lineno = 48
     expected = f"""
   Stack trace:
 
@@ -84,7 +85,7 @@ def test_render_debug_better_error_message_recursion_error() -> None:
     except RecursionError as e:
         trace = ExceptionTrace(e)
 
-    lineno = 83
+    lineno = 84
     trace.render(io)
 
     expected = rf"""^
@@ -131,7 +132,7 @@ def test_render_very_verbose_better_error_message() -> None:
     expected = f"""
   Stack trace:
 
-  1  {trace._get_relative_file_path(__file__)}:125 in \
+  1  {trace._get_relative_file_path(__file__)}:126 in \
 test_render_very_verbose_better_error_message
        simple.simple_exception()
 
@@ -183,7 +184,7 @@ def test_render_can_ignore_given_files() -> None:
     trace.ignore_files_in(rf"^{re.escape(nested1.__file__)}$")
     trace.render(io)
 
-    lineno = 180
+    lineno = 181
     expected = f"""
   Stack trace:
 
@@ -221,7 +222,7 @@ def test_render_shows_ignored_files_if_in_debug_mode() -> None:
     trace.ignore_files_in(rf"^{re.escape(nested1.__file__)}$")
 
     trace.render(io)
-    lineno = 218
+    lineno = 219
     expected = f"""
   Stack trace:
 
@@ -344,7 +345,7 @@ def test_simple_render_aborts_if_no_message() -> None:
     trace = ExceptionTrace(e.value)
 
     trace.render(io, simple=True)
-    lineno = 342
+    lineno = 343
 
     expected = f"""
   AssertionError
@@ -362,5 +363,34 @@ test_simple_render_aborts_if_no_message
       {lineno + 2}│     trace = ExceptionTrace(e.value)
       {lineno + 3}│ 
       {lineno + 4}│     trace.render(io, simple=True)
+"""
+    assert expected == io.fetch_output()
+
+
+def test_render_with_suppressed_context() -> None:
+    io = BufferedIO()
+    lineno = 6
+
+    # Arrange: Trigger and catch the exception
+    try:
+        raiser_with_suppressed_context.raiser_with_suppressed_context()
+    except Exception as e:
+        trace = ExceptionTrace(e)
+
+    trace.render(io)
+
+    expected = f"""\
+
+  RuntimeError
+
+  This error should be displayed.
+
+  at {trace._get_relative_file_path(raiser_with_suppressed_context.__file__)}:{lineno} in raiser_with_suppressed_context
+        {lineno - 4}│ def raiser_with_suppressed_context() -> None:
+        {lineno - 3}│     try:
+        {lineno - 2}│         raise ValueError("This error should be suppressed.")
+        {lineno - 1}│     except ValueError:
+    →   {lineno + 0}│         raise RuntimeError("This error should be displayed.") from None
+        {lineno + 1}│ 
 """
     assert expected == io.fetch_output()
