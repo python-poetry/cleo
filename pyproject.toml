@@ -44,7 +44,7 @@ mypy = "^1.15"
 pre-commit = "^4.2"
 pytest = "^8.3.5"
 pytest-cov = "^6.1"
-pytest-mock = "^3.8.2"
+pytest-mock = "^3.15.1"
 towncrier = ">=22.12.0"
 
 [tool.poetry.group.doc.dependencies]
