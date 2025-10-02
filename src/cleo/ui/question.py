@@ -106,7 +106,7 @@ class Question:
         if len(ret) <= 0:
             ret = self._default
 
-        return self._normalizer(ret)  # type: ignore[arg-type]
+        return self._normalizer(ret)
 
     def _write_prompt(self, io: IO) -> None:
         """
