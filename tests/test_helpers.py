@@ -70,3 +70,11 @@ def test_option() -> None:
     assert opt.requires_value()
     assert not opt.is_list()
     assert opt.default == "bar"
+
+    opt = option("foo", "f", "Foo", flag=False, choices=["bar1", "bar2"])
+
+    assert opt.description == "Foo"
+    assert opt.accepts_value()
+    assert opt.requires_value()
+    assert not opt.is_list()
+    assert opt.choices == ["bar1", "bar2"]

@@ -17,6 +17,7 @@ def test_create() -> None:
     assert not opt.requires_value()
     assert not opt.is_list()
     assert not opt.default
+    assert not opt.choices
 
 
 def test_dashed_name() -> None:
@@ -38,6 +39,16 @@ def test_fail_if_default_value_provided_for_flag() -> None:
 def test_fail_if_wrong_default_value_for_list_option() -> None:
     with pytest.raises(CleoLogicError):
         Option("option", flag=False, is_list=True, default="default")
+
+
+def test_fail_if_choices_provided_for_flag() -> None:
+    with pytest.raises(CleoLogicError):
+        Option("option", flag=True, choices=["ch1", "ch2"])
+
+
+def test_fail_if_choices_without_required_values() -> None:
+    with pytest.raises(CleoLogicError):
+        Option("option", flag=False, requires_value=False, choices=["ch1", "ch2"])
 
 
 def test_shortcut() -> None:
