@@ -372,10 +372,10 @@ def test_render_with_suppressed_context() -> None:
     lineno = 6
 
     # Arrange: Trigger and catch the exception
-    try:
+    with pytest.raises(RuntimeError) as excinfo:
         raiser_with_suppressed_context.raiser_with_suppressed_context()
-    except Exception as e:
-        trace = ExceptionTrace(e)
+
+    trace = ExceptionTrace(excinfo.value)
 
     trace.render(io)
 
