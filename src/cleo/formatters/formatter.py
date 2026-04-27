@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 
+from contextvars import ContextVar
 from typing import ClassVar
 
 from cleo.exceptions import CleoValueError
@@ -18,6 +19,9 @@ class Formatter:
         self, decorated: bool = False, styles: dict[str, Style] | None = None
     ) -> None:
         self._decorated = decorated
+        self._decoration_suppressed: ContextVar[bool] = ContextVar(
+            "decoration_suppressed", default=False
+        )
         self._styles: dict[str, Style] = {}
 
         self.set_style("error", Style("red", options=["bold"]))
@@ -120,14 +124,11 @@ class Formatter:
         return output.replace("\0", "\\").replace("\\<", "<")
 
     def remove_format(self, text: str) -> str:
-        decorated = self._decorated
-
-        self._decorated = False
-        text = re.sub(r"\033\[[^m]*m", "", self.format(text))
-
-        self._decorated = decorated
-
-        return text
+        token = self._decoration_suppressed.set(True)
+        try:
+            return re.sub(r"\033\[[^m]*m", "", self.format(text))
+        finally:
+            self._decoration_suppressed.reset(token)
 
     def _create_style_from_string(self, string: str) -> Style | None:
         if string in self._styles:
@@ -165,7 +166,7 @@ class Formatter:
             return "", current_line_length
 
         if not width:
-            if self.is_decorated():
+            if self._should_decorate():
                 return self._style_stack.current.apply(text), current_line_length
 
             return text, current_line_length
@@ -193,8 +194,11 @@ class Formatter:
             if current_line_length >= width:
                 current_line_length = 0
 
-        if self.is_decorated():
+        if self._should_decorate():
             apply = self._style_stack.current.apply
             text = "\n".join(map(apply, lines))
 
         return text, current_line_length
+
+    def _should_decorate(self) -> bool:
+        return self.is_decorated() and not self._decoration_suppressed.get()
