@@ -346,6 +346,15 @@ def test_run_with_help(tester: ApplicationTester) -> None:
     ).read_text(encoding="utf-8")
 
 
+def test_run_help_command_with_namespaced_command(app: Application) -> None:
+    app.catch_exceptions(False)
+    app.add(FooSubNamespaced1Command())
+    tester = ApplicationTester(app)
+
+    assert tester.execute("help foo bar baz", decorated=False) == 0
+    assert "The foo bar baz command" in tester.io.fetch_output()
+
+
 def test_run_with_input() -> None:
     app = Application()
     command = Foo3Command()
