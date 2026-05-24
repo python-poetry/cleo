@@ -6,7 +6,7 @@ create ``greet_command.py`` and add the following to it:
 
 .. code-block:: python
 
-    from cleo import Command
+    from cleo.commands.command import Command
 
 
     class GreetCommand(Command):
@@ -40,7 +40,7 @@ an ``Application`` and adds commands to it:
     #!/usr/bin/env python
 
     from greet_command import GreetCommand
-    from cleo import Application
+    from cleo.application import Application
 
     application = Application()
     application.add(GreetCommand())
@@ -406,7 +406,7 @@ console:
 
     import pytest
 
-    from cleo import Application
+    from cleo.application import Application
     from cleo.testers.command_tester import CommandTester
 
     def test_execute(self):
@@ -430,7 +430,7 @@ as a string to the ``CommandTester.execute()`` method:
 
     import pytest
 
-    from cleo import Application
+    from cleo.application import Application
     from cleo.testers.command_tester import CommandTester
 
     def test_execute(self):
