@@ -57,19 +57,32 @@ ZSH_TEMPLATE = """\
 
 %(function)s()
 {
-    local state com cur
+    local state com cur words_prefix command_name
     local -a opts
     local -a coms
+    local -a command_names
+
+    command_names=(%(cmd_names)s)
 
     cur=${words[${#words[@]}]}
+    words_prefix="${words[@]:1}"
 
     # lookup for command
-    for word in ${words[@]:1}; do
-        if [[ $word != -* ]]; then
-            com=$word
+    for command_name in ${command_names[@]}; do
+        if [[ $words_prefix == ${command_name} || $words_prefix == ${command_name}\\ * ]]; then
+            com=$command_name
             break
         fi
     done
+
+    if [[ -z $com ]]; then
+        for word in ${words[@]:1}; do
+            if [[ $word != -* ]]; then
+                com=$word
+                break
+            fi
+        done
+    fi
 
     if [[ ${cur} == --* ]]; then
         state="option"

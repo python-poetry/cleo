@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import TYPE_CHECKING
+from unittest import mock
 
 import pytest
 
@@ -73,6 +74,32 @@ def test_zsh(mocker: MockerFixture) -> None:
     expected = (FIXTURES_PATH / "zsh.txt").read_text(encoding="utf-8")
 
     assert expected == tester.io.fetch_output().replace("\r\n", "\n")
+
+
+def test_zsh_spaced_command_completion_value_is_not_quoted() -> None:
+    script_name = mock.patch(
+        "cleo.io.inputs.string_input.StringInput.script_name",
+        new_callable=mock.PropertyMock,
+        return_value="/path/to/my/script",
+    )
+    function_name = mock.patch(
+        "cleo.commands.completions_command.CompletionsCommand._generate_function_name",
+        return_value="_my_function",
+    )
+
+    with script_name, function_name:
+        command = app.find("completions")
+        tester = CommandTester(command)
+        tester.execute("zsh")
+
+    output = tester.io.fetch_output().replace("\r\n", "\n")
+
+    assert '"spaced command:Command with space in name."' in output
+    assert "\"'spaced command':Command with space in name.\"" not in output
+    assert (
+        "\n            ('spaced command')\n" in output
+        or '\n            ("spaced command")\n' in output
+    )
 
 
 @pytest.mark.skipif(WINDOWS, reason="Only test linux shells")

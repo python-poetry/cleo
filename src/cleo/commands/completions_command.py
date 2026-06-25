@@ -230,18 +230,23 @@ script. Consult your shells documentation for how to add such directives.
 
         # Commands + options
         cmds = []
+        command_names = []
         cmds_opts = []
         for cmd in sorted(self.application.all().values(), key=lambda c: c.name or ""):
             if cmd.hidden or not (cmd.enabled and cmd.name):
                 continue
-            command_name = shell_quote(cmd.name) if " " in cmd.name else cmd.name
+            command_name = cmd.name
+            command_pattern = (
+                shell_quote(command_name) if " " in command_name else command_name
+            )
+            command_names.append(command_name)
             cmds.append(self._zsh_describe(command_name, sanitize(cmd.description)))
             options = " ".join(
                 self._zsh_describe(f"--{opt.name}", sanitize(opt.description))
                 for opt in sorted(cmd.definition.options, key=lambda o: o.name)
             )
             cmds_opts += [
-                f"            ({command_name})",
+                f"            ({command_pattern})",
                 f"            opts+=({options})",
                 "            ;;",
                 "",  # newline
@@ -252,6 +257,13 @@ script. Consult your shells documentation for how to add such directives.
             "function": function,
             "opts": " ".join(opts),
             "cmds": " ".join(cmds),
+            "cmd_names": " ".join(
+                shell_quote(name) if " " in name else name
+                for name in sorted(
+                    command_names,
+                    key=lambda name: (-len(name.split()), name),
+                )
+            ),
             "cmds_opts": "\n".join(cmds_opts[:-1]),  # trim trailing newline
             "compdefs": "\n".join(f"compdef {function} {alias}" for alias in aliases),
         }

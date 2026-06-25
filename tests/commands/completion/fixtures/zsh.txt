@@ -2,26 +2,39 @@
 
 _my_function()
 {
-    local state com cur
+    local state com cur words_prefix command_name
     local -a opts
     local -a coms
+    local -a command_names
+
+    command_names=('spaced command' command:with:colons hello help list)
 
     cur=${words[${#words[@]}]}
+    words_prefix="${words[@]:1}"
 
     # lookup for command
-    for word in ${words[@]:1}; do
-        if [[ $word != -* ]]; then
-            com=$word
+    for command_name in ${command_names[@]}; do
+        if [[ $words_prefix == ${command_name} || $words_prefix == ${command_name}\ * ]]; then
+            com=$command_name
             break
         fi
     done
+
+    if [[ -z $com ]]; then
+        for word in ${words[@]:1}; do
+            if [[ $word != -* ]]; then
+                com=$word
+                break
+            fi
+        done
+    fi
 
     if [[ ${cur} == --* ]]; then
         state="option"
         opts+=("--ansi:Force ANSI output." "--help:Display help for the given command. When no command is given display help for the list command." "--no-ansi:Disable ANSI output." "--no-interaction:Do not ask any interactive question." "--quiet:Do not output any message." "--verbose:Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug." "--version:Display this application version.")
     elif [[ $cur == $com ]]; then
         state="command"
-        coms+=("command\:with\:colons:Test." "hello:Complete me please." "help:Displays help for a command." "list:Lists commands." "'spaced command':Command with space in name.")
+        coms+=("command\:with\:colons:Test." "hello:Complete me please." "help:Displays help for a command." "list:Lists commands." "spaced command:Command with space in name.")
     fi
 
     case $state in
