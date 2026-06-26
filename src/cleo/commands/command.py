@@ -95,9 +95,7 @@ class Command:
         string_input = StringInput(args or "")
         string_input.set_stream(self._io.input.stream)
 
-        return self.application._run_command(
-            command, self._io.with_input(string_input)
-        )
+        return self.application._run_command(command, self._io.with_input(string_input))
 
     def call_silent(self, name: str, args: str | None = None) -> int:
         """
