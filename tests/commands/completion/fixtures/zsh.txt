@@ -3,51 +3,63 @@
 _my_function()
 {
     local state com cur
+    local -a command_words
     local -a opts
     local -a coms
 
-    cur=${words[${#words[@]}]}
+    cur=${words[$CURRENT]}
 
     # lookup for command
-    for word in ${words[@]:1}; do
+    for word in ${words[@]:1:$((CURRENT - 2))}; do
         if [[ $word != -* ]]; then
-            com=$word
-            break
+            command_words+=$word
         fi
     done
+    com=${(j: :)command_words}
 
     if [[ ${cur} == --* ]]; then
         state="option"
         opts+=("--ansi:Force ANSI output." "--help:Display help for the given command. When no command is given display help for the list command." "--no-ansi:Disable ANSI output." "--no-interaction:Do not ask any interactive question." "--quiet:Do not output any message." "--verbose:Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug." "--version:Display this application version.")
-    elif [[ $cur == $com ]]; then
+    else
         state="command"
-        coms+=("command\:with\:colons:Test." "hello:Complete me please." "help:Displays help for a command." "list:Lists commands." "'spaced command':Command with space in name.")
     fi
 
     case $state in
         (command)
+            case "$com" in
+
+            ("")
+            coms+=("command\:with\:colons:Test." "hello:Complete me please." "help:Displays help for a command." "list:Lists commands." "spaced")
+            ;;
+
+            ("spaced")
+            coms+=("command:Command with space in name.")
+            ;;
+
+            esac
+
             _describe 'command' coms
         ;;
         (option)
             case "$com" in
 
-            (command:with:colons)
+            ("command:with:colons")
             opts+=("--goodbye")
             ;;
 
-            (hello)
+            ("hello")
             opts+=("--dangerous-option:This \$hould be \`escaped\`." "--option-without-description")
             ;;
 
-            (help)
+            ("help")
             opts+=()
             ;;
 
-            (list)
+            ("list")
             opts+=()
             ;;
 
-            ('spaced command')
+            ("spaced command")
             opts+=("--goodbye")
             ;;
 
