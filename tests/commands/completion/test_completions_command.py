@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shutil
 import subprocess
 
 from pathlib import Path
@@ -19,6 +20,7 @@ if TYPE_CHECKING:
     from pytest_mock import MockerFixture
 
 FIXTURES_PATH = Path(__file__).parent / "fixtures"
+ZSH = shutil.which("zsh")
 
 
 app = Application()
@@ -94,6 +96,15 @@ def test_zsh_handles_namespaced_commands(mocker: MockerFixture) -> None:
     tester.execute("zsh")
     script = tester.io.fetch_output().replace("\r\n", "\n")
 
+    assert (
+        '            ("spaced")\n            coms+=("command:Command with space in name.")'
+        in script
+    )
+    assert '            ("spaced command")\n            opts+=("--goodbye")' in script
+
+    if ZSH is None:
+        return
+
     probe = (
         "setopt no_nomatch\n"
         "compdef(){ :; }\n"
@@ -119,10 +130,11 @@ def test_zsh_handles_namespaced_commands(mocker: MockerFixture) -> None:
         "_my_function\n"
     )
     result = subprocess.run(
-        ["zsh", "-fc", probe],
+        [ZSH, "-fc", probe],
         check=True,
         text=True,
         capture_output=True,
+        encoding="utf-8",
     )
 
     assert (
