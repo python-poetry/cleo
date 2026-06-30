@@ -261,7 +261,15 @@ script. Consult your shells documentation for how to add such directives.
         function = self._generate_function_name(script_name, script_path)
 
         def sanitize(s: str) -> str:
-            return self._io.output.formatter.remove_format(s).replace("'", "\\'")
+            # Descriptions are emitted inside single-quoted fish arguments
+            # (`-d '...'`). In fish, a backslash inside single quotes still
+            # escapes a following backslash or single quote, so it has to be
+            # escaped before the single quote is.
+            return (
+                self._io.output.formatter.remove_format(s)
+                .replace("\\", "\\\\")
+                .replace("'", "\\'")
+            )
 
         # Global options
         assert self.application

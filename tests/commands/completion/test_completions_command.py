@@ -7,6 +7,7 @@ import pytest
 
 from cleo._compat import WINDOWS
 from cleo.application import Application
+from cleo.commands.command import Command
 from cleo.testers.command_tester import CommandTester
 from tests.commands.completion.fixtures.command_with_colons import CommandWithColons
 from tests.commands.completion.fixtures.command_with_space_in_name import SpacedCommand
@@ -94,3 +95,33 @@ def test_fish(mocker: MockerFixture) -> None:
     expected = (FIXTURES_PATH / "fish.txt").read_text(encoding="utf-8")
 
     assert expected == tester.io.fetch_output().replace("\r\n", "\n")
+
+
+@pytest.mark.skipif(WINDOWS, reason="Only test linux shells")
+def test_fish_escapes_backslashes_in_descriptions(mocker: MockerFixture) -> None:
+    mocker.patch(
+        "cleo.io.inputs.string_input.StringInput.script_name",
+        new_callable=mocker.PropertyMock,
+        return_value="/path/to/my/script",
+    )
+    mocker.patch(
+        "cleo.commands.completions_command.CompletionsCommand._generate_function_name",
+        return_value="_my_function",
+    )
+
+    class BackslashCommand(Command):
+        name = "winpath"
+        description = "Use C:\\temp and it's fun"
+
+    local_app = Application()
+    local_app.add(BackslashCommand())
+
+    command = local_app.find("completions")
+    tester = CommandTester(command)
+    tester.execute("fish")
+    output = tester.io.fetch_output().replace("\r\n", "\n")
+
+    # The description is emitted inside `-d '...'`. A backslash inside fish
+    # single quotes still escapes the next character, so it must be doubled;
+    # otherwise the closing quote can be escaped and the script breaks.
+    assert "-d 'Use C:\\\\temp and it\\'s fun'" in output
