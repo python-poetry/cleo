@@ -595,6 +595,8 @@ class Application:
                 if self.has(candidate):
                     return candidate
 
+            return candidates[-1]
+
         return io.input.first_argument
 
     def extract_namespace(self, name: str, limit: int | None = None) -> str:
