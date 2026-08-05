@@ -230,6 +230,18 @@ def test_set_catch_exceptions(app: Application, environ: dict[str, str]) -> None
         tester.execute("foo", decorated=False)
 
 
+def test_invalid_subcommand_uses_full_command_name(app: Application) -> None:
+    app.auto_exits(False)
+    app.catch_exceptions(True)
+    app.add(FooCommand())
+
+    tester = ApplicationTester(app)
+    tester.execute("foo baz", decorated=False)
+
+    assert tester.status_code == 1
+    assert 'The command "foo baz" does not exist.' in tester.io.fetch_error()
+
+
 def test_auto_exit(app: Application) -> None:
     app.auto_exits(False)
     assert not app.is_auto_exit_enabled()
