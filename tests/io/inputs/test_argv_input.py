@@ -153,7 +153,6 @@ def test_parse_options(
     assert i.options == expected_options
 
 
-
 @pytest.mark.parametrize(
     ["args", "values", "expected"],
     [
@@ -161,7 +160,11 @@ def test_parse_options(
         (["cli.py", "--directory=/tmp/foo"], "--directory", "/tmp/foo"),
         (["cli.py", "-C", "/tmp/foo"], "-C", "/tmp/foo"),
         (["cli.py", "-C/tmp/foo"], "-C", "/tmp/foo"),
-        (["cli.py", "run", "--directory=/tmp/foo", "python"], "--directory", "/tmp/foo"),
+        (
+            ["cli.py", "run", "--directory=/tmp/foo", "python"],
+            "--directory",
+            "/tmp/foo",
+        ),
         (["cli.py", "run", "-C/tmp/foo", "python"], "-C", "/tmp/foo"),
     ],
 )
