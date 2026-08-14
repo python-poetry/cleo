@@ -151,3 +151,23 @@ def test_parse_options(
     i.bind(Definition(options))
 
     assert i.options == expected_options
+
+
+
+@pytest.mark.parametrize(
+    ["args", "values", "expected"],
+    [
+        (["cli.py", "--directory", "/tmp/foo"], "--directory", "/tmp/foo"),
+        (["cli.py", "--directory=/tmp/foo"], "--directory", "/tmp/foo"),
+        (["cli.py", "-C", "/tmp/foo"], "-C", "/tmp/foo"),
+        (["cli.py", "-C/tmp/foo"], "-C", "/tmp/foo"),
+        (["cli.py", "run", "--directory=/tmp/foo", "python"], "--directory", "/tmp/foo"),
+        (["cli.py", "run", "-C/tmp/foo", "python"], "-C", "/tmp/foo"),
+    ],
+)
+def test_parameter_option_returns_full_attached_value(
+    args: list[str], values: str, expected: str
+) -> None:
+    i = ArgvInput(args)
+
+    assert i.parameter_option(values) == expected
