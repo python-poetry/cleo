@@ -481,3 +481,46 @@ def test_style_for_side_effects(io: BufferedIO) -> None:
     output2 = io.fetch_output()
 
     assert output1 != output2
+
+
+def test_column_max_width_wraps_long_cells(io: BufferedIO) -> None:
+    table = Table(io)
+    table.set_headers(["ISBN", "Description"])
+    table.set_rows(
+        [["99921-58-10-7", "A long description that has to be wrapped to fit"]]
+    )
+    table.set_column_max_width(1, 12)
+
+    table.render()
+
+    expected = """\
++---------------+--------------+
+| ISBN          | Description  |
++---------------+--------------+
+| 99921-58-10-7 | A long descr |
+|               | iption that  |
+|               | has to be wr |
+|               | apped to fit |
++---------------+--------------+
+"""
+
+    assert io.fetch_output() == expected
+
+
+def test_column_max_width_does_not_widen_short_cells(io: BufferedIO) -> None:
+    table = Table(io)
+    table.set_headers(["ISBN", "Title"])
+    table.set_rows([["99921-58-10-7", "Divine Comedy"]])
+    table.set_column_max_width(1, 40)
+
+    table.render()
+
+    expected = """\
++---------------+---------------+
+| ISBN          | Title         |
++---------------+---------------+
+| 99921-58-10-7 | Divine Comedy |
++---------------+---------------+
+"""
+
+    assert io.fetch_output() == expected
