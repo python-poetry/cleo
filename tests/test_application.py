@@ -346,6 +346,30 @@ def test_run_with_help(tester: ApplicationTester) -> None:
     ).read_text(encoding="utf-8")
 
 
+def test_run_help_with_nested_subcommand() -> None:
+    app = Application()
+    app.add(FooSubNamespaced1Command())
+
+    tester1 = ApplicationTester(app)
+    exit1 = tester1.execute("help foo bar baz")
+    output1 = tester1.io.fetch_output()
+
+    tester2 = ApplicationTester(app)
+    exit2 = tester2.execute('help "foo bar baz"')
+    output2 = tester2.io.fetch_output()
+
+    tester3 = ApplicationTester(app)
+    exit3 = tester3.execute("--help foo bar baz")
+    output3 = tester3.io.fetch_output()
+
+    assert exit1 == 0
+    assert exit2 == 0
+    assert exit3 == 0
+    assert "The foo bar baz command" in output1
+    assert output1 == output2
+    assert output1 == output3
+
+
 def test_run_with_input() -> None:
     app = Application()
     command = Foo3Command()
