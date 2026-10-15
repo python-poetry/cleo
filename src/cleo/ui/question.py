@@ -244,7 +244,7 @@ class Question:
 
             try:
                 return self._validator(interviewer())
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 error = e
 
             if attempts is not None:
@@ -267,8 +267,9 @@ class Question:
     def _has_stty_available(self) -> bool:
         with Path(os.devnull).open("w", encoding="utf-8") as devnull:
             try:
+                # TODO: replace with subprocess.run
                 exit_code = subprocess.call(["stty"], stdout=devnull, stderr=devnull)
-            except Exception:
+            except Exception:  # noqa: BLE001
                 exit_code = 2
 
         return exit_code == 0

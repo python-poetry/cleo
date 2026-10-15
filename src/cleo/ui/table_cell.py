@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING
 
 
 if TYPE_CHECKING:
+    from typing_extensions import Self
+
     from cleo.ui.table_cell_style import TableCellStyle
 
 
@@ -14,7 +16,7 @@ class TableCell(str):
         rowspan: int = 1,
         colspan: int = 1,
         style: TableCellStyle | None = None,
-    ) -> TableCell:
+    ) -> Self:
         return super().__new__(cls, value)
 
     def __init__(

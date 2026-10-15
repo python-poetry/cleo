@@ -24,22 +24,19 @@ To make a command that greets you from the command line, create
 from cleo.commands.command import Command
 from cleo.helpers import argument, option
 
+
 class GreetCommand(Command):
     name = "greet"
     description = "Greets someone"
     arguments = [
-        argument(
-            "name",
-            description="Who do you want to greet?",
-            optional=True
-        )
+        argument("name", description="Who do you want to greet?", optional=True)
     ]
     options = [
         option(
             "yell",
             "y",
             description="If set, the task will yell in uppercase letters",
-            flag=True
+            flag=True,
         )
     ]
 
@@ -204,18 +201,14 @@ class GreetCommand(Command):
             "name",
             description="Who do you want to greet?",
         ),
-        argument(
-            "last_name",
-            description="Your last name?",
-            optional=True
-        )
+        argument("last_name", description="Your last name?", optional=True),
     ]
     options = [
         option(
             "yell",
             "y",
             description="If set, the task will yell in uppercase letters",
-            flag=True
+            flag=True,
         )
     ]
 ```
@@ -244,18 +237,14 @@ class GreetCommand(Command):
     name = "greet"
     description = "Greets someone"
     arguments = [
-        argument(
-            "names",
-            description="Who do you want to greet?",
-            multiple=True
-        )
+        argument("names", description="Who do you want to greet?", multiple=True)
     ]
     options = [
         option(
             "yell",
             "y",
             description="If set, the task will yell in uppercase letters",
-            flag=True
+            flag=True,
         )
     ]
 ```
@@ -296,24 +285,20 @@ class GreetCommand(Command):
     name = "greet"
     description = "Greets someone"
     arguments = [
-        argument(
-            "name",
-            description="Who do you want to greet?",
-            optional=True
-        )
+        argument("name", description="Who do you want to greet?", optional=True)
     ]
     options = [
         option(
             "yell",
             "y",
             description="If set, the task will yell in uppercase letters",
-            flag=True
+            flag=True,
         ),
         option(
             "iterations",
             description="How many times should the message be printed?",
-            default=1
-        )
+            default=1,
+        ),
     ]
 ```
 
