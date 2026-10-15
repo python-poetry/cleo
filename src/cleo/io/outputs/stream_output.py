@@ -59,7 +59,7 @@ class StreamOutput(Output):
 
         try:
             return codecs.lookup(encoding).name == "utf-8"
-        except Exception:
+        except LookupError:
             return True
 
     def flush(self) -> None:

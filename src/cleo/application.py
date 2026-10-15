@@ -444,7 +444,7 @@ class Application:
                 exit_code = command.run(io)
             else:
                 exit_code = ConsoleCommandEvent.RETURN_CODE_DISABLED
-        except Exception as e:
+        except Exception as e:  # TODO: make proper error out of this  # noqa: BLE001
             error_event = ConsoleErrorEvent(command, io, e)
             self._event_dispatcher.dispatch(error_event, ERROR)
             error = error_event.error
@@ -499,7 +499,7 @@ class Application:
         ):
             io.interactive(False)
 
-        shell_verbosity = int(os.getenv("SHELL_VERBOSITY", 0))
+        shell_verbosity = int(os.getenv("SHELL_VERBOSITY", "0"))
         if shell_verbosity == -1:
             io.set_verbosity(Verbosity.QUIET)
         elif shell_verbosity == 1:
