@@ -104,7 +104,7 @@ class Table:
         return self
 
     def set_column_max_width(self, column_index: int, width: int) -> Table:
-        self._column_widths[column_index] = width
+        self._column_max_widths[column_index] = width
 
         return self
 
@@ -426,8 +426,10 @@ class Table:
                 if column in self._column_max_widths and self._column_max_widths[
                     column
                 ] < len(self._io.remove_format(cell)):
-                    assert isinstance(self._io, Output)
-                    cell = self._io.formatter.format_and_wrap(
+                    output = (
+                        self._io if isinstance(self._io, Output) else self._io.output
+                    )
+                    cell = output.formatter.format_and_wrap(
                         cell, self._column_max_widths[column] * colspan
                     )
 
