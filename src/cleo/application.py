@@ -365,10 +365,12 @@ class Application:
         name = self._get_command_name(io)
         if io.input.has_parameter_option(["--help", "-h"], True):
             if not name:
-                name = "help"
-                io.set_input(ArgvInput(["console", "help", self._default_command]))
-            else:
-                self._want_helps = True
+                from cleo.descriptors.text_descriptor import TextDescriptor
+
+                TextDescriptor().describe(io, self)
+
+                return 0
+            self._want_helps = True
 
         if not name:
             name = self._default_command
@@ -543,11 +545,7 @@ class Application:
                     "--help",
                     "-h",
                     flag=True,
-                    description=(
-                        "Display help for the given command. "
-                        "When no command is given display help for "
-                        f"the <info>{self._default_command}</info> command."
-                    ),
+                    description="Display this help message.",
                 ),
                 Option(
                     "--quiet", "-q", flag=True, description="Do not output any message."
