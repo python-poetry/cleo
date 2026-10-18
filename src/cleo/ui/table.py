@@ -421,6 +421,10 @@ class Table:
 
             # Remove any new line breaks and replace it with a new line
             for column, cell in enumerate(rows[row_key]):
+                if not isinstance(cell, str):
+                    cell = str(cell)
+                    rows[row_key][column] = cell
+
                 colspan = cell.colspan if isinstance(cell, TableCell) else 1
 
                 if column in self._column_max_widths and self._column_max_widths[

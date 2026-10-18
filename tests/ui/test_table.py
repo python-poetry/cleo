@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from typing import cast
 
 import pytest
 
@@ -425,6 +426,24 @@ def test_render(
 
     table.render()
 
+    assert io.fetch_output() == expected
+
+
+def test_render_non_string_cells(io: BufferedIO) -> None:
+    table = Table(io)
+    table.set_headers(["Value", "Detail"])
+    table.set_rows(cast("Rows", [[None, 12], [False, "ready"]]))
+
+    table.render()
+
+    expected = """\
++-------+--------+
+| Value | Detail |
++-------+--------+
+| None  | 12     |
+| False | ready  |
++-------+--------+
+"""
     assert io.fetch_output() == expected
 
 
