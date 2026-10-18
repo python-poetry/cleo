@@ -7,7 +7,7 @@ it is possible to remove this need by using `default()` when adding a command:
 
 .. code-block:: python
 
-    from cleo import Application
+    from cleo.application import Application
 
     command = GreetCommand()
 
