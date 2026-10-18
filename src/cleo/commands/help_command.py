@@ -15,8 +15,9 @@ class HelpCommand(Command):
         Argument(
             "command_name",
             required=False,
+            is_list=True,
             description="The command name",
-            default="help",
+            default=["help"],
         )
     ]
 
@@ -43,7 +44,10 @@ To display the list of available commands, please use the <info>list</info> comm
 
         if self._command is None:
             assert self._application is not None
-            self._command = self._application.find(self.argument("command_name"))
+            command_name = self.argument("command_name")
+            if isinstance(command_name, list):
+                command_name = " ".join(command_name)
+            self._command = self._application.find(command_name)
 
         self.line("")
         TextDescriptor().describe(self._io, self._command)

@@ -3,10 +3,10 @@ Description:
   Displays help for a command.
 
 Usage:
-  help [options] [--] [<command_name>]
+  help [options] [--] [<command_name>...]
 
 Arguments:
-  command_name          The command name [default: "help"]
+  command_name          The command name [default: ["help"]]
 
 Options:
   -h, --help            Display help for the given command. When no command is given display help for the list command.
