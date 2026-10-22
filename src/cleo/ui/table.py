@@ -519,7 +519,7 @@ class Table:
                 }
                 for k, v in unmerged_rows.items():
                     if k in placeholder:
-                        for l, m in unmerged_rows[k].items():  # noqa: E741
+                        for l, m in v.items():
                             placeholder[k][l] = m
                     else:
                         placeholder[k] = v
@@ -547,9 +547,7 @@ class Table:
                 and (
                     (
                         self._get_number_of_columns(this_row)
-                        + self._get_number_of_columns(
-                            list(unmerged_rows[unmerged_row_key].values())
-                        )
+                        + self._get_number_of_columns(list(unmerged_row.values()))
                     )
                     <= self._number_of_columns
                 )
@@ -561,7 +559,7 @@ class Table:
                 row = self._copy_row(rows, unmerged_row_key - 1)
                 for column, cell in unmerged_row.items():
                     if len(cell):
-                        row[column] = unmerged_row[column]
+                        row[column] = cell
 
                 rows.insert(unmerged_row_key, row)
 

@@ -23,8 +23,7 @@ class Option:
         description: str | None = None,
         default: Any | None = None,
     ) -> None:
-        if name.startswith("--"):
-            name = name[2:]
+        name = name.removeprefix("--")
 
         if not name:
             raise CleoValueError("An option name cannot be empty")

@@ -54,7 +54,7 @@ def test_ask_and_validate(io: BufferedIO) -> None:
 
     def validator(color: str) -> str:
         if color not in ["white", "black"]:
-            raise Exception(error)
+            raise Exception(error)  # noqa: TRY002
 
         return color
 

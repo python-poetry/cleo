@@ -39,17 +39,26 @@ classifiers = [
     "Topic :: Software Development",
 ]
 
-[tool.poetry.group.dev.dependencies]
-mypy = ">=1.18"
-pre-commit = ">=4.2"
-pytest = ">=8.3.5"
-pytest-cov = ">=7.0"
-pytest-mock = ">=3.8.2"
-towncrier = ">=22.12.0"
-
-[tool.poetry.group.doc.dependencies]
-sphinx = "^7.1"
-furo = "^2023.9.10"
+[dependency-groups]
+dev = [
+    { include-group = "types" },
+    { include-group = "test" },
+    { include-group = "docs" },
+    "towncrier >= 22.12.0",
+    "pre-commit >= 4.2",
+]
+types = [
+    "mypy >= 1.18",
+]
+test = [
+    "pytest >= 8.3.5",
+    "pytest-cov >= 7.0",
+    "pytest-mock >= 3.8.2",
+]
+docs = [
+    "sphinx >=7.1, <8",
+    "furo >=2023.9.10, <2024"
+]
 
 [tool.ruff]
 fix = true
@@ -96,6 +105,9 @@ lines-between-types = 1
 lines-after-imports = 2
 known-first-party = ["cleo"]
 required-imports = ["from __future__ import annotations"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["BLE001"] # ignore bare Exception in test fixtures
 
 [tool.mypy]
 strict = true
