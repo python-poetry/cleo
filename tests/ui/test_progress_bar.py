@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from unittest.mock import patch
 
 import pytest
 
@@ -223,6 +224,15 @@ def test_percent(ansi_io: BufferedIO) -> None:
     expected = generate_output(output)
 
     assert expected == ansi_io.fetch_error()
+
+
+def test_remaining_time_uses_uncompleted_steps(ansi_io: BufferedIO) -> None:
+    with patch("cleo.ui.progress_bar.time.time", return_value=10):
+        bar = ProgressBar(ansi_io, max=10, min_seconds_between_redraws=0)
+        bar._start_time = 0
+        bar._step = 2
+
+        assert bar._formatter_remaining() == "40 secs"
 
 
 def test_overwrite_with_shorter_line(ansi_io: BufferedIO) -> None:

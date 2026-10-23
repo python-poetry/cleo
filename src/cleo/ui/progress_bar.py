@@ -377,7 +377,7 @@ class ProgressBar(Component):
             remaining = 0
         else:
             remaining = round(
-                (time.time() - self._start_time) / self._step * (self._max - self._max)
+                (time.time() - self._start_time) / self._step * (self._max - self._step)
             )
 
         return format_time(remaining)
