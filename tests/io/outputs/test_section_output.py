@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 from io import StringIO
+from threading import Event
+from threading import Thread
 
 import pytest
 
+from cleo.formatters.formatter import Formatter
 from cleo.io.outputs.section_output import SectionOutput
+from cleo.io.outputs.stream_output import StreamOutput
 
 
 @pytest.fixture()
@@ -109,3 +113,40 @@ def test_multiple_sections_output(
         stream.read()
         == "Foo\nBar\n\x1b[2A\x1b[0JBar\n\x1b[1A\x1b[0JBaz\nBar\n\x1b[1A\x1b[0JFoobar\n"
     )
+
+
+def test_remove_format_does_not_change_shared_decoration_state() -> None:
+    entered = Event()
+    continue_run = Event()
+
+    class SlowFormatter(Formatter):
+        def format(self, message: str) -> str:
+            entered.set()
+            continue_run.wait(timeout=2)
+            return super().format(message)
+
+    stream = StringIO()
+    formatter = SlowFormatter(decorated=True)
+    output = StreamOutput(stream, decorated=True, formatter=formatter)
+    section = output.section()
+    result: dict[str, object] = {}
+
+    def worker() -> None:
+        result["text"] = section.remove_format("<info>x</info>")
+
+    thread = Thread(target=worker)
+    thread.start()
+    assert entered.wait(timeout=2)
+
+    result["output_during"] = output.is_decorated()
+    result["section_during"] = section.is_decorated()
+
+    continue_run.set()
+    thread.join(timeout=2)
+
+    assert not thread.is_alive()
+    assert result == {
+        "text": "x",
+        "output_during": True,
+        "section_during": True,
+    }
