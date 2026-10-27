@@ -13,6 +13,7 @@ def argument(
     multiple: bool = False,
     default: Any | None = None,
 ) -> Argument:
+    """Create a new command line argument."""
     return Argument(
         name,
         required=not optional,
@@ -31,6 +32,7 @@ def option(
     multiple: bool = False,
     default: Any | None = None,
 ) -> Option:
+    """Create a new command line option."""
     return Option(
         long_name,
         short_name,
@@ -44,7 +46,7 @@ def option(
 
 def tokenize(string: str) -> list[str]:  # pragma: no cover
     """
-    Split the string using shell-like syntax. Maps directly to using `shlex.split`
+    Split the string using shell-like syntax. Maps directly to using `shlex.split`.
     """
     import shlex
 
