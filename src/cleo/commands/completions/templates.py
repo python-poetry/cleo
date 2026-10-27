@@ -122,4 +122,39 @@ end
 %(cmds_opts)s"""
 
 
-TEMPLATES = {"bash": BASH_TEMPLATE, "zsh": ZSH_TEMPLATE, "fish": FISH_TEMPLATE}
+POWERSHELL_TEMPLATE = (
+    """\
+$%(function)s = {
+    param(
+        [string] $wordToComplete,
+        [System.Management.Automation.Language.Ast] $commandAst,
+        [int] $cursorPosition
+    )
+
+    $options = %(opts)s
+    $commands = %(cmds)s
+
+    if ($wordToComplete -notlike '--*' -and $wordToComplete -notlike "" -and """
+    """($commandAst.CommandElements.Count -eq "2")) {
+        return $commands | Where-Object { $_ -like "$wordToComplete*" }
+    }
+
+    $result = $commandAst.CommandElements | Select-Object -Skip 1 | """
+    """Where-Object { $_ -notlike '--*' }
+    switch ($result -Join " " ) {
+%(cmds_opts)s
+    }
+
+    return $options | Where-Object { $_ -like "$wordToComplete*" }
+}
+
+Register-ArgumentCompleter -Native -CommandName %(script_name)s """
+    """-ScriptBlock $%(function)s"""
+)
+
+TEMPLATES = {
+    "bash": BASH_TEMPLATE,
+    "zsh": ZSH_TEMPLATE,
+    "fish": FISH_TEMPLATE,
+    "PowerShell": POWERSHELL_TEMPLATE,
+}
