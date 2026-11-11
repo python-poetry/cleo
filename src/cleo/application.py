@@ -499,7 +499,10 @@ class Application:
         ):
             io.interactive(False)
 
-        shell_verbosity = int(os.getenv("SHELL_VERBOSITY", "0"))
+        try:
+            shell_verbosity = int(os.getenv("SHELL_VERBOSITY", "0"))
+        except ValueError:
+            shell_verbosity = 0
         if shell_verbosity == -1:
             io.set_verbosity(Verbosity.QUIET)
         elif shell_verbosity == 1:

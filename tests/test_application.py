@@ -380,3 +380,16 @@ def test_run_with_input_and_non_interactive(cmd: Command) -> None:
 
     assert status_code == 0
     assert tester.io.fetch_output() == "default input\n"
+
+
+def test_run_with_invalid_shell_verbosity_env(
+    app: Application, monkeypatch: pytest.MonkeyPatch, environ: dict[str, str]
+) -> None:
+    monkeypatch.setenv("SHELL_VERBOSITY", "not-a-number")
+    app.catch_exceptions(False)
+    app.auto_exits(False)
+    tester = ApplicationTester(app)
+
+    status_code = tester.execute("list")
+
+    assert status_code == 0
