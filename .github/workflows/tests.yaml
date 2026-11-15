@@ -47,8 +47,11 @@ jobs:
       - name: Install dependencies
         run: poetry install
 
-      - name: Run typechecking
+      - name: Run mypy typechecking
         run: poetry run mypy
+
+      - name: Run ty typechecking
+        run: poetry run ty check
 
       - name: Run tests
         run: poetry run pytest

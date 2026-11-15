@@ -109,8 +109,7 @@ class Table:
 
     def set_headers(self, headers: Header | list[Header]) -> Table:
         if headers and not isinstance(headers[0], list):
-            headers = cast("Header", headers)
-            headers = [headers]
+            headers = [headers]  # ty: ignore[invalid-assignment]
 
         headers = cast("list[Header]", headers)
 
