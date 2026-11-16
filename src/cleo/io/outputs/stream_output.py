@@ -50,12 +50,7 @@ class StreamOutput(Output):
         """
         Returns whether the stream supports the UTF-8 encoding.
         """
-        if self._stream.encoding:
-            encoding = self._stream.encoding
-        elif sys.version_info < (3, 11):
-            encoding = locale.getpreferredencoding(False)
-        else:
-            encoding = locale.getencoding()
+        encoding = self._stream.encoding or locale.getencoding()
 
         try:
             return codecs.lookup(encoding).name == "utf-8"

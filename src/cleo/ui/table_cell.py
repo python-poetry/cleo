@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
+    from typing import Self
 
     from cleo.ui.table_cell_style import TableCellStyle
 
