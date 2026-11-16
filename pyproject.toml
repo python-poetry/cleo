@@ -44,7 +44,11 @@ dev = [
     { include-group = "types" },
     { include-group = "test" },
     { include-group = "docs" },
+    { include-group = "lint" },
     "towncrier >= 22.12.0",
+]
+lint = [
+    "codespell >= 2.4.3",
     "pre-commit >= 4.2",
     "gha-update ; python_full_version >= '3.12'",
 ]
@@ -128,6 +132,9 @@ exclude_lines = [
     "if TYPE_CHECKING:",
     "raise NotImplementedError"
 ]
+
+[tool.codespell]
+skip = "docs/_static/*,tests/*"
 
 [tool.towncrier]
 package = "cleo"
