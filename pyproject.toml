@@ -6,7 +6,7 @@ build-backend = "poetry.core.masonry.api"
 name = "cleo"
 version = "3.0.0.dev0"
 description = "Cleo allows you to create beautiful and testable command-line interfaces."
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 authors = [
     { name = "Sébastien Eustace", email = "sebastien@eustace.io" }
 ]
@@ -67,7 +67,7 @@ docs = [
 
 [tool.ruff]
 fix = true
-target-version = "py39"
+target-version = "py311"
 line-length = 88
 extend-exclude = [
     "docs/*",
