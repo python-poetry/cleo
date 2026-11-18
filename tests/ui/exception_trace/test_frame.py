@@ -41,7 +41,7 @@ def test_frame() -> None:
 
 def test_frame_with_no_context_should_return_empty_line() -> None:
     frame = Frame(
-        inspect.FrameInfo(None, "filename.py", 123, "function", None, 3)  # type: ignore[arg-type]
+        inspect.FrameInfo(None, "filename.py", 123, "function", None, 3)  # type: ignore[arg-type] # ty: ignore[invalid-argument-type]
     )
 
     assert frame.line == ""

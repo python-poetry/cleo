@@ -47,7 +47,7 @@ class Command:
     hidden = False
 
     def __init__(self) -> None:
-        self._io: IO = None  # type: ignore[assignment]
+        self._io: IO = None  # type: ignore[assignment] # ty: ignore[invalid-assignment]
         self._definition = Definition()
         self._full_definition: Definition | None = None
         self._application: Application | None = None

@@ -16,8 +16,8 @@ class TagStripper(HTMLParser):
         self.reset()
         self.fed: list[str] = []
 
-    def handle_data(self, d: str) -> None:
-        self.fed.append(d)
+    def handle_data(self, data: str) -> None:
+        self.fed.append(data)
 
     def handle_entityref(self, name: str) -> None:
         self.fed.append(f"&{name};")
