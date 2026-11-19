@@ -14,7 +14,7 @@ built-in options as well as a couple of built-in commands for Cleo.
         #!/usr/bin/env python
         # application.py
 
-        from cleo import Application
+        from cleo.application import Application
 
         application = Application()
         # ...
