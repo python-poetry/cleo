@@ -18,7 +18,7 @@ class Input:
 
     def __init__(self, definition: Definition | None = None) -> None:
         self._definition: Definition
-        self._stream: TextIO = None  # type: ignore[assignment]
+        self._stream: TextIO = None  # type: ignore[assignment] # ty: ignore[invalid-assignment]
         self._options: dict[str, Any] = {}
         self._arguments: dict[str, Any] = {}
         self._interactive: bool | None = None

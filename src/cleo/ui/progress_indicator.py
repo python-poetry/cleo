@@ -12,7 +12,7 @@ from cleo.io.io import IO
 
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Generator
     from re import Match
 
     from cleo.io.outputs.output import Output
@@ -129,7 +129,9 @@ class ProgressIndicator:
         self._started = False
 
     @contextmanager
-    def auto(self, start_message: str, end_message: str) -> Iterator[ProgressIndicator]:
+    def auto(
+        self, start_message: str, end_message: str
+    ) -> Generator[ProgressIndicator]:
         """
         Auto progress.
         """

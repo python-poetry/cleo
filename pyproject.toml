@@ -6,7 +6,7 @@ build-backend = "poetry.core.masonry.api"
 name = "cleo"
 version = "3.0.0.dev0"
 description = "Cleo allows you to create beautiful and testable command-line interfaces."
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 authors = [
     { name = "Sébastien Eustace", email = "sebastien@eustace.io" }
 ]
@@ -44,11 +44,17 @@ dev = [
     { include-group = "types" },
     { include-group = "test" },
     { include-group = "docs" },
+    { include-group = "lint" },
     "towncrier >= 22.12.0",
-    "pre-commit >= 4.2",
+]
+lint = [
+    "codespell >= 2.4.3",
+    "prek >= 0.5.10",
+    "gha-update ; python_full_version >= '3.12'",
 ]
 types = [
-    "mypy >= 1.18",
+    "mypy >= 2.4.1",
+    "ty >= 0.0.104",
 ]
 test = [
     "pytest >= 8.3.5",
@@ -62,7 +68,7 @@ docs = [
 
 [tool.ruff]
 fix = true
-target-version = "py39"
+target-version = "py311"
 line-length = 88
 extend-exclude = [
     "docs/*",
@@ -127,6 +133,9 @@ exclude_lines = [
     "if TYPE_CHECKING:",
     "raise NotImplementedError"
 ]
+
+[tool.codespell]
+skip = "docs/_static/*,tests/*"
 
 [tool.towncrier]
 package = "cleo"

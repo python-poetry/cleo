@@ -7,7 +7,6 @@ from contextlib import suppress
 from copy import deepcopy
 from itertools import repeat
 from typing import TYPE_CHECKING
-from typing import Union
 from typing import cast
 
 from cleo.formatters.formatter import Formatter
@@ -23,8 +22,8 @@ if TYPE_CHECKING:
 
     from cleo.io.io import IO
 
-Row = list[Union[str, TableCell]]
-Rows = list[Union[Row, TableSeparator]]
+Row = list[str | TableCell]
+Rows = list[Row | TableSeparator]
 Header = Row
 
 
@@ -110,8 +109,7 @@ class Table:
 
     def set_headers(self, headers: Header | list[Header]) -> Table:
         if headers and not isinstance(headers[0], list):
-            headers = cast("Header", headers)
-            headers = [headers]
+            headers = [headers]  # ty: ignore[invalid-assignment]
 
         headers = cast("list[Header]", headers)
 
@@ -648,7 +646,7 @@ class Table:
                             for position, content in enumerate(content_columns):
                                 try:
                                     row_[i + position] = content
-                                except IndexError:  # noqa: PERF203
+                                except IndexError:
                                     row_.append(content)
 
                 lengths.append(self._get_cell_width(row_, column))
