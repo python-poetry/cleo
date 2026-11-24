@@ -94,3 +94,26 @@ def test_fish(mocker: MockerFixture) -> None:
     expected = (FIXTURES_PATH / "fish.txt").read_text(encoding="utf-8")
 
     assert expected == tester.io.fetch_output().replace("\r\n", "\n")
+
+
+def test_power_shell(mocker: MockerFixture) -> None:
+    mocker.patch(
+        "cleo.io.inputs.string_input.StringInput.script_name",
+        new_callable=mocker.PropertyMock,
+        return_value="/path/to/my/script",
+    )
+    mocker.patch(
+        "cleo.commands.completions_command.CompletionsCommand._generate_function_name",
+        return_value="_my_function",
+    )
+
+    command = app.find("completions")
+    tester = CommandTester(command)
+    tester.execute("PowerShell")
+
+    with open(
+        os.path.join(os.path.dirname(__file__), "fixtures", "PowerShell.txt")
+    ) as f:
+        expected = f.read()
+
+    assert expected == tester.io.fetch_output().replace("\r\n", "\n")
