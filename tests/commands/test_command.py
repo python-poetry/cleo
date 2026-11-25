@@ -6,6 +6,7 @@ from typing import ClassVar
 from cleo.application import Application
 from cleo.commands.command import Command
 from cleo.helpers import argument
+from cleo.testers.application_tester import ApplicationTester
 from cleo.testers.command_tester import CommandTester
 from tests.fixtures.inherited_command import ChildCommand
 from tests.fixtures.signature_command import SignatureCommand
@@ -87,3 +88,54 @@ def test_explicit_multiple_argument() -> None:
     tester.execute("1 2 3")
 
     assert tester.io.fetch_output() == "1,2,3\n"
+
+
+class CalleeCommand(Command):
+    name = "callee"
+    arguments: ClassVar[list[Argument]] = [argument("value", "The value to print.")]
+
+    def handle(self) -> int:
+        self.line(self.argument("value"))
+        return 0
+
+
+class CallerCommand(Command):
+    name = "caller"
+
+    def handle(self) -> int:
+        return self.call("callee", "hello")
+
+
+class SilentCallerCommand(Command):
+    name = "silent-caller"
+
+    def handle(self) -> int:
+        return self.call_silent("callee", "hello")
+
+
+def _app_with_callee_and(caller: Command) -> Application:
+    application = Application()
+    application.add(CalleeCommand())
+    application.add(caller)
+
+    return application
+
+
+def test_call_binds_arguments_to_the_called_command() -> None:
+    # Regression test for https://github.com/python-poetry/cleo/issues/130: the
+    # application's own top-level "command" argument used to be first in line for
+    # binding, so the called command's first real argument was silently swallowed
+    # by that phantom slot instead of reaching the called command's own argument.
+    tester = ApplicationTester(_app_with_callee_and(CallerCommand()))
+
+    assert tester.execute("caller") == 0
+    assert tester.io.fetch_output() == "hello\n"
+
+
+def test_call_silent_binds_arguments_to_the_called_command() -> None:
+    tester = ApplicationTester(_app_with_callee_and(SilentCallerCommand()))
+
+    assert tester.execute("silent-caller") == 0
+    # call_silent runs the called command against a NullIO, so its own output
+    # isn't captured here -- the point of this test is that the call above didn't
+    # raise "Not enough arguments" and returned a successful status code.
