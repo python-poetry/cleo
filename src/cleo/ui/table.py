@@ -11,7 +11,6 @@ from typing import cast
 
 from cleo.formatters.formatter import Formatter
 from cleo.io.io import IO
-from cleo.io.outputs.output import Output
 from cleo.ui.table_cell import TableCell
 from cleo.ui.table_cell_style import TableCellStyle
 from cleo.ui.table_separator import TableSeparator
@@ -20,6 +19,8 @@ from cleo.ui.table_style import TableStyle
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+
+    from cleo.io.outputs.output import Output
 
 Row = list[str | TableCell]
 Rows = list[Row | TableSeparator]
