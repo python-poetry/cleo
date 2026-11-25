@@ -87,3 +87,46 @@ def test_explicit_multiple_argument() -> None:
     tester.execute("1 2 3")
 
     assert tester.io.fetch_output() == "1,2,3\n"
+
+
+def test_call_propagates_stream_for_confirm() -> None:
+    """call() must propagate the parent's input stream so that interactive
+    questions (confirm, ask, …) in the callee can read from it.
+
+    Regression test for https://github.com/python-poetry/cleo/issues/333.
+    """
+
+    class GreetedCommand(Command):
+        name = "greeted"
+        description = "Greeted command"
+        arguments: ClassVar = [argument("name", "Name to greet")]
+
+        def handle(self) -> int:
+            name = self.argument("name")
+            confirmed = self.confirm(f"Say hello to {name}?")
+            if confirmed:
+                self.line(f"Hello, {name}!")
+            return 0
+
+    class GreeterCommand(Command):
+        name = "greeter"
+        description = "Greeter command"
+        arguments: ClassVar = [argument("name", "Name to greet")]
+
+        def handle(self) -> int:
+            # The first positional of the args string is consumed by the app's
+            # implicit "command" argument in the merged definition, so a
+            # placeholder is required before the actual argument values.
+            self.call("greeted", f"greeted {self.argument('name')}")
+            return 0
+
+    app = Application()
+    app.add(GreeterCommand())
+    app.add(GreetedCommand())
+
+    from cleo.testers.application_tester import ApplicationTester
+
+    tester = ApplicationTester(app)
+    # Provide "yes" so that confirm() can read from the propagated stream.
+    tester.execute("greeter Alice", inputs="yes\n")
+    assert "Hello, Alice!" in tester.io.fetch_output()
