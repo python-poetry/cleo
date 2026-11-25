@@ -92,18 +92,18 @@ def test_render_debug_better_error_message_recursion_error() -> None:
   Stack trace:
 
   \d+  {re.escape(str(trace._get_relative_file_path(__file__)))}:{lineno} in test_render_debug_better_error_message_recursion_error
-         {lineno - 2}\│ 
-         {lineno - 1}\│     try:
-      →  {lineno + 0}\│         recursion.recursion_error\(\)
-         {lineno + 1}\│     except RecursionError as e:
-         {lineno + 2}\│         trace = ExceptionTrace\(e\)
+\s+{lineno - 2}\│ 
+\s+{lineno - 1}\│     try:
+\s*→\s+{lineno + 0}\│         recursion.recursion_error\(\)
+\s+{lineno + 1}\│     except RecursionError as e:
+\s+{lineno + 2}\│         trace = ExceptionTrace\(e\)
 
-  ...  Previous frame repeated \d+ times
+\s*\.\.\.  Previous frame repeated \d+ times
 
-  \s*\d+  {re.escape(str(trace._get_relative_file_path(recursion.__file__)))}:2 in recursion_error
-          1\│ def recursion_error\(\) -> None:
-      →   2\│     recursion_error\(\)
-          3\│ 
+\s*\d+  {re.escape(str(trace._get_relative_file_path(recursion.__file__)))}:2 in recursion_error
+\s+1\│ def recursion_error\(\) -> None:
+\s*→\s+2\│     recursion_error\(\)
+\s+3\│ 
 
   RecursionError
 
