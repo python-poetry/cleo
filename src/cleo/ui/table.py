@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 from typing import cast
 
 from cleo.formatters.formatter import Formatter
+from cleo.io.io import IO
 from cleo.io.outputs.output import Output
 from cleo.ui.table_cell import TableCell
 from cleo.ui.table_cell_style import TableCellStyle
@@ -19,8 +20,6 @@ from cleo.ui.table_style import TableStyle
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
-
-    from cleo.io.io import IO
 
 Row = list[str | TableCell]
 Rows = list[Row | TableSeparator]
@@ -103,7 +102,7 @@ class Table:
         return self
 
     def set_column_max_width(self, column_index: int, width: int) -> Table:
-        self._column_widths[column_index] = width
+        self._column_max_widths[column_index] = width
 
         return self
 
@@ -424,8 +423,12 @@ class Table:
                 if column in self._column_max_widths and self._column_max_widths[
                     column
                 ] < len(self._io.remove_format(cell)):
-                    assert isinstance(self._io, Output)
-                    cell = self._io.formatter.format_and_wrap(
+                    formatter = (
+                        self._io.output.formatter
+                        if isinstance(self._io, IO)
+                        else self._io.formatter
+                    )
+                    cell = formatter.format_and_wrap(
                         cell, self._column_max_widths[column] * colspan
                     )
 

@@ -481,3 +481,20 @@ def test_style_for_side_effects(io: BufferedIO) -> None:
     output2 = io.fetch_output()
 
     assert output1 != output2
+
+
+def test_column_max_width_wraps_cell(io: BufferedIO) -> None:
+    table = Table(io)
+    table.set_rows([["abcdefghijklmnopqrstuvwxyz"]])
+    table.set_column_max_width(0, 10)
+
+    table.render()
+
+    expected = """\
++------------+
+| abcdefghij |
+| klmnopqrst |
+| uvwxyz     |
++------------+
+"""
+    assert io.fetch_output() == expected
