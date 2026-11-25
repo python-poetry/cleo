@@ -132,7 +132,7 @@ class ArgvInput(Input):
                 if token == value or (leading != "" and token.startswith(leading)):
                     return token[len(leading)]
 
-        return False
+        return default
 
     def _set_tokens(self, tokens: list[str]) -> None:
         self._tokens = tokens

@@ -151,3 +151,50 @@ def test_parse_options(
     i.bind(Definition(options))
 
     assert i.options == expected_options
+
+
+@pytest.mark.parametrize("args", [[], ["--other=value"]])
+@pytest.mark.parametrize("values", ["--name", ["--name", "-n"]])
+@pytest.mark.parametrize("default", [False, 0, None, "fallback", object()])
+def test_parameter_option_returns_default_when_missing(
+    args: list[str], values: str | list[str], default: object
+) -> None:
+    i = ArgvInput(["cli.py", *args])
+
+    assert i.parameter_option(values, default=default) is default
+
+
+@pytest.mark.parametrize(
+    ["args", "expected"],
+    [
+        (["--name", "alice"], "alice"),
+        (["-n", "alice"], "alice"),
+        (["--name"], None),
+    ],
+)
+def test_parameter_option_preserves_present_values(
+    args: list[str], expected: str | None
+) -> None:
+    i = ArgvInput(["cli.py", *args])
+
+    assert i.parameter_option(["--name", "-n"], default="fallback") == expected
+
+
+@pytest.mark.parametrize("only_params", [False, True])
+def test_parameter_option_default_after_end_of_options(only_params: bool) -> None:
+    i = ArgvInput(["cli.py", "--", "--name", "alice"])
+    default = object()
+
+    result = i.parameter_option("--name", default=default, only_params=only_params)
+
+    if only_params:
+        assert result is default
+    else:
+        assert result == "alice"
+
+
+@pytest.mark.parametrize("args", [[], ["--other=value"]])
+def test_parameter_option_default_is_false(args: list[str]) -> None:
+    i = ArgvInput(["cli.py", *args])
+
+    assert i.parameter_option("--name") is False
