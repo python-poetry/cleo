@@ -229,20 +229,44 @@ script. Consult your shells documentation for how to add such directives.
         ]
 
         # Commands + options
-        cmds = []
+        cmds_by_prefix: dict[str, dict[str, str | None]] = {"": {}}
         cmds_opts = []
         for cmd in sorted(self.application.all().values(), key=lambda c: c.name or ""):
             if cmd.hidden or not (cmd.enabled and cmd.name):
                 continue
-            command_name = shell_quote(cmd.name) if " " in cmd.name else cmd.name
-            cmds.append(self._zsh_describe(command_name, sanitize(cmd.description)))
+            parts = cmd.name.split(" ")
+            prefix = ""
+            for idx, part in enumerate(parts):
+                cmds_by_prefix.setdefault(prefix, {})
+                description = (
+                    sanitize(cmd.description) if idx == len(parts) - 1 else None
+                )
+                existing = cmds_by_prefix[prefix].get(part)
+                if existing is None or description is not None:
+                    cmds_by_prefix[prefix][part] = description
+
+                prefix = f"{prefix} {part}".strip()
+
             options = " ".join(
                 self._zsh_describe(f"--{opt.name}", sanitize(opt.description))
                 for opt in sorted(cmd.definition.options, key=lambda o: o.name)
             )
             cmds_opts += [
-                f"            ({command_name})",
+                f'            ("{cmd.name}")',
                 f"            opts+=({options})",
+                "            ;;",
+                "",  # newline
+            ]
+
+        cmds = []
+        for prefix, entries in cmds_by_prefix.items():
+            descriptions = " ".join(
+                self._zsh_describe(name, description)
+                for name, description in sorted(entries.items())
+            )
+            cmds += [
+                f'            ("{prefix}")',
+                f"            coms+=({descriptions})",
                 "            ;;",
                 "",  # newline
             ]
@@ -251,7 +275,7 @@ script. Consult your shells documentation for how to add such directives.
             "script_name": script_name,
             "function": function,
             "opts": " ".join(opts),
-            "cmds": " ".join(cmds),
+            "cmds": "\n".join(cmds[:-1]),
             "cmds_opts": "\n".join(cmds_opts[:-1]),  # trim trailing newline
             "compdefs": "\n".join(f"compdef {function} {alias}" for alias in aliases),
         }
