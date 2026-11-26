@@ -481,3 +481,32 @@ def test_style_for_side_effects(io: BufferedIO) -> None:
     output2 = io.fetch_output()
 
     assert output1 != output2
+
+
+def test_render_cjk_and_wide_chars_align(io: BufferedIO) -> None:
+    # Wide characters (CJK, emoji) occupy two terminal cells, so measuring
+    # them as single characters used to push the right border out of
+    # alignment.
+    table = Table(io)
+    table.set_rows([["你好世界", "x"], ["c", "dd"]])
+    table.render()
+
+    assert io.fetch_output() == (
+        "+----------+----+\n| 你好世界 | x  |\n| c        | dd |\n+----------+----+\n"
+    )
+
+
+def test_render_wide_chars_in_headers_align(io: BufferedIO) -> None:
+    table = Table(io)
+    table.set_headers(["Name", "値"])
+    table.set_rows([["ab", "日本"], ["cde", "f"]])
+    table.render()
+
+    assert io.fetch_output() == (
+        "+------+------+\n"
+        "| Name | 値   |\n"
+        "+------+------+\n"
+        "| ab   | 日本 |\n"
+        "| cde  | f    |\n"
+        "+------+------+\n"
+    )

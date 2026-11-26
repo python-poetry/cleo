@@ -9,6 +9,7 @@ from itertools import repeat
 from typing import TYPE_CHECKING
 from typing import cast
 
+from cleo._utils import wcswidth
 from cleo.formatters.formatter import Formatter
 from cleo.io.outputs.output import Output
 from cleo.ui.table_cell import TableCell
@@ -25,6 +26,18 @@ if TYPE_CHECKING:
 Row = list[str | TableCell]
 Rows = list[Row | TableSeparator]
 Header = Row
+
+
+def _visual_width(text: str) -> int:
+    """Determine the number of terminal cells needed to display a text.
+
+    Falls back to the character count for texts with control characters,
+    which have no well-defined display width.
+    """
+    width = wcswidth(text)
+    if width < 0:
+        return len(text)
+    return width
 
 
 class Table:
@@ -291,7 +304,7 @@ class Table:
         if title is not None:
             assert title_format is not None
             formatted_title = title_format.format(title)
-            title_length = len(self._io.remove_format(formatted_title))
+            title_length = _visual_width(self._io.remove_format(formatted_title))
             markup_length = len(markup)
             limit = markup_length - 4
 
@@ -370,7 +383,7 @@ class Table:
         if isinstance(cell, TableSeparator):
             return style.border_format.format(style.border_chars[2] * width)
 
-        width += len(cell) - len(self._io.remove_format(cell))
+        width += len(cell) - _visual_width(self._io.remove_format(cell))
         content = style.cell_row_content_format.format(cell)
 
         pad = style.pad
@@ -666,7 +679,7 @@ class Table:
 
         with suppress(IndexError):
             cell = row[column]
-            cell_width = len(self._io.remove_format(cell))
+            cell_width = _visual_width(self._io.remove_format(cell))
 
         column_width = self._column_widths.get(column, 0)
         cell_width = max(cell_width, column_width)
